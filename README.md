@@ -1,4 +1,6 @@
-Honda-OBD-Interface
+MotoLink
 ===================
 
-OBD interface and logger for Honda motorcycle.
+OBD, CAN BUS, K-Line interface and logger for motorcycles.
+
+Also includes a strain gauge shifter interface.
