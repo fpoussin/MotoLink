@@ -1,6 +1,8 @@
 MotoLink
 ===================
 
-OBD, CAN BUS, K-Line interface and logger for motorcycles.
+CAN bus, K-Line interface for motorcycles.
 
-Also includes a strain gauge shifter interface.
+Primarily intended to communicate with Honda HRC ECUs.
+
+Includes some digital and analog inputs and a knock sensor interface.
