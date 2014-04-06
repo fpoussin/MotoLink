@@ -8,34 +8,34 @@
 </settings>
 <grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.005" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
-<layer number="21" name="tPlace" color="16" fill="1" visible="yes" active="no"/>
-<layer number="22" name="bPlace" color="14" fill="1" visible="yes" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
+<layer number="21" name="tPlace" color="16" fill="1" visible="no" active="no"/>
+<layer number="22" name="bPlace" color="14" fill="1" visible="no" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -44,8 +44,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -53,17 +53,17 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
-<layer number="51" name="tDocu" color="6" fill="1" visible="yes" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
+<layer number="51" name="tDocu" color="6" fill="1" visible="no" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -139,32 +139,6 @@
 <libraries>
 <library name="misc">
 <packages>
-<package name="SO08">
-<description>&lt;b&gt;Small Outline Package&lt;/b&gt; Fits JEDEC packages (narrow SOIC-8)</description>
-<wire x1="-2.362" y1="-1.803" x2="2.362" y2="-1.803" width="0.1524" layer="51"/>
-<wire x1="2.362" y1="-1.803" x2="2.362" y2="1.803" width="0.1524" layer="21"/>
-<wire x1="2.362" y1="1.803" x2="-2.362" y2="1.803" width="0.1524" layer="51"/>
-<wire x1="-2.362" y1="1.803" x2="-2.362" y2="-1.803" width="0.1524" layer="21"/>
-<circle x="-1.8034" y="-0.9906" radius="0.1436" width="0.2032" layer="21"/>
-<smd name="1" x="-1.905" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="2" x="-0.635" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="3" x="0.635" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="4" x="1.905" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="5" x="1.905" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="6" x="0.635" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="7" x="-0.635" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<smd name="8" x="-1.905" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
-<text x="-1.27" y="-0.635" size="0.4064" layer="27">&gt;VALUE</text>
-<text x="-1.27" y="0" size="0.4064" layer="25">&gt;NAME</text>
-<rectangle x1="-2.0828" y1="-2.8702" x2="-1.7272" y2="-1.8542" layer="51"/>
-<rectangle x1="-0.8128" y1="-2.8702" x2="-0.4572" y2="-1.8542" layer="51"/>
-<rectangle x1="0.4572" y1="-2.8702" x2="0.8128" y2="-1.8542" layer="51"/>
-<rectangle x1="1.7272" y1="-2.8702" x2="2.0828" y2="-1.8542" layer="51"/>
-<rectangle x1="-2.0828" y1="1.8542" x2="-1.7272" y2="2.8702" layer="51"/>
-<rectangle x1="-0.8128" y1="1.8542" x2="-0.4572" y2="2.8702" layer="51"/>
-<rectangle x1="0.4572" y1="1.8542" x2="0.8128" y2="2.8702" layer="51"/>
-<rectangle x1="1.7272" y1="1.8542" x2="2.0828" y2="2.8702" layer="51"/>
-</package>
 <package name="DIL16">
 <description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
 <wire x1="10.16" y1="2.921" x2="-10.16" y2="2.921" width="0.1524" layer="21"/>
@@ -283,22 +257,34 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <text x="-3.175" y="2.794" size="1.778" layer="25">&gt;NAME</text>
 <text x="-3.429" y="-4.826" size="1.778" layer="27">&gt;VALUE</text>
 </package>
+<package name="SO08">
+<description>&lt;b&gt;Small Outline Package&lt;/b&gt; Fits JEDEC packages (narrow SOIC-8)</description>
+<wire x1="-2.362" y1="-1.803" x2="2.362" y2="-1.803" width="0.1524" layer="51"/>
+<wire x1="2.362" y1="-1.803" x2="2.362" y2="1.803" width="0.1524" layer="21"/>
+<wire x1="2.362" y1="1.803" x2="-2.362" y2="1.803" width="0.1524" layer="51"/>
+<wire x1="-2.362" y1="1.803" x2="-2.362" y2="-1.803" width="0.1524" layer="21"/>
+<circle x="-1.8034" y="-0.9906" radius="0.1436" width="0.2032" layer="21"/>
+<smd name="1" x="-1.905" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="2" x="-0.635" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="3" x="0.635" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="4" x="1.905" y="-2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="5" x="1.905" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="6" x="0.635" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="7" x="-0.635" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<smd name="8" x="-1.905" y="2.6162" dx="0.6096" dy="2.2098" layer="1"/>
+<text x="-1.27" y="-0.635" size="0.4064" layer="27">&gt;VALUE</text>
+<text x="-1.27" y="0" size="0.4064" layer="25">&gt;NAME</text>
+<rectangle x1="-2.0828" y1="-2.8702" x2="-1.7272" y2="-1.8542" layer="51"/>
+<rectangle x1="-0.8128" y1="-2.8702" x2="-0.4572" y2="-1.8542" layer="51"/>
+<rectangle x1="0.4572" y1="-2.8702" x2="0.8128" y2="-1.8542" layer="51"/>
+<rectangle x1="1.7272" y1="-2.8702" x2="2.0828" y2="-1.8542" layer="51"/>
+<rectangle x1="-2.0828" y1="1.8542" x2="-1.7272" y2="2.8702" layer="51"/>
+<rectangle x1="-0.8128" y1="1.8542" x2="-0.4572" y2="2.8702" layer="51"/>
+<rectangle x1="0.4572" y1="1.8542" x2="0.8128" y2="2.8702" layer="51"/>
+<rectangle x1="1.7272" y1="1.8542" x2="2.0828" y2="2.8702" layer="51"/>
+</package>
 </packages>
 <symbols>
-<symbol name="MCP2021">
-<pin name="TXD@4" x="0" y="5.08" length="middle"/>
-<pin name="VREG@3" x="0" y="7.62" length="middle"/>
-<pin name="CS/WAKE@2" x="0" y="10.16" length="middle"/>
-<pin name="RXD@1" x="0" y="12.7" length="middle"/>
-<pin name="VSS@5" x="38.1" y="5.08" length="middle" rot="R180"/>
-<pin name="LBUS@6" x="38.1" y="7.62" length="middle" rot="R180"/>
-<pin name="VBB@7" x="38.1" y="10.16" length="middle" rot="R180"/>
-<pin name="FAULT/TXE@8" x="38.1" y="12.7" length="middle" rot="R180"/>
-<wire x1="5.08" y1="13.97" x2="33.02" y2="13.97" width="0.254" layer="94"/>
-<wire x1="33.02" y1="13.97" x2="33.02" y2="3.81" width="0.254" layer="94"/>
-<wire x1="33.02" y1="3.81" x2="5.08" y2="3.81" width="0.254" layer="94"/>
-<wire x1="5.08" y1="3.81" x2="5.08" y2="13.97" width="0.254" layer="94"/>
-</symbol>
 <symbol name="2001A">
 <wire x1="-7.62" y1="10.16" x2="7.62" y2="10.16" width="0.4064" layer="94"/>
 <wire x1="7.62" y1="-12.7" x2="7.62" y2="10.16" width="0.4064" layer="94"/>
@@ -323,30 +309,22 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <pin name="CD+" x="12.7" y="-10.16" length="middle" direction="pas" rot="R180"/>
 <pin name="GND" x="-12.7" y="-10.16" length="middle" direction="pwr"/>
 </symbol>
+<symbol name="MCP2004">
+<pin name="TXD@4" x="-17.78" y="-2.54" length="middle"/>
+<pin name="FAULT/TXE@3" x="-17.78" y="0" length="middle"/>
+<pin name="CS/WAKE@2" x="-17.78" y="2.54" length="middle"/>
+<pin name="RXD@1" x="-17.78" y="5.08" length="middle"/>
+<pin name="VSS@5" x="20.32" y="-2.54" length="middle" rot="R180"/>
+<pin name="LBUS@6" x="20.32" y="0" length="middle" rot="R180"/>
+<pin name="VBB@7" x="20.32" y="2.54" length="middle" rot="R180"/>
+<pin name="VREN@8" x="20.32" y="5.08" length="middle" rot="R180"/>
+<wire x1="-12.7" y1="6.35" x2="15.24" y2="6.35" width="0.254" layer="94"/>
+<wire x1="15.24" y1="6.35" x2="15.24" y2="-3.81" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-3.81" x2="-12.7" y2="-3.81" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-3.81" x2="-12.7" y2="6.35" width="0.254" layer="94"/>
+</symbol>
 </symbols>
 <devicesets>
-<deviceset name="MCP2021">
-<gates>
-<gate name="G$1" symbol="MCP2021" x="-20.32" y="-12.7"/>
-</gates>
-<devices>
-<device name="" package="SO08">
-<connects>
-<connect gate="G$1" pin="CS/WAKE@2" pad="2"/>
-<connect gate="G$1" pin="FAULT/TXE@8" pad="8"/>
-<connect gate="G$1" pin="LBUS@6" pad="6"/>
-<connect gate="G$1" pin="RXD@1" pad="1"/>
-<connect gate="G$1" pin="TXD@4" pad="4"/>
-<connect gate="G$1" pin="VBB@7" pad="7"/>
-<connect gate="G$1" pin="VREG@3" pad="3"/>
-<connect gate="G$1" pin="VSS@5" pad="5"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="ULN2003A" prefix="IC">
 <description>&lt;b&gt;DRIVER ARRAY&lt;/b&gt;</description>
 <gates>
@@ -417,6 +395,28 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <connect gate="A" pin="O5" pad="12"/>
 <connect gate="A" pin="O6" pad="11"/>
 <connect gate="A" pin="O7" pad="10"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="MCP2004">
+<gates>
+<gate name="G$1" symbol="MCP2004" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SO08">
+<connects>
+<connect gate="G$1" pin="CS/WAKE@2" pad="2"/>
+<connect gate="G$1" pin="FAULT/TXE@3" pad="3"/>
+<connect gate="G$1" pin="LBUS@6" pad="6"/>
+<connect gate="G$1" pin="RXD@1" pad="1"/>
+<connect gate="G$1" pin="TXD@4" pad="4"/>
+<connect gate="G$1" pin="VBB@7" pad="7"/>
+<connect gate="G$1" pin="VREN@8" pad="8"/>
+<connect gate="G$1" pin="VSS@5" pad="5"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -6311,7 +6311,6 @@ Various fiducial points for machine vision alignment.</description>
 <part name="R3" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="100K"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
-<part name="IC_KL" library="misc" deviceset="MCP2021" device="" value="MCP2004"/>
 <part name="P+3" library="supply1" deviceset="+12V" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
@@ -6374,6 +6373,11 @@ Various fiducial points for machine vision alignment.</description>
 <part name="R1" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="D5" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA"/>
 <part name="TVS1" library="SparkFun-DiscreteSemi" deviceset="TVS" device="" value="SMAJ15CA"/>
+<part name="R2" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="4.7K"/>
+<part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
+<part name="IC_KLINE" library="misc" deviceset="MCP2004" device=""/>
+<part name="R13" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
+<part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA"/>
 </parts>
 <sheets>
 <sheet>
@@ -6392,7 +6396,7 @@ Various fiducial points for machine vision alignment.</description>
 <instance part="C2" gate="G$1" x="63.5" y="17.78"/>
 <instance part="P+2" gate="1" x="39.37" y="46.99"/>
 <instance part="D1" gate="G$1" x="39.37" y="29.21" rot="R270"/>
-<instance part="P+1" gate="VCC" x="33.02" y="31.75"/>
+<instance part="P+1" gate="VCC" x="33.02" y="29.21"/>
 <instance part="JP1" gate="G$1" x="298.45" y="120.65"/>
 <instance part="GND20" gate="1" x="82.55" y="54.61"/>
 <instance part="C22" gate="G$1" x="68.58" y="54.61"/>
@@ -6426,8 +6430,7 @@ Various fiducial points for machine vision alignment.</description>
 <instance part="R3" gate="G$1" x="321.31" y="101.6" rot="R90"/>
 <instance part="GND4" gate="1" x="312.42" y="104.14"/>
 <instance part="+3V4" gate="G$1" x="276.86" y="87.63"/>
-<instance part="IC_KL" gate="G$1" x="287.02" y="53.34"/>
-<instance part="P+3" gate="1" x="337.82" y="69.85"/>
+<instance part="P+3" gate="1" x="337.82" y="73.66"/>
 <instance part="IC_OPA" gate="D" x="88.9" y="86.36"/>
 <instance part="GND5" gate="1" x="31.75" y="96.52"/>
 <instance part="R4" gate="G$1" x="38.1" y="109.22"/>
@@ -6501,7 +6504,12 @@ Various fiducial points for machine vision alignment.</description>
 <instance part="FID2" gate="G$1" x="99.06" y="46.99"/>
 <instance part="R1" gate="G$1" x="49.53" y="78.74" rot="R270"/>
 <instance part="D5" gate="G$1" x="52.07" y="39.37" rot="R270"/>
-<instance part="TVS1" gate="G$1" x="22.86" y="39.37" rot="R90"/>
+<instance part="TVS1" gate="G$1" x="22.86" y="24.13" rot="R90"/>
+<instance part="R2" gate="G$1" x="287.02" y="71.12" rot="R90"/>
+<instance part="+3V11" gate="G$1" x="287.02" y="78.74"/>
+<instance part="IC_KLINE" gate="G$1" x="304.8" y="60.96"/>
+<instance part="R13" gate="G$1" x="345.44" y="66.04" rot="R90"/>
+<instance part="D6" gate="G$1" x="342.9" y="71.12"/>
 </instances>
 <busses>
 </busses>
@@ -6520,7 +6528,7 @@ Various fiducial points for machine vision alignment.</description>
 <wire x1="63.5" y1="15.24" x2="74.93" y2="15.24" width="0.1524" layer="91"/>
 <junction x="63.5" y="15.24"/>
 <pinref part="TVS1" gate="G$1" pin="1"/>
-<wire x1="22.86" y1="36.83" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="21.59" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="15.24" x2="39.37" y2="15.24" width="0.1524" layer="91"/>
 <junction x="39.37" y="15.24"/>
 </segment>
@@ -6657,11 +6665,11 @@ Various fiducial points for machine vision alignment.</description>
 <segment>
 <pinref part="CON_KL" gate="G$1" pin="4"/>
 <pinref part="GND6" gate="1" pin="GND"/>
-<pinref part="IC_KL" gate="G$1" pin="VSS@5"/>
 <wire x1="325.12" y1="58.42" x2="325.12" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="325.12" y1="55.88" x2="346.71" y2="55.88" width="0.1524" layer="91"/>
 <junction x="346.71" y="55.88"/>
 <wire x1="346.71" y1="55.88" x2="351.79" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="IC_KLINE" gate="G$1" pin="VSS@5"/>
 </segment>
 <segment>
 <pinref part="C8" gate="G$1" pin="1"/>
@@ -6801,16 +6809,23 @@ Various fiducial points for machine vision alignment.</description>
 <wire x1="49.53" y1="73.66" x2="54.61" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="54.61" y1="73.66" x2="54.61" y2="78.74" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="R2" gate="G$1" pin="2"/>
+<pinref part="+3V11" gate="G$1" pin="+3V3"/>
+</segment>
 </net>
 <net name="+12V" class="0">
 <segment>
-<pinref part="IC_KL" gate="G$1" pin="VBB@7"/>
 <pinref part="P+3" gate="1" pin="+12V"/>
 <wire x1="325.12" y1="63.5" x2="337.82" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="337.82" y1="63.5" x2="337.82" y2="67.31" width="0.1524" layer="91"/>
+<wire x1="337.82" y1="63.5" x2="337.82" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="CON_KL" gate="G$1" pin="1"/>
 <wire x1="337.82" y1="63.5" x2="351.79" y2="63.5" width="0.1524" layer="91"/>
 <junction x="337.82" y="63.5"/>
+<pinref part="IC_KLINE" gate="G$1" pin="VBB@7"/>
+<pinref part="D6" gate="G$1" pin="A"/>
+<wire x1="340.36" y1="71.12" x2="337.82" y2="71.12" width="0.1524" layer="91"/>
+<junction x="337.82" y="71.12"/>
 </segment>
 <segment>
 <pinref part="CON_PWR" gate="G$1" pin="2"/>
@@ -6821,9 +6836,6 @@ Various fiducial points for machine vision alignment.</description>
 <segment>
 <pinref part="F1" gate="G$1" pin="2"/>
 <pinref part="P+2" gate="1" pin="+12V"/>
-<pinref part="TVS1" gate="G$1" pin="2"/>
-<wire x1="39.37" y1="44.45" x2="22.86" y2="44.45" width="0.1524" layer="91"/>
-<junction x="39.37" y="44.45"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -6833,14 +6845,13 @@ Various fiducial points for machine vision alignment.</description>
 <pinref part="C1" gate="G$1" pin="1"/>
 <junction x="39.37" y="22.86"/>
 <pinref part="P+1" gate="VCC" pin="VCC"/>
-<wire x1="39.37" y1="22.86" x2="33.02" y2="22.86" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="22.86" x2="33.02" y2="29.21" width="0.1524" layer="91"/>
 <pinref part="D1" gate="G$1" pin="C"/>
 <wire x1="39.37" y1="22.86" x2="39.37" y2="26.67" width="0.1524" layer="91"/>
 <pinref part="D5" gate="G$1" pin="C"/>
 <wire x1="39.37" y1="26.67" x2="52.07" y2="26.67" width="0.1524" layer="91"/>
 <wire x1="52.07" y1="26.67" x2="52.07" y2="36.83" width="0.1524" layer="91"/>
 <junction x="39.37" y="26.67"/>
+<wire x1="39.37" y1="26.67" x2="33.02" y2="26.67" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R30" gate="G$1" pin="2"/>
@@ -6911,9 +6922,11 @@ Various fiducial points for machine vision alignment.</description>
 </net>
 <net name="UART_RXD" class="0">
 <segment>
-<pinref part="IC_KL" gate="G$1" pin="RXD@1"/>
 <wire x1="287.02" y1="66.04" x2="276.86" y2="66.04" width="0.1524" layer="91"/>
 <label x="276.86" y="66.04" size="1.778" layer="95"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<pinref part="IC_KLINE" gate="G$1" pin="RXD@1"/>
+<junction x="287.02" y="66.04"/>
 </segment>
 <segment>
 <wire x1="142.24" y1="107.95" x2="128.27" y2="107.95" width="0.1524" layer="91"/>
@@ -6923,9 +6936,9 @@ Various fiducial points for machine vision alignment.</description>
 </net>
 <net name="UART_TXD" class="0">
 <segment>
-<pinref part="IC_KL" gate="G$1" pin="TXD@4"/>
 <wire x1="287.02" y1="58.42" x2="276.86" y2="58.42" width="0.1524" layer="91"/>
 <label x="276.86" y="58.42" size="1.778" layer="95"/>
+<pinref part="IC_KLINE" gate="G$1" pin="TXD@4"/>
 </segment>
 <segment>
 <wire x1="142.24" y1="110.49" x2="128.27" y2="110.49" width="0.1524" layer="91"/>
@@ -7095,18 +7108,21 @@ Various fiducial points for machine vision alignment.</description>
 </net>
 <net name="K-LINE" class="0">
 <segment>
-<pinref part="IC_KL" gate="G$1" pin="LBUS@6"/>
 <wire x1="325.12" y1="60.96" x2="337.82" y2="60.96" width="0.1524" layer="91"/>
 <label x="327.66" y="60.96" size="1.778" layer="95"/>
 <pinref part="CON_KL" gate="G$1" pin="2"/>
-<wire x1="337.82" y1="60.96" x2="351.79" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="337.82" y1="60.96" x2="345.44" y2="60.96" width="0.1524" layer="91"/>
+<pinref part="IC_KLINE" gate="G$1" pin="LBUS@6"/>
+<pinref part="R13" gate="G$1" pin="1"/>
+<wire x1="345.44" y1="60.96" x2="351.79" y2="60.96" width="0.1524" layer="91"/>
+<junction x="345.44" y="60.96"/>
 </segment>
 </net>
 <net name="KL-CS" class="0">
 <segment>
-<pinref part="IC_KL" gate="G$1" pin="CS/WAKE@2"/>
 <wire x1="287.02" y1="63.5" x2="276.86" y2="63.5" width="0.1524" layer="91"/>
 <label x="276.86" y="63.5" size="1.778" layer="95"/>
+<pinref part="IC_KLINE" gate="G$1" pin="CS/WAKE@2"/>
 </segment>
 <segment>
 <pinref part="STM32" gate="PORTD/OSC" pin="PD2"/>
@@ -7342,6 +7358,10 @@ Various fiducial points for machine vision alignment.</description>
 <segment>
 <pinref part="D1" gate="G$1" pin="A"/>
 <pinref part="F1" gate="G$1" pin="1"/>
+<pinref part="TVS1" gate="G$1" pin="2"/>
+<wire x1="39.37" y1="31.75" x2="22.86" y2="31.75" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="31.75" x2="22.86" y2="29.21" width="0.1524" layer="91"/>
+<junction x="39.37" y="31.75"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -7367,6 +7387,12 @@ Various fiducial points for machine vision alignment.</description>
 <pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="45.72" y1="86.36" x2="49.53" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="49.53" y1="86.36" x2="49.53" y2="83.82" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="D6" gate="G$1" pin="C"/>
 </segment>
 </net>
 </nets>
