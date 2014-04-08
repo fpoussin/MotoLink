@@ -1,13 +1,20 @@
 MotoLink
 ===================
 
-CAN bus, K-Line interface for motorcycles.
+CAN Bus, K-Line interface for motorcycles.
 
 Primarily intended to communicate with Honda HRC ECUs, as a USB CDC to K-Line connection.
 
-Includes some digital (rpm) and analog inputs (tps, wideband), and a knock sensor interface for tuning.
+Includes some digital (RPM, VSS) and analog inputs (TPS, Wideband), as well as a knock sensor interface for tuning.
 
-#### Board
-* **board.sch** Eagle schematic file  
-* **board.sch** Eagle layout file  
-* **F3_64.ioc** STM32CubeMX IO file  
+###File tree:###
+
+**├── board**  *Eagle board files*  
+**├── code**  
+**│   ├── app**  *Motolink code*  
+**│   ├── bootloader**  *STM32 Bootloader*  
+**│   └── common**  *Common files for bootloader and Motolink*  
+**├── GUI**  
+**│   └── MotoLink**  *Motolink Graphic User Interface*  
+**├── LICENSE**  *GPL Licence file*  
+**└── README.md**  *This readme file*  
