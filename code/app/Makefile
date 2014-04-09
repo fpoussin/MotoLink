@@ -65,7 +65,7 @@ PROJECT = motolink
 
 # Imported source files and paths
 CHIBIOS = ../../../chibios
-include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
+include ../common/common.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
