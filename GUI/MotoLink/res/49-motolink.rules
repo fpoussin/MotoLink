@@ -1,0 +1,9 @@
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="61a5", \
+    MODE:="0666", \
+    SYMLINK+="motolink_%n"
+    
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="61a4", \
+    MODE:="0666", \
+    SYMLINK+="bootloader_%n"
+

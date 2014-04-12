@@ -1,0 +1,12 @@
+Source: motolink
+Section: devel
+Priority: extra
+Maintainer: Fabien Poussin <fabien.poussin@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), cdbs, libqt4-dev, qt4-qmake, libusb-dev
+Standards-Version: 3.9.3
+Homepage: http://github.com/mobyfab/MotoLink
+
+Package: motolink
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-core, libqt4-gui, libqt4-xml, libusb-1.0
+Description: A Gui for the MotoLink cable interface.
