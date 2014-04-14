@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MotoLink</class>
- <widget class="QMainWindow" name="MotoLink">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -232,52 +232,79 @@
                <string/>
               </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="1" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="2" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="3" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="4" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="5" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="6" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="7" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="8" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="9" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
             </widget>
@@ -394,53 +421,83 @@
               </property>
              </column>
              <item row="0" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="1" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="2" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="3" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="4" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="5" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="6" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="7" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="8" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
              <item row="9" column="0">
+              <property name="text">
+               <string/>
+              </property>
               <property name="flags">
-               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+               <set>ItemIsEditable|ItemIsEnabled</set>
               </property>
              </item>
             </widget>

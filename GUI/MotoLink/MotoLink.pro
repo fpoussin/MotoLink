@@ -14,13 +14,13 @@ TEMPLATE = app
 INCLUDEPATH += inc
 
 SOURCES += src/main.cpp \
-        src/motolink.cpp
+    src/mainwindow.cpp
 
-HEADERS  += inc/motolink.h \
-    inc/motolink.h \
-    inc/compat.h
+HEADERS  += \
+    inc/compat.h \
+    inc/mainwindow.h
 
-FORMS    += ui/motolink.ui
+FORMS    += ui/main.ui
 
 win32 {
     message(Building with WinUSB support.)

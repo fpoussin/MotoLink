@@ -4,5 +4,9 @@
         <file>images/Qt-logo.png</file>
         <file>images/question_mark_icon.png</file>
         <file>images/refresh.png</file>
+        <file>images/icon.hqx</file>
+        <file>images/icon.icns</file>
+        <file>images/icon.ico</file>
+        <file>images/icon.png</file>
     </qresource>
 </RCC>
