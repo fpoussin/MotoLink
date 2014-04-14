@@ -17,6 +17,7 @@ public:
     
 private:
     Ui::MotoLink *ui;
+    void setupDefaults(void);
 };
 
 #endif // MOTOLINK_H

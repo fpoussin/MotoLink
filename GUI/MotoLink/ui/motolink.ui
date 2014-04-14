@@ -58,47 +58,420 @@
       </property>
       <widget class="QWidget" name="tab_settings">
        <attribute name="title">
-        <string>ECU Settings</string>
+        <string>Settings</string>
        </attribute>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>120</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>Versions</string>
-        </property>
-        <widget class="QLabel" name="label">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>46</width>
-           <height>13</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>MotoLink:</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>40</y>
-           <width>46</width>
-           <height>13</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>GUI:</string>
-         </property>
-        </widget>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Versions</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QLabel" name="ltMotolink">
+             <property name="text">
+              <string>MotoLink: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="ltGui">
+             <property name="text">
+              <string>GUI: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="lMotolink">
+             <property name="text">
+              <string>0.0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="lGui">
+             <property name="text">
+              <string>0.0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Sensor Mappings</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="1">
+            <widget class="QLabel" name="ltAFR">
+             <property name="text">
+              <string>AFR</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QTableWidget" name="tableSensorAFR">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>330</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>110</width>
+               <height>370</height>
+              </size>
+             </property>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>60</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>20</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderMinimumSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>8</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>11</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>12</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>13</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>14</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>15</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>16</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>17</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>20</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>22</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Voltage</string>
+              </property>
+             </column>
+             <item row="0" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="1" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="2" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="3" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="4" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="5" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="6" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="7" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="8" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="9" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTableWidget" name="tableSensorTPS">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>330</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>110</width>
+               <height>370</height>
+              </size>
+             </property>
+             <property name="columnCount">
+              <number>1</number>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>60</number>
+             </attribute>
+             <attribute name="horizontalHeaderHighlightSections">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>20</number>
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderHighlightSections">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderMinimumSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>0</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>10</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>20</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>30</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>40</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>50</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>60</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>70</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>80</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>100</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Voltage</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+              </property>
+             </column>
+             <item row="0" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="1" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="2" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="3" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="4" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="5" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="6" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="7" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="8" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="9" column="0">
+              <property name="flags">
+               <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="ltTPS">
+             <property name="text">
+              <string>TPS</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_fuel">
        <attribute name="title">

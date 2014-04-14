@@ -13,17 +13,12 @@ TEMPLATE = app
 
 INCLUDEPATH += inc
 
-SOURCES += src/main.cpp\
-        src/motolink.cpp \
-    src/qwinusb.cpp \
-    src/motolink.cpp \
-    src/main.cpp
+SOURCES += src/main.cpp \
+        src/motolink.cpp
 
 HEADERS  += inc/motolink.h \
-    inc/qwinusb.h \
     inc/motolink.h \
     inc/compat.h
-
 
 FORMS    += ui/motolink.ui
 
@@ -42,5 +37,4 @@ else {
     LIBS += -lusb-1.0
 }
 
-RESOURCES += \
-    res/resources.qrc
+RESOURCES += res/resources.qrc
