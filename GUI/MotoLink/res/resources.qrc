@@ -1,12 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/icon-questionmark.png</file>
         <file>images/Qt-logo.png</file>
-        <file>images/question_mark_icon.png</file>
         <file>images/refresh.png</file>
         <file>images/icon.hqx</file>
         <file>images/icon.icns</file>
         <file>images/icon.ico</file>
         <file>images/icon.png</file>
+        <file>images/gauge-icon.png</file>
+        <file>images/icon-injector.png</file>
+        <file>images/icon-afr-sensor.png</file>
+        <file>images/icon-denso-sparkplug.png</file>
+        <file>images/explosion-hi.png</file>
+        <file>images/target.png</file>
     </qresource>
 </RCC>

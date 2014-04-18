@@ -37,4 +37,5 @@ else {
     LIBS += -lusb-1.0
 }
 
-RESOURCES += res/resources.qrc
+RESOURCES += res/resources.qrc \
+    res/oxygen.qrc

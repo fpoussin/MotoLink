@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>900</width>
     <height>500</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>900</width>
     <height>500</height>
    </size>
   </property>
@@ -44,8 +44,8 @@
      <height>16777215</height>
     </size>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="minimumSize">
        <size>
@@ -53,12 +53,48 @@
         <height>0</height>
        </size>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
       <widget class="QWidget" name="tab_settings">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <attribute name="icon">
+        <iconset resource="../res/oxygen.qrc">
+         <normaloff>:/oxygen/32x32/actions/configure.png</normaloff>:/oxygen/32x32/actions/configure.png</iconset>
+       </attribute>
        <attribute name="title">
-        <string>Settings</string>
+        <string>&amp;Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
@@ -130,185 +166,6 @@
            <string>Sensor Mappings</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QLabel" name="ltAFR">
-             <property name="text">
-              <string>AFR</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QTableWidget" name="tableSensorAFR">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>330</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>110</width>
-               <height>370</height>
-              </size>
-             </property>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>60</number>
-             </attribute>
-             <attribute name="horizontalHeaderMinimumSectionSize">
-              <number>20</number>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderDefaultSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderMinimumSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <row>
-              <property name="text">
-               <string>8</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>11</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>12</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>13</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>14</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>15</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>16</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>17</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>20</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>22</string>
-              </property>
-             </row>
-             <column>
-              <property name="text">
-               <string>Voltage</string>
-              </property>
-             </column>
-             <item row="0" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="1" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="2" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="3" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="4" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="5" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="6" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="7" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="8" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="9" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QTableWidget" name="tableSensorTPS">
              <property name="minimumSize">
@@ -502,16 +359,6 @@
              </item>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="ltTPS">
-             <property name="text">
-              <string>TPS</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="1">
             <spacer name="verticalSpacer_2">
              <property name="orientation">
@@ -525,68 +372,350 @@
              </property>
             </spacer>
            </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="ltAFR">
+             <property name="text">
+              <string>AFR</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="ltTPS">
+             <property name="text">
+              <string>TPS</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QTableWidget" name="tableSensorAFR">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>330</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>110</width>
+               <height>370</height>
+              </size>
+             </property>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>60</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>20</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderMinimumSectionSize">
+              <number>30</number>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>8</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>11</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>12</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>13</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>14</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>15</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>16</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>17</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>20</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>22</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Voltage</string>
+              </property>
+             </column>
+             <item row="0" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="1" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="2" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="3" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="4" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="5" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="6" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="7" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="8" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+             <item row="9" column="0">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="flags">
+               <set>ItemIsEditable|ItemIsEnabled</set>
+              </property>
+             </item>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_fuel">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
+       </attribute>
        <attribute name="title">
-        <string>Fuel Map</string>
+        <string>&amp;Fuel Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QTableView" name="tableFuel"/>
+         <widget class="QTableView" name="tableFuel">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>30</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_afrmap">
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
+       </attribute>
        <attribute name="title">
-        <string>AFR Map</string>
+        <string>&amp;AFR Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QTableView" name="tableAfrMap"/>
+         <widget class="QTableView" name="tableAfrMap">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_afrtarget">
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/target.png</normaloff>:/images/target.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>AFR Target</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QTableView" name="tableAfrTgt"/>
+         <widget class="QTableView" name="tableAfrTgt">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_ignmap">
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Ignition Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QTableView" name="tableIgnMap"/>
+         <widget class="QTableView" name="tableIgnMap">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_igntarget">
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/target.png</normaloff>:/images/target.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Ignition Target</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QTableView" name="tableIgnTgt"/>
+         <widget class="QTableView" name="tableIgnTgt">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_knock">
+       <attribute name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Knock Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QTableView" name="tableKnk"/>
+         <widget class="QTableView" name="tableKnk">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -599,7 +728,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>900</width>
      <height>21</height>
     </rect>
    </property>
@@ -610,6 +739,10 @@
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -630,49 +763,127 @@
    <addaction name="menuConnection"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-open.png</normaloff>:/oxygen/32x32/actions/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Open...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-save.png</normaloff>:/oxygen/32x32/actions/document-save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionSave_As">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-save-as.png</normaloff>:/oxygen/32x32/actions/document-save-as.png</iconset>
+   </property>
    <property name="text">
     <string>Save As...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/application-exit.png</normaloff>:/oxygen/32x32/actions/application-exit.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/help-about.png</normaloff>:/oxygen/32x32/actions/help-about.png</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="actionAbout_QT">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/images/Qt-logo.png</normaloff>:/images/Qt-logo.png</iconset>
+   </property>
    <property name="text">
     <string>About QT</string>
    </property>
   </action>
   <action name="actionConnect">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/network-connect.png</normaloff>:/oxygen/32x32/actions/network-connect.png</iconset>
+   </property>
    <property name="text">
     <string>Connect</string>
    </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
   </action>
   <action name="actionDisconnect">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
+   </property>
    <property name="text">
     <string>Disconnect</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-import.png</normaloff>:/oxygen/32x32/actions/document-import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import from HRC...</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-export.png</normaloff>:/oxygen/32x32/actions/document-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export to HRC...</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+  <include location="../res/oxygen.qrc"/>
+ </resources>
  <connections/>
 </ui>
