@@ -283,6 +283,29 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <rectangle x1="0.4572" y1="1.8542" x2="0.8128" y2="2.8702" layer="51"/>
 <rectangle x1="1.7272" y1="1.8542" x2="2.0828" y2="2.8702" layer="51"/>
 </package>
+<package name="SOT23-6">
+<wire x1="1.4224" y1="0.4294" x2="1.4224" y2="-0.4294" width="0.2032" layer="21"/>
+<wire x1="1.4" y1="-0.8" x2="-1.4" y2="-0.8" width="0.1524" layer="51"/>
+<wire x1="-1.4224" y1="-0.4294" x2="-1.4224" y2="0.4294" width="0.2032" layer="21"/>
+<wire x1="-1.4" y1="0.8" x2="1.4" y2="0.8" width="0.1524" layer="51"/>
+<wire x1="1.4" y1="0.8" x2="1.4" y2="-0.8" width="0.1524" layer="51"/>
+<wire x1="-1.4" y1="0.8" x2="-1.4" y2="-0.8" width="0.1524" layer="51"/>
+<smd name="1" x="-0.95" y="-1.3751" dx="0.55" dy="1.35" layer="1"/>
+<smd name="2" x="0" y="-1.3751" dx="0.55" dy="1.35" layer="1"/>
+<smd name="3" x="0.95" y="-1.3751" dx="0.55" dy="1.35" layer="1"/>
+<smd name="4" x="0.95" y="1.3751" dx="0.55" dy="1.35" layer="1"/>
+<smd name="5" x="0" y="1.3751" dx="0.55" dy="1.35" layer="1"/>
+<text x="-0.889" y="2.159" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.0525" y="0.0095" size="0.4064" layer="27">&gt;VALUE</text>
+<rectangle x1="-1.2" y1="-1.5" x2="-0.7" y2="-0.85" layer="51"/>
+<rectangle x1="-0.25" y1="-1.5" x2="0.25" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="-1.5" x2="1.2" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="0.85" x2="1.2" y2="1.5" layer="51"/>
+<rectangle x1="-1.2" y1="0.85" x2="-0.7" y2="1.5" layer="51"/>
+<smd name="6" x="-0.95" y="1.3751" dx="0.55" dy="1.35" layer="1"/>
+<rectangle x1="-0.25" y1="0.85" x2="0.25" y2="1.5" layer="51"/>
+<circle x="-0.95" y="-0.3" radius="0.1436" width="0.2032" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="2001A">
@@ -322,6 +345,18 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <wire x1="15.24" y1="6.35" x2="15.24" y2="-3.81" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-3.81" x2="-12.7" y2="-3.81" width="0.254" layer="94"/>
 <wire x1="-12.7" y1="-3.81" x2="-12.7" y2="6.35" width="0.254" layer="94"/>
+</symbol>
+<symbol name="NUP4201">
+<pin name="IO@1" x="-12.7" y="5.08" length="middle"/>
+<pin name="VN@2" x="-12.7" y="0" length="middle" direction="pwr"/>
+<pin name="IO@3" x="-12.7" y="-5.08" length="middle"/>
+<pin name="IO@4" x="12.7" y="-5.08" length="middle" rot="R180"/>
+<pin name="VBUS@5" x="12.7" y="0" length="middle" direction="pwr" rot="R180"/>
+<pin name="IO@6" x="12.7" y="5.08" length="middle" rot="R180"/>
+<wire x1="-7.62" y1="7.62" x2="7.62" y2="7.62" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="7.62" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-7.62" x2="-7.62" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-7.62" x2="-7.62" y2="7.62" width="0.254" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -417,6 +452,26 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <connect gate="G$1" pin="VBB@7" pad="7"/>
 <connect gate="G$1" pin="VREN@8" pad="8"/>
 <connect gate="G$1" pin="VSS@5" pad="5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="NUP4201MR6">
+<gates>
+<gate name="G$1" symbol="NUP4201" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SOT23-6">
+<connects>
+<connect gate="G$1" pin="IO@1" pad="1"/>
+<connect gate="G$1" pin="IO@3" pad="3"/>
+<connect gate="G$1" pin="IO@4" pad="4"/>
+<connect gate="G$1" pin="IO@6" pad="6"/>
+<connect gate="G$1" pin="VBUS@5" pad="5"/>
+<connect gate="G$1" pin="VN@2" pad="2"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -6196,67 +6251,6 @@ Resettable Fuse. Spark Fun Electronics SKU : COM-08357</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="SparkFun-Aesthetics">
-<description>&lt;h3&gt;SparkFun Electronics' preferred foot prints&lt;/h3&gt;
-In this library you'll find non-functional items- supply symbols, logos, notations, frame blocks, etc.&lt;br&gt;&lt;br&gt;
-We've spent an enormous amount of time creating and checking these footprints and parts, but it is the end user's responsibility to ensure correctness and suitablity for a given componet or application. If you enjoy using this library, please buy one of our products at www.sparkfun.com.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;Licensing:&lt;/b&gt; CC v3.0 Share-Alike You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
-<packages>
-<package name="FIDUCIAL-1.5X3">
-<circle x="0" y="0" radius="0.9055" width="1.27" layer="29"/>
-<smd name="1" x="0" y="0" dx="1.5" dy="1.5" layer="1" roundness="100" cream="no"/>
-</package>
-<package name="FIDUCIAL-1X2">
-<smd name="1" x="0" y="0" dx="1" dy="1" layer="1" roundness="100" cream="no"/>
-</package>
-<package name="FIDUCIAL-1X2.5">
-<circle x="0" y="0" radius="0.9" width="1.27" layer="29"/>
-<smd name="1" x="0" y="0" dx="1" dy="1" layer="1" roundness="100" cream="no"/>
-</package>
-<package name="MICRO-FIDUCIAL">
-<smd name="1" x="0" y="0" dx="0.635" dy="0.635" layer="1" roundness="100" cream="no"/>
-</package>
-</packages>
-<symbols>
-<symbol name="FIDUCIAL">
-<wire x1="-0.762" y1="0.762" x2="0.762" y2="-0.762" width="0.254" layer="94"/>
-<wire x1="0.762" y1="0.762" x2="-0.762" y2="-0.762" width="0.254" layer="94"/>
-<circle x="0" y="0" radius="1.27" width="0.254" layer="94"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="FIDUCIAL" prefix="FID">
-<description>&lt;b&gt;Fiducial Alignment Points&lt;/b&gt;
-Various fiducial points for machine vision alignment.</description>
-<gates>
-<gate name="G$1" symbol="FIDUCIAL" x="0" y="0"/>
-</gates>
-<devices>
-<device name="1.5X3" package="FIDUCIAL-1.5X3">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="1X2" package="FIDUCIAL-1X2">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="1X2.5" package="FIDUCIAL-1X2.5">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="UFIDUCIAL" package="MICRO-FIDUCIAL">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="SparkFun-FreqCtrl">
 <description>&lt;h3&gt;SparkFun Electronics' preferred foot prints&lt;/h3&gt;
 In this library you'll find crystals and oscillators and other things that go "tick".&lt;br&gt;&lt;br&gt;
@@ -6726,7 +6720,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="Q2" library="misc" deviceset="ULN2003A" device="D" value="ULN2003AD"/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
 <part name="+3V17" library="supply1" deviceset="+3V3" device=""/>
-<part name="R9" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="STM32" library="stm32" deviceset="STM32F10XRXT6" device="" value="STM32F303RCT6"/>
 <part name="C3" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="100nF"/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
@@ -6767,8 +6760,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
 <part name="CON_KNK" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
-<part name="FID1" library="SparkFun-Aesthetics" deviceset="FIDUCIAL" device="1X2" value="FIDUCIAL1X2"/>
-<part name="FID2" library="SparkFun-Aesthetics" deviceset="FIDUCIAL" device="1X2" value="FIDUCIAL1X2"/>
 <part name="R1" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="D5" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
 <part name="TVS1" library="SparkFun-DiscreteSemi" deviceset="TVS" device="" value="SMAJ15CA"/>
@@ -6782,6 +6773,8 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="C7" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
+<part name="TVS2" library="misc" deviceset="NUP4201MR6" device=""/>
+<part name="GND18" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6851,7 +6844,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="Q2" gate="A" x="207.01" y="176.53"/>
 <instance part="GND13" gate="1" x="194.31" y="163.83"/>
 <instance part="+3V17" gate="G$1" x="246.38" y="189.23"/>
-<instance part="R9" gate="G$1" x="224.79" y="173.99"/>
 <instance part="STM32" gate="PORTA_L" x="149.86" y="130.81"/>
 <instance part="STM32" gate="PORTA_H" x="149.86" y="102.87"/>
 <instance part="STM32" gate="PORTB_L" x="166.37" y="128.27"/>
@@ -6904,8 +6896,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="+3V2" gate="G$1" x="190.5" y="38.1"/>
 <instance part="CON_KNK" gate="G$1" x="35.56" y="86.36"/>
 <instance part="+3V3" gate="G$1" x="54.61" y="81.28" rot="MR0"/>
-<instance part="FID1" gate="G$1" x="99.06" y="54.61"/>
-<instance part="FID2" gate="G$1" x="99.06" y="46.99"/>
 <instance part="R1" gate="G$1" x="49.53" y="78.74" rot="R270"/>
 <instance part="D5" gate="G$1" x="52.07" y="39.37" rot="R270"/>
 <instance part="TVS1" gate="G$1" x="22.86" y="24.13" rot="R90"/>
@@ -6919,6 +6909,8 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="C7" gate="G$1" x="100.33" y="31.75" rot="R180"/>
 <instance part="GND12" gate="1" x="100.33" y="24.13"/>
 <instance part="GND14" gate="1" x="85.09" y="24.13"/>
+<instance part="TVS2" gate="G$1" x="238.76" y="134.62"/>
+<instance part="GND18" gate="1" x="215.9" y="132.08"/>
 </instances>
 <busses>
 </busses>
@@ -7100,6 +7092,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="CON_PWR" gate="G$1" pin="2"/>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="44.45" y1="58.42" x2="52.07" y2="58.42" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="TVS2" gate="G$1" pin="VN@2"/>
+<wire x1="226.06" y1="134.62" x2="215.9" y2="134.62" width="0.1524" layer="91"/>
+<pinref part="GND18" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -7299,18 +7296,25 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <net name="USB_VBUS" class="0">
 <segment>
 <pinref part="JP1" gate="G$1" pin="VBUS"/>
-<wire x1="295.91" y1="123.19" x2="288.29" y2="123.19" width="0.1524" layer="91"/>
+<wire x1="295.91" y1="123.19" x2="290.83" y2="123.19" width="0.1524" layer="91"/>
 <label x="290.83" y="123.19" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
-<wire x1="246.38" y1="173.99" x2="229.87" y2="173.99" width="0.1524" layer="91"/>
-<label x="228.6" y="173.99" size="1.778" layer="95"/>
-<pinref part="R9" gate="G$1" pin="2"/>
+<wire x1="290.83" y1="123.19" x2="288.29" y2="123.19" width="0.1524" layer="91"/>
+<wire x1="298.45" y1="123.19" x2="290.83" y2="123.19" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="D5" gate="G$1" pin="A"/>
 <wire x1="52.07" y1="41.91" x2="62.23" y2="41.91" width="0.1524" layer="91"/>
 <label x="52.07" y="41.91" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="TVS2" gate="G$1" pin="VBUS@5"/>
+<wire x1="251.46" y1="134.62" x2="261.62" y2="134.62" width="0.1524" layer="91"/>
+<label x="251.46" y="134.62" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="Q2" gate="A" pin="I5"/>
+<wire x1="194.31" y1="173.99" x2="181.61" y2="173.99" width="0.1524" layer="91"/>
+<label x="194.31" y="173.99" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="USB_DM" class="0">
@@ -7594,18 +7598,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="IC_OPA" gate="B" pin="+IN"/>
 </segment>
 </net>
-<net name="USB_VBUS_CTRL" class="0">
-<segment>
-<wire x1="194.31" y1="173.99" x2="181.61" y2="173.99" width="0.1524" layer="91"/>
-<label x="194.31" y="173.99" size="1.778" layer="95" rot="R180"/>
-<pinref part="Q2" gate="A" pin="I5"/>
-</segment>
-<segment>
-<pinref part="STM32" gate="PORTC_H" pin="PC15"/>
-<wire x1="142.24" y1="44.45" x2="135.89" y2="44.45" width="0.1524" layer="91"/>
-<label x="142.24" y="44.45" size="1.778" layer="95" rot="R180"/>
-</segment>
-</net>
 <net name="N$10" class="0">
 <segment>
 <pinref part="Q2" gate="A" pin="O3"/>
@@ -7644,12 +7636,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <label x="142.24" y="130.81" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="Q2" gate="A" pin="O5"/>
-<pinref part="R9" gate="G$1" pin="1"/>
-</segment>
-</net>
 <net name="N$18" class="0">
 <segment>
 <pinref part="R10" gate="G$1" pin="1"/>
@@ -7664,6 +7650,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="JP1" gate="G$1" pin="D-"/>
 <wire x1="285.75" y1="125.73" x2="295.91" y2="125.73" width="0.1524" layer="91"/>
 <pinref part="R16" gate="G$1" pin="1"/>
+<pinref part="TVS2" gate="G$1" pin="IO@1"/>
+<wire x1="226.06" y1="139.7" x2="226.06" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="137.16" x2="285.75" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="285.75" y1="137.16" x2="285.75" y2="125.73" width="0.1524" layer="91"/>
+<junction x="285.75" y="125.73"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -7674,6 +7665,10 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="R17" gate="G$1" pin="2"/>
 <wire x1="295.91" y1="128.27" x2="295.91" y2="132.08" width="0.1524" layer="91"/>
 <junction x="295.91" y="128.27"/>
+<pinref part="TVS2" gate="G$1" pin="IO@6"/>
+<wire x1="251.46" y1="139.7" x2="293.37" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="293.37" y1="139.7" x2="293.37" y2="128.27" width="0.1524" layer="91"/>
+<junction x="293.37" y="128.27"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -7812,7 +7807,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="D6" gate="G$1" pin="C"/>
 </segment>
 </net>
-<net name="OSC_IN" class="0">
+<net name="OSC_OUT" class="0">
 <segment>
 <pinref part="STM32" gate="PORTD/OSC" pin="PD1/OSC=&gt;"/>
 <wire x1="142.24" y1="33.02" x2="133.35" y2="33.02" width="0.1524" layer="91"/>
@@ -7821,14 +7816,14 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <segment>
 <pinref part="Y1" gate="G$1" pin="1"/>
 <wire x1="90.17" y1="36.83" x2="85.09" y2="36.83" width="0.1524" layer="91"/>
-<label x="80.01" y="36.83" size="1.778" layer="95"/>
+<label x="76.2" y="36.83" size="1.778" layer="95"/>
 <pinref part="C5" gate="G$1" pin="2"/>
 <wire x1="85.09" y1="36.83" x2="78.74" y2="36.83" width="0.1524" layer="91"/>
 <wire x1="85.09" y1="34.29" x2="85.09" y2="36.83" width="0.1524" layer="91"/>
 <junction x="85.09" y="36.83"/>
 </segment>
 </net>
-<net name="OSC_OUT" class="0">
+<net name="OSC_IN" class="0">
 <segment>
 <pinref part="STM32" gate="PORTD/OSC" pin="PD0/OSC&lt;="/>
 <wire x1="142.24" y1="30.48" x2="133.35" y2="30.48" width="0.1524" layer="91"/>
@@ -7869,6 +7864,18 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <label x="142.24" y="120.65" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
+<net name="USB_DETECT" class="0">
+<segment>
+<pinref part="Q2" gate="A" pin="O5"/>
+<wire x1="219.71" y1="173.99" x2="234.95" y2="173.99" width="0.1524" layer="91"/>
+<label x="219.71" y="173.99" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="STM32" gate="PORTC_H" pin="PC15"/>
+<wire x1="142.24" y1="44.45" x2="135.89" y2="44.45" width="0.1524" layer="91"/>
+<label x="142.24" y="44.45" size="1.778" layer="95" rot="R180"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
@@ -7887,7 +7894,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <approved hash="104,1,177.8,30.48,STM32AN_POWER,VSSA,GND,,,"/>
 <approved hash="104,1,177.8,25.4,STM32AN_POWER,VDDA,+3V3,,,"/>
 <approved hash="111,1,345.44,63.5,+12V,,,,,"/>
-<approved hash="113,1,39.8568,29.21,D1,,,,,"/>
 <approved hash="113,1,133.35,153.437,CON_DBG,,,,,"/>
 <approved hash="113,1,78.74,58.4285,S1,,,,,"/>
 <approved hash="113,1,41.2327,59.8847,CON_PWR,,,,,"/>
@@ -7897,8 +7903,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <approved hash="113,1,183.322,160.215,CON_RPM-VSS,,,,,"/>
 <approved hash="113,1,355.007,58.2253,CON_KL,,,,,"/>
 <approved hash="113,1,39.9627,87.8247,CON_KNK,,,,,"/>
-<approved hash="113,1,52.5568,39.37,D5,,,,,"/>
-<approved hash="113,1,342.9,71.6068,D6,,,,,"/>
 </errors>
 </schematic>
 </drawing>
