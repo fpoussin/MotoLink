@@ -6669,13 +6669,13 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </class>
 </classes>
 <parts>
-<part name="IC_REG" library="v-reg" deviceset="LD117A?*" device="DT" technology="33TR" value="NCV4274DT33RKG"/>
+<part name="IC_REG" library="v-reg" deviceset="LD117A?*" device="DT" technology="33TR" value="LM1117-3.3"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="C1" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="C2" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="P+2" library="supply1" deviceset="+12V" device=""/>
-<part name="D1" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA"/>
+<part name="D1" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
 <part name="P+1" library="supply1" deviceset="VCC" device=""/>
 <part name="JP1" library="SparkFun-Connectors" deviceset="USB" device="SMD"/>
 <part name="GND20" library="supply1" deviceset="GND" device=""/>
@@ -6770,13 +6770,13 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="FID1" library="SparkFun-Aesthetics" deviceset="FIDUCIAL" device="1X2" value="FIDUCIAL1X2"/>
 <part name="FID2" library="SparkFun-Aesthetics" deviceset="FIDUCIAL" device="1X2" value="FIDUCIAL1X2"/>
 <part name="R1" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
-<part name="D5" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA"/>
+<part name="D5" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
 <part name="TVS1" library="SparkFun-DiscreteSemi" deviceset="TVS" device="" value="SMAJ15CA"/>
 <part name="R2" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="4.7K"/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
 <part name="IC_KLINE" library="misc" deviceset="MCP2004" device=""/>
 <part name="R13" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
-<part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA"/>
+<part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
 <part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="8Mhz"/>
 <part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
 <part name="C7" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
