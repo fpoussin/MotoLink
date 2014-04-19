@@ -626,7 +626,7 @@
       <widget class="QWidget" name="tab_afrtarget">
        <attribute name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/target.png</normaloff>:/images/target.png</iconset>
+         <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
        </attribute>
        <attribute name="title">
         <string>AFR Target</string>
@@ -674,7 +674,7 @@
       <widget class="QWidget" name="tab_igntarget">
        <attribute name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/target.png</normaloff>:/images/target.png</iconset>
+         <normaloff>:/images/sparkplug-target.png</normaloff>:/images/sparkplug-target.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Ignition Target</string>
@@ -882,8 +882,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../res/resources.qrc"/>
   <include location="../res/oxygen.qrc"/>
+  <include location="../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -12,5 +12,7 @@
         <file>images/icon-denso-sparkplug.png</file>
         <file>images/explosion-hi.png</file>
         <file>images/target.png</file>
+        <file>images/icon-afr-target.png</file>
+        <file>images/sparkplug-target.png</file>
     </qresource>
 </RCC>
