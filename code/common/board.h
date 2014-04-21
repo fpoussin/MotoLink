@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics STM32F3-Discovery board.
+ * Setup for Motolink board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32F3_DISCOVERY
-#define BOARD_NAME                  "STMicroelectronics STM32F3-Discovery"
+#define BOARD_MOTOLINK_REV_A
+#define BOARD_NAME                  "Motolink board Revision A"
 
 /*
  * Board oscillators-related settings.
@@ -41,7 +41,7 @@
 #define STM32_HSECLK                8000000
 #endif
 
-#define STM32_HSE_BYPASS
+//#define STM32_HSE_BYPASS
 
 /*
  * MCU type as defined in the ST header.
@@ -51,6 +51,10 @@
 /*
  * IO pins assignments.
  */
+ 
+#define USB_CONN_PORT GPIOB
+#define USB_CONN_PAD GPIOB_PIN13
+ 
 #define GPIOA_BUTTON                0
 #define GPIOA_PIN1                  1
 #define GPIOA_PIN2                  2

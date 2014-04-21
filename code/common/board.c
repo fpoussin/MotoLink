@@ -94,6 +94,28 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
 }
 #endif
 
+#if HAL_USE_USB || defined(__DOXYGEN__)
+/**
+ * @brief   USB bus connect.
+ */
+bool_t usb_lld_connect_bus(USBDriver *usbp) {
+
+  (void)usbp;
+  palSetPad(USB_CONN_PORT, USB_CONN_PAD);
+  return TRUE;
+}
+
+/**
+ * @brief   USB bus disconnect.
+ */
+bool_t usb_lld_disconnect_bus(USBDriver *usbp) {
+
+  (void)usbp;
+  palClearPad(USB_CONN_PORT, USB_CONN_PAD);
+  return FALSE;
+}
+#endif
+
 /**
  * @brief   Board-specific initialization code.
  * @todo    Add your board-specific code, if any.
