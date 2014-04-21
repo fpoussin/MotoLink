@@ -121,4 +121,5 @@ bool_t usb_lld_disconnect_bus(USBDriver *usbp) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
+	
 }

@@ -45,9 +45,9 @@ static msg_t Thread1(void *arg) {
   chRegSetThreadName("blinker");
   while (TRUE) {
     systime_t time = USBD1.state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOE, GPIOE_LED3_RED);
+    palClearPad(LED_PORT, LED_GREEN_PAD);
     chThdSleepMilliseconds(time);
-    palSetPad(GPIOE, GPIOE_LED3_RED);
+    palSetPad(LED_PORT, LED_GREEN_PAD);
     chThdSleepMilliseconds(time);
   }
 }
@@ -70,7 +70,7 @@ static msg_t Thread2(void *arg) {
    * after a reset.
    */
   usbDisconnectBus(serusbcfg.usbp);
-  //chThdSleepMilliseconds(1500);
+  chThdSleepMilliseconds(500);
   usbStart(&USBD1, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
@@ -87,15 +87,10 @@ static msg_t Thread2(void *arg) {
 
   while (TRUE) {
 
-    //chThdSleepMilliseconds(1);
-    palClearPad(GPIOE, GPIOE_LED10_RED);
-
     chEvtWaitAny(ALL_EVENTS);
     chSysLock();
     flags = chEvtGetAndClearFlagsI(&el1);
     chSysUnlock();
-
-    //if (chIQGetFullI(&BDU1.iqueue) > 4) {
 
     if (flags & CHN_INPUT_AVAILABLE) {
 
@@ -104,15 +99,6 @@ static msg_t Thread2(void *arg) {
       uint8_t cmd_res = read_cmd((BaseChannel *)&BDU1, reset_flags);
 
       chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
-
-      if (cmd_res == 0)
-      {
-        palTogglePad(GPIOE, GPIOE_LED4_BLUE);
-        continue;
-      }
-      else {
-        palTogglePad(GPIOE, GPIOE_LED8_ORANGE);
-      }
 
     }
   }

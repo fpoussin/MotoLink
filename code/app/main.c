@@ -136,10 +136,10 @@ int main(void) {
    * Note, a delay is inserted in order to not have to disconnect the cable
    * after a reset.
    */
-  //usbDisconnectBus(serusbcfg.usbp);
-  //chThdSleepMilliseconds(1500);
+  usbDisconnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(500);
   usbStart(serusbcfg.usbp, &usbcfg);
-  //usbConnectBus(serusbcfg.usbp);
+  usbConnectBus(serusbcfg.usbp);
 
   /*
    * Creates the blinker and bulk threads.
