@@ -14,11 +14,13 @@ TEMPLATE = app
 INCLUDEPATH += inc
 
 SOURCES += src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/intelhexclass.cpp
 
 HEADERS  += \
     inc/compat.h \
-    inc/mainwindow.h
+    inc/mainwindow.h \
+    inc/intelhexclass.h
 
 FORMS    += ui/main.ui
 
