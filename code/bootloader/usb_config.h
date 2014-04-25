@@ -26,3 +26,5 @@ extern BulkUSBDriver BDU1;
 
 extern const USBConfig usbcfg;
 extern const BulkUSBConfig bulkusbcfg;
+
+bool_t usbDetect(void);

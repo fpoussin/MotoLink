@@ -64,6 +64,9 @@ static msg_t Thread2(void *arg) {
   (void)arg;
   chRegSetThreadName("USB");
 
+  /* Wait for USB connection */
+  while(!usbDetect()) chThdSleepMilliseconds(10);
+
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    * Note, a delay is inserted in order to not have to disconnect the cable
@@ -94,8 +97,6 @@ static msg_t Thread2(void *arg) {
 
     if (flags & CHN_INPUT_AVAILABLE) {
 
-      palSetPad(GPIOE, GPIOE_LED10_RED);
-
       uint8_t cmd_res = read_cmd((BaseChannel *)&BDU1, reset_flags);
 
       chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
@@ -121,6 +122,7 @@ int main(void) {
     /* Bootloader called by user app */
 
     reset_flags |= FLAG_SFTRST;
+    palSetPad(LED_PORT, LED_BLUE_PAD);
   }
 
   else if (checkUserCode(USER_APP_ADDR) == 1) {
@@ -141,7 +143,7 @@ int main(void) {
 
   /*!< Remove reset flags */
   RCC->CSR |= RCC_CSR_RMVF;
-  reset_flags = FLAG_OK;
+  //reset_flags = FLAG_OK;
 
   /*
    * System initializations.

@@ -52,114 +52,43 @@
  * IO pins assignments.
  */
  
+#define SWITCH_PORT GPIOC
+#define SWITCH_PAD 13
+
+#define RELAY_DRV_PORT GPIOA
+#define RELAY_DRV_PAD 7
+
+#define SCS_PORT GPIOB
+#define SCS_PAD 0
+
+#define KL_CS_PORT GPIOC
+#define KL_CS_PAD 12
+ 
 #define USB_CONN_PORT GPIOB
 #define USB_CONN_PAD   13
+
+#define USB_DETECT_PORT GPIOC
+#define USB_DETECT_PAD   15
 
 #define LED_PORT GPIOA
 #define LED_GREEN_PAD 2
 #define LED_BLUE_PAD 3
+
+#define FREQIN_PORT GPIOC
+#define FREQIN_PAD1 6
+#define FREQIN_PAD2 7
+
+#define AN_PORT GPIOC
+#define AN1_PAD 1
+#define AN2_PAD 2
+#define AN3_PAD 3
+
+#define KNOCK_PORT GPIOC
+#define KNOCK_PAD 1
+
+#define DAC_PORT GPIOA
+#define DAC_PAD 4
  
-#define GPIOA_PIN0                  0
-#define GPIOA_PIN1                  1
-#define GPIOA_PIN2                  2
-#define GPIOA_PIN3                  3
-#define GPIOA_PIN4                  4
-#define GPIOA_SPI1_SCK           5
-#define GPIOA_SPI1_MISO         6
-#define GPIOA_SPI1_MOSI         7
-#define GPIOA_PIN8                  8
-#define GPIOA_PIN9                  9
-#define GPIOA_PIN10                10
-#define GPIOA_USB_DM             11
-#define GPIOA_USB_DP              12
-#define GPIOA_SWDIO               13
-#define GPIOA_SWCLK               14
-#define GPIOA_PIN15                 15
-
-#define GPIOB_PIN0                  0
-#define GPIOB_PIN1                  1
-#define GPIOB_PIN2                  2
-#define GPIOB_SWO                  3
-#define GPIOB_PIN4                  4
-#define GPIOB_PIN5                  5
-#define GPIOB_I2C1_SCL           6
-#define GPIOB_I2C1_SDA           7
-#define GPIOB_PIN8                  8
-#define GPIOB_PIN9                  9
-#define GPIOB_PIN10                 10
-#define GPIOB_PIN11                 11
-#define GPIOB_PIN12                 12
-#define GPIOB_PIN13                 13
-#define GPIOB_PIN14                 14
-#define GPIOB_PIN15                 15
-
-#define GPIOC_PIN0                  0
-#define GPIOC_PIN1                  1
-#define GPIOC_PIN2                  2
-#define GPIOC_PIN3                  3
-#define GPIOC_PIN4                  4
-#define GPIOC_PIN5                  5
-#define GPIOC_PIN6                  6
-#define GPIOC_PIN7                  7
-#define GPIOC_PIN8                  8
-#define GPIOC_PIN9                  9
-#define GPIOC_PIN10                 10
-#define GPIOC_PIN11                 11
-#define GPIOC_PIN12                 12
-#define GPIOC_PIN13                 13
-#define GPIOC_OSC32_IN            14
-#define GPIOC_OSC32_OUT         15
-
-#define GPIOD_PIN0                  0
-#define GPIOD_PIN1                  1
-#define GPIOD_PIN2                  2
-#define GPIOD_PIN3                  3
-#define GPIOD_PIN4                  4
-#define GPIOD_PIN5                  5
-#define GPIOD_PIN6                  6
-#define GPIOD_PIN7                  7
-#define GPIOD_PIN8                  8
-#define GPIOD_PIN9                  9
-#define GPIOD_PIN10                 10
-#define GPIOD_PIN11                 11
-#define GPIOD_PIN12                 12
-#define GPIOD_PIN13                 13
-#define GPIOD_PIN14                 14
-#define GPIOD_PIN15                 15
-
-#define GPIOE_PIN0                  0
-#define GPIOE_PIN1                  1
-#define GPIOE_PIN2                  2
-#define GPIOE_SPI1_CS               3
-#define GPIOE_PIN4           4
-#define GPIOE_PIN5           5
-#define GPIOE_PIN6                  6
-#define GPIOE_PIN7                  7
-#define GPIOE_LED4_BLUE             8
-#define GPIOE_LED3_RED              9
-#define GPIOE_LED5_ORANGE           10
-#define GPIOE_LED7_GREEN            11
-#define GPIOE_LED9_BLUE             12
-#define GPIOE_LED10_RED             13
-#define GPIOE_LED8_ORANGE           14
-#define GPIOE_LED6_GREEN            15
-
-#define GPIOF_OSC_IN                0
-#define GPIOF_OSC_OUT               1
-#define GPIOF_PIN2                  2
-#define GPIOF_PIN3                  3
-#define GPIOF_PIN4                  4
-#define GPIOF_PIN5                  5
-#define GPIOF_PIN6                  6
-#define GPIOF_PIN7                  7
-#define GPIOF_PIN8                  8
-#define GPIOF_PIN9                  9
-#define GPIOF_PIN10                 10
-#define GPIOF_PIN11                 11
-#define GPIOF_PIN12                 12
-#define GPIOF_PIN13                 13
-#define GPIOF_PIN14                 14
-#define GPIOF_PIN15                 15
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset

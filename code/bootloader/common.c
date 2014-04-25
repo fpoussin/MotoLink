@@ -55,7 +55,7 @@ uint8_t eraseFlash(uint32_t len) {
   FLASH_Unlock();
   FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
 
-  for (addr=USER_APP_ADDR; addr < USER_APP_ADDR+(64*1024); addr+=FLASH_PAGE_SIZE) {
+  for (addr=USER_APP_ADDR; addr < USER_APP_ADDR+(200*1024); addr+=FLASH_PAGE_SIZE) {
 
     if (FLASH_ErasePage(addr) != FLASH_COMPLETE) {
 
