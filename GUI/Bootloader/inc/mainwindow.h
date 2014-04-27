@@ -28,6 +28,7 @@ This file is part of QSTLink2.
 #include <bootloader.h>
 #include <QThread>
 #include <QTimer>
+#include <QProgressDialog>
 
 namespace Ui {
     class MainWindow;
@@ -64,9 +65,11 @@ private:
     QString filename;
     quint32 lastAction;
     QThread btlThread;
+    QProgressDialog connectDialog;
 
 private slots:
     void connectSlot(bool success);
+    void connectAbortSlot(void);
     void lockUI(bool enabled);
     void log(const QString &s);
     void Send();

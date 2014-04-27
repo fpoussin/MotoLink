@@ -38,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->ui->gb_top->setEnabled(true);
 
+    this->connectDialog.setLabelText("Searching Device...");
+    this->connectDialog.setRange(0, 10000);
+
     // UI
     QObject::connect(this->ui->b_quit,SIGNAL(clicked()),this,SLOT(Quit()));
     QObject::connect(this->ui->b_qt,SIGNAL(clicked()),qApp,SLOT(aboutQt()));
@@ -57,10 +60,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(this, SIGNAL(doConnect()), this->btl, SLOT(connect()));
     QObject::connect(this->btl, SIGNAL(connectionResult(bool)), this, SLOT(connectSlot(bool)));
+    QObject::connect(&this->connectDialog, SIGNAL(canceled()), this, SLOT(connectAbortSlot()));
+    QObject::connect(this->btl, SIGNAL(timeElapsed(int)), &this->connectDialog, SLOT(setValue(int)));
+
 }
 
 MainWindow::~MainWindow()
 {
+    this->btlThread.exit();
     this->tfThread->exit();
     delete tfThread;
     delete btl;
@@ -81,6 +88,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::connectSlot(bool success)
 {
     PrintFuncName();
+
+    this->connectDialog.hide();
+
     switch (success) {
     case false:
         this->ui->b_connect->setEnabled(true);
@@ -89,8 +99,6 @@ void MainWindow::connectSlot(bool success)
         this->log("Did you install the drivers ?");
 #elif !defined(WIN32)
         this->log("Did you install the udev rules ?");
-#else
-        this->log("Did you install the libusb-win32 driver ?");
 #endif
         return;
     case true:
@@ -111,12 +119,18 @@ void MainWindow::connectSlot(bool success)
     }
 }
 
+void MainWindow::connectAbortSlot()
+{
+    this->btl->abortConnect();
+}
+
 bool MainWindow::Connect()
 {
     PrintFuncName();
     this->log("Searching Device...");
 
     this->ui->b_connect->setEnabled(false);
+    this->connectDialog.show();
     emit doConnect();
 
     return false;

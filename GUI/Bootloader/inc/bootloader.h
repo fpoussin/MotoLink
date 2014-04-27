@@ -52,12 +52,13 @@ private slots:
     quint8 checkSum(const quint8 *data, quint8 length);
 
 private:
-    QUsb *usb;
+    QUsb *mUsb;
     bool mConnected;
     bool mAbortConnect;
 
 signals:
     void connectionResult(bool result);
+    void timeElapsed(int time);
     
 };
 

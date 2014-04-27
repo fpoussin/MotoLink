@@ -49,12 +49,12 @@ private:
     void send(const QString &filename);
     void verify(const QString &filename);
 
-    QString m_filename;
-    Bootloader *m_btl;
-    bool m_write;
-    bool m_stop;
-    bool m_erase;
-    bool m_verify;
+    QString mFilename;
+    Bootloader *mBtl;
+    bool mWrite;
+    bool mStop;
+    bool mErase;
+    bool mVerify;
 };
 
 #endif // TRANSFERTHREAD_H
