@@ -4,23 +4,43 @@ Bootloader::Bootloader(QObject *parent) :
     QObject(parent)
 {
 
-    this->m_connected = false;
+    this->mConnected = false;
+    this->mAbortConnect = false;
     this->usb = new QUsb;
 }
 
 bool Bootloader::connect()
 {
+    PrintFuncName();
     QByteArray tmp;
+    QElapsedTimer timer;
+    qint32 ret = -1;
+    this->mAbortConnect = false;
 
-    if (this->usb->open() < 0) {
+    timer.start();
+    while (timer.elapsed() < 10000) {
+
+        ret = this->usb->open();
+        if (ret >= 0 || this->mAbortConnect) {
+            break;
+        }
+        usleep(50000);
+    }
+
+    if (ret < 0) {
+        emit connectionResult(false);
+        this->mConnected = false;
         return false;
     }
+
     /* Clean buffer */
     this->usb->read(&tmp, 256);
-    this->m_connected = true;
+    this->mConnected = true;
 
     this->sendWake();
     this->getFlags();
+
+    emit connectionResult(true);
 
     return true;
 }
@@ -28,7 +48,7 @@ bool Bootloader::connect()
 bool Bootloader::disconnect()
 {
     this->usb->close();
-    this->m_connected = false;
+    this->mConnected = false;
 
     return true;
 }
@@ -64,10 +84,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     send.append(MAGIC2);
     send.append(MASK_CMD | CMD_WRITE);
 
-    send.append(buf_addr[0]);
-    send.append(buf_addr[1]);
-    send.append(buf_addr[2]);
-    send.append(buf_addr[3]);
+    send.append((char*)buf_addr, 4);
     send.append(data->constData(), data->size());
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
@@ -97,14 +114,8 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     send.append(MAGIC1);
     send.append(MAGIC2);
     send.append(MASK_CMD | CMD_READ);
-    send.append(buf_addr[0]);
-    send.append(buf_addr[1]);
-    send.append(buf_addr[2]);
-    send.append(buf_addr[3]);
-    send.append(buf_len[0]);
-    send.append(buf_len[1]);
-    send.append(buf_len[2]);
-    send.append(buf_len[3]);
+    send.append((char*)buf_addr, 4);
+    send.append((char*)buf_len, 4);
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
@@ -123,10 +134,7 @@ bool Bootloader::eraseFlash(quint32 len)
     send.append(MAGIC1);
     send.append(MAGIC2);
     send.append(MASK_CMD | CMD_ERASE);
-    send.append(buf_len[0]);
-    send.append(buf_len[1]);
-    send.append(buf_len[2]);
-    send.append(buf_len[3]);
+    send.append((char*)buf_len, 4);
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
@@ -160,7 +168,7 @@ bool Bootloader::reset()
 
 bool Bootloader::isConnected()
 {
-    return this->m_connected;
+    return this->mConnected;
 }
 
 bool Bootloader::sendWake()
@@ -177,6 +185,11 @@ bool Bootloader::sendWake()
     this->usb->read(&recv, 1);
 
     return true;
+}
+
+void Bootloader::abortConnect()
+{
+    this->mAbortConnect = true;
 }
 
 quint8 Bootloader::checkSum(const quint8 *data, quint8 length)

@@ -5,6 +5,7 @@
 #include <compat.h>
 #include <QString>
 #include <QtEndian>
+#include <QTimer>
 
 #define MAGIC (quint16)0xAFEB
 #define MAGIC1 (quint8)0xAF
@@ -45,13 +46,18 @@ public slots:
     bool reset(void);
     bool isConnected(void);
     bool sendWake(void);
+    void abortConnect(void);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length);
 
 private:
     QUsb *usb;
-    bool m_connected;
+    bool mConnected;
+    bool mAbortConnect;
+
+signals:
+    void connectionResult(bool result);
     
 };
 

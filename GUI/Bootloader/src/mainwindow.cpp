@@ -34,8 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->lastAction = ACTION_NONE;
     this->btl->moveToThread(&btlThread);
+    btlThread.start();
 
     this->ui->gb_top->setEnabled(true);
+
+    // UI
     QObject::connect(this->ui->b_quit,SIGNAL(clicked()),this,SLOT(Quit()));
     QObject::connect(this->ui->b_qt,SIGNAL(clicked()),qApp,SLOT(aboutQt()));
     QObject::connect(this->ui->b_connect, SIGNAL(clicked()), this, SLOT(Connect()));
@@ -45,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->b_repeat, SIGNAL(clicked()), this, SLOT(Repeat()));
     QObject::connect(this->ui->b_reset, SIGNAL(clicked()), this, SLOT(ResetMCU()));
 
-
     // Thread
     QObject::connect(this->tfThread, SIGNAL(sendProgress(quint32)), this, SLOT(updateProgress(quint32)));
     QObject::connect(this->tfThread, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
@@ -53,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->b_stop, SIGNAL(clicked()), this->tfThread, SLOT(halt()));
     QObject::connect(this->tfThread, SIGNAL(sendLog(QString)), this, SLOT(log(QString)));
 
+    QObject::connect(this, SIGNAL(doConnect()), this->btl, SLOT(connect()));
+    QObject::connect(this->btl, SIGNAL(connectionResult(bool)), this, SLOT(connectSlot(bool)));
 }
 
 MainWindow::~MainWindow()
@@ -74,27 +78,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
     this->Quit();
 }
 
-bool MainWindow::Connect()
+void MainWindow::connectSlot(bool success)
 {
     PrintFuncName();
-    bool ret = false;
-    QElapsedTimer timer;
-    this->log("Searching Device...");
-
-    /* Needs to move to async function using signals */
-    timer.start();
-    this->ui->b_connect->setEnabled(false);
-    while (timer.elapsed() < 5000) {
-
-        ret = this->btl->connect();
-        if (ret)
-            break;
-        qApp->processEvents();
-    }
-    this->ui->b_connect->setEnabled(true);
-
-    switch (ret) {
+    switch (success) {
     case false:
+        this->ui->b_connect->setEnabled(true);
         this->log("Device not found or unable to access it.");
 #if defined(QWINUSB) && defined(WIN32)
         this->log("Did you install the drivers ?");
@@ -103,7 +92,7 @@ bool MainWindow::Connect()
 #else
         this->log("Did you install the libusb-win32 driver ?");
 #endif
-        return false;
+        return;
     case true:
         this->log("Device found!");
 
@@ -115,11 +104,21 @@ bool MainWindow::Connect()
             this->ui->b_verify->setEnabled(true);
             this->ui->b_repeat->setEnabled(true);
             this->ui->b_reset->setEnabled(true);
-            return true;
+            return;
         }
         else
-            return false;
+            return;
     }
+}
+
+bool MainWindow::Connect()
+{
+    PrintFuncName();
+    this->log("Searching Device...");
+
+    this->ui->b_connect->setEnabled(false);
+    emit doConnect();
+
     return false;
 }
 

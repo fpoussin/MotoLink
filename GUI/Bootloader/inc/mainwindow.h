@@ -66,6 +66,7 @@ private:
     QThread btlThread;
 
 private slots:
+    void connectSlot(bool success);
     void lockUI(bool enabled);
     void log(const QString &s);
     void Send();
@@ -73,6 +74,9 @@ private slots:
     void Repeat();
     void ResetMCU();
     void Quit();
+
+signals:
+    void doConnect();
 
 };
 
