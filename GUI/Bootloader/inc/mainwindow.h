@@ -26,6 +26,8 @@ This file is part of QSTLink2.
 #include <compat.h>
 #include <QMessageBox>
 #include <bootloader.h>
+#include <QThread>
+#include <QTimer>
 
 namespace Ui {
     class MainWindow;
@@ -61,6 +63,7 @@ private:
     Bootloader *btl;
     QString filename;
     quint32 lastAction;
+    QThread btlThread;
 
 private slots:
     void lockUI(bool enabled);

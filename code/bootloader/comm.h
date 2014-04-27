@@ -16,6 +16,7 @@
 #define CMD_WRITE 0x03
 #define CMD_RESET 0x04
 #define CMD_GET_FLAGS 0x05
+#define CMD_WAKE 0x06
 
 #define FLAG_OK 0x01
 #define FLAG_IWDRST 0x02
@@ -32,6 +33,7 @@ typedef struct {
   uint8_t len;
 } cmd_header_t;
 
+extern uint8_t bl_wake;
 
 uint8_t read_cmd(BaseChannel *chn, uint8_t flags);
 uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len);
@@ -39,4 +41,4 @@ uint8_t readHandler(BaseChannel *chn, uint8_t* buf);
 uint8_t eraseHandler(BaseChannel * chn, uint8_t len);
 uint8_t resetHandler(BaseChannel * chn);
 uint8_t sendFlags(BaseChannel * chn, uint8_t flags);
-
+uint8_t wakeHandler(BaseChannel * chn);

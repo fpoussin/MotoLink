@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->tfThread = new transferThread();
 
     this->lastAction = ACTION_NONE;
+    this->btl->moveToThread(&btlThread);
 
     this->ui->gb_top->setEnabled(true);
     QObject::connect(this->ui->b_quit,SIGNAL(clicked()),this,SLOT(Quit()));
@@ -76,9 +77,23 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::Connect()
 {
     PrintFuncName();
+    bool ret = false;
+    QElapsedTimer timer;
     this->log("Searching Device...");
 
-    switch (this->btl->connect()) {
+    /* Needs to move to async function using signals */
+    timer.start();
+    this->ui->b_connect->setEnabled(false);
+    while (timer.elapsed() < 5000) {
+
+        ret = this->btl->connect();
+        if (ret)
+            break;
+        qApp->processEvents();
+    }
+    this->ui->b_connect->setEnabled(true);
+
+    switch (ret) {
     case false:
         this->log("Device not found or unable to access it.");
 #if defined(QWINUSB) && defined(WIN32)

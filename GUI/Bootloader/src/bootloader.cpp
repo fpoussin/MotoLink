@@ -11,14 +11,15 @@ Bootloader::Bootloader(QObject *parent) :
 bool Bootloader::connect()
 {
     QByteArray tmp;
+
     if (this->usb->open() < 0) {
         return false;
     }
-
     /* Clean buffer */
     this->usb->read(&tmp, 256);
     this->m_connected = true;
 
+    this->sendWake();
     this->getFlags();
 
     return true;
@@ -160,6 +161,22 @@ bool Bootloader::reset()
 bool Bootloader::isConnected()
 {
     return this->m_connected;
+}
+
+bool Bootloader::sendWake()
+{
+    QByteArray send, recv;
+
+    send.append(MAGIC1);
+    send.append(MAGIC2);
+    send.append(MASK_CMD | CMD_WAKE);
+    send.insert(3, send.size()+2);
+    send.append(checkSum((quint8*)send.constData(), send.size()));
+
+    this->usb->write(&send, send.size());
+    this->usb->read(&recv, 1);
+
+    return true;
 }
 
 quint8 Bootloader::checkSum(const quint8 *data, quint8 length)

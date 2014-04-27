@@ -19,6 +19,7 @@
 #define CMD_WRITE (quint8)0x03
 #define CMD_RESET (quint8)0x04
 #define CMD_GET_FLAGS (quint8)0x05
+#define CMD_WAKE (quint8)0x06
 
 #define FLAG_OK (quint8)0x01
 #define FLAG_IWDRST (quint8)0x02
@@ -43,6 +44,7 @@ public slots:
     bool eraseFlash(quint32 len);
     bool reset(void);
     bool isConnected(void);
+    bool sendWake(void);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length);

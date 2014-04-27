@@ -1,6 +1,8 @@
 #include "comm.h"
 #include "common.h"
 
+uint8_t bl_wake = 0;
+
 uint8_t checksum(uint8_t *data, uint8_t length)
 {
     uint8_t i;
@@ -67,6 +69,10 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
 
     case MASK_CMD | CMD_GET_FLAGS:
       status = sendFlags(chn, flags);
+      break;
+
+    case MASK_CMD | CMD_WAKE:
+      status = wakeHandler(chn);
       break;
 
     default:
@@ -153,3 +159,9 @@ uint8_t resetHandler(BaseChannel * chn) {
   return 0;
 }
 
+uint8_t wakeHandler(BaseChannel * chn) {
+
+  bl_wake = 1;
+  chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  return 0;
+}

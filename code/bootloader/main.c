@@ -125,7 +125,28 @@ int main(void) {
     palSetPad(LED_PORT, LED_BLUE_PAD);
   }
 
-  else if (checkUserCode(USER_APP_ADDR) == 1) {
+  /*!< Remove reset flags */
+  RCC->CSR |= RCC_CSR_RMVF;
+
+  halInit();
+  chSysInit();
+
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO+1, Thread2, NULL);
+
+  /* If USB is plugged, probe it, else boot directly */
+  if (usbDetect()) {
+
+    /* Wait half a second for the bootloader GUI to connect */
+    chThdSleepMilliseconds(500);
+  }
+
+  /* If BL did not get wakeup cmd, no reset flags and user app looks good, launch it */
+  if (!bl_wake && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
+
+      chSysDisable();
+
+      usbDisconnectBus(&USBD1);
 
       /* Setup IWDG in case the target application does not load */
 
@@ -141,30 +162,6 @@ int main(void) {
       jumpToUser(USER_APP_ADDR);
   }
 
-  /*!< Remove reset flags */
-  RCC->CSR |= RCC_CSR_RMVF;
-  //reset_flags = FLAG_OK;
-
-  /*
-   * System initializations.
-   * - HAL initialization, this also initializes the configured device drivers
-   *   and performs the board-specific initializations.
-   * - Kernel initialization, the main() function becomes a thread and the
-   *   RTOS is active.
-   */
-  halInit();
-  chSysInit();
-
-  /*
-   * Creates the blinker and bulk threads.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO+1, Thread2, NULL);
-
-  /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
-   */
   while (TRUE) {
     chThdSleepMilliseconds(1000);
   }
