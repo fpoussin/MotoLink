@@ -11,6 +11,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = MotoLink
 TEMPLATE = app
 
+VERSION = 0.1
+message(Version $$VERSION)
+
+VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
+DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the version string
+
 INCLUDEPATH += inc
 
 include(QtUsb/QtUsb.pri)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>950</width>
     <height>500</height>
    </rect>
   </property>
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>900</width>
+    <width>950</width>
     <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>950</width>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tabMain">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -74,7 +74,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>8</number>
       </property>
       <property name="iconSize">
        <size>
@@ -85,7 +85,7 @@
       <property name="movable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tab_fuel">
+      <widget class="QWidget" name="tabFuel">
        <property name="font">
         <font>
          <weight>50</weight>
@@ -118,7 +118,21 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_afrmap">
+      <widget class="QWidget" name="tabStaging">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Staging Map</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="0" column="0">
+         <widget class="QListView" name="listStaging"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabAfrMap">
        <attribute name="icon">
         <iconset resource="../res/images.qrc">
          <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
@@ -142,7 +156,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_afrtarget">
+      <widget class="QWidget" name="tabAfrTarget">
        <attribute name="icon">
         <iconset resource="../res/images.qrc">
          <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
@@ -166,7 +180,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_ignmap">
+      <widget class="QWidget" name="tabIgnMap">
        <attribute name="icon">
         <iconset resource="../res/images.qrc">
          <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
@@ -190,7 +204,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_igntarget">
+      <widget class="QWidget" name="tabIgnTarget">
        <attribute name="icon">
         <iconset resource="../res/images.qrc">
          <normaloff>:/images/sparkplug-target.png</normaloff>:/images/sparkplug-target.png</iconset>
@@ -214,7 +228,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_knock">
+      <widget class="QWidget" name="tabKnock">
        <attribute name="icon">
         <iconset resource="../res/images.qrc">
          <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
@@ -238,7 +252,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_settings">
+      <widget class="QWidget" name="tabSettings">
        <property name="font">
         <font>
          <weight>50</weight>
@@ -253,7 +267,7 @@
         <string>&amp;Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+        <item row="0" column="3">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -266,207 +280,112 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Sensor Mappings</string>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
-            <widget class="QTableWidget" name="tableSensorTPS">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>330</height>
-              </size>
+          <property name="title">
+           <string>ECU Settings</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="2" column="0">
+            <widget class="QFrame" name="frame_2">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>110</width>
-               <height>370</height>
-              </size>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
              </property>
-             <property name="columnCount">
+             <property name="midLineWidth">
               <number>1</number>
              </property>
-             <attribute name="horizontalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="horizontalHeaderCascadingSectionResizes">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>60</number>
-             </attribute>
-             <attribute name="horizontalHeaderHighlightSections">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="horizontalHeaderMinimumSectionSize">
-              <number>20</number>
-             </attribute>
-             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderDefaultSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderHighlightSections">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderMinimumSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <row>
-              <property name="text">
-               <string>0</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>10</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>20</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>30</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>40</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>50</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>60</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>70</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>80</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>100</string>
-              </property>
-             </row>
-             <column>
-              <property name="text">
-               <string>Voltage</string>
-              </property>
-              <property name="textAlignment">
-               <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-              </property>
-             </column>
-             <item row="0" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="1" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="2" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="3" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="4" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="5" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="6" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="7" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="8" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="9" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
+             <layout class="QGridLayout" name="gridLayout_6">
+              <item row="0" column="0">
+               <widget class="QLabel" name="ltPitLimiter">
+                <property name="text">
+                 <string>Pit limiter</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QSpinBox" name="sbPitLimiter">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="suffix">
+                 <string> rpm</string>
+                </property>
+                <property name="maximum">
+                 <number>18000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
-           <item row="2" column="1">
-            <spacer name="verticalSpacer_2">
+           <item row="0" column="0">
+            <widget class="QFrame" name="frame">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QLabel" name="ltIdle">
+                <property name="text">
+                 <string>Idle</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="sbIdle">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="suffix">
+                 <string> rpm</string>
+                </property>
+                <property name="maximum">
+                 <number>3000</number>
+                </property>
+                <property name="singleStep">
+                 <number>200</number>
+                </property>
+                <property name="value">
+                 <number>1400</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="Line" name="line_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <spacer name="verticalSpacer_4">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -478,201 +397,487 @@
              </property>
             </spacer>
            </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="ltAFR">
-             <property name="text">
-              <string>AFR</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+           <item row="1" column="0">
+            <widget class="Line" name="line_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="ltTPS">
-             <property name="text">
-              <string>TPS</string>
+           <item row="4" column="0">
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QTableWidget" name="tableSensorAFR">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>330</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>110</width>
-               <height>370</height>
-              </size>
-             </property>
-             <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>60</number>
-             </attribute>
-             <attribute name="horizontalHeaderMinimumSectionSize">
-              <number>20</number>
-             </attribute>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <attribute name="verticalHeaderDefaultSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderMinimumSectionSize">
-              <number>30</number>
-             </attribute>
-             <attribute name="verticalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <row>
-              <property name="text">
-               <string>8</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>11</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>12</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>13</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>14</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>15</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>16</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>17</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>20</string>
-              </property>
-             </row>
-             <row>
-              <property name="text">
-               <string>22</string>
-              </property>
-             </row>
-             <column>
-              <property name="text">
-               <string>Voltage</string>
-              </property>
-             </column>
-             <item row="0" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="1" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="2" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="3" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="4" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="5" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="6" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="7" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="8" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
-             <item row="9" column="0">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="flags">
-               <set>ItemIsEditable|ItemIsEnabled</set>
-              </property>
-             </item>
+             <layout class="QGridLayout" name="gridLayout_9">
+              <item row="0" column="0">
+               <widget class="QLabel" name="ltShiftLight">
+                <property name="text">
+                 <string>Shift Light</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QSpinBox" name="sbShiftLight">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="minimum">
+                 <number>10000</number>
+                </property>
+                <property name="maximum">
+                 <number>18000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>15000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
+        <item row="0" column="2">
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Self Mapping</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="2" column="0">
+            <widget class="QLabel" name="ltThresholdMin">
+             <property name="text">
+              <string>Minimum</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="ltThresholdMax">
+             <property name="text">
+              <string>Maximum</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="Line" name="line_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="Line" name="line_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="ltThresholds">
+             <property name="text">
+              <string>Fuel Thresholds</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <spacer name="verticalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="3" column="0">
+            <widget class="QSpinBox" name="sbThresholdMin">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="maximum">
+              <number>20</number>
+             </property>
+             <property name="value">
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QSpinBox" name="ltThresholdMax_2">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="maximum">
+              <number>20</number>
+             </property>
+             <property name="value">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="Line" name="line_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Sensor Mappings</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <layout class="QGridLayout" name="gridLayout">
+             <item row="5" column="0">
+              <widget class="QDoubleSpinBox" name="dsbRpmDiv">
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="minimum">
+                <double>0.001000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>10000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QDoubleSpinBox" name="dsbSpeedDiv">
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="minimum">
+                <double>0.001000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>10000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="ltTPS">
+               <property name="text">
+                <string>TPS</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="ltSpeedDiv">
+               <property name="text">
+                <string>Speed Divider</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="ltRpmdiv">
+               <property name="text">
+                <string>RPM Divider</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QTableWidget" name="tableSensorTPS">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>90</height>
+                </size>
+               </property>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                <number>60</number>
+               </attribute>
+               <attribute name="horizontalHeaderMinimumSectionSize">
+                <number>20</number>
+               </attribute>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderDefaultSectionSize">
+                <number>28</number>
+               </attribute>
+               <attribute name="verticalHeaderMinimumSectionSize">
+                <number>30</number>
+               </attribute>
+               <attribute name="verticalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <row>
+                <property name="text">
+                 <string>0%</string>
+                </property>
+               </row>
+               <row>
+                <property name="text">
+                 <string>100%</string>
+                </property>
+               </row>
+               <column>
+                <property name="text">
+                 <string>Voltage</string>
+                </property>
+               </column>
+               <item row="0" column="0">
+                <property name="text">
+                 <string>0.5</string>
+                </property>
+                <property name="flags">
+                 <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
+                </property>
+               </item>
+               <item row="1" column="0">
+                <property name="text">
+                 <string>4.5</string>
+                </property>
+                <property name="flags">
+                 <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="pushButton">
+               <property name="maximumSize">
+                <size>
+                 <width>110</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Calibrate TPS</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="6" column="0">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="3" column="0">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="ltAFR">
+               <property name="text">
+                <string>AFR</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QTableWidget" name="tableSensorAFR">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>90</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>90</height>
+                </size>
+               </property>
+               <property name="cornerButtonEnabled">
+                <bool>false</bool>
+               </property>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                <number>60</number>
+               </attribute>
+               <attribute name="horizontalHeaderMinimumSectionSize">
+                <number>20</number>
+               </attribute>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderDefaultSectionSize">
+                <number>28</number>
+               </attribute>
+               <attribute name="verticalHeaderHighlightSections">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderMinimumSectionSize">
+                <number>30</number>
+               </attribute>
+               <attribute name="verticalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <row>
+                <property name="text">
+                 <string>8</string>
+                </property>
+               </row>
+               <row>
+                <property name="text">
+                 <string>22</string>
+                </property>
+               </row>
+               <column>
+                <property name="text">
+                 <string>Voltage</string>
+                </property>
+               </column>
+               <item row="0" column="0">
+                <property name="text">
+                 <string>0.0</string>
+                </property>
+                <property name="flags">
+                 <set>ItemIsEditable|ItemIsEnabled</set>
+                </property>
+               </item>
+               <item row="1" column="0">
+                <property name="text">
+                 <string>5.0</string>
+                </property>
+                <property name="flags">
+                 <set>ItemIsEditable|ItemIsEnabled</set>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_update">
+      <widget class="QWidget" name="tabUpdate">
        <attribute name="icon">
         <iconset resource="../res/oxygen.qrc">
          <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
@@ -746,7 +951,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
+     <width>950</width>
      <height>21</height>
     </rect>
    </property>
@@ -754,6 +959,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -767,6 +973,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionGetting_Started"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_QT"/>
    </widget>
@@ -842,9 +1049,6 @@
    <property name="text">
     <string>About</string>
    </property>
-   <property name="shortcut">
-    <string>F1</string>
-   </property>
   </action>
   <action name="actionAbout_QT">
    <property name="icon">
@@ -897,11 +1101,35 @@
     <string>Export to HRC...</string>
    </property>
   </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-new.png</normaloff>:/oxygen/32x32/actions/document-new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionGetting_Started">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/help-contents.png</normaloff>:/oxygen/32x32/actions/help-contents.png</iconset>
+   </property>
+   <property name="text">
+    <string>Getting Started...</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../res/oxygen.qrc"/>
   <include location="../res/images.qrc"/>
+  <include location="../res/oxygen.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -26,6 +26,9 @@ public slots:
     void openFile(void);
     void saveFile(void);
     void saveFileAs(void);
+    void connectToEcu(void);
+    void disconnectFromEcu(void);
+    void showAbout(void);
     
 private:
     Ui::MainWindow *ui;
@@ -39,6 +42,7 @@ private:
     QString mCurrentFile;
     quint8 mNumCol;
     quint8 mNumRow;
+    bool mHasChanged;
 };
 
 #endif // MAINWINDOW_H
