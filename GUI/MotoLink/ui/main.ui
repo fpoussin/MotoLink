@@ -363,6 +363,9 @@
                 <property name="suffix">
                  <string> rpm</string>
                 </property>
+                <property name="minimum">
+                 <number>1400</number>
+                </property>
                 <property name="maximum">
                  <number>3000</number>
                 </property>
