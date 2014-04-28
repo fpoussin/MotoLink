@@ -23,6 +23,15 @@ transferThread::transferThread(QObject *parent) :
     this->mStop = false;
 }
 
+transferThread::~transferThread()
+{
+    this->exit();
+    if (!this->wait(1000)) {
+        this->terminate();
+        this->wait();
+    }
+}
+
 void transferThread::run()
 {
     if (this->mWrite) {
@@ -152,7 +161,7 @@ void transferThread::verify(const QString &filename)
         if (this->mStop)
             break;
 
-        usleep(50000);
+        this->msleep(50);
 
         data_local = file.read(buf_size);
         qDebug() << "Read" << data_local.size() << "Bytes from disk";

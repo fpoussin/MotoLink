@@ -3,10 +3,24 @@
 Bootloader::Bootloader(QObject *parent) :
     QObject(parent)
 {
+    this->moveToThread(&this->mThread);
+    this->mThread.start();
 
     this->mConnected = false;
     this->mAbortConnect = false;
     this->mUsb = new QUsb;
+}
+
+Bootloader::~Bootloader()
+{
+    this->abortConnect();
+    this->mThread.exit();
+    if(!this->mThread.wait(1000))
+    {
+      this->mThread.terminate();
+      this->mThread.wait();
+    }
+    delete this->mUsb;
 }
 
 bool Bootloader::connect()

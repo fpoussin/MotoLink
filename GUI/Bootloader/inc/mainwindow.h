@@ -64,7 +64,6 @@ private:
     Bootloader *btl;
     QString filename;
     quint32 lastAction;
-    QThread btlThread;
     QProgressDialog connectDialog;
 
 private slots:

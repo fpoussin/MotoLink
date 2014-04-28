@@ -43,19 +43,21 @@ qint32 QUsb::open()
     r = libusb_init(&ctx); //initialize the library for the session we just declared
     if(r < 0) {
         qDebug()<<"Init Error "<<r; //there was an error
-        return 1;
+        return -1;
     }
     libusb_set_debug(ctx, 3); //set verbosity level to 3, as suggested in the documentation
 
     cnt = libusb_get_device_list(ctx, &devs); //get the list of devices
     if(cnt < 0) {
         qDebug()<<"Get Device Error"; //there was an error
-        return 1;
+        return -2;
     }
 
     dev_handle = libusb_open_device_with_vid_pid(ctx, USB_ST_VID, USB_DEVICE_PID); //these are vendorID and productID I found for my usb device
-    if(dev_handle == NULL)
+    if(dev_handle == NULL) {
         qDebug()<<"Cannot open device";
+        return -3;
+    }
     else
         qDebug()<<"Device Opened";
     libusb_free_device_list(devs, 1); //free the list, unref the devices in it
@@ -68,7 +70,7 @@ qint32 QUsb::open()
     r = libusb_claim_interface(dev_handle, 0); //claim interface 0 (the first) of device (mine had jsut 1)
     if(r < 0) {
         qDebug()<<"Cannot Claim Interface";
-        return 1;
+        return -4;
     }
     qDebug()<<"Claimed Interface";
 
@@ -77,7 +79,7 @@ qint32 QUsb::open()
 
 void QUsb::close()
 {
-    if (this->dev_handle) {
+    if (this->dev_handle != NULL) {
         // stop any further write attempts whilst we close down
         qDebug() << "Closing USB connection...";
 

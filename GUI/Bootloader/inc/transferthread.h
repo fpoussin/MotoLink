@@ -29,6 +29,7 @@ class transferThread : public QThread
     Q_OBJECT
 public:
     explicit transferThread(QObject *parent = 0);
+    ~transferThread();
     void run();
     void setParams(Bootloader *btl, QString filename, bool write, bool verify);
 

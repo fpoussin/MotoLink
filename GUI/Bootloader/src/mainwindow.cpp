@@ -33,12 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->tfThread = new transferThread();
 
     this->lastAction = ACTION_NONE;
-    this->btl->moveToThread(&btlThread);
-    btlThread.start();
 
     this->ui->gb_top->setEnabled(true);
 
-    this->connectDialog.setLabelText("Searching Device...");
+    this->connectDialog.setLabelText("Searching Device... \nPlug it now if not already done.");
     this->connectDialog.setRange(0, 10000);
 
     // UI
@@ -67,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    this->btlThread.exit();
     this->tfThread->exit();
     delete tfThread;
     delete btl;
@@ -130,6 +127,7 @@ bool MainWindow::Connect()
     this->log("Searching Device...");
 
     this->ui->b_connect->setEnabled(false);
+    this->connectDialog.setValue(0);
     this->connectDialog.show();
     emit doConnect();
 

@@ -6,6 +6,7 @@
 #include <QString>
 #include <QtEndian>
 #include <QTimer>
+#include <QThread>
 
 #define MAGIC (quint16)0xAFEB
 #define MAGIC1 (quint8)0xAF
@@ -33,8 +34,7 @@ class Bootloader : public QObject
     Q_OBJECT
 public:
     explicit Bootloader(QObject *parent = 0);
-    
-signals:
+    ~Bootloader();
     
 public slots:
     bool connect();
@@ -55,6 +55,7 @@ private:
     QUsb *mUsb;
     bool mConnected;
     bool mAbortConnect;
+    QThread mThread;
 
 signals:
     void connectionResult(bool result);
