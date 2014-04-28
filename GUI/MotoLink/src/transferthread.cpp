@@ -161,7 +161,7 @@ void transferThread::verify(const QString &filename)
         if (this->mStop)
             break;
 
-        this->msleep(50);
+        _usleep(50000);
 
         data_local = file.read(buf_size);
         qDebug() << "Read" << data_local.size() << "Bytes from disk";

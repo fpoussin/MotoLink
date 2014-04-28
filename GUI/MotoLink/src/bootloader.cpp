@@ -41,7 +41,7 @@ bool Bootloader::connect()
         if (ret >= 0 || this->mAbortConnect) {
             break;
         }
-        usleep(50000);
+        _usleep(50000);
     }
 
     if (ret < 0) {
@@ -127,7 +127,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 
     qint32 wr = this->mUsb->write(&send, send.size());
 
-    usleep(30000);
+    _usleep(30000);
     this->mUsb->read(&recv, 1);
 
     if (recv.size() < 1)
@@ -176,7 +176,7 @@ bool Bootloader::eraseFlash(quint32 len)
 
     this->mUsb->write(&send, send.size());
 
-    usleep(1000000);
+    _usleep(1000000);
 
     this->mUsb->read(&recv, 2);
 
