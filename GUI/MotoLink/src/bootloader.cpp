@@ -28,7 +28,6 @@ Bootloader::~Bootloader()
 
 bool Bootloader::connect()
 {
-    PrintFuncName();
     QByteArray tmp;
     QElapsedTimer timer;
     qint32 ret = -1;
@@ -84,8 +83,27 @@ quint8 Bootloader::getFlags()
     this->mUsb->write(&send, send.size());
     this->mUsb->read(&recv, 2);
 
-    if (recv.size() > 1)
+    if (recv.size() > 1 && recv.at(0) == MASK_REPLY_OK)
         return recv.at(1);
+
+    return 0;
+}
+
+quint16 Bootloader::getVersion()
+{
+    QByteArray send, recv;
+
+    send.append(MAGIC1);
+    send.append(MAGIC2);
+    send.append(MASK_CMD | CMD_GET_VERSION);
+    send.insert(3, send.size()+2);
+    send.append(checkSum((quint8*)send.constData(), send.size()));
+
+    this->mUsb->write(&send, send.size());
+    this->mUsb->read(&recv, 3);
+
+    if (recv.size() > 2 && recv.at(0) == MASK_REPLY_OK)
+        return recv.at(1) + (recv.at(2)*256);
 
     return 0;
 }
@@ -202,12 +220,11 @@ bool Bootloader::sendWake()
     this->mUsb->write(&send, send.size());
     this->mUsb->read(&recv, 1);
 
-    return true;
+    return recv.at(0) == MASK_REPLY_OK;
 }
 
 void Bootloader::abortConnect()
 {
-    PrintFuncName();
     this->mAbortConnect = true;
 }
 

@@ -26,7 +26,8 @@ HEADERS  += \
     inc/mainwindow.h \
     inc/intelhexclass.h \
     inc/bootloader.h \
-    inc/transferthread.h
+    inc/transferthread.h \
+    inc/datastructures.h
 
 FORMS    += ui/main.ui
 
