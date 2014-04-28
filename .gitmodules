@@ -1,0 +1,3 @@
+[submodule "GUI/MotoLink/QtUsb"]
+	path = GUI/MotoLink/QtUsb
+	url = git@github.com:mobyfab/QtUsb.git

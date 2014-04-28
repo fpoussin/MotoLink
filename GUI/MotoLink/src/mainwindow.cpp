@@ -115,7 +115,7 @@ void MainWindow::makeDefaultModel()
             QStandardItem *item = new QStandardItem(0);
             this->mDefaultModel.setItem(row, column, item);
             this->mDefaultModel.setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
-            this->mDefaultModel.setHeaderData(row, Qt::Vertical, row*10);
+            this->mDefaultModel.setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
             this->ui->tableFuel->setColumnWidth(column, 15);
         }
     }

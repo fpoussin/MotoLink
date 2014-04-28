@@ -47,6 +47,9 @@
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -71,7 +74,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>7</number>
       </property>
       <property name="iconSize">
        <size>
@@ -82,6 +85,159 @@
       <property name="movable">
        <bool>true</bool>
       </property>
+      <widget class="QWidget" name="tab_fuel">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>&amp;Fuel Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QTableView" name="tableFuel">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>30</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_afrmap">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>&amp;AFR Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QTableView" name="tableAfrMap">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_afrtarget">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>AFR Target</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QTableView" name="tableAfrTgt">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_ignmap">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Ignition Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QTableView" name="tableIgnMap">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_igntarget">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/sparkplug-target.png</normaloff>:/images/sparkplug-target.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Ignition Target</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QTableView" name="tableIgnTgt">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_knock">
+       <attribute name="icon">
+        <iconset resource="../res/images.qrc">
+         <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Knock Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QTableView" name="tableKnk">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>50</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab_settings">
        <property name="font">
         <font>
@@ -98,56 +254,6 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Versions</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="ltMotolink">
-             <property name="text">
-              <string>MotoLink: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="ltGui">
-             <property name="text">
-              <string>GUI: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="lMotolink">
-             <property name="text">
-              <string>0.0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="lGui">
-             <property name="text">
-              <string>0.0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="1">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -160,7 +266,7 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="1">
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
            <string>Sensor Mappings</string>
@@ -184,7 +290,7 @@
               <number>1</number>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderCascadingSectionResizes">
               <bool>false</bool>
@@ -205,7 +311,7 @@
               <bool>true</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderDefaultSectionSize">
               <number>30</number>
@@ -566,158 +672,70 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_fuel">
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
+      <widget class="QWidget" name="tab_update">
        <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
+        <iconset resource="../res/oxygen.qrc">
+         <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;Fuel Map</string>
+        <string>Update</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QTableView" name="tableFuel">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderDefaultSectionSize">
-           <number>30</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_afrmap">
-       <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>&amp;AFR Map</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <widget class="QTableView" name="tableAfrMap">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_afrtarget">
-       <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>AFR Target</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QTableView" name="tableAfrTgt">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_ignmap">
-       <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Ignition Map</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QTableView" name="tableIgnMap">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_igntarget">
-       <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/sparkplug-target.png</normaloff>:/images/sparkplug-target.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Ignition Target</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QTableView" name="tableIgnTgt">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_knock">
-       <attribute name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Knock Map</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QTableView" name="tableKnk">
-          <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>50</number>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>30</number>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>131</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Versions</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="1" column="0">
+          <widget class="QLabel" name="lMotolink">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="lGui">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QLabel" name="ltGui">
+           <property name="text">
+            <string>GUI: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="ltMotolink">
+           <property name="text">
+            <string>MotoLink: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -830,7 +848,7 @@
   </action>
   <action name="actionAbout_QT">
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
+    <iconset resource="../res/images.qrc">
      <normaloff>:/images/Qt-logo.png</normaloff>:/images/Qt-logo.png</iconset>
    </property>
    <property name="text">
@@ -883,7 +901,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="../res/oxygen.qrc"/>
-  <include location="../res/resources.qrc"/>
+  <include location="../res/images.qrc"/>
  </resources>
  <connections/>
 </ui>

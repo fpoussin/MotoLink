@@ -65,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    this->tfThread->exit();
     delete tfThread;
     delete btl;
     delete ui;

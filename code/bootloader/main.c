@@ -38,8 +38,8 @@ uint8_t reset_flags = 0;
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static WORKING_AREA(waThreadBlinker, 128);
+static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
@@ -50,13 +50,14 @@ static msg_t Thread1(void *arg) {
     palSetPad(LED_PORT, LED_GREEN_PAD);
     chThdSleepMilliseconds(time);
   }
+  return 0;
 }
 
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread2, 8192);
-static msg_t Thread2(void *arg) {
+static WORKING_AREA(waThreadUsb, 8192);
+static msg_t ThreadUsb(void *arg) {
 
   uint8_t clear_buff[64];
   EventListener el1;
@@ -88,7 +89,7 @@ static msg_t Thread2(void *arg) {
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
-  while (TRUE) {
+  while (USBD1.state != USB_STOP && BDU1.state != BDU_STOP) {
 
     chEvtWaitAny(ALL_EVENTS);
     chSysLock();
@@ -97,12 +98,18 @@ static msg_t Thread2(void *arg) {
 
     if (flags & CHN_INPUT_AVAILABLE) {
 
-      uint8_t cmd_res = read_cmd((BaseChannel *)&BDU1, reset_flags);
+      read_cmd((BaseChannel *)&BDU1, reset_flags);
 
       chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
 
     }
   }
+
+  /* USB stopped because we are launching user app */
+  while (TRUE) {
+    chThdSleepMilliseconds(100);
+  };
+  return 0;
 }
 
 /*
@@ -131,22 +138,24 @@ int main(void) {
   halInit();
   chSysInit();
 
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO+1, Thread2, NULL);
+  chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
+  chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
 
   /* If USB is plugged, probe it, else boot directly */
   if (usbDetect()) {
 
-    /* Wait half a second for the bootloader GUI to connect */
-    chThdSleepMilliseconds(500);
+    /* Wait one second for the bootloader GUI to send wake up command */
+    chThdSleepMilliseconds(1000);
   }
 
-  /* If BL did not get wakeup cmd, no reset flags and user app looks good, launch it */
+  /* If BL did not get wake up command, no reset flags and user app looks good, launch it */
   if (!bl_wake && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
 
-      chSysDisable();
-
+      bduStop(&BDU1);
+      usbStop(&USBD1);
       usbDisconnectBus(&USBD1);
+
+      chSysDisable();
 
       /* Setup IWDG in case the target application does not load */
 
