@@ -8,12 +8,12 @@
 struct cbr600rr_map_t {
 
     /* All RPM values are divided by 100 to fit in 8 bits */
-    char ign[4*16];     /* Ignition table */
+    char ign1[4*16];     /* Ignition table */
     char dummy1[16];    /* Unknown - zeros */
-    char ign[7*16];     /* Ignition table */
-    char fuel[7*16];    /* Fuel table */
+    char ign2[7*16];     /* Ignition table */
+    char fuel1[7*16];    /* Fuel table */
     char dummy2[16];    /* Unknown - zeros */
-    char fuel[4*16];    /* Fuel table */
+    char fuel2[4*16];    /* Fuel table */
     char rpm_row[16];   /* RPM row values */
     char tps_row[11];   /* TPS row values */
     char dummy3;        /* Unknown */

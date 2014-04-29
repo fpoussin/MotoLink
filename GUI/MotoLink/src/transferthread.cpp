@@ -91,7 +91,7 @@ void transferThread::send(const QString &filename)
         qDebug() << "Erase OK";
     }
 
-    qInformal() << "Writing from" << "0x"+QString::number(from, 16) << "to" << "0x"+QString::number(to, 16);
+    qDebug() << "Writing from" << "0x"+QString::number(from, 16) << "to" << "0x"+QString::number(to, 16);
 
     emit sendStatus("Transfering");
     emit sendLog("Transfering");
@@ -123,7 +123,7 @@ void transferThread::send(const QString &filename)
         progress = (i*100)/file.size();
         if (progress > oldprogress) { // Push only if number has increased
             emit sendProgress(progress);
-            qInformal() << "Progress:"<< QString::number(progress)+"%";
+            qDebug() << "Progress:"<< QString::number(progress)+"%";
         }
 
     }
@@ -134,7 +134,7 @@ void transferThread::send(const QString &filename)
     emit sendProgress(100);
     emit sendStatus("Transfer done");
     emit sendLog("Transfer done");
-    qInformal() << "Transfer done";
+    qDebug() << "Transfer done";
 
     emit sendLock(false);
 }
@@ -151,7 +151,7 @@ void transferThread::verify(const QString &filename)
     const quint32 buf_size = 512;
     const quint32 from = 0;
     const quint32 to = file.size();
-    qInformal() << "Reading from" << QString::number(from, 16) << "to" << QString::number(to, 16);
+    qDebug() << "Reading from" << QString::number(from, 16) << "to" << QString::number(to, 16);
     quint32 addr, progress, oldprogress;
     QByteArray data_local, data_remote;
 
@@ -174,8 +174,8 @@ void transferThread::verify(const QString &filename)
             file.close();
             emit sendProgress(0);
             emit sendStatus("Verification Failed");
-            qInformal() << "Verification Failed";
-            qInformal() << "read" << read_size << "valid" << data_local.size();
+            qWarning() << "Verification Failed";
+            qDebug() << "read" << read_size << "valid" << data_local.size();
             emit sendLock(false);
             return;
         }
@@ -200,7 +200,7 @@ void transferThread::verify(const QString &filename)
         progress = (i*100)/file.size();
         if (progress > oldprogress) { // Push only if number has increased
             emit sendProgress(progress);
-            qInformal() << "Progress:"<< QString::number(progress)+"%";
+            qDebug() << "Progress:"<< QString::number(progress)+"%";
         }
         emit sendStatus("Verified "+QString::number(i/1024)+" kilobytes out of "+QString::number(file.size()/1024));
     }
@@ -208,6 +208,6 @@ void transferThread::verify(const QString &filename)
     file.close();
     emit sendProgress(100);
     emit sendStatus("Verification OK");
-    qInformal() << "Verification OK";
+    qDebug() << "Verification OK";
     emit sendLock(false);
 }

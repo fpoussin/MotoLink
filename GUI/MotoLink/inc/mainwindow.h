@@ -8,6 +8,9 @@
 #include <QCloseEvent>
 #include <QString>
 
+#include "hrc.h"
+#include "updatewizard.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -29,20 +32,24 @@ public slots:
     void connectToEcu(void);
     void disconnectFromEcu(void);
     void showAbout(void);
+    void showUpdateDialog(void);
+    void importHrc(void);
+    void exportHrc(void);
     
 private:
-    Ui::MainWindow *ui;
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);
     void makeDefaultModel(void);
 
+    Ui::MainWindow *mUi;
+    UpdateWizard mUpdateWizard;
     QStandardItemModel mDefaultModel;
-
     QString mCurrentFile;
     quint8 mNumCol;
     quint8 mNumRow;
     bool mHasChanged;
+    Hrc mHrc;
 };
 
 #endif // MAINWINDOW_H

@@ -25,7 +25,11 @@ SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/intelhexclass.cpp \
     src/bootloader.cpp \
-    src/transferthread.cpp
+    src/transferthread.cpp \
+    src/hrc.cpp \
+    src/updatewizard.cpp \
+    src/updatewizardpage1.cpp \
+    src/updatewizardpage2.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -33,9 +37,16 @@ HEADERS  += \
     inc/intelhexclass.h \
     inc/bootloader.h \
     inc/transferthread.h \
-    inc/datastructures.h
+    inc/datastructures.h \
+    inc/hrc.h \
+    inc/updatewizard.h \
+    inc/updatewizardpage1.h \
+    inc/updatewizardpage2.h
 
-FORMS    += ui/main.ui
+FORMS    += ui/main.ui \
+    ui/updatewizard.ui \
+    ui/updatewizardpage1.ui \
+    ui/updatewizardpage2.ui
 
 RESOURCES += \
     res/oxygen.qrc \

@@ -880,71 +880,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabUpdate">
-       <attribute name="icon">
-        <iconset resource="../res/oxygen.qrc">
-         <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Update</string>
-       </attribute>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>131</width>
-          <height>161</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>Versions</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="0">
-          <widget class="QLabel" name="lMotolink">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="lGui">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QLabel" name="ltGui">
-           <property name="text">
-            <string>GUI: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="ltMotolink">
-           <property name="text">
-            <string>MotoLink: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -982,10 +917,11 @@
    </widget>
    <widget class="QMenu" name="menuConnection">
     <property name="title">
-     <string>Connection</string>
+     <string>MotoLink</string>
     </property>
     <addaction name="actionConnect"/>
     <addaction name="actionDisconnect"/>
+    <addaction name="actionUpdate"/>
    </widget>
    <addaction name="menuTest"/>
    <addaction name="menuConnection"/>
@@ -1126,6 +1062,15 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
+   </property>
+   <property name="text">
+    <string>Update...</string>
    </property>
   </action>
  </widget>
