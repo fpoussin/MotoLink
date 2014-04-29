@@ -1,1 +1,4 @@
 	
+[submodule "GUI/QtUsb"]
+	path = GUI/QtUsb
+	url = git@github.com:mobyfab/QtUsb.git
