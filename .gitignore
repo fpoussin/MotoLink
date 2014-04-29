@@ -14,9 +14,9 @@ board/*.dri
 board/*.dxf
 board/*.gpi
 
-GUI/*/*.pro.user*
-GUI/build-*
-GUI/MotoLink/res/oxygen
+GUI/*.pro.user*
+build-*
+GUI/res/oxygen
 
 code/*/.dep
 code/*/build

@@ -17,6 +17,9 @@ public slots:
 
 private:
     QUsb *mUsb;
+    QString mGuid;
+    quint16 mPid;
+    quint16 mVid;
 };
 
 #endif // MOTOLINK_H

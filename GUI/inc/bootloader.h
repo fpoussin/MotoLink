@@ -60,6 +60,9 @@ private:
     bool mConnected;
     bool mAbortConnect;
     QThread mThread;
+    QString mGuid;
+    quint16 mPid;
+    quint16 mVid;
 
 signals:
     void connectionResult(bool result);
