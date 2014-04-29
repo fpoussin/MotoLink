@@ -104,7 +104,7 @@ void MainWindow::showAbout()
 
 void MainWindow::showUpdateDialog()
 {
-    this->mUpdateWizard.show();
+    this->mUpdateWizard.showWizard();
 }
 
 void MainWindow::importHrc()

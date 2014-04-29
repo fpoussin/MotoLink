@@ -6,8 +6,6 @@ UpdateWizard::UpdateWizard(QWidget *parent) :
     mUi(new Ui::UpdateWizard)
 {
     mUi->setupUi(this);
-    this->addPage(&this->mPage1);
-    this->addPage(&this->mPage2);
 }
 
 UpdateWizard::~UpdateWizard()

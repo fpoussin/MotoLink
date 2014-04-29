@@ -27,9 +27,7 @@ SOURCES += src/main.cpp \
     src/bootloader.cpp \
     src/transferthread.cpp \
     src/hrc.cpp \
-    src/updatewizard.cpp \
-    src/updatewizardpage1.cpp \
-    src/updatewizardpage2.cpp
+    src/updatewizard.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -39,14 +37,10 @@ HEADERS  += \
     inc/transferthread.h \
     inc/datastructures.h \
     inc/hrc.h \
-    inc/updatewizard.h \
-    inc/updatewizardpage1.h \
-    inc/updatewizardpage2.h
+    inc/updatewizard.h
 
 FORMS    += ui/main.ui \
-    ui/updatewizard.ui \
-    ui/updatewizardpage1.ui \
-    ui/updatewizardpage2.ui
+    ui/updatewizard.ui
 
 RESOURCES += \
     res/oxygen.qrc \
