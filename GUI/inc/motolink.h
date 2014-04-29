@@ -2,7 +2,7 @@
 #define MOTOLINK_H
 
 #include <QObject>
-#include <QtUsb>
+#include <QUsb>
 
 class Motolink : public QObject
 {

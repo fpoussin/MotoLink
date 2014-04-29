@@ -7,7 +7,7 @@
 #include <QtEndian>
 #include <QTimer>
 #include <QThread>
-#include <QtUsb>
+#include <QUsb>
 
 #define MAGIC (quint16)0xAFEB
 #define MAGIC1 (quint8)0xAF

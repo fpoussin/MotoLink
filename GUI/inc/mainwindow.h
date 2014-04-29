@@ -7,7 +7,7 @@
 #include <QStandardItemModel>
 #include <QCloseEvent>
 #include <QString>
-#include <QtUsb>
+#include <QUsb>
 
 #include "hrc.h"
 #include "updatewizard.h"
