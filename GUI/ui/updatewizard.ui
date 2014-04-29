@@ -178,6 +178,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="wizardPage3"/>
  </widget>
  <resources/>
  <connections/>

@@ -3,6 +3,9 @@
 
 #include <QWizard>
 
+#include "bootloader.h"
+#include "motolink.h"
+
 namespace Ui {
     class UpdateWizard;
 }
@@ -12,12 +15,17 @@ class UpdateWizard : public QWizard
     Q_OBJECT
 
 public:
-    explicit UpdateWizard(QWidget *parent = 0);
+    explicit UpdateWizard(Bootloader *btl, QWidget *parent = 0);
     ~UpdateWizard();
     void showWizard(void);
 
+public slots:
+    void startUpdate(void);
+
 private:
     Ui::UpdateWizard *mUi;
+    Bootloader *mBtl;
+    Motolink *mMtl;
 };
 
 #endif // UPDATEWIZARD_H

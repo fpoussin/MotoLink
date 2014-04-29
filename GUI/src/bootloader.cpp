@@ -1,29 +1,29 @@
 #include "bootloader.h"
 
-Bootloader::Bootloader(QObject *parent) :
+Bootloader::Bootloader(QUsb *usb, QObject *parent) :
     QObject(parent)
 {
-    this->moveToThread(&this->mThread);
-    this->mThread.start();
+    moveToThread(&mThread);
+    mThread.start();
 
-    this->mConnected = false;
-    this->mAbortConnect = false;
-    this->mUsb = new QUsb;
+    mConnected = false;
+    mAbortConnect = false;
+    mUsb = usb;
 
-    this->mUsb->setGuid("f0207e85-88d7-4839-bba8-bf87a5092f03");
-    this->mUsb->setDeviceIds(0x0483, 0xFEDC);
+    mUsb->setGuid("f0207e85-88d7-4839-bba8-bf87a5092f03");
+    mUsb->setDeviceIds(0x0483, 0xFEDC);
 }
 
 Bootloader::~Bootloader()
 {
     this->abortConnect();
-    this->mThread.exit();
-    if(!this->mThread.wait(1000))
+    mThread.exit();
+    if(!mThread.wait(1000))
     {
-      this->mThread.terminate();
-      this->mThread.wait();
+      mThread.terminate();
+      mThread.wait();
     }
-    delete this->mUsb;
+    delete mUsb;
 }
 
 bool Bootloader::connect()
@@ -31,14 +31,14 @@ bool Bootloader::connect()
     QByteArray tmp;
     QElapsedTimer timer;
     qint32 ret = -1;
-    this->mAbortConnect = false;
+    mAbortConnect = false;
 
     timer.start();
     while (timer.elapsed() < 10000) {
 
         emit timeElapsed(timer.elapsed());
-        ret = this->mUsb->open();
-        if (ret >= 0 || this->mAbortConnect) {
+        ret = mUsb->open();
+        if (ret >= 0 || mAbortConnect) {
             break;
         }
         _usleep(50000);
@@ -46,13 +46,13 @@ bool Bootloader::connect()
 
     if (ret < 0) {
         emit connectionResult(false);
-        this->mConnected = false;
+        mConnected = false;
         return false;
     }
 
     /* Clean buffer */
-    this->mUsb->read(&tmp, 256);
-    this->mConnected = true;
+    mUsb->read(&tmp, 256);
+    mConnected = true;
 
     this->sendWake();
     this->getFlags();
@@ -64,8 +64,8 @@ bool Bootloader::connect()
 
 bool Bootloader::disconnect()
 {
-    this->mUsb->close();
-    this->mConnected = false;
+    mUsb->close();
+    mConnected = false;
 
     return true;
 }
@@ -80,8 +80,8 @@ quint8 Bootloader::getFlags()
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
-    this->mUsb->read(&recv, 2);
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 2);
 
     if (recv.size() > 1 && recv.at(0) == MASK_REPLY_OK)
         return recv.at(1);
@@ -99,8 +99,8 @@ quint16 Bootloader::getVersion()
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
-    this->mUsb->read(&recv, 3);
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 3);
 
     if (recv.size() > 2 && recv.at(0) == MASK_REPLY_OK)
         return recv.at(1) + (recv.at(2)*256);
@@ -125,10 +125,10 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    qint32 wr = this->mUsb->write(&send, send.size());
+    qint32 wr = mUsb->write(&send, send.size());
 
     _usleep(30000);
-    this->mUsb->read(&recv, 1);
+    mUsb->read(&recv, 1);
 
     if (recv.size() < 1)
         return -1;
@@ -155,9 +155,9 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
+    mUsb->write(&send, send.size());
 
-    return this->mUsb->read(data, len);
+    return mUsb->read(data, len);
 }
 
 bool Bootloader::eraseFlash(quint32 len)
@@ -174,11 +174,11 @@ bool Bootloader::eraseFlash(quint32 len)
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
+    mUsb->write(&send, send.size());
 
     _usleep(1000000);
 
-    this->mUsb->read(&recv, 2);
+    mUsb->read(&recv, 2);
 
     if (recv.size() >= 2)
         return ((recv.at(0) == MASK_REPLY_OK) && (recv.at(1) == ERASE_OK));
@@ -196,15 +196,15 @@ bool Bootloader::reset()
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
-    this->mUsb->read(&recv, 1);
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 1);
 
     return true;
 }
 
 bool Bootloader::isConnected()
 {
-    return this->mConnected;
+    return mConnected;
 }
 
 bool Bootloader::sendWake()
@@ -217,15 +217,15 @@ bool Bootloader::sendWake()
     send.insert(3, send.size()+2);
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
-    this->mUsb->write(&send, send.size());
-    this->mUsb->read(&recv, 1);
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 1);
 
     return recv.at(0) == MASK_REPLY_OK;
 }
 
 void Bootloader::abortConnect()
 {
-    this->mAbortConnect = true;
+    mAbortConnect = true;
 }
 
 quint8 Bootloader::checkSum(const quint8 *data, quint8 length)

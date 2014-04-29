@@ -5,16 +5,18 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    mUi(new Ui::MainWindow), mUpdateWizard(this)
+    mUi(new Ui::MainWindow),
+    mUsb(),
+    mMtl(&mUsb, this),
+    mBtl(&mUsb, this),
+    mUpdateWizard(&mBtl, this)
 {
     mUi->setupUi(this);
-    this->makeDefaultModel();
+    makeDefaultModel();
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
-    this->mHasChanged = false;
-
-    //this->mUpdateWizard = new Ui::UpdateWizard(this);
+    mHasChanged = false;
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +26,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::Quit()
 {
-    if (this->mHasChanged) {
+    if (mHasChanged) {
 
         int ret = QMessageBox::question(this, tr("Confirm"),
                     tr("Unsaved changes!\nSave file before closing?"),
@@ -76,21 +78,20 @@ void MainWindow::saveFileAs(void)
     {
         return;
     }
-    this->mCurrentFile = fileName;
+    mCurrentFile = fileName;
 }
 
 void MainWindow::connectToEcu()
 {
 
-
-    this->mUi->tabMain->setEnabled(true);
+    mUi->tabMain->setEnabled(true);
 }
 
 void MainWindow::disconnectFromEcu()
 {
 
 
-    this->mUi->tabMain->setEnabled(false);
+    mUi->tabMain->setEnabled(false);
 }
 
 void MainWindow::showAbout()
@@ -104,32 +105,32 @@ void MainWindow::showAbout()
 
 void MainWindow::showUpdateDialog()
 {
-    this->mUpdateWizard.showWizard();
+    mUpdateWizard.showWizard();
 }
 
 void MainWindow::importHrc()
 {
     QString fileName(QFileDialog::getOpenFileName(this,
                        tr("Import HRC File"), "", tr("HRC File (*.E2P)")));
-    this->mHrc.openFile(fileName);
+    mHrc.openFile(fileName);
 }
 
 void MainWindow::exportHrc()
 {
     QString fileName(QFileDialog::getSaveFileName(this,
                        tr("Export HRC File"), "", tr("HRC File (*.E2P)")));
-    this->mHrc.saveFile(fileName);
+    mHrc.saveFile(fileName);
 }
 
 void MainWindow::setupDefaults(void)
 {
-    this->mUi->statusBar->showMessage("Disconnected");
-    this->mUi->tableFuel->setModel(&this->mDefaultModel);
-    this->mUi->tableIgnMap->setModel(&this->mDefaultModel);
-    this->mUi->tableAfrMap->setModel(&this->mDefaultModel);
-    this->mUi->tableIgnTgt->setModel(&this->mDefaultModel);
-    this->mUi->tableAfrTgt->setModel(&this->mDefaultModel);
-    this->mUi->tableKnk->setModel(&this->mDefaultModel);
+    mUi->statusBar->showMessage("Disconnected");
+    mUi->tableFuel->setModel(&mDefaultModel);
+    mUi->tableIgnMap->setModel(&mDefaultModel);
+    mUi->tableAfrMap->setModel(&mDefaultModel);
+    mUi->tableIgnTgt->setModel(&mDefaultModel);
+    mUi->tableAfrTgt->setModel(&mDefaultModel);
+    mUi->tableKnk->setModel(&mDefaultModel);
 }
 
 void MainWindow::setupConnections(void)
@@ -145,6 +146,24 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionUpdate, SIGNAL(triggered()), this, SLOT(showUpdateDialog()));
     QObject::connect(mUi->actionImport, SIGNAL(triggered()), this, SLOT(importHrc()));
     QObject::connect(mUi->actionExport, SIGNAL(triggered()), this, SLOT(exportHrc()));
+
+
+    /*
+     * Signals from old bootloader GUI, just for reference, will remove later
+    // Thread
+    QObject::connect(this->tfThread, SIGNAL(sendProgress(quint32)), this, SLOT(updateProgress(quint32)));
+    QObject::connect(this->tfThread, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
+    QObject::connect(this->tfThread, SIGNAL(sendLock(bool)), this, SLOT(lockUI(bool)));
+    QObject::connect(this->ui->b_stop, SIGNAL(clicked()), this->tfThread, SLOT(halt()));
+    QObject::connect(this->tfThread, SIGNAL(sendLog(QString)), this, SLOT(log(QString)));
+
+    QObject::connect(this, SIGNAL(doConnect()), this->btl, SLOT(connect()));
+    QObject::connect(this->btl, SIGNAL(connectionResult(bool)), this, SLOT(connectSlot(bool)));
+    QObject::connect(&this->connectDialog, SIGNAL(canceled()), this, SLOT(connectAbortSlot()));
+    QObject::connect(this->btl, SIGNAL(timeElapsed(int)), &this->connectDialog, SLOT(setValue(int)));
+    */
+
+
 }
 
 void MainWindow::setupTabShortcuts()
@@ -152,7 +171,7 @@ void MainWindow::setupTabShortcuts()
     QSignalMapper *signalMapper = new QSignalMapper(this);
 
     /* Assign tab shortcuts starting from F5 up to F12 */
-    for(int index=0; index < this->mUi->tabMain->count(); ++index)
+    for(int index=0; index < mUi->tabMain->count(); ++index)
     {
        if (index > 7) break;
        QShortcut *shortcut = new QShortcut(
@@ -163,24 +182,24 @@ void MainWindow::setupTabShortcuts()
        signalMapper->setMapping(shortcut, index);
     }
     QObject::connect(signalMapper, SIGNAL(mapped(int)),
-              this->mUi->tabMain, SLOT(setCurrentIndex(int)));
+              mUi->tabMain, SLOT(setCurrentIndex(int)));
 }
 
 void MainWindow::makeDefaultModel()
 {
-    this->mNumRow = 11;
-    this->mNumCol = 16;
+    mNumRow = 11;
+    mNumCol = 16;
 
-    for (int row = 0; row < this->mNumRow; ++row)
+    for (int row = 0; row < mNumRow; ++row)
     {
-        for (int column = 0; column < this->mNumCol; ++column)
+        for (int column = 0; column < mNumCol; ++column)
         {
             QStandardItem *item = new QStandardItem(0);
-            this->mDefaultModel.setItem(row, column, item);
-            this->mDefaultModel.setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
-            this->mDefaultModel.setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
-            this->mUi->tableFuel->setColumnWidth(column, 15);
-            this->mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
+            mDefaultModel.setItem(row, column, item);
+            mDefaultModel.setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
+            mDefaultModel.setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
+            mUi->tableFuel->setColumnWidth(column, 15);
+            mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
         }
     }
 }

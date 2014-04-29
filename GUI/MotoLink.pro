@@ -27,7 +27,8 @@ SOURCES += src/main.cpp \
     src/bootloader.cpp \
     src/transferthread.cpp \
     src/hrc.cpp \
-    src/updatewizard.cpp
+    src/updatewizard.cpp \
+    src/motolink.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -37,7 +38,8 @@ HEADERS  += \
     inc/transferthread.h \
     inc/datastructures.h \
     inc/hrc.h \
-    inc/updatewizard.h
+    inc/updatewizard.h \
+    inc/motolink.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui

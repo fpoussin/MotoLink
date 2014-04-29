@@ -7,9 +7,12 @@
 #include <QStandardItemModel>
 #include <QCloseEvent>
 #include <QString>
+#include <QtUsb>
 
 #include "hrc.h"
 #include "updatewizard.h"
+#include "motolink.h"
+#include "bootloader.h"
 
 namespace Ui {
     class MainWindow;
@@ -43,13 +46,16 @@ private:
     void makeDefaultModel(void);
 
     Ui::MainWindow *mUi;
-    UpdateWizard mUpdateWizard;
     QStandardItemModel mDefaultModel;
     QString mCurrentFile;
     quint8 mNumCol;
     quint8 mNumRow;
     bool mHasChanged;
     Hrc mHrc;
+    QUsb mUsb;
+    Motolink mMtl;
+    Bootloader mBtl;
+    UpdateWizard mUpdateWizard;
 };
 
 #endif // MAINWINDOW_H

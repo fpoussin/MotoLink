@@ -36,7 +36,7 @@ class Bootloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bootloader(QObject *parent = 0);
+    explicit Bootloader(QUsb *usb, QObject *parent = 0);
     ~Bootloader();
     
 public slots:

@@ -20,7 +20,7 @@ transferThread::transferThread(QObject *parent) :
     QThread(parent)
 {
     qDebug() << "New Transfer Thread";
-    this->mStop = false;
+    mStop = false;
 }
 
 transferThread::~transferThread()
@@ -34,28 +34,28 @@ transferThread::~transferThread()
 
 void transferThread::run()
 {
-    if (this->mWrite) {
-            this->send(this->mFilename);
-        if (this->mVerify)
-            this->verify(this->mFilename);
+    if (mWrite) {
+            this->send(mFilename);
+        if (mVerify)
+            this->verify(mFilename);
     }
     else {
-        this->verify(this->mFilename);
+        this->verify(mFilename);
     }
 }
 void transferThread::halt()
 {
-    this->mStop = true;
+    mStop = true;
     emit sendStatus("Aborted");
     emit sendLog("Transfer Aborted");
 }
 
 void transferThread::setParams(Bootloader *btl, QString filename, bool write, bool verify)
 {
-    this->mBtl = btl;
-    this->mFilename = filename;
-    this->mWrite = write;
-    this->mVerify = verify;
+    mBtl = btl;
+    mFilename = filename;
+    mWrite = write;
+    mVerify = verify;
 }
 
 void transferThread::send(const QString &filename)
@@ -66,7 +66,7 @@ void transferThread::send(const QString &filename)
         return;
     }
     emit sendLock(true);
-    this->mStop = false;
+    mStop = false;
     quint32 step_size = 116;
     const quint32 from = 0;
     const quint32 to = file.size();
@@ -77,7 +77,7 @@ void transferThread::send(const QString &filename)
 
     qDebug() << "File size" << file.size();
 
-    if (!this->mBtl->eraseFlash(file.size())) {
+    if (!mBtl->eraseFlash(file.size())) {
 
         emit sendStatus("Erase failed");
         emit sendLog("Erase failed");
@@ -99,7 +99,7 @@ void transferThread::send(const QString &filename)
     progress = 0;
     for (int i=0; i<=file.size(); i+=step_size) {
 
-        if (this->mStop)
+        if (mStop)
             break;
 
         if (file.atEnd()) {
@@ -113,7 +113,7 @@ void transferThread::send(const QString &filename)
         qDebug() << "Read" << read << "Bytes from disk";
         QByteArray buf(buf2, read);
 
-        if (this->mBtl->writeFlash(i, &buf, step_size) < read){
+        if (mBtl->writeFlash(i, &buf, step_size) < read){
             emit sendStatus("Transfer failed");
             emit sendLog("Transfer failed");
             break;
@@ -147,7 +147,7 @@ void transferThread::verify(const QString &filename)
         return;
     }
     emit sendLock(true);
-    this->mStop = false;
+    mStop = false;
     const quint32 buf_size = 512;
     const quint32 from = 0;
     const quint32 to = file.size();
@@ -158,7 +158,7 @@ void transferThread::verify(const QString &filename)
     progress = 0;
     for (quint32 i=0; i<file.size(); i+=buf_size)
     {
-        if (this->mStop)
+        if (mStop)
             break;
 
         _usleep(50000);
@@ -168,7 +168,7 @@ void transferThread::verify(const QString &filename)
         addr = i;
 
         if (!data_local.size()) break;
-        int read_size = this->mBtl->readMem(addr, &data_remote, data_local.size());
+        int read_size = mBtl->readMem(addr, &data_remote, data_local.size());
         if (read_size < data_local.size()) {// Read same amount of data as from file.
 
             file.close();

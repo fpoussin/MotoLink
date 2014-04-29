@@ -1,11 +1,12 @@
 #include "updatewizard.h"
 #include "ui_updatewizard.h"
 
-UpdateWizard::UpdateWizard(QWidget *parent) :
+UpdateWizard::UpdateWizard(Bootloader *btl, QWidget *parent) :
     QWizard(parent),
     mUi(new Ui::UpdateWizard)
 {
     mUi->setupUi(this);
+    mBtl = btl;
 }
 
 UpdateWizard::~UpdateWizard()
@@ -16,4 +17,9 @@ UpdateWizard::~UpdateWizard()
 void UpdateWizard::showWizard()
 {
     this->show();
+}
+
+void UpdateWizard::startUpdate()
+{
+    mUi->pbProgress->setValue(50);
 }
