@@ -23,7 +23,6 @@ Bootloader::~Bootloader()
       mThread.terminate();
       mThread.wait();
     }
-    delete mUsb;
 }
 
 bool Bootloader::connect()

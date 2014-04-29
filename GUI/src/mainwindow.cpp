@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
     mUsb(),
-    mMtl(&mUsb, this),
-    mBtl(&mUsb, this),
+    mMtl(&mUsb),
+    mBtl(&mUsb),
     mUpdateWizard(&mBtl, this)
 {
     mUi->setupUi(this);
