@@ -5,9 +5,12 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardItemModel>
+#include <QItemDelegate>
 #include <QCloseEvent>
 #include <QString>
 #include <QUsb>
+#include <QUndoStack>
+#include <QUndoCommand>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -56,6 +59,8 @@ private:
     Motolink mMtl;
     Bootloader mBtl;
     UpdateWizard mUpdateWizard;
+    QUndoStack mUndoStack; /* TODO */
+    QUndoCommand mUndoCommand; /* TODO */
 };
 
 #endif // MAINWINDOW_H
