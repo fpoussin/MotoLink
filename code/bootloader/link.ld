@@ -18,22 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * ST32F303xC memory setup.
- */
-__main_stack_size__     = 0x0400;
-__process_stack_size__  = 0x0400;
-
-MEMORY
-{
-    flash : org = 0x08000000, len = 16k
-    ram : org = 0x20000000, len = 40k
-    ccmram : org = 0x10000000, len = 8k
-}
-
-__ram_start__           = ORIGIN(ram);
-__ram_size__            = LENGTH(ram);
-__ram_end__             = __ram_start__ + __ram_size__;
+INCLUDE ../common/STM32F303xC_common.ld
 
 ENTRY(ResetHandler)
 
@@ -45,7 +30,7 @@ SECTIONS
     startup : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(vectors))
-    } > flash
+    } > boot
 
     constructors : ALIGN(4) SUBALIGN(4)
     {
@@ -53,7 +38,7 @@ SECTIONS
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         PROVIDE(__init_array_end = .);
-    } > flash
+    } > boot
 
     destructors : ALIGN(4) SUBALIGN(4)
     {
@@ -61,7 +46,7 @@ SECTIONS
         KEEP(*(.fini_array))
         KEEP(*(SORT(.fini_array.*)))
         PROVIDE(__fini_array_end = .);
-    } > flash
+    } > boot
 
     .text : ALIGN(16) SUBALIGN(16)
     {
@@ -73,33 +58,33 @@ SECTIONS
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
-    } > flash
+    } > boot
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > flash
+    } > boot
 
     .ARM.exidx : {
         PROVIDE(__exidx_start = .);
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         PROVIDE(__exidx_end = .);
-     } > flash
+     } > boot
 
     .eh_frame_hdr :
     {
         *(.eh_frame_hdr)
-    } > flash
+    } > boot
 
     .eh_frame : ONLY_IF_RO
     {
         *(.eh_frame)
-    } > flash
+    } > boot
     
     .textalign : ONLY_IF_RO
     {
         . = ALIGN(8);
-    } > flash
+    } > boot
 
     . = ALIGN(4);
     _etext = .;
@@ -118,7 +103,7 @@ SECTIONS
         . = ALIGN(8);
         __process_stack_end__ = .;
         __main_thread_stack_end__ = .;
-    } > ram
+    } > ccmram
 
     .data :
     {
@@ -131,7 +116,7 @@ SECTIONS
         *(.ramtext)
         . = ALIGN(4);
         PROVIDE(_edata = .);
-    } > ram AT > flash
+    } > ram AT > boot
 
     .bss :
     {

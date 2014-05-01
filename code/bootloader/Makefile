@@ -72,7 +72,7 @@ include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 
 # Define linker script file here
-LDSCRIPT= STM32F303xC_SMALL.ld
+LDSCRIPT= link.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
