@@ -2,6 +2,28 @@
 
 typedef void (*FuncPtr)(void);
 
+void startUserApp(void) {
+
+  bduStop(&BDU1);
+  usbStop(&USBD1);
+  usbDisconnectBus(&USBD1);
+
+  chSysDisable();
+
+  /* Setup IWDG in case the target application does not load */
+
+  const uint32_t LsiFreq = 42000;
+  IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+
+  IWDG_SetPrescaler(IWDG_Prescaler_32);
+
+  IWDG_SetReload(LsiFreq/128);
+
+  IWDG_Enable();
+
+  jumpToUser(USER_APP_ADDR);
+}
+
 void jumpToUser(uint32_t address) {
 
   typedef void (*pFunction)(void);

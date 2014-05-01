@@ -1,6 +1,8 @@
 #include "ch.h"
 #include "hal.h"
 #include "stm32f30x_flash.h"
+#include "stm32f30x_iwdg.h"
+#include "usb_config.h"
 
 
 #define USER_APP_ADDR (uint32_t)0x08004000
@@ -13,6 +15,7 @@
 #define mmio16(x)   (*(volatile uint16_t *)(x))
 #define mmio8(x)   (*(volatile uint8_t *)(x))
 
+void startUserApp(void);
 void jumpToUser(uint32_t address);
 uint8_t checkUserCode(uint32_t address);
 

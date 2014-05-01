@@ -11,7 +11,7 @@ bool Hrc::openFile(const QString &filename)
 
     if(!mIntelHexInput.good())
     {
-        qWarning() << "Error: couldn't open " << filename;
+        qWarning() << tr("Error: couldn't open ") << filename;
         return false;
     }
 
@@ -26,7 +26,7 @@ bool Hrc::saveFile(const QString &filename)
 
     if(!mIntelHexOutput.good())
     {
-        qWarning() << "Error: couldn't open " << filename;
+        qWarning() << tr("Error: couldn't open ") << filename;
         return false;
     }
 
@@ -46,12 +46,12 @@ bool Hrc::checkHexType(void)
 
         if (strcmp(CBR600RR07_SIGN, tmp.signature) == 0)
         {
-            qDebug("CBR600RR7 Map detected");
+            qDebug() << tr("CBR600RR7 Map detected");
             mCbr600rr_map = tmp; /* Implicit copy */
             return true;
         }
     }
 
-    qWarning("Unknown Map Type");
+    qWarning() << tr("Unknown Map Type");
     return false;
 }

@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MotoLink</string>
+   <string notr="true">MotoLink</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="minimumSize">
@@ -1015,7 +1015,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>RPM</string>
+                 <string notr="true">RPM</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -1025,14 +1025,14 @@
               <item>
                <widget class="QLabel" name="lRpmPct">
                 <property name="text">
-                 <string>0 RPM</string>
+                 <string notr="true">0 RPM</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lRpmHertz">
                 <property name="text">
-                 <string>0 Hertz</string>
+                 <string notr="true">0 Hertz</string>
                 </property>
                </widget>
               </item>
@@ -1067,14 +1067,14 @@
               <item>
                <widget class="QLabel" name="lSpeedKph">
                 <property name="text">
-                 <string>0 KPH</string>
+                 <string notr="true">0 KPH</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lSpeedHertz">
                 <property name="text">
-                 <string>0 Hertz</string>
+                 <string notr="true">0 Hertz</string>
                 </property>
                </widget>
               </item>
@@ -1126,7 +1126,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>AFR</string>
+                 <string notr="true">AFR</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -1136,14 +1136,14 @@
               <item>
                <widget class="QLabel" name="lAfrPct">
                 <property name="text">
-                 <string>0 AFR</string>
+                 <string notr="true">0 AFR</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lAfrVolts">
                 <property name="text">
-                 <string>0.0 Volts</string>
+                 <string notr="true">0.0 Volts</string>
                 </property>
                </widget>
               </item>
@@ -1168,7 +1168,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>TPS</string>
+                 <string notr="true">TPS</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -1178,14 +1178,14 @@
               <item>
                <widget class="QLabel" name="lTpsPct">
                 <property name="text">
-                 <string>0.0%</string>
+                 <string notr="true">0.0%</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lTpsVolts">
                 <property name="text">
-                 <string>0.0 Volts</string>
+                 <string notr="true">0.0 Volts</string>
                 </property>
                </widget>
               </item>
@@ -1266,10 +1266,18 @@
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
    </widget>
+   <widget class="QMenu" name="menuLanguage">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="actionEnglish"/>
+    <addaction name="actionFran_ais"/>
+   </widget>
    <addaction name="menuTest"/>
    <addaction name="menuEdit"/>
    <addaction name="menuConnection"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuLanguage"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -1469,6 +1477,16 @@
    </property>
    <property name="text">
     <string>Get Configuration</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string notr="true">English</string>
+   </property>
+  </action>
+  <action name="actionFran_ais">
+   <property name="text">
+    <string notr="true">Français</string>
    </property>
   </action>
  </widget>

@@ -47,4 +47,9 @@ FORMS    += ui/main.ui \
 RESOURCES += \
     res/oxygen.qrc \
     res/binaries.qrc \
-    res/images.qrc
+    res/images.qrc \
+    res/translations.qrc
+
+TRANSLATIONS = res/motolink_fr.ts
+CODECFORTR = UTF-8
+

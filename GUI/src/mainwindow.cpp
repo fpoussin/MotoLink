@@ -96,11 +96,11 @@ void MainWindow::disconnectFromEcu()
 
 void MainWindow::showAbout()
 {
-    QMessageBox::information(this, "About Motolink",
-       "<strong>Version: " __MTL_VER__ "</strong><br/><br/>"
+    QMessageBox::information(this,tr("About Motolink"),
+       tr("<strong>Version: " __MTL_VER__ "</strong><br/><br/>"
        "Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
        "You can find more information "
-       "<a href=\"https://github.com/mobyfab/MotoLink\">here.</a>");
+       "<a href=\"https://github.com/mobyfab/MotoLink\">here.</a>"));
 }
 
 void MainWindow::showUpdateDialog()
@@ -124,7 +124,7 @@ void MainWindow::exportHrc()
 
 void MainWindow::setupDefaults(void)
 {
-    mUi->statusBar->showMessage("Disconnected");
+    mUi->statusBar->showMessage(tr("Disconnected"));
     mUi->tableFuel->setModel(&mDefaultModel);
     mUi->tableIgnMap->setModel(&mDefaultModel);
     mUi->tableAfrMap->setModel(&mDefaultModel);
@@ -146,6 +146,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionUpdate, SIGNAL(triggered()), this, SLOT(showUpdateDialog()));
     QObject::connect(mUi->actionImport, SIGNAL(triggered()), this, SLOT(importHrc()));
     QObject::connect(mUi->actionExport, SIGNAL(triggered()), this, SLOT(exportHrc()));
+    QObject::connect(mUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
+    QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
 
 
     /*
@@ -202,4 +204,26 @@ void MainWindow::makeDefaultModel()
             mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
         }
     }
+}
+
+void MainWindow::retranslate()
+{
+    mUi->retranslateUi(this);
+    mUpdateWizard.retranslate();
+}
+
+void MainWindow::setLanguageEnglish()
+{
+    qApp->removeTranslator(&mTranslator);
+    this->retranslate();
+}
+
+void MainWindow::setLanguageFrench()
+{
+    if (!mTranslator.load(":/tr/motolink_fr")) {
+        qWarning() << "Failed to load translation";
+    }
+
+    qApp->installTranslator(&mTranslator);
+    this->retranslate();
 }

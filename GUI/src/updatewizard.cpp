@@ -23,3 +23,8 @@ void UpdateWizard::startUpdate()
 {
     mUi->pbProgress->setValue(50);
 }
+
+void UpdateWizard::retranslate()
+{
+    mUi->retranslateUi(this);
+}

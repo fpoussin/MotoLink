@@ -6596,6 +6596,10 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
 <part name="R14" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="0R"/>
 <part name="F1" library="misc" deviceset="PTC" device="1812K" value="24V 0.75A"/>
+<part name="Q1" library="misc" deviceset="ULN2003A" device="S" value="ULN2003AS"/>
+<part name="GND21" library="supply1" deviceset="GND" device=""/>
+<part name="CON_UART" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
+<part name="GND22" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6735,6 +6739,10 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="GND18" gate="1" x="215.9" y="132.08"/>
 <instance part="R14" gate="G$1" x="80.01" y="36.83" rot="R180"/>
 <instance part="F1" gate="G$1" x="39.37" y="36.83" rot="R90"/>
+<instance part="Q1" gate="A" x="304.8" y="180.34"/>
+<instance part="GND21" gate="1" x="292.1" y="167.64"/>
+<instance part="CON_UART" gate="G$1" x="285.75" y="156.21"/>
+<instance part="GND22" gate="1" x="293.37" y="151.13"/>
 </instances>
 <busses>
 </busses>
@@ -6921,6 +6929,14 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="TVS2" gate="G$1" pin="VN@2"/>
 <wire x1="226.06" y1="134.62" x2="215.9" y2="134.62" width="0.1524" layer="91"/>
 <pinref part="GND18" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="Q1" gate="A" pin="GND"/>
+<pinref part="GND21" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="CON_UART" gate="G$1" pin="1"/>
+<pinref part="GND22" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -7172,6 +7188,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <label x="142.24" y="107.95" size="1.778" layer="95" rot="R180"/>
 <pinref part="STM32" gate="PORTA_H" pin="PA10"/>
 </segment>
+<segment>
+<pinref part="Q1" gate="A" pin="O1"/>
+<wire x1="317.5" y1="187.96" x2="332.74" y2="187.96" width="0.1524" layer="91"/>
+<label x="318.77" y="187.96" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="UART_TXD" class="0">
 <segment>
@@ -7183,6 +7204,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="142.24" y1="110.49" x2="128.27" y2="110.49" width="0.1524" layer="91"/>
 <label x="142.24" y="110.49" size="1.778" layer="95" rot="R180"/>
 <pinref part="STM32" gate="PORTA_H" pin="PA9"/>
+</segment>
+<segment>
+<pinref part="Q1" gate="A" pin="I7"/>
+<wire x1="292.1" y1="172.72" x2="278.13" y2="172.72" width="0.1524" layer="91"/>
+<label x="292.1" y="172.72" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="BUT1" class="0">
@@ -7712,6 +7738,30 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="Y1" gate="G$1" pin="1"/>
 <wire x1="85.09" y1="36.83" x2="90.17" y2="36.83" width="0.1524" layer="91"/>
 <junction x="85.09" y="36.83"/>
+</segment>
+</net>
+<net name="UART_RXD_OUT" class="0">
+<segment>
+<pinref part="Q1" gate="A" pin="I1"/>
+<wire x1="292.1" y1="187.96" x2="278.13" y2="187.96" width="0.1524" layer="91"/>
+<label x="292.1" y="187.96" size="1.778" layer="95" rot="R180"/>
+</segment>
+<segment>
+<pinref part="CON_UART" gate="G$1" pin="2"/>
+<wire x1="293.37" y1="156.21" x2="306.07" y2="156.21" width="0.1524" layer="91"/>
+<label x="293.37" y="156.21" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="UART_TXD_OUT" class="0">
+<segment>
+<pinref part="Q1" gate="A" pin="O7"/>
+<wire x1="317.5" y1="172.72" x2="331.47" y2="172.72" width="0.1524" layer="91"/>
+<label x="318.77" y="172.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="CON_UART" gate="G$1" pin="3"/>
+<wire x1="293.37" y1="158.75" x2="306.07" y2="158.75" width="0.1524" layer="91"/>
+<label x="293.37" y="158.75" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>

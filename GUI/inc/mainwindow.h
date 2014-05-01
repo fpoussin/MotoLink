@@ -11,6 +11,7 @@
 #include <QUsb>
 #include <QUndoStack>
 #include <QUndoCommand>
+#include <QTranslator>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -41,14 +42,21 @@ public slots:
     void showUpdateDialog(void);
     void importHrc(void);
     void exportHrc(void);
-    
+
+
+private slots:
+    void setLanguageEnglish(void);
+    void setLanguageFrench(void);
+
 private:
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);
     void makeDefaultModel(void);
+    void retranslate(void);
 
     Ui::MainWindow *mUi;
+    QTranslator mTranslator;
     QStandardItemModel mDefaultModel;
     QString mCurrentFile;
     quint8 mNumCol;

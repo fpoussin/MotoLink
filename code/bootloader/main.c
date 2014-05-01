@@ -23,7 +23,7 @@
 #include "common.h"
 #include "usb_config.h"
 #include "stm32f30x_iwdg.h"
-#include "comm.h"
+#include "communication.h"
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -151,24 +151,7 @@ int main(void) {
   /* If BL did not get wake up command, no reset flags and user app looks good, launch it */
   if (!bl_wake && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
 
-      bduStop(&BDU1);
-      usbStop(&USBD1);
-      usbDisconnectBus(&USBD1);
-
-      chSysDisable();
-
-      /* Setup IWDG in case the target application does not load */
-
-      const uint32_t LsiFreq = 42000;
-      IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-
-      IWDG_SetPrescaler(IWDG_Prescaler_32);
-
-      IWDG_SetReload(LsiFreq/128);
-
-      IWDG_Enable();
-
-      jumpToUser(USER_APP_ADDR);
+    startUserApp();
   }
 
   while (TRUE) {

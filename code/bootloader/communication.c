@@ -1,4 +1,4 @@
-#include "comm.h"
+#include "communication.h"
 #include "common.h"
 
 uint8_t bl_wake = 0;
@@ -73,6 +73,10 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
 
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
+      break;
+
+    case MASK_CMD | CMD_BOOT:
+      status = bootHandler(chn);
       break;
 
     default:
@@ -163,5 +167,12 @@ uint8_t wakeHandler(BaseChannel * chn) {
 
   bl_wake = 1;
   chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  return 0;
+}
+
+uint8_t bootHandler(BaseChannel * chn) {
+
+  (void)chn;
+  startUserApp();
   return 0;
 }

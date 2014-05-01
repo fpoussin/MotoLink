@@ -21,6 +21,7 @@ public:
 
 public slots:
     void startUpdate(void);
+    void retranslate(void);
 
 private:
     Ui::UpdateWizard *mUi;
