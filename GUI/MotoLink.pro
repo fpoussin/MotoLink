@@ -4,12 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui help
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MotoLink
 TEMPLATE = app
+win32:CONFIG += console
 
 VERSION = 0.1
 message(Version $$VERSION)

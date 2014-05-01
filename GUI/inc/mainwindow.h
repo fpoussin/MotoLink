@@ -12,6 +12,7 @@
 #include <QUndoStack>
 #include <QUndoCommand>
 #include <QTranslator>
+#include <QSettings>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -52,11 +53,13 @@ private:
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);
+    void setupSettings(void);
     void makeDefaultModel(void);
     void retranslate(void);
 
     Ui::MainWindow *mUi;
     QTranslator mTranslator;
+    QSettings mSettings;
     QStandardItemModel mDefaultModel;
     QString mCurrentFile;
     quint8 mNumCol;

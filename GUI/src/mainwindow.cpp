@@ -6,6 +6,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
+    mSettings("Motolink", "Motolink"),
     mUsb(),
     mMtl(&mUsb),
     mBtl(&mUsb),
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
+    this->setupSettings();
     mHasChanged = false;
 }
 
@@ -184,7 +186,22 @@ void MainWindow::setupTabShortcuts()
        signalMapper->setMapping(shortcut, index);
     }
     QObject::connect(signalMapper, SIGNAL(mapped(int)),
-              mUi->tabMain, SLOT(setCurrentIndex(int)));
+                     mUi->tabMain, SLOT(setCurrentIndex(int)));
+}
+
+void MainWindow::setupSettings()
+{
+    const QString lang = mSettings.value("main/language", "English").toString();
+
+    qWarning() << lang;
+
+    if (lang == "French") {
+        this->setLanguageFrench();
+    }
+    else {
+        this->setLanguageEnglish();
+    }
+
 }
 
 void MainWindow::makeDefaultModel()
@@ -216,14 +233,18 @@ void MainWindow::setLanguageEnglish()
 {
     qApp->removeTranslator(&mTranslator);
     this->retranslate();
+    mSettings.setValue("main/language", "English");
+
 }
 
 void MainWindow::setLanguageFrench()
 {
     if (!mTranslator.load(":/tr/motolink_fr")) {
         qWarning() << "Failed to load translation";
+        return;
     }
 
     qApp->installTranslator(&mTranslator);
     this->retranslate();
+    mSettings.setValue("main/language", "French");
 }
