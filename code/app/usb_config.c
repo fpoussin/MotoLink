@@ -378,31 +378,32 @@ static bool_t sduSpecialRequestsHook(USBDriver *usbp) {
 
   if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
     switch (usbp->setup[1]) {
-    case CDC_GET_LINE_CODING:
-    case CDC_SET_LINE_CODING:
+      case CDC_GET_LINE_CODING:
 
-      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
-      return TRUE;
-    case CDC_SET_CONTROL_LINE_STATE:
-      if (usbp->setup[2] & 1) /* DTR */
-      {
+      case CDC_SET_LINE_CODING:
+        usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+        return TRUE;
 
-      }
-      else
-      {
+      case CDC_SET_CONTROL_LINE_STATE:
+        if (usbp->setup[2] & 1) /* DTR */
+        {
 
-      }
-      if (usbp->setup[2] & 2) /* RTS */
-      {
+        }
+        else
+        {
 
-      }
-      else
-      {
+        }
+        if (usbp->setup[2] & 2) /* RTS */
+        {
 
-      }
-      return TRUE;
-    default:
-      return FALSE;
+        }
+        else
+        {
+
+        }
+        return TRUE;
+      default:
+        return FALSE;
     }
   }
   return FALSE;
@@ -435,5 +436,13 @@ const BulkUSBConfig bulkusbcfg = {
   &USBD1,
   USBD2_DATA_REQUEST_EP,
   USBD2_DATA_AVAILABLE_EP
+};
+
+const SerialConfig uartCfg =
+{
+ 10400, // bit rate
+ 0,
+ USART_CR2_STOP1_BITS | USART_CR2_LINEN,
+ 0
 };
 
