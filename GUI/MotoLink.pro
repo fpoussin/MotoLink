@@ -51,7 +51,7 @@ FORMS    += ui/main.ui \
 RESOURCES += \
     res/oxygen.qrc \
     res/binaries.qrc \
-    res/images.qrc \
+    res/images/images.qrc \
     res/translations.qrc \
     res/doc/doc.qrc
 

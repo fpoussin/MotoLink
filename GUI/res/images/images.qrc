@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>explosion-hi.png</file>
+        <file>gauge-icon.png</file>
+        <file>icon.png</file>
+        <file>icon-afr-sensor.png</file>
+        <file>icon-afr-target.png</file>
+        <file>icon-denso-sparkplug.png</file>
+        <file>icon-injector.png</file>
+        <file>Qt-logo.png</file>
+        <file>refresh.png</file>
+        <file>sparkplug-target.png</file>
+        <file>target.png</file>
+    </qresource>
+</RCC>
