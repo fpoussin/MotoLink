@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui help
+QT += core gui webkit webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,7 +29,8 @@ SOURCES += src/main.cpp \
     src/transferthread.cpp \
     src/hrc.cpp \
     src/updatewizard.cpp \
-    src/motolink.cpp
+    src/motolink.cpp \
+    src/helpviewer.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -40,16 +41,19 @@ HEADERS  += \
     inc/datastructures.h \
     inc/hrc.h \
     inc/updatewizard.h \
-    inc/motolink.h
+    inc/motolink.h \
+    inc/helpviewer.h
 
 FORMS    += ui/main.ui \
-    ui/updatewizard.ui
+    ui/updatewizard.ui \
+    ui/helpviewer.ui
 
 RESOURCES += \
     res/oxygen.qrc \
     res/binaries.qrc \
     res/images.qrc \
-    res/translations.qrc
+    res/translations.qrc \
+    res/doc/doc.qrc
 
 TRANSLATIONS = res/motolink_fr.ts
 CODECFORTR = UTF-8

@@ -1242,7 +1242,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionGetting_Started"/>
+    <addaction name="actionShowHelpIndex"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_QT"/>
    </widget>
@@ -1404,13 +1404,13 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionGetting_Started">
+  <action name="actionShowHelpIndex">
    <property name="icon">
     <iconset resource="../res/oxygen.qrc">
      <normaloff>:/oxygen/32x32/actions/help-contents.png</normaloff>:/oxygen/32x32/actions/help-contents.png</iconset>
    </property>
    <property name="text">
-    <string>Getting Started...</string>
+    <string>Index</string>
    </property>
    <property name="shortcut">
     <string>F1</string>

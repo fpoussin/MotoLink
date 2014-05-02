@@ -7,10 +7,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
     mSettings("Motolink", "Motolink"),
-    mUsb(),
+    mUsb(NULL),
     mMtl(&mUsb),
     mBtl(&mUsb),
-    mUpdateWizard(&mBtl, this)
+    mUpdateWizard(&mBtl, NULL),
+    mHelpViewer(NULL)
 {
     mUi->setupUi(this);
     makeDefaultModel();
@@ -150,6 +151,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionExport, SIGNAL(triggered()), this, SLOT(exportHrc()));
     QObject::connect(mUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
+    QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
 
 
     /*
@@ -192,8 +194,6 @@ void MainWindow::setupTabShortcuts()
 void MainWindow::setupSettings()
 {
     const QString lang = mSettings.value("main/language", "English").toString();
-
-    qWarning() << lang;
 
     if (lang == "French") {
         this->setLanguageFrench();
@@ -247,4 +247,9 @@ void MainWindow::setLanguageFrench()
     qApp->installTranslator(&mTranslator);
     this->retranslate();
     mSettings.setValue("main/language", "French");
+}
+
+void MainWindow::showHelp()
+{
+   mHelpViewer.show();
 }

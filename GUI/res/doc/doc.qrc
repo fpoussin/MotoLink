@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/doc">
+        <file>html/index.html</file>
+        <file>images/arrow.png</file>
+        <file>images/arrow_down.png</file>
+        <file>images/bg_l.png</file>
+        <file>images/bg_l_blank.png</file>
+        <file>images/bg_ll_blank.png</file>
+        <file>images/bg_r.png</file>
+        <file>images/bg_ul_blank.png</file>
+        <file>images/bgrContent.png</file>
+        <file>images/blu_dot.png</file>
+        <file>images/box_bg.png</file>
+        <file>images/breadcrumb.png</file>
+        <file>images/btn_next.png</file>
+        <file>images/btn_next_green.png</file>
+        <file>images/btn_prev.png</file>
+        <file>images/btn_prev_green.png</file>
+        <file>images/bullet_dn.png</file>
+        <file>images/bullet_gt.png</file>
+        <file>images/bullet_sq.png</file>
+        <file>images/bullet_up.png</file>
+        <file>images/feedbackground.png</file>
+        <file>images/header_bg.png</file>
+        <file>images/home.png</file>
+        <file>images/horBar.png</file>
+        <file>images/ico_note.png</file>
+        <file>images/ico_note_attention.png</file>
+        <file>images/ico_out.png</file>
+        <file>images/page.png</file>
+        <file>images/page_bg.png</file>
+        <file>images/spinner.gif</file>
+        <file>images/sprites-combined.png</file>
+        <file>style/offline.css</file>
+        <file>style/online.css</file>
+    </qresource>
+</RCC>

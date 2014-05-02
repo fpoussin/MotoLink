@@ -13,9 +13,11 @@
 #include <QUndoCommand>
 #include <QTranslator>
 #include <QSettings>
+#include <QTextBrowser>
 
 #include "hrc.h"
 #include "updatewizard.h"
+#include "helpviewer.h"
 #include "motolink.h"
 #include "bootloader.h"
 
@@ -48,6 +50,7 @@ public slots:
 private slots:
     void setLanguageEnglish(void);
     void setLanguageFrench(void);
+    void showHelp(void);
 
 private:
     void setupDefaults(void);
@@ -70,6 +73,7 @@ private:
     Motolink mMtl;
     Bootloader mBtl;
     UpdateWizard mUpdateWizard;
+    HelpViewer mHelpViewer;
     QUndoStack mUndoStack; /* TODO */
     QUndoCommand mUndoCommand; /* TODO */
 };
