@@ -69,6 +69,37 @@ static msg_t ThreadBDU(void *arg) {
 
     }
   }
+  return 0;
+}
+
+/*
+ * USB Bulk thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThreadSDU, 128);
+static msg_t ThreadSDU(void *arg) {
+
+  uint8_t bp;
+  EventListener el1;
+  flagsmask_t flags;
+  (void)arg;
+  chRegSetThreadName("USB Serial");
+  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
+
+  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(100);
+
+  while (TRUE) {
+
+    chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
+    flags = chEvtGetAndClearFlags(&el1);
+
+    if (flags & CHN_INPUT_AVAILABLE) {
+
+      chnReadTimeout((BaseChannel *)&SDU1, &bp, 1, MS2ST(10));
+
+
+    }
+  }
+  return 0;
 }
 
 /*
@@ -83,6 +114,7 @@ static msg_t ThreadIWDG(void *arg) {
     chThdSleepMilliseconds(10);
     IWDG->KR = ((uint16_t)0xAAAA);
   }
+  return 0;
 }
 
 
@@ -127,6 +159,7 @@ int main(void) {
    * Creates the blinker and bulk threads.
    */
   chThdCreateStatic(ThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  chThdCreateStatic(ThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), NORMALPRIO+1, ThreadIWDG, NULL);
 
   /*
