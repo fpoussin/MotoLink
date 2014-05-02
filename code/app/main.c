@@ -29,27 +29,10 @@
 /*===========================================================================*/
 
 /*
- * Red LED blinker thread, times are in milliseconds.
- */
-static WORKING_AREA(waThread1, 64);
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
-  chRegSetThreadName("blinker");
-  while (TRUE) {
-    systime_t time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(time);
-    palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(time);
-  }
-}
-
-/*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread2, 128);
-static msg_t Thread2(void *arg) {
+static WORKING_AREA(waThreadBDU, 128);
+static msg_t ThreadBDU(void *arg) {
 
   uint8_t bp;
   EventListener el1;
@@ -83,7 +66,6 @@ static msg_t Thread2(void *arg) {
 
       bp *=2;
       chnWriteTimeout((BaseChannel *)&BDU1, &bp, 1, MS2ST(10));
-      palTogglePad(GPIOE, GPIOE_LED10_RED);
 
     }
   }
@@ -92,8 +74,8 @@ static msg_t Thread2(void *arg) {
 /*
  * IWDG thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread3, 64);
-static msg_t Thread3(void *arg) {
+static WORKING_AREA(waThreadIWDG, 64);
+static msg_t ThreadIWDG(void *arg) {
 
   (void)arg;
   chRegSetThreadName("IWDG");
@@ -144,9 +126,8 @@ int main(void) {
   /*
    * Creates the blinker and bulk threads.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
-  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO+1, Thread3, NULL);
+  chThdCreateStatic(ThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), NORMALPRIO+1, ThreadIWDG, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

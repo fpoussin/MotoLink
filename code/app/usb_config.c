@@ -353,7 +353,6 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     bduConfigureHookI(&BDU1);
 
     chSysUnlockFromIsr();
-    palSetPad(GPIOE, GPIOE_LED6_GREEN);
     return;
   case USB_EVENT_SUSPEND:
     return;
@@ -381,25 +380,25 @@ static bool_t sduSpecialRequestsHook(USBDriver *usbp) {
     switch (usbp->setup[1]) {
     case CDC_GET_LINE_CODING:
     case CDC_SET_LINE_CODING:
-      palTogglePad(GPIOE, GPIOE_LED4_BLUE);
+
       usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
       return TRUE;
     case CDC_SET_CONTROL_LINE_STATE:
       if (usbp->setup[2] & 1) /* DTR */
       {
-         palSetPad(GPIOE, GPIOE_LED5_ORANGE);
+
       }
       else
       {
-          palClearPad(GPIOE, GPIOE_LED5_ORANGE);
+
       }
       if (usbp->setup[2] & 2) /* RTS */
       {
-         palSetPad(GPIOE, GPIOE_LED7_GREEN);
+
       }
       else
       {
-          palClearPad(GPIOE, GPIOE_LED7_GREEN);
+
       }
       return TRUE;
     default:
