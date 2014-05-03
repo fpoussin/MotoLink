@@ -93,7 +93,7 @@
         </font>
        </property>
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
        </attribute>
        <attribute name="title">
@@ -120,7 +120,7 @@
       </widget>
       <widget class="QWidget" name="tabStaging">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
        </attribute>
        <attribute name="title">
@@ -134,7 +134,7 @@
       </widget>
       <widget class="QWidget" name="tabAfrMap">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
        </attribute>
        <attribute name="title">
@@ -158,7 +158,7 @@
       </widget>
       <widget class="QWidget" name="tabAfrTarget">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
        </attribute>
        <attribute name="title">
@@ -182,7 +182,7 @@
       </widget>
       <widget class="QWidget" name="tabIgnMap">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
        </attribute>
        <attribute name="title">
@@ -206,7 +206,7 @@
       </widget>
       <widget class="QWidget" name="tabIgnTarget">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/sparkplug-target.png</normaloff>:/images/sparkplug-target.png</iconset>
        </attribute>
        <attribute name="title">
@@ -230,7 +230,7 @@
       </widget>
       <widget class="QWidget" name="tabKnock">
        <attribute name="icon">
-        <iconset resource="../res/images.qrc">
+        <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
        </attribute>
        <attribute name="title">
@@ -561,12 +561,12 @@
                </attribute>
                <row>
                 <property name="text">
-                 <string>0%</string>
+                 <string notr="true">0%</string>
                 </property>
                </row>
                <row>
                 <property name="text">
-                 <string>100%</string>
+                 <string notr="true">100%</string>
                 </property>
                </row>
                <column>
@@ -576,7 +576,7 @@
                </column>
                <item row="0" column="0">
                 <property name="text">
-                 <string>0.5</string>
+                 <string notr="true">0.5</string>
                 </property>
                 <property name="flags">
                  <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
@@ -584,7 +584,7 @@
                </item>
                <item row="1" column="0">
                 <property name="text">
-                 <string>4.5</string>
+                 <string notr="true">4.5</string>
                 </property>
                 <property name="flags">
                  <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
@@ -694,12 +694,12 @@
                </attribute>
                <row>
                 <property name="text">
-                 <string>8</string>
+                 <string notr="true">8</string>
                 </property>
                </row>
                <row>
                 <property name="text">
-                 <string>22</string>
+                 <string notr="true">22</string>
                 </property>
                </row>
                <column>
@@ -709,7 +709,7 @@
                </column>
                <item row="0" column="0">
                 <property name="text">
-                 <string>0.0</string>
+                 <string notr="true">0.0</string>
                 </property>
                 <property name="flags">
                  <set>ItemIsEditable|ItemIsEnabled</set>
@@ -717,7 +717,7 @@
                </item>
                <item row="1" column="0">
                 <property name="text">
-                 <string>5.0</string>
+                 <string notr="true">5.0</string>
                 </property>
                 <property name="flags">
                  <set>ItemIsEditable|ItemIsEnabled</set>
@@ -1343,7 +1343,7 @@
   </action>
   <action name="actionAbout_QT">
    <property name="icon">
-    <iconset resource="../res/images.qrc">
+    <iconset resource="../res/images/images.qrc">
      <normaloff>:/images/Qt-logo.png</normaloff>:/images/Qt-logo.png</iconset>
    </property>
    <property name="text">
@@ -1492,8 +1492,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../res/images.qrc"/>
   <include location="../res/oxygen.qrc"/>
+  <include location="../res/images/images.qrc"/>
  </resources>
  <connections/>
 </ui>
