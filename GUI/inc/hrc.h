@@ -26,6 +26,7 @@ private slots:
     bool checkMapType(void);
 
 private:
+    QString msError;
     bool mHasMap;
     cbr600rr07_map_t mCbr600rr07_map;
     QString mFileContent;

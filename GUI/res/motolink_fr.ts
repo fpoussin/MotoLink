@@ -27,48 +27,61 @@
 <context>
     <name>Hrc</name>
     <message>
-        <location filename="../src/hrc.cpp" line="15"/>
-        <location filename="../src/hrc.cpp" line="44"/>
         <source>Error: couldn&apos;t open </source>
-        <translation>Erreur: Impossible d&apos;ouvrir le fichier</translation>
+        <translation type="vanished">Erreur: Impossible d&apos;ouvrir le fichier</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="36"/>
         <source>Error: No HRC map loaded</source>
+        <translation type="vanished">Erreur: Aucun map HRC n&apos;es chargée</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="7"/>
+        <source>Error: </source>
+        <translation>Erreur:</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="16"/>
+        <location filename="../src/hrc.cpp" line="45"/>
+        <source>Couldn&apos;t open </source>
+        <translation>Impossible d&apos;ouvrir</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="37"/>
+        <source>No HRC map loaded</source>
         <translation>Erreur: Aucun map HRC n&apos;es chargée</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="88"/>
+        <location filename="../src/hrc.cpp" line="89"/>
         <source>Line does not start with &apos;:&apos; at</source>
         <translation>La ligne ne commence pas par &quot;:&quot; à</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="104"/>
+        <location filename="../src/hrc.cpp" line="105"/>
         <source>Failed to parse line header</source>
         <translation>Impossible de lire l&apos;entête</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="111"/>
+        <location filename="../src/hrc.cpp" line="112"/>
         <source>Failed to parse length</source>
         <translation>Impossible de lire la longueur</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="123"/>
+        <location filename="../src/hrc.cpp" line="124"/>
         <source>Failed to parse number</source>
         <translation>Impossible de lire le nombre</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="131"/>
+        <location filename="../src/hrc.cpp" line="132"/>
         <source>Checksum failed at line</source>
         <translation>Echec du checksum</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="192"/>
+        <location filename="../src/hrc.cpp" line="193"/>
         <source>CBR600RR7 Map loaded</source>
         <translation>Map de CBR600RR7 chargée</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="198"/>
+        <location filename="../src/hrc.cpp" line="199"/>
         <source>Unknown Map Type</source>
         <translation>Map inconnue</translation>
     </message>
@@ -154,7 +167,7 @@
     <message>
         <location filename="../ui/main.ui" line="484"/>
         <source>TPS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="500"/>
@@ -175,7 +188,7 @@
         <location filename="../ui/main.ui" line="574"/>
         <location filename="../ui/main.ui" line="707"/>
         <source>Voltage</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="579"/>
@@ -195,7 +208,7 @@
     <message>
         <location filename="../ui/main.ui" line="631"/>
         <source>AFR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="697"/>
@@ -321,7 +334,7 @@
     <message>
         <location filename="../ui/main.ui" line="1350"/>
         <source>About QT</source>
-        <translation>à propose de QT</translation>
+        <translation>à propos de QT</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1359"/>
@@ -346,7 +359,7 @@
     <message>
         <location filename="../ui/main.ui" line="1383"/>
         <source>Import from HRC...</source>
-        <translation>Importer depuis HRC</translation>
+        <translation>Importer depuis HRC...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1392"/>
@@ -401,7 +414,7 @@
     <message>
         <location filename="../ui/main.ui" line="1461"/>
         <source>Auto Send</source>
-        <translation>Mise à jour automatique</translation>
+        <translation>Envoi automatique</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1470"/>
@@ -516,147 +529,147 @@ Sauvegarder avant la fermeture ?</translation>
     <message>
         <location filename="../src/transferthread.cpp" line="49"/>
         <source>Aborted</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulé</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="50"/>
         <source>Transfer Aborted</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfert annulé</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="65"/>
         <location filename="../src/transferthread.cpp" line="146"/>
         <source>Could not open the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le fichier</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="78"/>
         <source>File size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du fichier</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="82"/>
         <location filename="../src/transferthread.cpp" line="83"/>
         <location filename="../src/transferthread.cpp" line="84"/>
         <source>Erase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>échec de l&apos;éffacement</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="89"/>
         <location filename="../src/transferthread.cpp" line="90"/>
         <location filename="../src/transferthread.cpp" line="91"/>
         <source>Erase OK</source>
-        <translation type="unfinished"></translation>
+        <translation>éffacement OK</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="94"/>
         <source>Writing from</source>
-        <translation type="unfinished"></translation>
+        <translation>écriture de</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="96"/>
         <location filename="../src/transferthread.cpp" line="97"/>
         <source>Transfering</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfert en cours</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="106"/>
         <source>End Of File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fin du fichier</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="113"/>
         <location filename="../src/transferthread.cpp" line="167"/>
         <source>Read</source>
-        <translation type="unfinished"></translation>
+        <translation>Lu</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="113"/>
         <location filename="../src/transferthread.cpp" line="167"/>
         <source>Bytes from disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Octets depuis le disque</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="117"/>
         <location filename="../src/transferthread.cpp" line="118"/>
         <source>Transfer failed</source>
-        <translation type="unfinished"></translation>
+        <translation>échec du transfert</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="126"/>
         <location filename="../src/transferthread.cpp" line="203"/>
         <source>Progress:</source>
-        <translation type="unfinished"></translation>
+        <translation>Avancement:</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="130"/>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation>En attente</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="135"/>
         <location filename="../src/transferthread.cpp" line="136"/>
         <location filename="../src/transferthread.cpp" line="137"/>
         <source>Transfer done</source>
-        <translation type="unfinished"></translation>
+        <translation>Transfert terminé</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="154"/>
         <source>Reading from</source>
-        <translation type="unfinished"></translation>
+        <translation>Lecture depuis</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="154"/>
         <source>to</source>
-        <translation type="unfinished"></translation>
+        <translation>vers</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="176"/>
         <location filename="../src/transferthread.cpp" line="177"/>
         <source>Verification Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>échec de la vérification</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="178"/>
         <source>read</source>
-        <translation type="unfinished"></translation>
+        <translation>lu</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="178"/>
         <source>valid</source>
-        <translation type="unfinished"></translation>
+        <translation>valide</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="187"/>
         <location filename="../src/transferthread.cpp" line="194"/>
         <source>Verification failed at 0x</source>
-        <translation type="unfinished"></translation>
+        <translation>échec de la vérification à 0x</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="195"/>
         <source>Expecting:</source>
-        <translation type="unfinished"></translation>
+        <translation>Attendu:</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="195"/>
         <source>Got:</source>
-        <translation type="unfinished"></translation>
+        <translation>Reçu:</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="205"/>
         <source>Verified </source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifié</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="205"/>
         <source> kilobytes out of </source>
-        <translation type="unfinished"></translation>
+        <translation>kilo octets de</translation>
     </message>
     <message>
         <location filename="../src/transferthread.cpp" line="210"/>
         <location filename="../src/transferthread.cpp" line="211"/>
         <source>Verification OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérification OK</translation>
     </message>
 </context>
 </TS>

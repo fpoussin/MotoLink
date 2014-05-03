@@ -4,6 +4,7 @@ Hrc::Hrc(QObject *parent) :
     QObject(parent)
 {
     mHasMap = false;
+    msError = tr("Error: ");
 }
 
 bool Hrc::openFile(const QString &filename)
@@ -12,7 +13,7 @@ bool Hrc::openFile(const QString &filename)
 
     if(!file.open(QIODevice::ReadOnly))
     {
-        qWarning() << tr("Error: couldn't open ") << filename;
+        qWarning() << msError << tr("Couldn't open ") << filename;
         file.close();
         return false;
     }
@@ -33,7 +34,7 @@ bool Hrc::saveFile(const QString &filename)
 {
     if (!mHasMap)
     {
-         qWarning() << tr("Error: No HRC map loaded");
+         qWarning() << msError << tr("No HRC map loaded");
         return false;
     }
 
@@ -41,7 +42,7 @@ bool Hrc::saveFile(const QString &filename)
 
     if(!file.open(QIODevice::WriteOnly))
     {
-        qWarning() << tr("Error: couldn't open ") << filename;
+        qWarning() << msError << tr("Couldn't open ") << filename;
         file.close();
         return false;
     }
@@ -85,7 +86,7 @@ bool Hrc::hexToArray(QString *hex, QByteArray *array)
 
         if (!curLine->startsWith(':'))
         {
-            qWarning() << tr("Line does not start with ':' at") << i;
+            qWarning() << msError << tr("Line does not start with ':' at") << i;
             continue;
         }
 
@@ -101,14 +102,14 @@ bool Hrc::hexToArray(QString *hex, QByteArray *array)
             calculated_checksum += curLine->mid(1+(j*2), 2).toInt(&ok, 16)&0xFF;
             if (!ok)
             {
-                qWarning() << tr("Failed to parse line header") << curLine->mid(1, 8);
+                qWarning() << msError << tr("Failed to parse line header") << curLine->mid(1, 8);
             }
         }
 
         uint data_len = curLine->mid(1, 2).toInt(&ok, 16);
         if (!ok)
         {
-            qWarning() << tr("Failed to parse length") << curLine->mid(1, 2);
+            qWarning() << msError << tr("Failed to parse length") << curLine->mid(1, 2);
             return false;
         }
 
@@ -120,7 +121,7 @@ bool Hrc::hexToArray(QString *hex, QByteArray *array)
             tmp_line.append(cur_val);
             if (!ok)
             {
-                qWarning() << tr("Failed to parse number") << curLine->mid(1+j, 2);
+                qWarning() << msError << tr("Failed to parse number") << curLine->mid(1+j, 2);
                 return false;
             }
         }
@@ -128,7 +129,7 @@ bool Hrc::hexToArray(QString *hex, QByteArray *array)
         calculated_checksum = 0x100u - calculated_checksum;
         if (!ok || calculated_checksum != hex_checksum)
         {
-            qWarning() << tr("Checksum failed at line") << i+1;
+            qWarning() << msError << tr("Checksum failed at line") << i+1;
             qWarning() << calculated_checksum << hex_checksum;
             return false;
         }
@@ -195,6 +196,6 @@ bool Hrc::checkMapType(void)
         }
     }
 
-    qWarning() << tr("Unknown Map Type");
+    qWarning() << msError << tr("Unknown Map Type");
     return false;
 }
