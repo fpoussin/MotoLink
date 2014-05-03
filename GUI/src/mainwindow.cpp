@@ -2,6 +2,7 @@
 #include <QShortcut>
 #include <QSignalMapper>
 #include <ui_main.h>
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setupTabShortcuts();
     this->setupSettings();
     mHasChanged = false;
+
+    this->uiDisable();
 }
 
 MainWindow::~MainWindow()
@@ -61,7 +64,26 @@ void MainWindow::openFile(void)
     QString fileName(QFileDialog::getOpenFileName(this,
                        tr("Open Tune File"), "", tr("Tune Files (*.xml)")));
 
+    this->openFile(fileName);
+}
 
+void MainWindow::openFile(QString &filename)
+{
+    if (!filename.length())
+        return;
+
+    qWarning() << "Opening" << filename;
+
+    QStringList files = mSettings.value(SETTINGS_RECENT_FILES).toStringList();
+
+    mCurrentFile = filename;
+    files.removeAll(filename);
+    files.prepend(filename);
+    while (files.size() > MAX_RECENT_FILES)
+             files.removeLast();
+
+    mSettings.setValue(SETTINGS_RECENT_FILES, files);
+    this->updateRecentFilesActions();
 }
 
 void MainWindow::saveFile(void)
@@ -86,15 +108,12 @@ void MainWindow::saveFileAs(void)
 
 void MainWindow::connectToEcu()
 {
-
-    mUi->tabMain->setEnabled(true);
+    this->uiEnable();
 }
 
 void MainWindow::disconnectFromEcu()
 {
-
-
-    mUi->tabMain->setEnabled(false);
+    this->uiDisable();
 }
 
 void MainWindow::showAbout()
@@ -153,6 +172,17 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
 
+    for (int i = 0; i < MAX_RECENT_FILES; ++i) {
+             mRecentFilesActions[i] = new QAction(this);
+             mRecentFilesActions[i]->setVisible(false);
+             mRecentFilesActions[i]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-file.png"));
+             connect(mRecentFilesActions[i], SIGNAL(triggered()),
+                     this, SLOT(openRecenFile()));
+         }
+
+    for (int i = 0; i < MAX_RECENT_FILES; ++i)
+            mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
+
 
     /*
      * Signals from old bootloader GUI, just for reference, will remove later
@@ -193,7 +223,8 @@ void MainWindow::setupTabShortcuts()
 
 void MainWindow::setupSettings()
 {
-    const QString lang = mSettings.value("main/language", "English").toString();
+    const QString lang = mSettings.value(SETTINGS_LANGUAGE, "English").toString();
+    mRecentFiles = mSettings.value(SETTINGS_RECENT_FILES, QStringList()).toStringList();
 
     if (lang == "French") {
         this->setLanguageFrench();
@@ -201,6 +232,8 @@ void MainWindow::setupSettings()
     else {
         this->setLanguageEnglish();
     }
+
+    this->updateRecentFilesActions();
 
 }
 
@@ -251,5 +284,60 @@ void MainWindow::setLanguageFrench()
 
 void MainWindow::showHelp()
 {
-   mHelpViewer.show();
+    mHelpViewer.show();
+}
+
+void MainWindow::uiEnable()
+{
+    const bool toggle = true;
+    mUi->tabMain->setEnabled(toggle);
+
+    mUi->actionSave->setEnabled(toggle);
+    mUi->actionSave_As->setEnabled(toggle);
+    mUi->actionImport->setEnabled(toggle);
+    mUi->actionExport->setEnabled(toggle);
+    mUi->actionDisconnect->setEnabled(toggle);
+    mUi->actionGet_Configuration->setEnabled(toggle);
+    mUi->actionSend_Configuration->setEnabled(toggle);
+    mUi->actionAuto_Send->setEnabled(toggle);
+}
+
+void MainWindow::uiDisable()
+{
+    const bool toggle = false;
+    mUi->tabMain->setEnabled(toggle);
+
+    mUi->actionSave->setEnabled(toggle);
+    mUi->actionSave_As->setEnabled(toggle);
+    mUi->actionImport->setEnabled(toggle);
+    mUi->actionExport->setEnabled(toggle);
+    mUi->actionDisconnect->setEnabled(toggle);
+    mUi->actionGet_Configuration->setEnabled(toggle);
+    mUi->actionSend_Configuration->setEnabled(toggle);
+    mUi->actionAuto_Send->setEnabled(toggle);
+}
+
+void MainWindow::updateRecentFilesActions()
+{
+    QStringList files = mSettings.value(SETTINGS_RECENT_FILES).toStringList();
+    const uint numRecentFiles = qMin(files.size(), (int)MAX_RECENT_FILES);
+
+    for (uint i = 0; i < numRecentFiles; ++i)
+    {
+        QString text = QFileInfo(files[i]).fileName();
+        mRecentFilesActions[i]->setText(text);
+        mRecentFilesActions[i]->setData(files[i]);
+        mRecentFilesActions[i]->setVisible(true);
+    }
+    for (int j = numRecentFiles; j < MAX_RECENT_FILES; ++j)
+        mRecentFilesActions[j]->setVisible(false);
+
+    //separatorAct->setVisible(numRecentFiles > 0);
+}
+
+void MainWindow::openRecenFile()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+        this->openFile(action->data().toString());
 }

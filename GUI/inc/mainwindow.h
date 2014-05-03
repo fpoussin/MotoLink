@@ -14,12 +14,17 @@
 #include <QTranslator>
 #include <QSettings>
 #include <QTextBrowser>
+#include <QAction>
 
 #include "hrc.h"
 #include "updatewizard.h"
 #include "helpviewer.h"
 #include "motolink.h"
 #include "bootloader.h"
+
+#define MAX_RECENT_FILES 5
+#define SETTINGS_RECENT_FILES "main/recent_files"
+#define SETTINGS_LANGUAGE "main/language"
 
 namespace Ui {
     class MainWindow;
@@ -37,6 +42,7 @@ public slots:
     void Quit(void);
     void closeEvent(QCloseEvent *event);
     void openFile(void);
+    void openFile(QString &filename);
     void saveFile(void);
     void saveFileAs(void);
     void connectToEcu(void);
@@ -51,6 +57,10 @@ private slots:
     void setLanguageEnglish(void);
     void setLanguageFrench(void);
     void showHelp(void);
+    void uiEnable(void);
+    void uiDisable(void);
+    void updateRecentFilesActions(void);
+    void openRecenFile(void);
 
 private:
     void setupDefaults(void);
@@ -76,6 +86,8 @@ private:
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack; /* TODO */
     QUndoCommand mUndoCommand; /* TODO */
+    QStringList mRecentFiles;
+    QAction *mRecentFilesActions[MAX_RECENT_FILES];
 };
 
 #endif // MAINWINDOW_H
