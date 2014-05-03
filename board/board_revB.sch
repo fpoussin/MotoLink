@@ -6517,7 +6517,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="R30" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
 <part name="R31" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="GND34" library="supply1" deviceset="GND" device=""/>
-<part name="P+10" library="supply1" deviceset="VCC" device=""/>
 <part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
 <part name="C34" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="S1" library="adafruit" deviceset="EG1213" device=""/>
@@ -6600,6 +6599,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
 <part name="CON_UART" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
+<part name="GND24" library="supply1" deviceset="GND" device=""/>
+<part name="C9" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="100nF"/>
+<part name="GND25" library="supply1" deviceset="GND" device=""/>
+<part name="S2" library="adafruit" deviceset="EG1213" device=""/>
+<part name="P+5" library="supply1" deviceset="+12V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6644,7 +6648,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="R30" gate="G$1" x="62.23" y="156.21" rot="R90"/>
 <instance part="R31" gate="G$1" x="62.23" y="146.05" rot="R90"/>
 <instance part="GND34" gate="1" x="62.23" y="138.43"/>
-<instance part="P+10" gate="VCC" x="62.23" y="163.83"/>
 <instance part="R32" gate="G$1" x="36.83" y="120.65"/>
 <instance part="C34" gate="G$1" x="74.93" y="17.78"/>
 <instance part="S1" gate="1" x="77.47" y="59.69" rot="R270"/>
@@ -6743,6 +6746,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="GND21" gate="1" x="292.1" y="167.64"/>
 <instance part="CON_UART" gate="G$1" x="285.75" y="156.21"/>
 <instance part="GND22" gate="1" x="293.37" y="151.13"/>
+<instance part="GND24" gate="1" x="110.49" y="54.61"/>
+<instance part="C9" gate="G$1" x="96.52" y="54.61"/>
+<instance part="GND25" gate="1" x="96.52" y="49.53"/>
+<instance part="S2" gate="1" x="105.41" y="59.69" rot="R270"/>
+<instance part="P+5" gate="1" x="62.23" y="163.83"/>
 </instances>
 <busses>
 </busses>
@@ -6938,6 +6946,14 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="CON_UART" gate="G$1" pin="1"/>
 <pinref part="GND22" gate="1" pin="GND"/>
 </segment>
+<segment>
+<pinref part="C9" gate="G$1" pin="2"/>
+<pinref part="GND25" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="S2" gate="1" pin="S"/>
+<pinref part="GND24" gate="1" pin="GND"/>
+</segment>
 </net>
 <net name="+3V3" class="0">
 <segment>
@@ -7086,6 +7102,10 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="P+2" gate="1" pin="+12V"/>
 <pinref part="F1" gate="G$1" pin="2"/>
 </segment>
+<segment>
+<pinref part="R30" gate="G$1" pin="2"/>
+<pinref part="P+5" gate="1" pin="+12V"/>
+</segment>
 </net>
 <net name="VCC" class="0">
 <segment>
@@ -7101,10 +7121,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="52.07" y1="26.67" x2="52.07" y2="36.83" width="0.1524" layer="91"/>
 <junction x="39.37" y="26.67"/>
 <wire x1="39.37" y1="26.67" x2="33.02" y2="26.67" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="R30" gate="G$1" pin="2"/>
-<pinref part="P+10" gate="VCC" pin="VCC"/>
 </segment>
 </net>
 <net name="BOOT0" class="0">
@@ -7211,9 +7227,9 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="S1" gate="1" pin="P"/>
 </segment>
 <segment>
-<wire x1="142.24" y1="49.53" x2="135.89" y2="49.53" width="0.1524" layer="91"/>
-<label x="142.24" y="49.53" size="1.778" layer="95" rot="R180"/>
-<pinref part="STM32" gate="PORTC_H" pin="PC13"/>
+<pinref part="STM32" gate="PORTC_H" pin="PC14"/>
+<wire x1="142.24" y1="46.99" x2="135.89" y2="46.99" width="0.1524" layer="91"/>
+<label x="142.24" y="46.99" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="AN1" class="0">
@@ -7776,6 +7792,21 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="Q1" gate="A" pin="O1"/>
 <wire x1="317.5" y1="187.96" x2="332.74" y2="187.96" width="0.1524" layer="91"/>
 <label x="318.77" y="187.96" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="BUT2" class="0">
+<segment>
+<wire x1="100.33" y1="59.69" x2="96.52" y2="59.69" width="0.1524" layer="91"/>
+<label x="91.44" y="59.69" size="1.778" layer="95"/>
+<pinref part="C9" gate="G$1" pin="1"/>
+<wire x1="96.52" y1="59.69" x2="91.44" y2="59.69" width="0.1524" layer="91"/>
+<junction x="96.52" y="59.69"/>
+<pinref part="S2" gate="1" pin="P"/>
+</segment>
+<segment>
+<wire x1="142.24" y1="49.53" x2="135.89" y2="49.53" width="0.1524" layer="91"/>
+<label x="142.24" y="49.53" size="1.778" layer="95" rot="R180"/>
+<pinref part="STM32" gate="PORTC_H" pin="PC13"/>
 </segment>
 </net>
 </nets>
