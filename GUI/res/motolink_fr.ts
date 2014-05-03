@@ -2,22 +2,75 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>HelpViewer</name>
+    <message>
+        <location filename="../ui/helpviewer.ui" line="20"/>
+        <source>Help Viewer</source>
+        <translation>Navigateur d&apos;aide</translation>
+    </message>
+    <message>
+        <location filename="../ui/helpviewer.ui" line="32"/>
+        <source>Search Help</source>
+        <translation>Chercher dans l&apos;aide</translation>
+    </message>
+    <message>
+        <location filename="../ui/helpviewer.ui" line="38"/>
+        <source>Search:</source>
+        <translation>Recherche</translation>
+    </message>
+    <message>
+        <location filename="../ui/helpviewer.ui" line="52"/>
+        <source>about:blank</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Hrc</name>
     <message>
-        <location filename="../src/hrc.cpp" line="14"/>
-        <location filename="../src/hrc.cpp" line="29"/>
+        <location filename="../src/hrc.cpp" line="15"/>
+        <location filename="../src/hrc.cpp" line="44"/>
         <source>Error: couldn&apos;t open </source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur: Impossible d&apos;ouvrir le fichier</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="49"/>
-        <source>CBR600RR7 Map detected</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/hrc.cpp" line="36"/>
+        <source>Error: No HRC map loaded</source>
+        <translation>Erreur: Aucun map HRC n&apos;es chargée</translation>
     </message>
     <message>
-        <location filename="../src/hrc.cpp" line="55"/>
+        <location filename="../src/hrc.cpp" line="88"/>
+        <source>Line does not start with &apos;:&apos; at</source>
+        <translation>La ligne ne commence pas par &quot;:&quot; à</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="104"/>
+        <source>Failed to parse line header</source>
+        <translation>Impossible de lire l&apos;entête</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="111"/>
+        <source>Failed to parse length</source>
+        <translation>Impossible de lire la longueur</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="123"/>
+        <source>Failed to parse number</source>
+        <translation>Impossible de lire le nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="131"/>
+        <source>Checksum failed at line</source>
+        <translation>Echec du checksum</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="192"/>
+        <source>CBR600RR7 Map loaded</source>
+        <translation>Map de CBR600RR7 chargée</translation>
+    </message>
+    <message>
+        <location filename="../src/hrc.cpp" line="198"/>
         <source>Unknown Map Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Map inconnue</translation>
     </message>
 </context>
 <context>
@@ -25,78 +78,78 @@
     <message>
         <location filename="../ui/main.ui" line="1251"/>
         <source>MotoLink</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="100"/>
         <source>&amp;Fuel Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Map Injection</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="127"/>
         <source>Staging Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Map Staging</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="141"/>
         <source>&amp;AFR Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Map AFR</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="165"/>
         <source>AFR Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Cible AFR</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="189"/>
         <source>Ignition Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Map Allumage</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="213"/>
         <source>Ignition Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Cible Allumage</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="237"/>
         <source>Knock Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Map Détonations</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="267"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Parametres</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="279"/>
         <source>Self Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>Map Auto</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="330"/>
         <source>Maximum Fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum Injection</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="343"/>
         <location filename="../ui/main.ui" line="387"/>
         <source> %</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="374"/>
         <source>Minimum Fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum injection</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="421"/>
         <source>Sensor Mappings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages capteurs</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="454"/>
         <source>Speed Divider</source>
-        <translation type="unfinished"></translation>
+        <translation>Diviseur Vitesse</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="484"/>
@@ -106,7 +159,7 @@
     <message>
         <location filename="../ui/main.ui" line="500"/>
         <source>Calibrate TPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Calibrer TPS</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="564"/>
@@ -137,7 +190,7 @@
     <message>
         <location filename="../ui/main.ui" line="604"/>
         <source>RPM Divider</source>
-        <translation type="unfinished"></translation>
+        <translation>Diviseur RPM</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="631"/>
@@ -167,256 +220,257 @@
     <message>
         <location filename="../ui/main.ui" line="782"/>
         <source>ECU Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages ECU</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="816"/>
         <source>Shift Light</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="870"/>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ralenti</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="883"/>
         <location filename="../ui/main.ui" line="936"/>
         <source> rpm</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="923"/>
         <source>Pit limiter</source>
-        <translation type="unfinished"></translation>
+        <translation>Limiteur de Stands</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="997"/>
         <source>Sensors Readings</source>
-        <translation type="unfinished"></translation>
+        <translation>Info Capteurs</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1060"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1229"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1243"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1264"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editer</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1271"/>
         <source>Language</source>
-        <translation type="unfinished">Langue</translation>
+        <translation>Langue</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1293"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1296"/>
         <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1305"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1308"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1317"/>
         <source>Save As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer sous...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1320"/>
         <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1329"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1332"/>
         <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1341"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>à propos</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1350"/>
         <source>About QT</source>
-        <translation type="unfinished"></translation>
+        <translation>à propose de QT</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1359"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Connecter</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1362"/>
         <source>F3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1371"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecter</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1374"/>
         <source>F4</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1383"/>
         <source>Import from HRC...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer depuis HRC</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1392"/>
         <source>Export to HRC...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter vers HRC...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1401"/>
         <source>New...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1404"/>
         <source>Ctrl+N</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1413"/>
-        <source>Getting Started...</source>
-        <translation type="unfinished"></translation>
+        <source>Index</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1416"/>
         <source>F1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1425"/>
         <source>Update Firmware...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à jour du Firmware...</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1434"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1437"/>
         <source>Ctrl+Z</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1446"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1449"/>
         <source>Ctrl+Y</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1461"/>
         <source>Auto Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à jour automatique</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1470"/>
         <source>Send Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer la configuration</translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="1479"/>
         <source>Get Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Recevoir la configuration</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="31"/>
+        <location filename="../src/mainwindow.cpp" line="34"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="32"/>
+        <location filename="../src/mainwindow.cpp" line="35"/>
         <source>Unsaved changes!
 Save file before closing?</source>
-        <translation type="unfinished"></translation>
+        <translation>Des changements sont en cours !
+Sauvegarder avant la fermeture ?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="59"/>
+        <location filename="../src/mainwindow.cpp" line="62"/>
         <source>Open Tune File</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="59"/>
-        <location filename="../src/mainwindow.cpp" line="75"/>
+        <location filename="../src/mainwindow.cpp" line="62"/>
+        <location filename="../src/mainwindow.cpp" line="78"/>
         <source>Tune Files (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier de cartographie (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="75"/>
+        <location filename="../src/mainwindow.cpp" line="78"/>
         <source>Save Tune File</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="99"/>
+        <location filename="../src/mainwindow.cpp" line="102"/>
         <source>About Motolink</source>
-        <translation type="unfinished"></translation>
+        <translation>à propos de MotoLink</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="100"/>
+        <location filename="../src/mainwindow.cpp" line="103"/>
         <source>&lt;strong&gt;Version: </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="114"/>
+        <location filename="../src/mainwindow.cpp" line="117"/>
         <source>Import HRC File</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="114"/>
-        <location filename="../src/mainwindow.cpp" line="121"/>
+        <location filename="../src/mainwindow.cpp" line="117"/>
+        <location filename="../src/mainwindow.cpp" line="124"/>
         <source>HRC File (*.E2P)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier HRC (*.E2P)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="121"/>
+        <location filename="../src/mainwindow.cpp" line="124"/>
         <source>Export HRC File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="127"/>
+        <location filename="../src/mainwindow.cpp" line="130"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecter</translation>
     </message>
 </context>
 <context>
@@ -424,37 +478,37 @@ Save file before closing?</source>
     <message>
         <location filename="../ui/updatewizard.ui" line="14"/>
         <source>Wizard</source>
-        <translation type="unfinished">Assistant de mise à jour</translation>
+        <translation>Assistant de mise à jour</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="42"/>
         <source>Current version</source>
-        <translation type="unfinished">Version actuelle</translation>
+        <translation>Version actuelle</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="62"/>
         <source>New version</source>
-        <translation type="unfinished">Nouvelle version</translation>
+        <translation>Nouvelle version</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="82"/>
         <source>This Wizard will update Motolink&apos;s firmware.</source>
-        <translation type="unfinished">Cet assistant vas mettre Motolink à jour.</translation>
+        <translation>Cet assistant vas mettre Motolink à jour.</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="89"/>
         <source>Please do not unplug Motolink during the update.</source>
-        <translation type="unfinished">Merci de ne pas débrancher Motolink pendant la mise à jour.</translation>
+        <translation>Merci de ne pas débrancher Motolink pendant la mise à jour.</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="114"/>
         <source>Progress</source>
-        <translation type="unfinished">Avancement</translation>
+        <translation>Avancement</translation>
     </message>
     <message>
         <location filename="../ui/updatewizard.ui" line="121"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
 </context>
 <context>
