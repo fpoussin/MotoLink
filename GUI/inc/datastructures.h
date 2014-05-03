@@ -3,9 +3,18 @@
 
 /* This will be based on the HRC tool hex files */
 
-#define CBR600RR07_SIGN "07CBR600KEA6KO"
+enum MAP_TYPE {
+                MAP_UNKNOWN = 0,
+                MAP_CBR600RR07 = 10,
+                MAP_CBR1000RR08 = 11
+              };
 
-struct cbr600rr_map_t {
+#define HEX_EOF ":00000001FF"
+#define HEX_START ":"
+#define CBR600RR07_SIGN_HEX "30374342523630304B4541364B4F"
+#define CBR600RR07_SIGN_STRING "07CBR600KEA6KO"
+
+struct cbr600rr07_map_t {
 
     /* All RPM values are divided by 100 to fit in 8 bits */
     char ign1[4*16];     /* Ignition table */

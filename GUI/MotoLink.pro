@@ -24,7 +24,6 @@ include(QtUsb/QtUsb.pri)
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
-    src/intelhexclass.cpp \
     src/bootloader.cpp \
     src/transferthread.cpp \
     src/hrc.cpp \
@@ -35,7 +34,6 @@ SOURCES += src/main.cpp \
 HEADERS  += \
     inc/compat.h \
     inc/mainwindow.h \
-    inc/intelhexclass.h \
     inc/bootloader.h \
     inc/transferthread.h \
     inc/datastructures.h \

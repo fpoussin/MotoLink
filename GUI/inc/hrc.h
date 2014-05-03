@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <QDebug>
-#include "intelhexclass.h"
-#include <fstream>
+#include <QFile>
+#include <QString>
+#include <QTextStream>
 #include "datastructures.h"
 
 class Hrc : public QObject
@@ -20,15 +21,15 @@ public slots:
     bool saveFile(const QString &filename);
 
 private slots:
-    bool checkHexType(void);
+    bool hexToArray(QString *hex, QByteArray *array);
+    bool arrayToHex(QByteArray *array, QString *hex);
+    bool checkMapType(void);
 
 private:
-    std::ifstream mIntelHexInput;
-    std::ofstream mIntelHexOutput;
-    intelhex mIntelhex;
-    QString mIntelHexLine;
-
-    cbr600rr_map_t mCbr600rr_map;
+    bool mHasMap;
+    cbr600rr07_map_t mCbr600rr07_map;
+    QString mFileContent;
+    QByteArray mMapArray;
 
 };
 
