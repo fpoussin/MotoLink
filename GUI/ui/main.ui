@@ -1501,11 +1501,19 @@
    </property>
   </action>
   <action name="actionEnglish">
+   <property name="icon">
+    <iconset resource="../res/images/images.qrc">
+     <normaloff>:/images/flags/us.png</normaloff>:/images/flags/us.png</iconset>
+   </property>
    <property name="text">
     <string notr="true">English</string>
    </property>
   </action>
   <action name="actionFran_ais">
+   <property name="icon">
+    <iconset resource="../res/images/images.qrc">
+     <normaloff>:/images/flags/fr.png</normaloff>:/images/flags/fr.png</iconset>
+   </property>
    <property name="text">
     <string notr="true">Français</string>
    </property>

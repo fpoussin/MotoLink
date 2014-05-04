@@ -11,5 +11,7 @@
         <file>refresh.png</file>
         <file>sparkplug-target.png</file>
         <file>target.png</file>
+        <file>flags/fr.png</file>
+        <file>flags/us.png</file>
     </qresource>
 </RCC>
