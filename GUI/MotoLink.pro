@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui webkit webkitwidgets
+QT += core gui xml webkit webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -55,4 +55,26 @@ RESOURCES += \
 
 TRANSLATIONS = res/motolink_fr.ts
 CODECFORTR = UTF-8
+
+# Icon for windows
+win32:RC_FILE = res/motolink.rc
+# OSX
+macx:ICON = res/images/icon.icns
+
+target.path = /usr/bin
+INSTALLS += target
+
+conf.path = /etc/udev/rules.d
+conf.files = 49-motolink.rules
+INSTALLS += conf
+
+unix:!macx {
+    icon.path = /usr/share/pixmaps
+    icon.files = res/images/motolink.png
+    INSTALLS += icon
+
+    launcher.path = /usr/share/applications
+    launcher.files = res/motolink.desktop
+    INSTALLS += launcher
+}
 

@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setupConnections();
     this->setupTabShortcuts();
     this->setupSettings();
+    mUndoView.setStack(&mUndoStack);
+    mUndoView.setWindowTitle("Actions History - "+this->windowTitle());
     mHasChanged = false;
 
     this->uiDisable();
@@ -171,6 +173,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
+    QObject::connect(mUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);

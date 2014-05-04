@@ -426,7 +426,7 @@
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <layout class="QGridLayout" name="gridLayout">
-             <item row="6" column="0">
+             <item row="7" column="0">
               <widget class="QDoubleSpinBox" name="dsbRpmDiv">
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -445,7 +445,7 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="0">
+             <item row="9" column="0">
               <widget class="QLabel" name="ltSpeedDiv">
                <property name="font">
                 <font>
@@ -461,14 +461,14 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="0">
+             <item row="8" column="0">
               <widget class="Line" name="line">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="5" column="0">
               <widget class="Line" name="line_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -492,7 +492,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="bTpsSet0">
                <property name="maximumSize">
                 <size>
                  <width>110</width>
@@ -500,11 +500,11 @@
                 </size>
                </property>
                <property name="text">
-                <string>Calibrate TPS</string>
+                <string>Set 0%</string>
                </property>
               </widget>
              </item>
-             <item row="10" column="0">
+             <item row="11" column="0">
               <spacer name="verticalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -517,7 +517,7 @@
                </property>
               </spacer>
              </item>
-             <item row="9" column="0">
+             <item row="10" column="0">
               <widget class="QDoubleSpinBox" name="dsbSpeedDiv">
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -595,7 +595,7 @@
                </item>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="6" column="0">
               <widget class="QLabel" name="ltRpmdiv">
                <property name="font">
                 <font>
@@ -615,6 +615,13 @@
               <widget class="Line" name="line_16">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="bTpsSet100">
+               <property name="text">
+                <string>Set 100%</string>
                </property>
               </widget>
              </item>
@@ -1278,6 +1285,7 @@
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="actionShow_actions"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
@@ -1500,6 +1508,15 @@
   <action name="actionFran_ais">
    <property name="text">
     <string notr="true">Français</string>
+   </property>
+  </action>
+  <action name="actionShow_actions">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/view-history.png</normaloff>:/oxygen/32x32/actions/view-history.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show actions</string>
    </property>
   </action>
  </widget>

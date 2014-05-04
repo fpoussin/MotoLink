@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QTextBrowser>
 #include <QAction>
+#include <QUndoView>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -63,6 +64,7 @@ private slots:
     void openRecenFile(void);
 
 private:
+
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);
@@ -86,6 +88,7 @@ private:
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack; /* TODO */
     QUndoCommand mUndoCommand; /* TODO */
+    QUndoView mUndoView; /* TODO */
     QStringList mRecentFiles;
     QAction *mRecentFilesActions[MAX_RECENT_FILES];
 };
