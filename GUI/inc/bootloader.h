@@ -48,12 +48,12 @@ public slots:
     qint32 readMem(quint32 addr, QByteArray *data, quint32 len);
     bool eraseFlash(quint32 len);
     bool reset(void);
-    bool isConnected(void);
+    bool isConnected(void) const;
     bool sendWake(void);
     void abortConnect(void);
 
 private slots:
-    quint8 checkSum(const quint8 *data, quint8 length);
+    quint8 checkSum(const quint8 *data, quint8 length) const;
 
 private:
     QUsb *mUsb;

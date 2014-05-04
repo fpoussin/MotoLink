@@ -174,6 +174,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
     QObject::connect(mUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
+    QObject::connect(mUi->actionUndo, SIGNAL(triggered()), &mUndoStack, SLOT(undo()));
+    QObject::connect(mUi->actionRedo, SIGNAL(triggered()), &mUndoStack, SLOT(redo()));
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
@@ -255,6 +257,9 @@ void MainWindow::makeDefaultModel()
             mDefaultModel.setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
             mUi->tableFuel->setColumnWidth(column, 15);
             mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
+            mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::white)), Qt::ForegroundRole );
+            mDefaultModel.setData(mDefaultModel.index(row, column), Qt::AlignCenter, Qt::TextAlignmentRole);
+            mDefaultModel.setData(mDefaultModel.index(row, column), 0);
         }
     }
 }

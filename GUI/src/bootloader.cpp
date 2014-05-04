@@ -205,7 +205,7 @@ bool Bootloader::reset()
     return true;
 }
 
-bool Bootloader::isConnected()
+bool Bootloader::isConnected() const
 {
     return mConnected;
 }
@@ -231,7 +231,7 @@ void Bootloader::abortConnect()
     mAbortConnect = true;
 }
 
-quint8 Bootloader::checkSum(const quint8 *data, quint8 length)
+quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
 {
     quint8 i;
     quint8 sum = 0;

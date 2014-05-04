@@ -10,7 +10,6 @@
 #include <QString>
 #include <QUsb>
 #include <QUndoStack>
-#include <QUndoCommand>
 #include <QTranslator>
 #include <QSettings>
 #include <QTextBrowser>
@@ -22,6 +21,7 @@
 #include "helpviewer.h"
 #include "motolink.h"
 #include "bootloader.h"
+#include "commands.h"
 
 #define MAX_RECENT_FILES 5
 #define SETTINGS_RECENT_FILES "main/recent_files"
@@ -87,8 +87,7 @@ private:
     UpdateWizard mUpdateWizard;
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack; /* TODO */
-    QUndoCommand mUndoCommand; /* TODO */
-    QUndoView mUndoView; /* TODO */
+    QUndoView mUndoView;
     QStringList mRecentFiles;
     QAction *mRecentFilesActions[MAX_RECENT_FILES];
 };

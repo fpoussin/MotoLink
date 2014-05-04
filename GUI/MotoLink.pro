@@ -29,7 +29,8 @@ SOURCES += src/main.cpp \
     src/hrc.cpp \
     src/updatewizard.cpp \
     src/motolink.cpp \
-    src/helpviewer.cpp
+    src/helpviewer.cpp \
+    src/commands.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -40,7 +41,8 @@ HEADERS  += \
     inc/hrc.h \
     inc/updatewizard.h \
     inc/motolink.h \
-    inc/helpviewer.h
+    inc/helpviewer.h \
+    inc/commands.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \
