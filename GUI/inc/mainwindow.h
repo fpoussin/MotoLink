@@ -71,6 +71,8 @@ private slots:
     void showIgnTab(void);
     void showKnockTab(void);
 
+    void showFuelContextMenu(const QPoint& pos);
+
 private:
 
     void setupDefaults(void);

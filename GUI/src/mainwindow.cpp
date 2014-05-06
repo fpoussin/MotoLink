@@ -193,6 +193,9 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
     QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
 
+    mUi->tableFuel->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(mUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));
+
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
              mRecentFilesActions[i]->setVisible(false);
@@ -387,5 +390,27 @@ void MainWindow::showKnockTab()
 
     if (index >= 0)
         mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showFuelContextMenu(const QPoint &pos)
+{
+    QPoint globalPos = this->mUi->tableFuel->mapToGlobal(pos);
+
+    QMenu myMenu;
+//    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));
+//    myMenu.addSeparator();
+//    myMenu.addAction("Menu Item 2");
+
+    QAction* selectedItem = myMenu.exec(globalPos);
+
+    if (selectedItem)
+    {
+        // something was chosen, do stuff
+    }
+    else
+    {
+        // nothing was chosen
+    }
+
 }
 
