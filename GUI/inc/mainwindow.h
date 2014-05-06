@@ -70,7 +70,9 @@ private:
     void setupTabShortcuts(void);
     void setupSettings(void);
     void makeDefaultModel(void);
+    void makeCellColors(void);
     void retranslate(void);
+    QColor NumberToColor(float value, float maxValue, bool greenIsNegative = false);
 
     Ui::MainWindow *mUi;
     QTranslator mTranslator;

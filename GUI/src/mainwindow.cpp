@@ -3,6 +3,7 @@
 #include <QSignalMapper>
 #include <ui_main.h>
 #include <QFileInfo>
+#include <QModelIndex>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mHelpViewer(NULL)
 {
     mUi->setupUi(this);
-    makeDefaultModel();
+    this->makeDefaultModel();
+    this->makeCellColors();
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
@@ -152,7 +154,6 @@ void MainWindow::setupDefaults(void)
     mUi->tableFuel->setModel(&mDefaultModel);
     mUi->tableIgnMap->setModel(&mDefaultModel);
     mUi->tableAfrMap->setModel(&mDefaultModel);
-    mUi->tableIgnTgt->setModel(&mDefaultModel);
     mUi->tableAfrTgt->setModel(&mDefaultModel);
     mUi->tableKnk->setModel(&mDefaultModel);
 }
@@ -256,10 +257,29 @@ void MainWindow::makeDefaultModel()
             mDefaultModel.setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
             mDefaultModel.setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
             mUi->tableFuel->setColumnWidth(column, 15);
-            mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
-            mDefaultModel.setData(mDefaultModel.index(row, column), QVariant(QBrush(Qt::white)), Qt::ForegroundRole );
-            mDefaultModel.setData(mDefaultModel.index(row, column), Qt::AlignCenter, Qt::TextAlignmentRole);
-            mDefaultModel.setData(mDefaultModel.index(row, column), 0);
+
+            int rd = qrand() % ((30 + 1) - -30) + -30;
+            QColor color(0xFFFFFF);
+            QModelIndex index(mDefaultModel.indexFromItem(item));
+
+            mDefaultModel.setData(index, QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
+            mDefaultModel.setData(index, QVariant(QBrush(color)), Qt::ForegroundRole );
+            mDefaultModel.setData(index, Qt::AlignCenter, Qt::TextAlignmentRole);
+            mDefaultModel.setData(index, rd);
+        }
+    }
+}
+
+void MainWindow::makeCellColors()
+{
+    for (int childCol = 0; childCol < mDefaultModel.columnCount(); ++childCol)
+    {
+        for (int childRow = 0; childRow < mDefaultModel.rowCount(); ++childRow)
+        {
+            QModelIndex childIndex = mDefaultModel.index(childRow, childCol);
+            uchar value = childIndex.data().toInt()+30;
+
+            mDefaultModel.setData(childIndex, QVariant(QBrush(this->NumberToColor(value, 60, true))), Qt::BackgroundRole);
         }
     }
 }
@@ -268,6 +288,18 @@ void MainWindow::retranslate()
 {
     mUi->retranslateUi(this);
     mUpdateWizard.retranslate();
+}
+
+QColor MainWindow::NumberToColor(float value, float maxValue, bool greenIsNegative)
+{
+    if (greenIsNegative)
+        value = maxValue - value;
+    QColor color;
+    const float hue = value * (maxValue/20.0) / 360.0;
+
+    color.setHslF(hue, 0.85, 0.25, 0.85);
+
+    return color;
 }
 
 void MainWindow::setLanguageEnglish()
