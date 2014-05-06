@@ -7,10 +7,21 @@ ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value,
 {
     mOld = item->index().data();
     mNew = value;
-    QString title(QObject::tr("Changed cell from "));
-    title.append(mOld.toString());
-    title.append(QObject::tr(" to "));
-    title.append(mNew.toString());
+
+    /* For easy translation */
+    const QString cellMsg(QObject::tr("Changed cell"));
+    const QString cellFrom(QObject::tr("from"));
+    const QString cellTo(QObject::tr("to"));
+
+    const QString colname = model->headerData(
+                item->index().column(), Qt::Horizontal).toString();
+
+    const QString rowname = model->headerData(
+                item->index().row(), Qt::Vertical).toString();
+
+    QString title = QString(cellMsg+" %1:%2 "+cellFrom+" %3 "+cellTo+" %4")
+            .arg(rowname, colname, mOld.toString(), mNew.toString());
+
     this->setText(title);
 }
 
