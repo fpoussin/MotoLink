@@ -15,7 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
     mUpdateWizard(&mBtl, NULL),
     mHelpViewer(NULL),
     mUndoStack(NULL),
-    mDefaultModel(&mUndoStack)
+    mFuelModel(&mUndoStack),
+    mStagingModel(&mUndoStack),
+    mAFRModel(&mUndoStack),
+    mAFRTgtModel(&mUndoStack),
+    mIgnModel(&mUndoStack),
+    mKnockModel(&mUndoStack)
 {
     mUndoStack.setUndoLimit(20);
     mUi->setupUi(this);
@@ -124,8 +129,8 @@ void MainWindow::disconnectFromEcu()
 void MainWindow::showAbout()
 {
     QMessageBox::information(this,tr("About Motolink"),
-       tr("<strong>Version: " __MTL_VER__ "</strong><br/><br/>"
-       "Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
+       tr("<strong>Version: " __MTL_VER__ "</strong><br/><br/>")+
+       tr("Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
        "You can find more information "
        "<a href=\"https://github.com/mobyfab/MotoLink\">here.</a>"));
 }
@@ -152,11 +157,11 @@ void MainWindow::exportHrc()
 void MainWindow::setupDefaults(void)
 {
     mUi->statusBar->showMessage(tr("Disconnected"));
-    mUi->tableFuel->setModel(&mDefaultModel);
-    mUi->tableIgnMap->setModel(&mDefaultModel);
-    mUi->tableAfrMap->setModel(&mDefaultModel);
-    mUi->tableAfrTgt->setModel(&mDefaultModel);
-    mUi->tableKnk->setModel(&mDefaultModel);
+    mUi->tableFuel->setModel(&mFuelModel);
+    mUi->tableIgnMap->setModel(&mIgnModel);
+    mUi->tableAfrMap->setModel(&mAFRModel);
+    mUi->tableAfrTgt->setModel(&mAFRTgtModel);
+    mUi->tableKnk->setModel(&mKnockModel);
 }
 
 void MainWindow::setupConnections(void)
@@ -180,6 +185,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionRedo, SIGNAL(triggered()), &mUndoStack, SLOT(redo()));
     QObject::connect(&mUndoStack, SIGNAL(canRedoChanged(bool)), mUi->actionRedo, SLOT(setEnabled(bool)));
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mUi->actionUndo, SLOT(setEnabled(bool)));
+
+    //QObject::connect(&mDefaultModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT());
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);

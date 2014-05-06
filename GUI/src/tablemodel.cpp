@@ -25,7 +25,9 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     }
     if (role == Qt::UserRole)
         role = Qt::EditRole;
-    item->setData(QVariant(QBrush(this->NumberToColor(newvalue+mMax, mMax*2, true))), Qt::BackgroundRole);
+    item->setData(QVariant(QBrush(this->NumberToColor(newvalue, true))), Qt::BackgroundRole);
+    item->setData(QVariant(QBrush(Qt::white)), Qt::ForegroundRole );
+    item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
 }
@@ -40,14 +42,15 @@ void TableModel::setMax(int max)
     mMax = max;
 }
 
-QColor TableModel::NumberToColor(float value, float maxValue, bool greenIsNegative)
+QColor TableModel::NumberToColor(float value, bool greenIsNegative)
 {
-    if (greenIsNegative)
-        value = maxValue - value;
+    value += mMax;
+    if (greenIsNegative) /* Green to Red */
+        value = (mMax*2) - value;
     QColor color;
-    const float hue = value * (maxValue/20.0) / 360.0;
+    const float hue = value * (mMax/10.0) / 360.0;
 
-    color.setHslF(hue, 0.85, 0.25, 0.85);
+    color.setHslF(hue, 0.85, 0.40, 0.80);
 
     return color;
 }
@@ -56,7 +59,6 @@ void TableModel::fill()
 {
     mNumRow = 11;
     mNumCol = 16;
-    QColor color(0xFFFFFF);
     QModelIndex * index;
 
     for (int row = 0; row < mNumRow; ++row)
@@ -67,14 +69,9 @@ void TableModel::fill()
             this->setItem(row, column, item);
             this->setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
             this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
-            //mUi->tableFuel->setColumnWidth(column, 15);
 
-            int rd = qrand() % ((30 + 1) - -30) + -30;
+            int rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
             index = &this->indexFromItem(item);
-
-            this->setData(*index, QVariant(QBrush(Qt::darkGreen)), Qt::BackgroundRole);
-            this->setData(*index, QVariant(QBrush(color)), Qt::ForegroundRole );
-            this->setData(*index, Qt::AlignCenter, Qt::TextAlignmentRole);
             this->setData(*index, rd, Qt::UserRole);
         }
     }

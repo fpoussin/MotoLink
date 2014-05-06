@@ -76,7 +76,12 @@ private:
     Ui::MainWindow *mUi;
     QTranslator mTranslator;
     QSettings mSettings;
-    TableModel mDefaultModel;
+    TableModel mFuelModel;
+    TableModel mStagingModel;
+    TableModel mAFRModel;
+    TableModel mAFRTgtModel;
+    TableModel mIgnModel;
+    TableModel mKnockModel;
     QString mCurrentFile;
     bool mHasChanged;
     Hrc mHrc;

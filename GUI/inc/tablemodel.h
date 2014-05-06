@@ -20,7 +20,7 @@ public slots:
 
 
 private:
-    QColor NumberToColor(float value, float maxValue, bool greenIsNegative);
+    QColor NumberToColor(float value, bool greenIsNegative);
     void fill(void);
 
     QUndoStack* mStack;

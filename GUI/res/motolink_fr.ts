@@ -365,101 +365,106 @@
         <translation>Mise à jour du Firmware...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1467"/>
+        <location filename="../ui/main.ui" line="1470"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1470"/>
+        <location filename="../ui/main.ui" line="1473"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1479"/>
+        <location filename="../ui/main.ui" line="1485"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1482"/>
+        <location filename="../ui/main.ui" line="1488"/>
         <source>Ctrl+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1494"/>
+        <location filename="../ui/main.ui" line="1500"/>
         <source>Auto Send</source>
         <translation>Envoi automatique</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1503"/>
+        <location filename="../ui/main.ui" line="1509"/>
         <source>Send Configuration</source>
         <translation>Envoyer la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1512"/>
+        <location filename="../ui/main.ui" line="1518"/>
         <source>Get Configuration</source>
         <translation>Recevoir la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1539"/>
+        <location filename="../ui/main.ui" line="1545"/>
         <source>Show actions</source>
         <translation>Monter les actions</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="42"/>
+        <location filename="../src/mainwindow.cpp" line="47"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="43"/>
+        <location filename="../src/mainwindow.cpp" line="48"/>
         <source>Unsaved changes!
 Save file before closing?</source>
         <translation>Des changements sont en cours !
 Sauvegarder avant la fermeture ?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="70"/>
+        <location filename="../src/mainwindow.cpp" line="75"/>
         <source>Open Tune File</source>
         <translation>Ouvrir une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="70"/>
-        <location filename="../src/mainwindow.cpp" line="105"/>
+        <location filename="../src/mainwindow.cpp" line="75"/>
+        <location filename="../src/mainwindow.cpp" line="110"/>
         <source>Tune Files (*.xml)</source>
         <translation>Fichier de cartographie (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="105"/>
+        <location filename="../src/mainwindow.cpp" line="110"/>
         <source>Save Tune File</source>
         <translation>Enregistrer une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="126"/>
+        <location filename="../src/mainwindow.cpp" line="131"/>
         <source>About Motolink</source>
         <translation>à propos de MotoLink</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="127"/>
+        <location filename="../src/mainwindow.cpp" line="132"/>
         <source>&lt;strong&gt;Version: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="141"/>
+        <location filename="../src/mainwindow.cpp" line="133"/>
+        <source>Motolink is a smart interface designed for Honda HRC ECUs.&lt;br/&gt;&lt;br/&gt;You can find more information &lt;a href=&quot;https://github.com/mobyfab/MotoLink&quot;&gt;here.&lt;/a&gt;</source>
+        <translation>MotoLink est une interface intelligente conçue pour les calculateurs HRC.&lt;br/&gt;&lt;br/&gt;Vous pouvez trouver plus d&apos;informations &lt;a href=&quot;https://github.com/mobyfab/MotoLink&quot;&gt;ici.&lt;/a&gt; (En Anglais)</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="146"/>
         <source>Import HRC File</source>
         <translation>Importer un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="141"/>
-        <location filename="../src/mainwindow.cpp" line="148"/>
+        <location filename="../src/mainwindow.cpp" line="146"/>
+        <location filename="../src/mainwindow.cpp" line="153"/>
         <source>HRC File (*.E2P)</source>
         <translation>Fichier HRC (*.E2P)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="148"/>
+        <location filename="../src/mainwindow.cpp" line="153"/>
         <source>Export HRC File</source>
         <translation>Exporter un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="154"/>
+        <location filename="../src/mainwindow.cpp" line="159"/>
         <source>Disconnected</source>
         <translation>Déconnecter</translation>
     </message>
