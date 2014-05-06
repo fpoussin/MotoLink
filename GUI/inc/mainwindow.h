@@ -43,7 +43,7 @@ public slots:
     void Quit(void);
     void closeEvent(QCloseEvent *event);
     void openFile(void);
-    void openFile(QString &filename);
+    void openFile(const QString &filename);
     void saveFile(void);
     void saveFileAs(void);
     void connectToEcu(void);

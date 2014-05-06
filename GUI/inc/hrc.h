@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QString>
-#include <QTextStream>
+#include <QStringList>
 #include "datastructures.h"
 
 class Hrc : public QObject

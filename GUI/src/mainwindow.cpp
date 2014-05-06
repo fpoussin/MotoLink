@@ -69,7 +69,7 @@ void MainWindow::openFile(void)
     this->openFile(fileName);
 }
 
-void MainWindow::openFile(QString &filename)
+void MainWindow::openFile(const QString &filename)
 {
     if (!filename.length())
         return;
