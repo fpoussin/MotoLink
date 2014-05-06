@@ -62,6 +62,8 @@ private slots:
     void uiDisable(void);
     void updateRecentFilesActions(void);
     void openRecenFile(void);
+    void itemChanged (QStandardItem * item);
+    void itemActivated (const QModelIndex & index);
 
 private:
 
@@ -70,7 +72,7 @@ private:
     void setupTabShortcuts(void);
     void setupSettings(void);
     void makeDefaultModel(void);
-    void makeCellColors(void);
+    void makeCellColors(QStandardItemModel *model);
     void retranslate(void);
     QColor NumberToColor(float value, float maxValue, bool greenIsNegative = false);
 

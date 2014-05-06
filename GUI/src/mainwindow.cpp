@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     mUi->setupUi(this);
     this->makeDefaultModel();
-    this->makeCellColors();
+    this->makeCellColors(&mDefaultModel);
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
@@ -190,6 +190,9 @@ void MainWindow::setupConnections(void)
             mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
 
 
+    QObject::connect(&mDefaultModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
+    QObject::connect(mUi->tableFuel, SIGNAL(activated(QModelIndex)), this, SLOT(itemActivated(QModelIndex)));
+
     /*
      * Signals from old bootloader GUI, just for reference, will remove later
     // Thread
@@ -270,16 +273,16 @@ void MainWindow::makeDefaultModel()
     }
 }
 
-void MainWindow::makeCellColors()
+void MainWindow::makeCellColors(QStandardItemModel *model)
 {
-    for (int childCol = 0; childCol < mDefaultModel.columnCount(); ++childCol)
+    for (int childCol = 0; childCol < model->columnCount(); ++childCol)
     {
-        for (int childRow = 0; childRow < mDefaultModel.rowCount(); ++childRow)
+        for (int childRow = 0; childRow < model->rowCount(); ++childRow)
         {
-            QModelIndex childIndex = mDefaultModel.index(childRow, childCol);
+            QModelIndex childIndex = model->index(childRow, childCol);
             uchar value = childIndex.data().toInt()+30;
 
-            mDefaultModel.setData(childIndex, QVariant(QBrush(this->NumberToColor(value, 60, true))), Qt::BackgroundRole);
+            model->setData(childIndex, QVariant(QBrush(this->NumberToColor(value, 60, true))), Qt::BackgroundRole);
         }
     }
 }
@@ -380,4 +383,29 @@ void MainWindow::openRecenFile()
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
         this->openFile(action->data().toString());
+}
+
+void MainWindow::itemChanged(QStandardItem *item)
+{
+    const int value = item->index().data().toInt();
+    int newvalue = value;
+
+    if (value > 30)
+        newvalue = 30;
+    else if (value < -30)
+        newvalue = -30;
+
+//    mUndoStack.push(new ModelEditCommand(item, QVariant(value)));
+
+    if (value != newvalue)
+        item->model()->setData(item->index(), newvalue);
+    item->setData(QVariant(QBrush(this->NumberToColor(value+30, 60, true))), Qt::BackgroundRole);
+
+    qWarning() << "itemChanged" << value;
+}
+
+void MainWindow::itemActivated(const QModelIndex &index)
+{
+
+    qWarning() << "itemActivated" << index.data();
 }

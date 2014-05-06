@@ -3,13 +3,12 @@
 
 #include <QUndoCommand>
 #include <QStandardItem>
-#include <QPoint>
 #include <QVariant>
 
 class ModelEditCommand : public QUndoCommand
 {
 public:
-    ModelEditCommand(QStandardItemModel *model,
+    ModelEditCommand(QStandardItem *item, QVariant value,
                     QUndoCommand *parent = 0);
 
     void undo();
@@ -19,8 +18,8 @@ private slots:
 
 
 private:
-    QStandardItemModel *mModel;
-    QStandardItemModel *mOldModel;
+    QStandardItem *mItem;
+    QVariant mOld, mNew;
 };
 
 #endif // COMMANDS_H
