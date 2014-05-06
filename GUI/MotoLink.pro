@@ -30,7 +30,8 @@ SOURCES += src/main.cpp \
     src/updatewizard.cpp \
     src/motolink.cpp \
     src/helpviewer.cpp \
-    src/commands.cpp
+    src/commands.cpp \
+    src/tablemodel.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -42,7 +43,8 @@ HEADERS  += \
     inc/updatewizard.h \
     inc/motolink.h \
     inc/helpviewer.h \
-    inc/commands.h
+    inc/commands.h \
+    inc/tablemodel.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

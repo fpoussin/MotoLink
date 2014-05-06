@@ -8,8 +8,10 @@
 class ModelEditCommand : public QUndoCommand
 {
 public:
-    ModelEditCommand(QStandardItem *item, QVariant value,
-                    QUndoCommand *parent = 0);
+    ModelEditCommand(QStandardItem *item,
+                     QVariant value,
+                     QStandardItemModel *model,
+                     QUndoCommand *parent = 0);
 
     void undo();
     void redo();
@@ -20,6 +22,7 @@ private slots:
 private:
     QStandardItem *mItem;
     QVariant mOld, mNew;
+    QStandardItemModel *mModel;
 };
 
 #endif // COMMANDS_H

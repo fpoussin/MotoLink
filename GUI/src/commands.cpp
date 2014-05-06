@@ -1,12 +1,13 @@
 #include "commands.h"
 
 ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value,
-                                 QUndoCommand *parent)
-    : QUndoCommand(parent), mItem(item)
+                                   QStandardItemModel *model,
+                                   QUndoCommand *parent)
+    : QUndoCommand(parent), mItem(item), mModel(model)
 {
     mOld = item->index().data();
     mNew = value;
-    QString title(QObject::tr("Changed table cell from "));
+    QString title(QObject::tr("Changed cell from "));
     title.append(mOld.toString());
     title.append(QObject::tr(" to "));
     title.append(mNew.toString());
@@ -15,10 +16,10 @@ ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value,
 
 void ModelEditCommand::undo()
 {
-    mItem->model()->setData(mItem->index(), mOld);
+    mModel->setData(mItem->index(), mOld, Qt::UserRole);
 }
 
 void ModelEditCommand::redo()
 {
-    mItem->model()->setData(mItem->index(), mNew);
+    mModel->setData(mItem->index(), mNew, Qt::UserRole);
 }

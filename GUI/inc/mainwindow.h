@@ -22,6 +22,7 @@
 #include "motolink.h"
 #include "bootloader.h"
 #include "commands.h"
+#include "tablemodel.h"
 
 #define MAX_RECENT_FILES 5
 #define SETTINGS_RECENT_FILES "main/recent_files"
@@ -62,8 +63,6 @@ private slots:
     void uiDisable(void);
     void updateRecentFilesActions(void);
     void openRecenFile(void);
-    void itemChanged (QStandardItem * item);
-    void itemActivated (const QModelIndex & index);
 
 private:
 
@@ -72,17 +71,13 @@ private:
     void setupTabShortcuts(void);
     void setupSettings(void);
     void makeDefaultModel(void);
-    void makeCellColors(QStandardItemModel *model);
     void retranslate(void);
-    QColor NumberToColor(float value, float maxValue, bool greenIsNegative = false);
 
     Ui::MainWindow *mUi;
     QTranslator mTranslator;
     QSettings mSettings;
-    QStandardItemModel mDefaultModel;
+    TableModel mDefaultModel;
     QString mCurrentFile;
-    quint8 mNumCol;
-    quint8 mNumRow;
     bool mHasChanged;
     Hrc mHrc;
     QUsb mUsb;
