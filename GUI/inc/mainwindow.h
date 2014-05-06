@@ -64,6 +64,13 @@ private slots:
     void updateRecentFilesActions(void);
     void openRecenFile(void);
 
+    void showFuelTab(void);
+    void showAFRTab(void);
+    void showStagingTab(void);
+    void showAFRTgtTab(void);
+    void showIgnTab(void);
+    void showKnockTab(void);
+
 private:
 
     void setupDefaults(void);

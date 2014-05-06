@@ -186,7 +186,12 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canRedoChanged(bool)), mUi->actionRedo, SLOT(setEnabled(bool)));
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mUi->actionUndo, SLOT(setEnabled(bool)));
 
-    //QObject::connect(&mDefaultModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT());
+    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showFuelTab()));
+    QObject::connect(&mStagingModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showStagingTab()));
+    QObject::connect(&mAFRModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTab()));
+    QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTgtTab()));
+    QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
+    QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
@@ -327,8 +332,6 @@ void MainWindow::updateRecentFilesActions()
     }
     for (int j = numRecentFiles; j < MAX_RECENT_FILES; ++j)
         mRecentFilesActions[j]->setVisible(false);
-
-    //separatorAct->setVisible(numRecentFiles > 0);
 }
 
 void MainWindow::openRecenFile()
@@ -337,3 +340,52 @@ void MainWindow::openRecenFile()
     if (action)
         this->openFile(action->data().toString());
 }
+
+void MainWindow::showFuelTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabFuel);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showAFRTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabAfrMap);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showStagingTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabStaging);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showAFRTgtTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabAfrTarget);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showIgnTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabIgnMap);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
+void MainWindow::showKnockTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabKnock);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
