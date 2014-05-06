@@ -1459,6 +1459,9 @@
    </property>
   </action>
   <action name="actionUndo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/oxygen.qrc">
      <normaloff>:/oxygen/32x32/actions/edit-undo.png</normaloff>:/oxygen/32x32/actions/edit-undo.png</iconset>
@@ -1471,6 +1474,9 @@
    </property>
   </action>
   <action name="actionRedo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/oxygen.qrc">
      <normaloff>:/oxygen/32x32/actions/edit-redo.png</normaloff>:/oxygen/32x32/actions/edit-redo.png</iconset>
