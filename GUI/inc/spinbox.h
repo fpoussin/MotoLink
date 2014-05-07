@@ -18,6 +18,9 @@ signals:
 public slots:
     void pushUndo(void);
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+
 private:
     int mOld;
     QString mName;

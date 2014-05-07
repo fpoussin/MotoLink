@@ -31,6 +31,9 @@
     <height>482</height>
    </size>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string notr="true">MotoLink</string>
   </property>
@@ -46,6 +49,9 @@
      <width>16777215</width>
      <height>440</height>
     </size>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
@@ -397,6 +403,12 @@
                <widget class="SpinBox" name="sbThresholdMin">
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::UpDownArrows</enum>
+                </property>
+                <property name="accelerated">
+                 <bool>false</bool>
                 </property>
                 <property name="suffix">
                  <string> %</string>
