@@ -21,7 +21,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
     if (role == Qt::EditRole)
     {
-        mStack->push(new ModelEditCommand(item, QVariant(newvalue), this));
+        mStack->push(new ModelEditCommand(item, QVariant(newvalue), mName, this));
     }
     if (role == Qt::UserRole)
         role = Qt::EditRole;
@@ -30,6 +30,11 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
+}
+
+void TableModel::setName(QString name)
+{
+    mName = name;
 }
 
 void TableModel::setMin(int min)
@@ -50,7 +55,7 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative)
     QColor color;
     const float hue = value * (mMax/10.0) / 360.0;
 
-    color.setHslF(hue, 0.85, 0.40, 0.80);
+    color.setHslF(hue, 0.70, 0.30, 1.0);
 
     return color;
 }
@@ -70,6 +75,7 @@ void TableModel::fill()
             this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
 
             int rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
+
             this->setData(this->indexFromItem(item), rd, Qt::UserRole);
         }
     }

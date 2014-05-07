@@ -9,8 +9,9 @@ class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit TableModel(QUndoStack *stack, QObject *parent = 0);
+    explicit TableModel(QUndoStack *stack,QObject *parent = 0);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    void setName(QString name);
     void setMin(int min);
     void setMax(int max);
 
@@ -24,6 +25,7 @@ private:
     void fill(void);
 
     QUndoStack* mStack;
+    QString mName;
     int mMin;
     int mMax;
     quint8 mNumCol;

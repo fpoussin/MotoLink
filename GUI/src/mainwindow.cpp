@@ -22,15 +22,36 @@ MainWindow::MainWindow(QWidget *parent) :
     mIgnModel(&mUndoStack),
     mKnockModel(&mUndoStack)
 {
-    mUndoStack.setUndoLimit(20);
+    mUndoStack.setUndoLimit(100);
+
+    mFuelModel.setName("Fuel");
+    mStagingModel.setName("Staging");
+    mAFRModel.setName("AFR");
+    mAFRTgtModel.setName("AFR Target");
+    mIgnModel.setName("Ignition");
+    mKnockModel.setName("Knock");
+
     mUi->setupUi(this);
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
     this->setupSettings();
+
     mUndoView.setStack(&mUndoStack);
     mUndoView.setWindowTitle("Actions History - "+this->windowTitle());
     mHasChanged = false;
+
+    mUi->sbIdle->setName("Idle");
+    mUi->sbPitLimiter->setName("Pit Limiter");
+    mUi->sbShiftLight->setName("Shift Light");
+    mUi->sbThresholdMin->setName("Minimum Threshold");
+    mUi->sbThresholdMax->setName("Maximum Threshold");
+
+    mUi->sbIdle->setUndoStack(&mUndoStack);
+    mUi->sbPitLimiter->setUndoStack(&mUndoStack);
+    mUi->sbShiftLight->setUndoStack(&mUndoStack);
+    mUi->sbThresholdMin->setUndoStack(&mUndoStack);
+    mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
     this->uiDisable();
 }
@@ -38,6 +59,12 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete mUi;
+
+    for (int i = 0; i < MAX_RECENT_FILES; ++i)
+    {
+        if (mRecentFilesActions[i] != NULL)
+            delete mRecentFilesActions[i];
+    }
 }
 
 void MainWindow::Quit()
@@ -193,6 +220,12 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
     QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
 
+    QObject::connect(mUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+    QObject::connect(mUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+    QObject::connect(mUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+    QObject::connect(mUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+    QObject::connect(mUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+
     mUi->tableFuel->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(mUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));
 
@@ -202,10 +235,8 @@ void MainWindow::setupConnections(void)
              mRecentFilesActions[i]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-file.png"));
              connect(mRecentFilesActions[i], SIGNAL(triggered()),
                      this, SLOT(openRecenFile()));
+             mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
          }
-
-    for (int i = 0; i < MAX_RECENT_FILES; ++i)
-            mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
 
     /*
      * Signals from old bootloader GUI, just for reference, will remove later
@@ -392,9 +423,17 @@ void MainWindow::showKnockTab()
         mUi->tabMain->setCurrentIndex(index);
 }
 
+void MainWindow::showSettingsTab()
+{
+    const int index = mUi->tabMain->indexOf(mUi->tabSettings);
+
+    if (index >= 0)
+        mUi->tabMain->setCurrentIndex(index);
+}
+
 void MainWindow::showFuelContextMenu(const QPoint &pos)
 {
-    QPoint globalPos = this->mUi->tableFuel->mapToGlobal(pos);
+    QPoint globalPos = this->mUi->tableFuel->viewport()->mapToGlobal(pos);
 
     QMenu myMenu;
 //    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));

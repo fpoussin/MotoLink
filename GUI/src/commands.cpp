@@ -1,6 +1,6 @@
 #include "commands.h"
 
-ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value,
+ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value, QString& name,
                                    QStandardItemModel *model,
                                    QUndoCommand *parent)
     : QUndoCommand(parent), mItem(item), mModel(model)
@@ -8,19 +8,18 @@ ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value,
     mOld = item->index().data();
     mNew = value;
 
-    /* For easy translation */
-    const QString cellMsg(QObject::tr("Changed cell"));
-    const QString cellFrom(QObject::tr("from"));
-    const QString cellTo(QObject::tr("to"));
-
     const QString colname = model->headerData(
                 item->index().column(), Qt::Horizontal).toString();
 
     const QString rowname = model->headerData(
                 item->index().row(), Qt::Vertical).toString();
 
-    QString title = QString(cellMsg+" %1:%2 "+cellFrom+" %3 "+cellTo+" %4")
-            .arg(rowname, colname, mOld.toString(), mNew.toString());
+    using namespace Commands;
+    QString title = QString("%1 %2 %3:%4 %5 %6 %7 %8")
+            .arg(msgChanged, name,
+                 rowname, colname,
+                 msgFrom, mOld.toString(),
+                 msgTo, mNew.toString());
 
     this->setText(title);
 }
@@ -33,4 +32,58 @@ void ModelEditCommand::undo()
 void ModelEditCommand::redo()
 {
     mModel->setData(mItem->index(), mNew, Qt::UserRole);
+}
+
+
+SpinBoxEditCommand::SpinBoxEditCommand(QSpinBox *spinbox, int value, QString& name, QUndoCommand *parent)
+    : QUndoCommand(parent)
+{
+    mSpinBox = spinbox;
+    mNew = spinbox->value();
+    mOld = value;
+
+    using namespace Commands;
+    QString title = QString("%1 %2 %3 %4 %5 %6")
+            .arg(msgChanged, name,
+                 msgFrom, QString::number(mOld),
+                 msgTo, QString::number(mNew));
+
+    this->setText(title);
+}
+
+void SpinBoxEditCommand::undo()
+{
+    mSpinBox->setValue(mOld);
+}
+
+void SpinBoxEditCommand::redo()
+{
+    mSpinBox->setValue(mNew);
+}
+
+
+DoubleSpinBoxEditCommand::DoubleSpinBoxEditCommand(QDoubleSpinBox *spinbox, double value, QString &name, QUndoCommand *parent)
+    : QUndoCommand(parent)
+{
+    mSpinBox = spinbox;
+    mNew = spinbox->value();
+    mOld = value;
+
+    using namespace Commands;
+    QString title = QString("%1 %2 %3 %4 %5 %6")
+            .arg(msgChanged, name,
+                 msgFrom, QString::number(mOld),
+                 msgTo, QString::number(mNew));
+
+    this->setText(title);
+}
+
+void DoubleSpinBoxEditCommand::undo()
+{
+    mSpinBox->setValue(mOld);
+}
+
+void DoubleSpinBoxEditCommand::redo()
+{
+    mSpinBox->setValue(mNew);
 }

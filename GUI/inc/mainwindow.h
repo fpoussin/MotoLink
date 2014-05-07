@@ -70,6 +70,7 @@ private slots:
     void showAFRTgtTab(void);
     void showIgnTab(void);
     void showKnockTab(void);
+    void showSettingsTab(void);
 
     void showFuelContextMenu(const QPoint& pos);
 
@@ -85,12 +86,6 @@ private:
     Ui::MainWindow *mUi;
     QTranslator mTranslator;
     QSettings mSettings;
-    TableModel mFuelModel;
-    TableModel mStagingModel;
-    TableModel mAFRModel;
-    TableModel mAFRTgtModel;
-    TableModel mIgnModel;
-    TableModel mKnockModel;
     QString mCurrentFile;
     bool mHasChanged;
     Hrc mHrc;
@@ -99,10 +94,16 @@ private:
     Bootloader mBtl;
     UpdateWizard mUpdateWizard;
     HelpViewer mHelpViewer;
-    QUndoStack mUndoStack; /* TODO */
+    QUndoStack mUndoStack;
     QUndoView mUndoView;
     QStringList mRecentFiles;
     QAction *mRecentFilesActions[MAX_RECENT_FILES];
+    TableModel mFuelModel;
+    TableModel mStagingModel;
+    TableModel mAFRModel;
+    TableModel mAFRTgtModel;
+    TableModel mIgnModel;
+    TableModel mKnockModel;
 };
 
 #endif // MAINWINDOW_H

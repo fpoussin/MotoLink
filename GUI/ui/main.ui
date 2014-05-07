@@ -83,7 +83,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="iconSize">
        <size>
@@ -350,7 +350,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="ltThresholdMax_2">
+               <widget class="SpinBox" name="sbThresholdMax">
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -394,7 +394,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="sbThresholdMin">
+               <widget class="SpinBox" name="sbThresholdMin">
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -843,7 +843,13 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QSpinBox" name="sbShiftLight">
+               <widget class="SpinBox" name="sbShiftLight">
+                <property name="toolTip">
+                 <string/>
+                </property>
+                <property name="accessibleName">
+                 <string/>
+                </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -897,7 +903,7 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QSpinBox" name="sbIdle">
+               <widget class="SpinBox" name="sbIdle">
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -950,7 +956,7 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QSpinBox" name="sbPitLimiter">
+               <widget class="SpinBox" name="sbPitLimiter">
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -1002,7 +1008,7 @@
          </spacer>
         </item>
         <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="gbSensors">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -1547,6 +1553,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>spinbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../res/oxygen.qrc"/>
   <include location="../res/images/images.qrc"/>
