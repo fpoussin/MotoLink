@@ -59,7 +59,6 @@ void TableModel::fill()
 {
     mNumRow = 11;
     mNumCol = 16;
-    QModelIndex * index;
 
     for (int row = 0; row < mNumRow; ++row)
     {
@@ -71,8 +70,7 @@ void TableModel::fill()
             this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
 
             int rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
-            index = &this->indexFromItem(item);
-            this->setData(*index, rd, Qt::UserRole);
+            this->setData(this->indexFromItem(item), rd, Qt::UserRole);
         }
     }
 }
