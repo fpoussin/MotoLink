@@ -27,6 +27,7 @@ void SpinBox::pushUndo()
         return;
     if (mUndoStack != NULL)
     {
+        /* Pushes when undoing as well... */
         mUndoStack->push(new SpinBoxEditCommand(this, mOld, mName));
     }
     mOld = this->value();
