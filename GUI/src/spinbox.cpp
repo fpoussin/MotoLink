@@ -1,4 +1,4 @@
-#include "inc/spinbox.h"
+#include "spinbox.h"
 
 #include <QCloseEvent>
 #include <qcoreevent.h>
