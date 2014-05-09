@@ -11,7 +11,6 @@ SpinBox::SpinBox(QWidget *parent) :
     mName = "SpinBox";
     mOld = this->value();
     this->installEventFilter(this);
-    this->setFocusPolicy( Qt::StrongFocus );
 
     QObject::connect(this, SIGNAL(editingFinished()), this, SLOT(pushUndo()));
 }
@@ -31,9 +30,8 @@ void SpinBox::pushUndo()
 {
     if (this->value() == mOld)
         return;
-    if (mUndoStack != NULL)
+    if (mUndoStack != NULL && !this->hasFocus())
     {
-        /* Pushes when undoing with focus as well... */
         mUndoStack->push(new SpinBoxEditCommand(this, mOld, mName));
     }
     mOld = this->value();
@@ -44,27 +42,28 @@ bool SpinBox::eventFilter(QObject *obj, QEvent *event)
     if (event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyEvt= (QKeyEvent *)event;
-        if(keyEvt->key() == Qt::Key_Z
-                && keyEvt->modifiers().testFlag(Qt::ControlModifier))
+        const int numKey = keyEvt->key();
+        const bool isCtrl = keyEvt->modifiers().testFlag(Qt::ControlModifier);
+
+        if(numKey == Qt::Key_Z && isCtrl)
         {
-            this->clearFocus();
+            this->setFocus();
             this->mUndoStack->undo();
-            this->setFocus();
             event->accept();
             return true;
         }
 
-        else if(keyEvt->key() == Qt::Key_Y
-                && keyEvt->modifiers().testFlag(Qt::ControlModifier))
+        else if(numKey == Qt::Key_Y && isCtrl)
         {
-            this->clearFocus();
-            this->mUndoStack->redo();
             this->setFocus();
+            this->mUndoStack->redo();
             event->accept();
             return true;
         }
 
-        else if(keyEvt->key() == Qt::Key_Escape)
+        else if(numKey == Qt::Key_Escape
+                || numKey == Qt::Key_Enter
+                || numKey == Qt::Key_Return)
         {
             this->clearFocus();
             event->accept();

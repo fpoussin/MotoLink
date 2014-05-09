@@ -1,4 +1,5 @@
 #include "commands.h"
+#include <QToolTip>
 
 ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value, QString& name,
                                    QStandardItemModel *model,
@@ -53,11 +54,13 @@ SpinBoxEditCommand::SpinBoxEditCommand(QSpinBox *spinbox, int value, QString& na
 
 void SpinBoxEditCommand::undo()
 {
+    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Undo" );
     mSpinBox->setValue(mOld);
 }
 
 void SpinBoxEditCommand::redo()
 {
+    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Redo" );
     mSpinBox->setValue(mNew);
 }
 
@@ -80,10 +83,12 @@ DoubleSpinBoxEditCommand::DoubleSpinBoxEditCommand(QDoubleSpinBox *spinbox, doub
 
 void DoubleSpinBoxEditCommand::undo()
 {
+    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Undo" );
     mSpinBox->setValue(mOld);
 }
 
 void DoubleSpinBoxEditCommand::redo()
 {
+    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Redo" );
     mSpinBox->setValue(mNew);
 }
