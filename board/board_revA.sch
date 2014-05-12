@@ -6693,11 +6693,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="IC_OPA" library="linear" deviceset="LMV324?*" device="MZ" value="MCP6004"/>
 <part name="+3V19" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND35" library="supply1" deviceset="GND" device=""/>
-<part name="R30" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
-<part name="R31" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
+<part name="R30" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R31" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
 <part name="GND34" library="supply1" deviceset="GND" device=""/>
 <part name="P+10" library="supply1" deviceset="VCC" device=""/>
-<part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
+<part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
 <part name="C34" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="S1" library="SparkFun-Electromechanical" deviceset="SWITCH-SPDT" device="PTH"/>
 <part name="IC_CAN" library="SparkFun-DigitalIC" deviceset="MCP2551" device="" value="MAX3051"/>
@@ -6706,9 +6706,9 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="P+3" library="supply1" deviceset="+12V" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
-<part name="R6" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
-<part name="R7" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
+<part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R6" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R7" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="CON_PWR" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
@@ -6735,9 +6735,9 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="R17" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K5"/>
 <part name="CON_AN" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="R5" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="10K"/>
+<part name="R5" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="100K"/>
 <part name="C4" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="100nF"/>
-<part name="R8" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="47K"/>
+<part name="R8" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
 <part name="D7" library="diode" deviceset="BAT54S" device=""/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="D3" library="diode" deviceset="BAT54S" device=""/>
@@ -6765,7 +6765,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="R2" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="4.7K"/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
 <part name="IC_KLINE" library="misc" deviceset="MCP2004" device=""/>
-<part name="R13" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
+<part name="R13" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="2.2K"/>
 <part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
 <part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="8Mhz"/>
 <part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
@@ -6815,11 +6815,20 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="IC_OPA" gate="P" x="110.49" y="114.3"/>
 <instance part="+3V19" gate="G$1" x="110.49" y="124.46" rot="MR0"/>
 <instance part="GND35" gate="1" x="110.49" y="104.14"/>
-<instance part="R30" gate="G$1" x="62.23" y="156.21" rot="R90"/>
-<instance part="R31" gate="G$1" x="62.23" y="146.05" rot="R90"/>
+<instance part="R30" gate="G$1" x="62.23" y="156.21" smashed="yes" rot="R90">
+<attribute name="NAME" x="60.7314" y="152.4" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="65.532" y="152.4" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="R31" gate="G$1" x="62.23" y="146.05" smashed="yes" rot="R90">
+<attribute name="NAME" x="60.7314" y="142.24" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="65.532" y="138.43" size="1.778" layer="96" rot="R90"/>
+</instance>
 <instance part="GND34" gate="1" x="62.23" y="138.43"/>
 <instance part="P+10" gate="VCC" x="62.23" y="163.83"/>
-<instance part="R32" gate="G$1" x="36.83" y="120.65"/>
+<instance part="R32" gate="G$1" x="36.83" y="120.65" smashed="yes">
+<attribute name="NAME" x="33.02" y="122.1486" size="1.778" layer="95"/>
+<attribute name="VALUE" x="19.05" y="119.888" size="1.778" layer="96"/>
+</instance>
 <instance part="C34" gate="G$1" x="74.93" y="17.78"/>
 <instance part="S1" gate="1" x="77.47" y="59.69"/>
 <instance part="IC_CAN" gate="G$1" x="300.99" y="82.55"/>
@@ -6830,7 +6839,10 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="IC_OPA" gate="D" x="88.9" y="86.36"/>
 <instance part="GND5" gate="1" x="31.75" y="96.52"/>
 <instance part="R4" gate="G$1" x="38.1" y="109.22"/>
-<instance part="R6" gate="G$1" x="48.26" y="115.57" rot="R90"/>
+<instance part="R6" gate="G$1" x="48.26" y="115.57" smashed="yes" rot="R90">
+<attribute name="NAME" x="46.7614" y="111.76" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="51.562" y="110.49" size="1.778" layer="96" rot="R90"/>
+</instance>
 <instance part="R7" gate="G$1" x="59.69" y="104.14" rot="R90"/>
 <instance part="GND6" gate="1" x="346.71" y="53.34"/>
 <instance part="GND8" gate="1" x="295.91" y="118.11"/>
@@ -6867,13 +6879,27 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="R17" gate="G$1" x="295.91" y="137.16" rot="R270"/>
 <instance part="CON_AN" gate="G$1" x="24.13" y="106.68"/>
 <instance part="GND15" gate="1" x="43.18" y="78.74"/>
-<instance part="R5" gate="G$1" x="88.9" y="80.01" rot="R180"/>
+<instance part="R5" gate="G$1" x="88.9" y="80.01" smashed="yes" rot="R180">
+<attribute name="NAME" x="92.71" y="78.5114" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="88.9" y="78.232" size="1.778" layer="96" rot="R180"/>
+</instance>
 <instance part="C4" gate="G$1" x="53.34" y="88.9" rot="R90"/>
-<instance part="R8" gate="G$1" x="60.96" y="88.9" rot="R180"/>
-<instance part="D7" gate="G$1" x="44.45" y="120.65" rot="R90"/>
+<instance part="R8" gate="G$1" x="60.96" y="88.9" smashed="yes" rot="R180">
+<attribute name="NAME" x="64.77" y="87.4014" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="69.85" y="92.202" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="D7" gate="G$1" x="44.45" y="120.65" smashed="yes" rot="R90">
+<attribute name="NAME" x="47.5234" y="121.412" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="43.3324" y="113.792" size="1.778" layer="96" rot="R90"/>
+</instance>
 <instance part="+3V10" gate="G$1" x="44.45" y="130.81" rot="MR0"/>
-<instance part="D3" gate="G$1" x="54.61" y="109.22" rot="R90"/>
-<instance part="+3V9" gate="G$1" x="54.61" y="118.11" rot="MR0"/>
+<instance part="D3" gate="G$1" x="54.61" y="109.22" smashed="yes" rot="R90">
+<attribute name="NAME" x="52.6034" y="103.632" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="58.5724" y="104.902" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="+3V9" gate="G$1" x="54.61" y="118.11" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="54.61" y="118.11" size="1.778" layer="96" rot="MR90"/>
+</instance>
 <instance part="D4" gate="G$1" x="71.12" y="77.47"/>
 <instance part="+3V8" gate="G$1" x="78.74" y="80.01" rot="MR0"/>
 <instance part="GND16" gate="1" x="63.5" y="74.93"/>
