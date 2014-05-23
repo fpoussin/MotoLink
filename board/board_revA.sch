@@ -6666,7 +6666,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="IC_REG" library="v-reg" deviceset="LD117A?*" device="DT" technology="33TR" value="LM1117-3.3"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
-<part name="C1" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
+<part name="C1" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="1uF 25V"/>
 <part name="C2" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="P+2" library="supply1" deviceset="+12V" device=""/>
 <part name="D1" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
@@ -6693,11 +6693,11 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="IC_OPA" library="linear" deviceset="LMV324?*" device="MZ" value="MCP6004"/>
 <part name="+3V19" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND35" library="supply1" deviceset="GND" device=""/>
-<part name="R30" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
-<part name="R31" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R30" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
+<part name="R31" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
 <part name="GND34" library="supply1" deviceset="GND" device=""/>
 <part name="P+10" library="supply1" deviceset="VCC" device=""/>
-<part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
 <part name="C34" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="S1" library="SparkFun-Electromechanical" deviceset="SWITCH-SPDT" device="PTH"/>
 <part name="IC_CAN" library="SparkFun-DigitalIC" deviceset="MCP2551" device="" value="MAX3051"/>
@@ -6706,9 +6706,9 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="P+3" library="supply1" deviceset="+12V" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
-<part name="R6" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
-<part name="R7" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
+<part name="R6" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
+<part name="R7" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1M 1%"/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="CON_PWR" library="SparkFun-Connectors" deviceset="M03" device="PTH"/>
@@ -6737,7 +6737,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="R5" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="100K"/>
 <part name="C4" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="100nF"/>
-<part name="R8" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K 0.1%"/>
+<part name="R8" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="470K"/>
 <part name="D7" library="diode" deviceset="BAT54S" device=""/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="D3" library="diode" deviceset="BAT54S" device=""/>
@@ -6767,9 +6767,9 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="IC_KLINE" library="misc" deviceset="MCP2004" device=""/>
 <part name="R13" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="2.2K"/>
 <part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SMA" value="B240A"/>
-<part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="8Mhz"/>
-<part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
-<part name="C7" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="4.7pF"/>
+<part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="8Mhz 20pF"/>
+<part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="33pF"/>
+<part name="C7" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="33pF"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="TVS2" library="misc" deviceset="NUP4201MR6" device=""/>
@@ -6886,7 +6886,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="C4" gate="G$1" x="53.34" y="88.9" rot="R90"/>
 <instance part="R8" gate="G$1" x="60.96" y="88.9" smashed="yes" rot="R180">
 <attribute name="NAME" x="64.77" y="87.4014" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="69.85" y="92.202" size="1.778" layer="96" rot="R180"/>
+<attribute name="VALUE" x="64.77" y="92.202" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="D7" gate="G$1" x="44.45" y="120.65" smashed="yes" rot="R90">
 <attribute name="NAME" x="47.5234" y="121.412" size="1.778" layer="95" rot="R90"/>
