@@ -12,3 +12,13 @@ Motolink::Motolink(QUsb *usb, QObject *parent) :
     mUsb->setGuid(mGuid);
     mUsb->setDeviceIds(mPid, mVid);
 }
+
+void Motolink::connect()
+{
+    mUsb->open();
+}
+
+void Motolink::disconnect()
+{
+    mUsb->close();
+}

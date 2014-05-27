@@ -159,7 +159,7 @@ void MainWindow::showAbout()
        tr("<strong>Version: " __MTL_VER__ "</strong><br/><br/>")+
        tr("Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
        "You can find more information "
-       "<a href=\"https://github.com/mobyfab/MotoLink\">here.</a>"));
+       "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
 }
 
 void MainWindow::showUpdateDialog()

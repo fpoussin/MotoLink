@@ -1,1 +1,5 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/fw">
+        <file>firmware.xml</file>
+    </qresource>
+</RCC>

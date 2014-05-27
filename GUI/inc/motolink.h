@@ -13,6 +13,8 @@ public:
 signals:
 
 public slots:
+    void connect(void);
+    void disconnect(void);
 
 
 private:

@@ -154,7 +154,7 @@
 <wire x1="89.535" y1="36.195" x2="93.98" y2="36.195" width="0" layer="20"/>
 <wire x1="93.98" y1="36.195" x2="93.98" y2="8.255" width="0" layer="20"/>
 <text x="16.3125" y="21.33" size="3.81" layer="21" font="vector" ratio="16">MotoLink</text>
-<text x="16.2075" y="18.025" size="2.54" layer="21" font="vector" ratio="16" distance="0">Github.com/mobyfab/MotoLink</text>
+<text x="16.2075" y="18.025" size="2.54" layer="21" font="vector" ratio="16" distance="0">Github.com/fpoussin/MotoLink</text>
 <wire x1="30.955" y1="14.94" x2="40.6625" y2="14.94" width="0.254" layer="21"/>
 <wire x1="40.6625" y1="14.94" x2="40.6625" y2="4.4625" width="0.254" layer="21"/>
 <wire x1="40.6625" y1="4.4625" x2="30.955" y2="4.4625" width="0.254" layer="21"/>

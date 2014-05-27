@@ -66,7 +66,7 @@ static msg_t ThreadUsb(void *arg) {
   chRegSetThreadName("USB");
 
   /* Wait for USB connection */
-  while(!usbDetect()) chThdSleepMilliseconds(10);
+  //while(!usbDetect()) chThdSleepMilliseconds(10);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.

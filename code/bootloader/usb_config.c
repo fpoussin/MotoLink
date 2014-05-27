@@ -255,5 +255,6 @@ const BulkUSBConfig bulkusbcfg = {
  */
 bool_t usbDetect(void) {
 
+  return true;
   return palReadPad(USB_DETECT_PORT, USB_DETECT_PAD) == PAL_LOW;
 }
