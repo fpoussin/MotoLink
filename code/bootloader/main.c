@@ -26,10 +26,24 @@
 #include "communication.h"
 
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* Config                                                                    */
 /*===========================================================================*/
 
-uint8_t reset_flags = 0;
+uint8_t reset_flags = FLAG_OK;
+
+static PWMConfig pwmcfg = {
+  100000,    /* 100kHz PWM clock frequency.   */
+  500,       /* Initial PWM period 50mS.       */
+  NULL,
+  {
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+  },
+  0,
+  0
+};
 
 /*===========================================================================*/
 /* Generic code.                                                             */
@@ -38,17 +52,30 @@ uint8_t reset_flags = 0;
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBlinker, 128);
+static WORKING_AREA(waThreadBlinker, 64);
 static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
+  systime_t time;
   chRegSetThreadName("blinker");
+
   while (TRUE) {
-    systime_t time = USBD1.state == USB_ACTIVE ? 250 : 500;
-    palClearPad(LED_PORT, LED_GREEN_PAD);
-    chThdSleepMilliseconds(time);
-    palSetPad(LED_PORT, LED_GREEN_PAD);
-    chThdSleepMilliseconds(time);
+    const uint32_t maxDuty = 8000;
+    const uint32_t minDuty = 0;
+    uint32_t duty = maxDuty;
+
+    for (duty = maxDuty; duty > minDuty; duty-=100)
+    {
+        time = USBD1.state == USB_ACTIVE ? 7 : 15;
+        pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
+        chThdSleepMilliseconds(time);
+    }
+    for (duty = minDuty; duty < maxDuty; duty +=100)
+    {
+        time = USBD1.state == USB_ACTIVE ? 7 : 15;
+        pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
+        chThdSleepMilliseconds(time);
+    }
   }
   return 0;
 }
@@ -56,59 +83,70 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadUsb, 8192);
+static WORKING_AREA(waThreadUsb, 4096);
 static msg_t ThreadUsb(void *arg) {
 
   uint8_t clear_buff[64];
+  uint32_t duty;
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
   chRegSetThreadName("USB");
 
-  /* Wait for USB connection */
-  //while(!usbDetect()) chThdSleepMilliseconds(10);
-
-  /*
-   * Activates the USB driver and then the USB bus pull-up on D+.
-   * Note, a delay is inserted in order to not have to disconnect the cable
-   * after a reset.
-   */
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(500);
-  usbStart(&USBD1, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
-
-  /*
-   * Initializes a Bulk USB driver.
-   */
   bduObjectInit(&BDU1);
-  bduStart(&BDU1, &bulkusbcfg);
 
-  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
+  while (TRUE)
+  {
+    usbDisconnectBus(serusbcfg.usbp);
+    bduStop(&BDU1);
+    usbStop(&USBD1);
 
-  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
+    /* Wait for USB connection */
+    while(!usbConnected()) chThdSleepMilliseconds(20);
 
-  while (USBD1.state != USB_STOP && BDU1.state != BDU_STOP) {
+    /*
+     * Activates the USB driver and then the USB bus pull-up on D+.
+     * Note, a delay is inserted in order to not have to disconnect the cable
+     * after a reset.
+     */
+    usbStart(&USBD1, &usbcfg);
+    chThdSleepMilliseconds(100);
+    usbConnectBus(serusbcfg.usbp);
 
-    chEvtWaitAny(ALL_EVENTS);
-    chSysLock();
-    flags = chEvtGetAndClearFlagsI(&el1);
-    chSysUnlock();
+    /*
+     * Start the Bulk USB driver.
+     */
+    bduStart(&BDU1, &bulkusbcfg);
 
-    if (flags & CHN_INPUT_AVAILABLE) {
+    chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
 
-      read_cmd((BaseChannel *)&BDU1, reset_flags);
+    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+    while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
-      chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
+    duty = 0;
+    while (USBD1.state != USB_STOP
+        && BDU1.state != BDU_STOP
+        && usbConnected())
+    {
+      chEvtWaitAny(ALL_EVENTS);
+      chSysLock();
+      flags = chEvtGetAndClearFlagsI(&el1);
+      chSysUnlock();
 
+      if (flags & CHN_INPUT_AVAILABLE)
+      {
+        if (duty == 0)
+          duty = 7000;
+        else
+          duty = 0;
+
+        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
+
+        read_cmd((BaseChannel *)&BDU1, reset_flags);
+        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
+      }
     }
   }
-
-  /* USB stopped because we are launching user app */
-  while (TRUE) {
-    chThdSleepMilliseconds(100);
-  };
   return 0;
 }
 
@@ -129,7 +167,6 @@ int main(void) {
     /* Bootloader called by user app */
 
     reset_flags |= FLAG_SFTRST;
-    palSetPad(LED_PORT, LED_BLUE_PAD);
   }
 
   /*!< Remove reset flags */
@@ -138,11 +175,13 @@ int main(void) {
   halInit();
   chSysInit();
 
+  pwmStart(&PWMD2, &pwmcfg);
+
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
 
   /* If USB is plugged, probe it, else boot directly */
-  if (usbDetect()) {
+  if (usbConnected()) {
 
     /* Wait one second for the bootloader GUI to send wake up command */
     chThdSleepMilliseconds(1000);

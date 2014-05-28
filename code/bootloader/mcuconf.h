@@ -47,8 +47,7 @@
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#define STM32_ADC12PRES                     STM32_ADC12PRES_DIV1
+#define STM32_MCOSEL                        STM32_MCOSEL_HSE
 #define STM32_ADC34PRES                     STM32_ADC34PRES_DIV1
 #define STM32_USART1SW                      STM32_USART1SW_PCLK
 #define STM32_USART2SW                      STM32_USART2SW_PCLK
@@ -151,7 +150,7 @@
  */
 #define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM1                  FALSE
-#define STM32_PWM_USE_TIM2                  FALSE
+#define STM32_PWM_USE_TIM2                  TRUE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM4                  FALSE
 #define STM32_PWM_USE_TIM8                  FALSE

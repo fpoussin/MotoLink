@@ -1,6 +1,7 @@
 #ifndef _BOARD_GPIO_H_
 #define _BOARD_GPIO_H_
 
+/* PORT A */
 #define VAL_GPIOA_MODER ( \
     PIN_MODE_ANALOG(0) | \
     PIN_MODE_ANALOG(1) | \
@@ -10,7 +11,7 @@
     PIN_MODE_ANALOG(5) | \
     PIN_MODE_ANALOG(6) | \
     PIN_MODE_OUTPUT(7) | \
-    PIN_MODE_ANALOG(8) | \
+    PIN_MODE_ALTERNATE(8) | \
     PIN_MODE_ALTERNATE(9) | \
     PIN_MODE_ALTERNATE(10) | \
     PIN_MODE_ALTERNATE(11) | \
@@ -46,7 +47,7 @@
     PIN_OSPEED_2M(5) | \
     PIN_OSPEED_2M(6) | \
     PIN_OSPEED_100M(7) | \
-    PIN_OSPEED_2M(8) | \
+    PIN_OSPEED_100M(8) | \
     PIN_OSPEED_100M(9) | \
     PIN_OSPEED_100M(10) | \
     PIN_OSPEED_100M(11) | \
@@ -101,7 +102,7 @@
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
 
- #define VAL_GPIOA_AFRH ( \
+#define VAL_GPIOA_AFRH ( \
     PIN_AFIO_AF(8, 0) | \
     PIN_AFIO_AF(9, 7) | \
     PIN_AFIO_AF(10, 7) | \
@@ -110,6 +111,9 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT A */
+
+/* PORT B */
 #define VAL_GPIOB_MODER ( \
     PIN_MODE_OUTPUT(0) | \
     PIN_MODE_ANALOG(1) | \
@@ -210,7 +214,7 @@
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
 
- #define VAL_GPIOB_AFRH ( \
+#define VAL_GPIOB_AFRH ( \
     PIN_AFIO_AF(8, 9) | \
     PIN_AFIO_AF(9, 9) | \
     PIN_AFIO_AF(10, 0) | \
@@ -219,6 +223,9 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT B */
+
+/* PORT C */
 #define VAL_GPIOC_MODER ( \
     PIN_MODE_ANALOG(0) | \
     PIN_MODE_ANALOG(1) | \
@@ -230,8 +237,8 @@
     PIN_MODE_ALTERNATE(7) | \
     PIN_MODE_ANALOG(8) | \
     PIN_MODE_ANALOG(9) | \
-    PIN_MODE_ANALOG(10) | \
-    PIN_MODE_ANALOG(11) | \
+    PIN_MODE_ALTERNATE(10) | \
+    PIN_MODE_ALTERNATE(11) | \
     PIN_MODE_OUTPUT(12) | \
     PIN_MODE_INPUT(13) | \
     PIN_MODE_ANALOG(14) | \
@@ -266,8 +273,8 @@
     PIN_OSPEED_100M(7) | \
     PIN_OSPEED_2M(8) | \
     PIN_OSPEED_2M(9) | \
-    PIN_OSPEED_2M(10) | \
-    PIN_OSPEED_2M(11) | \
+    PIN_OSPEED_100M(10) | \
+    PIN_OSPEED_100M(11) | \
     PIN_OSPEED_100M(12) | \
     PIN_OSPEED_2M(13) | \
     PIN_OSPEED_2M(14) | \
@@ -319,15 +326,18 @@
     PIN_AFIO_AF(6, 2) | \
     PIN_AFIO_AF(7, 2))
 
- #define VAL_GPIOC_AFRH ( \
+#define VAL_GPIOC_AFRH ( \
     PIN_AFIO_AF(8, 0) | \
     PIN_AFIO_AF(9, 0) | \
-    PIN_AFIO_AF(10, 0) | \
-    PIN_AFIO_AF(11, 0) | \
+    PIN_AFIO_AF(10, 7) | \
+    PIN_AFIO_AF(11, 7) | \
     PIN_AFIO_AF(12, 0) | \
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT C */
+
+/* PORT D */
 #define VAL_GPIOD_MODER ( \
     PIN_MODE_ANALOG(0) | \
     PIN_MODE_ANALOG(1) | \
@@ -428,7 +438,7 @@
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
 
- #define VAL_GPIOD_AFRH ( \
+#define VAL_GPIOD_AFRH ( \
     PIN_AFIO_AF(8, 0) | \
     PIN_AFIO_AF(9, 0) | \
     PIN_AFIO_AF(10, 0) | \
@@ -437,6 +447,9 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT D */
+
+/* PORT E */
 #define VAL_GPIOE_MODER ( \
     PIN_MODE_ANALOG(0) | \
     PIN_MODE_ANALOG(1) | \
@@ -537,7 +550,7 @@
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
 
- #define VAL_GPIOE_AFRH ( \
+#define VAL_GPIOE_AFRH ( \
     PIN_AFIO_AF(8, 0) | \
     PIN_AFIO_AF(9, 0) | \
     PIN_AFIO_AF(10, 0) | \
@@ -546,6 +559,9 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT E */
+
+/* PORT F */
 #define VAL_GPIOF_MODER ( \
     PIN_MODE_INPUT(0) | \
     PIN_MODE_INPUT(1) | \
@@ -646,7 +662,7 @@
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
 
- #define VAL_GPIOF_AFRH ( \
+#define VAL_GPIOF_AFRH ( \
     PIN_AFIO_AF(8, 0) | \
     PIN_AFIO_AF(9, 0) | \
     PIN_AFIO_AF(10, 0) | \
@@ -655,5 +671,6 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
+/* END OF PORT F */
 
 #endif

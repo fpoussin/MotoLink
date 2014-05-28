@@ -253,8 +253,7 @@ const BulkUSBConfig bulkusbcfg = {
 /*
  * USB will pull input low when connected.
  */
-bool_t usbDetect(void) {
+bool_t usbConnected(void) {
 
-  return true;
   return palReadPad(USB_DETECT_PORT, USB_DETECT_PAD) == PAL_LOW;
 }

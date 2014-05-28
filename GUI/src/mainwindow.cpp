@@ -9,10 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
     mSettings("Motolink", "Motolink"),
-    mUsb(NULL),
-    mMtl(&mUsb),
-    mBtl(&mUsb),
-    mUpdateWizard(&mBtl, NULL),
     mHelpViewer(NULL),
     mUndoStack(NULL),
     mFuelModel(&mUndoStack),
@@ -23,6 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
     mKnockModel(&mUndoStack)
 {
     mUndoStack.setUndoLimit(100);
+
+    mUsb = new QUsb();
+    mMtl = new Motolink(mUsb);
+    mBtl = new Bootloader(mUsb);
+    mHrc = new Hrc();
+    mUpdateWizard = new UpdateWizard(mBtl, mMtl);
 
     mFuelModel.setName("Fuel");
     mStagingModel.setName("Staging");
@@ -59,6 +61,11 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete mUi;
+    delete mUpdateWizard;
+    delete mMtl;
+    delete mBtl;
+    delete mUsb;
+    delete mHrc;
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i)
     {
@@ -164,21 +171,21 @@ void MainWindow::showAbout()
 
 void MainWindow::showUpdateDialog()
 {
-    mUpdateWizard.showWizard();
+    mUpdateWizard->showWizard();
 }
 
 void MainWindow::importHrc()
 {
     QString fileName(QFileDialog::getOpenFileName(this,
                        tr("Import HRC File"), "", tr("HRC File (*.E2P)")));
-    mHrc.openFile(fileName);
+    mHrc->openFile(fileName);
 }
 
 void MainWindow::exportHrc()
 {
     QString fileName(QFileDialog::getSaveFileName(this,
                        tr("Export HRC File"), "", tr("HRC File (*.E2P)")));
-    mHrc.saveFile(fileName);
+    mHrc->saveFile(fileName);
 }
 
 void MainWindow::setupDefaults(void)
@@ -294,7 +301,7 @@ void MainWindow::setupSettings()
 void MainWindow::retranslate()
 {
     mUi->retranslateUi(this);
-    mUpdateWizard.retranslate();
+    mUpdateWizard->retranslate();
 }
 
 void MainWindow::setLanguageEnglish()
@@ -433,7 +440,7 @@ void MainWindow::showSettingsTab()
 
 void MainWindow::showFuelContextMenu(const QPoint &pos)
 {
-    QPoint globalPos = this->mUi->tableFuel->viewport()->mapToGlobal(pos);
+    QPoint globalPos = mUi->tableFuel->viewport()->mapToGlobal(pos);
 
     QMenu myMenu;
 //    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));

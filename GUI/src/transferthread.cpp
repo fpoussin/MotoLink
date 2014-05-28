@@ -15,15 +15,17 @@ This file is part of QSTLink2.
     along with QSTLink2.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "transferthread.h"
+#include <QDataStream>
 
-transferThread::transferThread(QObject *parent) :
+TransferThread::TransferThread(Bootloader *btl, QObject *parent) :
     QThread(parent)
 {
     qDebug() << "New Transfer Thread";
+    mBtl = btl;
     mStop = false;
 }
 
-transferThread::~transferThread()
+TransferThread::~TransferThread()
 {
     this->exit();
     if (!this->wait(1000)) {
@@ -32,72 +34,64 @@ transferThread::~transferThread()
     }
 }
 
-void transferThread::run()
+void TransferThread::run()
 {
     if (mWrite) {
-            this->send(mFilename);
-        if (mVerify)
-            this->verify(mFilename);
+        this->send(&mData);
     }
-    else {
-        this->verify(mFilename);
+    if (mVerify) {
+        this->verify(&mData);
     }
 }
-void transferThread::halt()
+void TransferThread::halt()
 {
     mStop = true;
     emit sendStatus(tr("Aborted"));
     emit sendLog(tr("Transfer Aborted"));
 }
 
-void transferThread::setParams(Bootloader *btl, QString filename, bool write, bool verify)
+void TransferThread::setParams(Bootloader *btl, QByteArray *data, bool write, bool verify)
 {
     mBtl = btl;
-    mFilename = filename;
+    mData = *data;
     mWrite = write;
     mVerify = verify;
 }
 
-void transferThread::send(const QString &filename)
+void TransferThread::send(QByteArray *data)
 {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << tr("Could not open the file.");
-        return;
-    }
+    QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStop = false;
-    quint32 step_size = 116;
+    quint32 step_size = 96;
     const quint32 from = 0;
-    const quint32 to = file.size();
+    const quint32 to = data->size();
 
     quint32 progress, oldprogress;
     qint32 read;
     char *buf2 = new char[step_size];
 
-    qDebug() << tr("File size") << file.size();
+    qDebug() << tr("File size") << data->size();
 
-    if (!mBtl->eraseFlash(file.size())) {
+    emit sendStatus(tr("Erasing..."));
+    if (!mBtl->eraseFlash(data->size())) {
 
         emit sendStatus(tr("Erase failed"));
-        emit sendLog(tr("Erase failed"));
         qDebug() << tr("Erase failed");
         emit sendLock(false);
         return;
     }
     else {
         emit sendStatus(tr("Erase OK"));
-        emit sendLog(tr("Erase OK"));
         qDebug() <<tr( "Erase OK");
     }
 
     qDebug() << tr("Writing from") << "0x"+QString::number(from, 16) << "to" << "0x"+QString::number(to, 16);
 
     emit sendStatus(tr("Transfering"));
-    emit sendLog(tr("Transfering"));
 
     progress = 0;
-    for (int i=0; i<=file.size(); i+=step_size) {
+    for (int i=0; i<=data->size(); i+=step_size) {
 
         if (mStop)
             break;
@@ -108,62 +102,59 @@ void transferThread::send(const QString &filename)
         }
 
         memset(buf2, 0, step_size);
-        if ((read = file.read(buf2, step_size)) <= 0)
+        if ((read = file.readRawData(buf2, step_size)) <= 0)
             break;
         qDebug() << tr("Read") << read << tr("Bytes from disk");
         QByteArray buf(buf2, read);
 
-        if (mBtl->writeFlash(i, &buf, step_size) < read){
+        int wrote = mBtl->writeFlash(i, &buf, read);
+
+        if (wrote < read){
             emit sendStatus(tr("Transfer failed"));
-            emit sendLog(tr("Transfer failed"));
+            qDebug() << tr("Transfer failed") << wrote << read;
             break;
         }
 
         oldprogress = progress;
-        progress = (i*100)/file.size();
+        progress = (i*100)/data->size();
         if (progress > oldprogress) { // Push only if number has increased
             emit sendProgress(progress);
             qDebug() << tr("Progress:") << QString::number(progress)+"%";
         }
 
     }
-    emit sendLoaderStatus(tr("Idle"));
-    file.close();
     delete buf2;
 
     emit sendProgress(100);
     emit sendStatus(tr("Transfer done"));
-    emit sendLog(tr("Transfer done"));
     qDebug() << tr("Transfer done");
 
     emit sendLock(false);
 }
 
-void transferThread::verify(const QString &filename)
+void TransferThread::verify(QByteArray *data)
 {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << tr("Could not open the file.");
-        return;
-    }
+    QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStop = false;
     const quint32 buf_size = 512;
     const quint32 from = 0;
-    const quint32 to = file.size();
+    const quint32 to = data->size();
+    char buf[buf_size];
     qDebug() << tr("Reading from") << QString::number(from, 16) << tr("to") << QString::number(to, 16);
     quint32 addr, progress, oldprogress;
     QByteArray data_local, data_remote;
 
     progress = 0;
-    for (quint32 i=0; i<file.size(); i+=buf_size)
+    for (int i=0; i<data->size(); i+=buf_size)
     {
         if (mStop)
             break;
 
         _usleep(50000);
 
-        data_local = file.read(buf_size);
+        int read = file.readRawData(buf, buf_size);
+        data_local.setRawData(buf, read);
         qDebug() << tr("Read") << data_local.size() << tr("Bytes from disk");
         addr = i;
 
@@ -171,7 +162,6 @@ void transferThread::verify(const QString &filename)
         int read_size = mBtl->readMem(addr, &data_remote, data_local.size());
         if (read_size < data_local.size()) {// Read same amount of data as from file.
 
-            file.close();
             emit sendProgress(0);
             emit sendStatus(tr("Verification Failed"));
             qWarning() << tr("Verification Failed");
@@ -182,7 +172,6 @@ void transferThread::verify(const QString &filename)
 
         if (data_remote != data_local) {
 
-            file.close();
             emit sendProgress(100);
             emit sendStatus(tr("Verification failed at 0x")+QString::number(addr, 16));
 
@@ -197,15 +186,14 @@ void transferThread::verify(const QString &filename)
             return;
         }
         oldprogress = progress;
-        progress = (i*100)/file.size();
+        progress = (i*100)/data->size();
         if (progress > oldprogress) { // Push only if number has increased
             emit sendProgress(progress);
             qDebug() << tr("Progress:") << QString::number(progress)+"%";
         }
-        emit sendStatus(tr("Verified ")+QString::number(i/1024)+tr(" kilobytes out of ")+QString::number(file.size()/1024));
+        emit sendStatus(tr("Verified ")+QString::number(i/1024)+tr(" kilobytes out of ")+QString::number(data->size()/1024));
     }
 
-    file.close();
     emit sendProgress(100);
     emit sendStatus(tr("Verification OK"));
     qDebug() << tr("Verification OK");

@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Sat May 03 18:53:59 CEST 2014
+#Wed May 28 02:44:24 CEST 2014
 File.Version=1
 KeepUserPlacement=true
 Mcu.Family=STM32F3
@@ -91,20 +91,14 @@ PA13.Signal=SYS_JTMS-SWDIO
 PA14.Mode=Serial-Wire
 PA14.Signal=SYS_JTCK-SWCLK
 PA15.Signal=GPIO_Analog
-PA2.GPIOParameters=GPIO_Speed,GPIO_OType
-PA2.GPIO_OType=N/A
-PA2.GPIO_Speed=N/A
 PA2.Signal=TIM2_CH3
-PA3.GPIOParameters=GPIO_Speed,GPIO_OType
-PA3.GPIO_OType=N/A
-PA3.GPIO_Speed=N/A
 PA3.Signal=TIM2_CH4
-PA4.Mode=OUT1
-PA4.Signal=DAC_OUT1
+PA4.Signal=COMP_DAC1_group
 PA5.Signal=GPIO_Analog
 PA6.Signal=GPIO_Analog
 PA7.Signal=GPIO_Output
-PA8.Signal=GPIO_Analog
+PA8.Mode=Clock-out-1
+PA8.Signal=SYS_MCO
 PA9.GPIOParameters=GPIO_Speed,GPIO_OType
 PA9.GPIO_OType=N/A
 PA9.GPIO_Speed=N/A
@@ -170,3 +164,5 @@ PF0-OSC_IN.Signal=SYS_OSC_IN
 PF1-OSC_OUT.Mode=HSE-External-Oscillator
 PF1-OSC_OUT.Signal=SYS_OSC_OUT
 PF4.Signal=GPIO_Analog
+SH.COMP_DAC1_group.0=DAC_OUT1,OUT1
+SH.COMP_DAC1_group.ConfNb=1

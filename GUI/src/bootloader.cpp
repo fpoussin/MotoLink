@@ -179,7 +179,7 @@ bool Bootloader::eraseFlash(quint32 len)
 
     mUsb->write(&send, send.size());
 
-    _usleep(1000000);
+    _usleep(2000000);
 
     mUsb->read(&recv, 2);
 

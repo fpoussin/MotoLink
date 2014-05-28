@@ -59,8 +59,12 @@ PERIPHERALS = \
                     PIN_AFIO_AF.format("{0}", 2)],
         "USART1": [PIN_MODE_ALTERNATE, PIN_OTYPE_PUSHPULL, PIN_OSPEED_100M, PIN_PUPDR_FLOATING, PIN_ODR_HIGH,
                    PIN_AFIO_AF.format("{0}", 7)],
+        "USART3": [PIN_MODE_ALTERNATE, PIN_OTYPE_PUSHPULL, PIN_OSPEED_100M, PIN_PUPDR_FLOATING, PIN_ODR_HIGH,
+                   PIN_AFIO_AF.format("{0}", 7)],
         "USB": [PIN_MODE_ALTERNATE, PIN_OTYPE_PUSHPULL, PIN_OSPEED_100M, PIN_PUPDR_FLOATING, PIN_ODR_HIGH,
                 PIN_AFIO_AF.format("{0}", 14)],
+        "SYS_MCO": [PIN_MODE_ALTERNATE, PIN_OTYPE_PUSHPULL, PIN_OSPEED_100M, PIN_PUPDR_FLOATING, PIN_ODR_HIGH,
+                PIN_AFIO_AF.format("{0}", 0)],
     }
 
 MX_FILE_PATH = "../../board/board.ioc"
@@ -75,7 +79,7 @@ mx_file.close()
 lines = []
 for t in tmp:
     if "Signal" in t:
-        lines.append(t.rstrip('\r\n'))
+        lines.append(t.rstrip('\n'))
 
 # Sort ports and pads
 signals = {}
@@ -95,32 +99,33 @@ for l in lines:
             signals[port][i] = "GPIO_Analog"
     signals[port][pad] = l.split("=")[-1]
 
-output = "#ifndef _BOARD_GPIO_H_\r\n#define _BOARD_GPIO_H_\r\n\r\n"
+output = "#ifndef _BOARD_GPIO_H_\n#define _BOARD_GPIO_H_\n\n"
 
 sorted_signals = sorted(signals.keys())
 for port in sorted_signals:
     pads = signals[port]
+    output += "/* PORT "+port+" */\n"
 
     for i in range(len(PIN_CONF_LIST)):
         output += "#define "
-        output += PIN_CONF_LIST[i].format(port) + " ( \\\r\n"
+        output += PIN_CONF_LIST[i].format(port) + " ( \\\n"
         for pad, type in pads.items():
             match = False
             for p in PERIPHERALS:
                 if re.search(p, type, re.M):
                     match = True
                     type_str = PERIPHERALS[p][i].format(pad)
-                    output += "    " + type_str + " | \\\r\n"
+                    output += "    " + type_str + " | \\\n"
             if not match:
                 print "Missing Peripheral:", type, "at", "P" + port + str(pad)
                 error = True
                 break
         output = output[:-6]
-        output += ")\r\n"
-        output += "\r\n"
+        output += "))\n"
+        output += "\n"
 
     output += "#define "
-    output += PIN_CONF_LIST_AF[0].format(port) + " ( \\\r\n"
+    output += PIN_CONF_LIST_AF[0].format(port) + " ( \\\n"
 
     for j in range(8):
         pad = j
@@ -130,17 +135,17 @@ for port in sorted_signals:
             if re.search(p, type, re.M):
                 match = True
                 type_str = PERIPHERALS[p][-1].format(pad)
-                output += "    " + type_str + " | \\\r\n"
+                output += "    " + type_str + " | \\\n"
         if not match:
             print "Missing Peripheral:", type, "at", "P" + port + str(pad)
             error = True
             break
     output = output[:-6]
-    output += ")\r\n"
-    output += "\r\n "
+    output += "))\n"
+    output += "\n"
 
     output += "#define "
-    output += PIN_CONF_LIST_AF[1].format(port) + " ( \\\r\n"
+    output += PIN_CONF_LIST_AF[1].format(port) + " ( \\\n"
 
     for j in range(8):
         pad = j + 8
@@ -150,15 +155,17 @@ for port in sorted_signals:
             if re.search(p, type, re.M):
                 match = True
                 type_str = PERIPHERALS[p][-1].format(pad)
-                output += "    " + type_str + " | \\\r\n"
+                output += "    " + type_str + " | \\\n"
         if not match:
             print "Missing Peripheral:", type, "at", "P" + port + str(pad)
             error = True
             break
     output = output[:-6]
-    output += ")\r\n"
+    output += "))\n"
+    
+    output += "/* END OF PORT "+port+" */\n\n"
 
-output += "\r\n#endif\r\n"
+output += "#endif\n"
 
 if not error:
     with open("board_gpio.h", "w") as text_file:

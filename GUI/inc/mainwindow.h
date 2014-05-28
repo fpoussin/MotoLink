@@ -88,11 +88,11 @@ private:
     QSettings mSettings;
     QString mCurrentFile;
     bool mHasChanged;
-    Hrc mHrc;
-    QUsb mUsb;
-    Motolink mMtl;
-    Bootloader mBtl;
-    UpdateWizard mUpdateWizard;
+    Hrc *mHrc;
+    QUsb *mUsb;
+    Motolink *mMtl;
+    Bootloader *mBtl;
+    UpdateWizard *mUpdateWizard;
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack;
     QUndoView mUndoView;

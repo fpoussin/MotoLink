@@ -24,33 +24,31 @@ This file is part of QSTLink2.
 #include <compat.h>
 #include <bootloader.h>
 
-class transferThread : public QThread
+class TransferThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit transferThread(QObject *parent = 0);
-    ~transferThread();
+    explicit TransferThread(Bootloader *btl, QObject *parent = 0);
+    ~TransferThread();
     void run();
-    void setParams(Bootloader *btl, QString filename, bool write, bool verify);
+    void setParams(Bootloader *btl, QByteArray *data, bool write, bool verify);
 
 signals:
-    void sendProgress(quint32 p);
+    void sendProgress(int p);
     void sendStatus(const QString &s);
-    void sendLoaderStatus(const QString &s);
     void sendError(const QString &s);
     void sendLock(bool enabled);
     void sendLog(const QString &s);
 
 public slots:
     void halt();
+    void send(QByteArray *data);
+    void verify(QByteArray *data);
 
 private slots:
 
 private:
-    void send(const QString &filename);
-    void verify(const QString &filename);
-
-    QString mFilename;
+    QByteArray mData;
     Bootloader *mBtl;
     bool mWrite;
     bool mStop;
