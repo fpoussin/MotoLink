@@ -68,7 +68,9 @@ void UpdateWizard::setupConnections()
     QObject::connect(mTft, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
     QObject::connect(mTft, SIGNAL(sendProgress(int)), this->mUi->pbProgress, SLOT(setValue(int)));
     QObject::connect(mTft, SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
+    QObject::connect(mTft, SIGNAL(finished()), mBtl, SLOT(disconnect()));
 
+    QObject::connect(this, SIGNAL(startTransfer()), mTft, SLOT(start()));
     QObject::connect(this, SIGNAL(send(QByteArray*)), mTft, SLOT(send(QByteArray*)));
     QObject::connect(this, SIGNAL(verify(QByteArray*)), mTft, SLOT(verify(QByteArray*)));
 
@@ -136,11 +138,18 @@ void UpdateWizard::connectBtl()
         mUi->pbProgress->setValue(10);
 
         mTft->setParams(mBtl, &mFwData, true, true);
-        mTft->run();
+        //mTft->run();
+        emit startTransfer();
+/*
+        while (mTft->isRunning())
+        {
+         _usleep(100000);
+        }*/
     }
-
+/*
     if (mBtl->disconnect())
     {
         this->updateStatus(tr("Disconnected"));
     }
+    */
 }

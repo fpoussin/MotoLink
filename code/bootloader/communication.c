@@ -20,7 +20,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
   uint8_t data_buf[DATA_BUF_SIZE];
   uint8_t err_buf = MASK_REPLY_ERR;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(25)) < sizeof(cmd_header_t))
+  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(150)) < sizeof(cmd_header_t))
   {
     chnPutTimeout(chn, err_buf+1, MS2ST(25));
     return 1;
@@ -52,7 +52,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
   switch (header.type)
   {
     case MASK_CMD | CMD_ERASE:
-      status = eraseHandler(chn, leToInt(data_buf));
+      status = eraseHandler(chn, data_buf);
       break;
 
     case MASK_CMD | CMD_READ:
@@ -133,17 +133,18 @@ uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
   return 0;
 }
 
-uint8_t eraseHandler(BaseChannel * chn, uint8_t len) {
+uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
 
-  uint8_t buf[2];
-  buf[0] = MASK_REPLY_OK;
-  buf[1] = ERASE_OK;
+  uint8_t buf2[2];
+  uint32_t len = leToInt(buf);
+  buf2[0] = MASK_REPLY_OK;
+  buf2[1] = ERASE_OK;
 
   if (eraseFlash(len)) {
-    buf[1] = 0;
+    buf2[1] = 0;
   }
 
-  chnWrite(chn, buf, 2);
+  chnWrite(chn, buf2, 2);
   return 0;
 }
 

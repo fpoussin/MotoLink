@@ -32,8 +32,8 @@
 uint8_t reset_flags = FLAG_OK;
 
 static PWMConfig pwmcfg = {
-  100000,    /* 100kHz PWM clock frequency.   */
-  500,       /* Initial PWM period 50mS.       */
+  10000,    /* 10kHz PWM clock frequency.   */
+  50,      /* Initial PWM period 10mS.       */
   NULL,
   {
    {PWM_OUTPUT_DISABLED, NULL},
@@ -49,33 +49,43 @@ static PWMConfig pwmcfg = {
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+// Duty
+#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD2, x)
+
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBlinker, 64);
+static WORKING_AREA(waThreadBlinker, 512);
 static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
-  systime_t time;
   chRegSetThreadName("blinker");
 
-  while (TRUE) {
-    const uint32_t maxDuty = 8000;
-    const uint32_t minDuty = 0;
-    uint32_t duty = maxDuty;
+  const uint32_t dimmer[] = {D(0), D(200), D(400), D(600), D(800), D(1000), D(1200), D(1400), D(1600), D(1800), D(2000), D(2200),
+                             D(2400), D(2600), D(2800), D(3000),  D(3200), D(3400), D(3600), D(3800), D(4000), D(4200), D(4400),
+                             D(4600), D(4800), D(5000), D(5200), D(5400), D(5600), D(5800), D(6000), D(6200), D(6400), D(6600),
+                             D(6800), D(7000), D(7200), D(7400), D(7600), D(7800), D(8000), D(7800), D(7600), D(7400), D(7200),
+                             D(7000), D(6800), D(6600), D(6400), D(6200), D(6000), D(5800), D(5600), D(5400), D(5200), D(5000),
+                             D(4800), D(4600), D(4400), D(4200), D(4000), D(3800), D(3600), D(3400), D(3200), D(3000), D(2800),
+                             D(2600), D(2400), D(2200), D(2000), D(1800), D(1600), D(1400), D(1200), D(1000), D(800), D(600),
+                             D(400), D(200)};
 
-    for (duty = maxDuty; duty > minDuty; duty-=100)
-    {
-        time = USBD1.state == USB_ACTIVE ? 7 : 15;
-        pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
-        chThdSleepMilliseconds(time);
-    }
-    for (duty = minDuty; duty < maxDuty; duty +=100)
-    {
-        time = USBD1.state == USB_ACTIVE ? 7 : 15;
-        pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
-        chThdSleepMilliseconds(time);
-    }
+
+  TIM2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
+  if (dmaStreamAllocate(STM32_DMA1_STREAM2, 0, NULL, NULL)) while (1) chThdSleepMilliseconds(20);
+  dmaStreamSetPeripheral(STM32_DMA1_STREAM2, &TIM2->CCR3);
+  dmaStreamSetMemory0(STM32_DMA1_STREAM2, dimmer);
+  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/4);
+  dmaStreamSetMode(STM32_DMA1_STREAM2, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD
+                   | STM32_DMA_CR_EN | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
+
+  while (TRUE)
+  {
+    chThdSleepMilliseconds(100);
+    if (usbConnected())
+      TIM2->PSC = (STM32_TIMCLK1 / 10000) - 1;
+    else
+      TIM2->PSC = (STM32_TIMCLK1 / 5000) - 1;
   }
   return 0;
 }
@@ -87,13 +97,13 @@ static WORKING_AREA(waThreadUsb, 4096);
 static msg_t ThreadUsb(void *arg) {
 
   uint8_t clear_buff[64];
-  uint32_t duty;
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
   chRegSetThreadName("USB");
 
   bduObjectInit(&BDU1);
+  pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
 
   while (TRUE)
   {
@@ -123,7 +133,6 @@ static msg_t ThreadUsb(void *arg) {
     while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
     while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
-    duty = 0;
     while (USBD1.state != USB_STOP
         && BDU1.state != BDU_STOP
         && usbConnected())
@@ -135,15 +144,11 @@ static msg_t ThreadUsb(void *arg) {
 
       if (flags & CHN_INPUT_AVAILABLE)
       {
-        if (duty == 0)
-          duty = 7000;
-        else
-          duty = 0;
-
-        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, duty));
+        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
         read_cmd((BaseChannel *)&BDU1, reset_flags);
-        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, 64, MS2ST(25) );
+        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
+        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
     }
   }

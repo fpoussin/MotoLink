@@ -67,8 +67,8 @@ uint8_t checkUserCode(uint32_t address) {
 uint8_t eraseFlash(uint32_t len) {
 
   uint32_t addr;
-  //const uint32_t from = USER_APP_ADDR;
-  //const uint32_t to = from+len;
+  const uint32_t from = USER_APP_ADDR;
+  const uint32_t to = from+len;
 
   if (len % 4) {
     return 1;
@@ -77,7 +77,7 @@ uint8_t eraseFlash(uint32_t len) {
   FLASH_Unlock();
   FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
 
-  for (addr=USER_APP_ADDR; addr < USER_APP_ADDR+(200*1024); addr+=FLASH_PAGE_SIZE) {
+  for (addr=USER_APP_ADDR; addr <= to; addr+=FLASH_PAGE_SIZE) {
 
     if (FLASH_ErasePage(addr) != FLASH_COMPLETE) {
 
@@ -94,7 +94,7 @@ uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len) {
 
   uint8_t i;
 
-  if (addr > 240*1024 || buf == NULL || !len) {
+  if (addr > 196*1024 || buf == NULL || !len) {
 
     return 1;
   }

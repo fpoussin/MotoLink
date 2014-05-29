@@ -88,7 +88,7 @@ void TransferThread::send(QByteArray *data)
 
     qDebug() << tr("Writing from") << "0x"+QString::number(from, 16) << "to" << "0x"+QString::number(to, 16);
 
-    emit sendStatus(tr("Transfering"));
+    emit sendStatus(tr("Writing Flash"));
 
     progress = 0;
     for (int i=0; i<=data->size(); i+=step_size) {
@@ -145,6 +145,8 @@ void TransferThread::verify(QByteArray *data)
     quint32 addr, progress, oldprogress;
     QByteArray data_local, data_remote;
 
+    emit sendStatus(tr("Verifying flash"));
+
     progress = 0;
     for (int i=0; i<data->size(); i+=buf_size)
     {
@@ -191,7 +193,7 @@ void TransferThread::verify(QByteArray *data)
             emit sendProgress(progress);
             qDebug() << tr("Progress:") << QString::number(progress)+"%";
         }
-        emit sendStatus(tr("Verified ")+QString::number(i/1024)+tr(" kilobytes out of ")+QString::number(data->size()/1024));
+        //emit sendStatus(tr("Verified ")+QString::number(i/1024)+tr(" kilobytes out of ")+QString::number(data->size()/1024));
     }
 
     emit sendProgress(100);

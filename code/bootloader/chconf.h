@@ -56,7 +56,7 @@
  *          and generally faster.
  */
 #if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
-#define CH_TIME_QUANTUM                 10
+#define CH_TIME_QUANTUM                 5
 #endif
 
 /**

@@ -25,6 +25,7 @@ public slots:
     void retranslate(void);
 
 signals:
+    void startTransfer(void);
     void send(QByteArray *data);
     void verify(QByteArray *data);
 

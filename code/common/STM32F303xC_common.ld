@@ -26,8 +26,8 @@ __process_stack_size__  = 0x0400;
 
 MEMORY
 {
-    boot : org = 0x08000000, len = 16k
-    flash : org = 0x08004000, len = 200k
+    boot : org = 0x08000000, len = 20k
+    flash : org = 0x08005000, len = 196k
     eeprom : org = 0x8036000, len = 40k
     ram : org = 0x20000000, len = 40k
     ccmram : org = 0x10000000, len = 8k

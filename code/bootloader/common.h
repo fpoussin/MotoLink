@@ -5,10 +5,9 @@
 #include "usb_config.h"
 
 
-#define USER_APP_ADDR (uint32_t)0x08004000
-#define USER_APP_RESET_ADDR (uint32_t)0x08004281
+#define USER_APP_ADDR (uint32_t)0x08005000
+#define USER_APP_RESET_ADDR (uint32_t)0x08005281
 #define FLASH_PAGE_SIZE 0x800
-#define FLASH_PAGE_OFFSET 0x0A
 
 #define mmio64(x)   (*(volatile uint64_t *)(x))
 #define mmio32(x)   (*(volatile uint32_t *)(x))

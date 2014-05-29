@@ -185,7 +185,7 @@ DLIBS =
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSTM32_DMA_REQUIRED
 
 # Define ASM defines here
 UADEFS =
