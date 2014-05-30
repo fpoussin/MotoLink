@@ -63,7 +63,7 @@ void TransferThread::send(QByteArray *data)
     QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStop = false;
-    quint32 step_size = 96;
+    quint32 step_size = 112;
     const quint32 from = 0;
     const quint32 to = data->size();
 

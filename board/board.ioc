@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Wed May 28 02:44:24 CEST 2014
+#Thu May 29 14:05:01 CEST 2014
 File.Version=1
 KeepUserPlacement=true
 Mcu.Family=STM32F3
@@ -9,8 +9,8 @@ Mcu.IP2=CAN
 Mcu.IP3=DAC
 Mcu.IP4=SYS
 Mcu.IP5=TIM3
-Mcu.IP6=USART1
-Mcu.IP7=USART3
+Mcu.IP6=UART4
+Mcu.IP7=USART1
 Mcu.IP8=USB
 Mcu.IPNb=9
 Mcu.Name=STM32F303R(B-C)Tx
@@ -133,9 +133,9 @@ PC0.Signal=GPIO_Analog
 PC1.Mode=CH7-Single-Ended
 PC1.Signal=ADC1_IN7
 PC10.Mode=Asynchronous
-PC10.Signal=USART3_TX
+PC10.Signal=UART4_TX
 PC11.Mode=Asynchronous
-PC11.Signal=USART3_RX
+PC11.Signal=UART4_RX
 PC12.Signal=GPIO_Output
 PC13.Signal=GPIO_Input
 PC14-OSC32_IN.Signal=GPIO_Analog

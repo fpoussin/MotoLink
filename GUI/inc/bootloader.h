@@ -9,28 +9,8 @@
 #include <QThread>
 #include <QUsb>
 
-#define MAGIC (quint16)0xAFEB
-#define MAGIC1 (quint8)0xAF
-#define MAGIC2 (quint8)0xEB
-
-#define MASK_CMD (quint8)0xA0
-#define MASK_REPLY_OK (quint8)0x50
-#define MASK_REPLY_ERR (quint8)0x70
-
-#define CMD_ERASE (quint8)0x01
-#define CMD_READ (quint8)0x02
-#define CMD_WRITE (quint8)0x03
-#define CMD_RESET (quint8)0x04
-#define CMD_GET_FLAGS (quint8)0x05
-#define CMD_WAKE (quint8)0x06
-#define CMD_GET_VERSION (quint8)0x07
-#define CMD_GET_SIZE (quint8)0x08
-
-#define FLAG_OK (quint8)0x01
-#define FLAG_IWDRST (quint8)0x02
-#define FLAG_SFTRST (quint8)0x03
-
-#define ERASE_OK (quint8)0x10
+typedef quint8 uint8_t;
+#include "protocol.h"
 
 class Bootloader : public QObject
 {
@@ -43,6 +23,7 @@ public slots:
     bool connect();
     bool disconnect();
     quint8 getFlags();
+    quint8 getMode();
     quint16 getVersion();
     qint32 writeFlash(quint32 addr, const QByteArray *data, quint32 len);
     qint32 readMem(quint32 addr, QByteArray *data, quint32 len);

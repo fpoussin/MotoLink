@@ -18,7 +18,7 @@ message(Version $$VERSION)
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
 DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the version string
 
-INCLUDEPATH += inc
+INCLUDEPATH += inc ../code/common/
 
 include(QtUsb/QtUsb.pri)
 

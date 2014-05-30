@@ -20,7 +20,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
   uint8_t data_buf[DATA_BUF_SIZE];
   uint8_t err_buf = MASK_REPLY_ERR;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(150)) < sizeof(cmd_header_t))
+  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(50)) < sizeof(cmd_header_t))
   {
     chnPutTimeout(chn, err_buf+1, MS2ST(25));
     return 1;
@@ -118,7 +118,7 @@ uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
   uint32_t address = leToInt(buf);
   uint32_t buf_len = leToInt(buf+4);
 
-  chnWrite(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len);
+  chnWriteTimeout(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len, MS2ST(25));
   return 0;
 }
 
@@ -128,8 +128,17 @@ uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
   buf[0] = MASK_REPLY_OK;
   buf[1] = flags;
 
-  //chOQWriteTimeout(&BDU1.oqueue, buf, 2, MS2ST(10));
-  chnWrite(chn, buf, 2);
+  chnWriteTimeout(chn, buf, 2, MS2ST(25));
+  return 0;
+}
+
+uint8_t sendMode(BaseChannel * chn) {
+
+  uint8_t buf[2];
+  buf[0] = MASK_REPLY_OK;
+  buf[1] = MODE_BL;
+
+  chnWriteTimeout(chn, buf, 2, MS2ST(25));
   return 0;
 }
 
@@ -144,7 +153,7 @@ uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
     buf2[1] = 0;
   }
 
-  chnWrite(chn, buf2, 2);
+  chnWriteTimeout(chn, buf2, 2, MS2ST(25));
   return 0;
 }
 

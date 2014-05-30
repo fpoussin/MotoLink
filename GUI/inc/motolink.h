@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUsb>
+#include "bootloader.h"
 
 class Motolink : public QObject
 {
@@ -19,6 +20,7 @@ public slots:
 
 private:
     QUsb *mUsb;
+    Bootloader *mBtl;
     QString mGuid;
     quint16 mPid;
     quint16 mVid;

@@ -446,3 +446,10 @@ const SerialConfig uartCfg =
  0
 };
 
+/*
+ * USB will pull input low when connected.
+ */
+bool_t usbConnected(void) {
+
+  return palReadPad(USB_DETECT_PORT, USB_DETECT_PAD) == PAL_LOW;
+}

@@ -82,8 +82,7 @@ CSRC = $(PORTSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(CHIBIOS)/os/various/chprintf.c \
-       main.c usb_config.c \
-       stm32f30x_flash.c communication.c stm32f30x_iwdg.c common.c
+       main.c communication.c common.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

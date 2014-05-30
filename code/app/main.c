@@ -28,6 +28,20 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+static PWMConfig pwmcfg = {
+  10000,    /* 10kHz PWM clock frequency.   */
+  50,      /* Initial PWM period 10mS.       */
+  NULL,
+  {
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+  },
+  0,
+  0
+};
+
 /*
  * USB Bulk thread, times are in milliseconds.
  */
@@ -40,6 +54,7 @@ static msg_t ThreadBDU(void *arg) {
   (void)arg;
   chRegSetThreadName("USB Bulk");
   chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, CHN_INPUT_AVAILABLE);
+  pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
 
   while(BDU1.state != BDU_READY) chThdSleepMilliseconds(100);
 
@@ -50,6 +65,7 @@ static msg_t ThreadBDU(void *arg) {
 
     if (flags & CHN_INPUT_AVAILABLE) {
 
+      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       chnReadTimeout((BaseChannel *)&BDU1, &bp, 1, MS2ST(10));
 
       if (bp == 0xAB) {
@@ -66,14 +82,14 @@ static msg_t ThreadBDU(void *arg) {
 
       bp *=2;
       chnWriteTimeout((BaseChannel *)&BDU1, &bp, 1, MS2ST(10));
-
+      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
     }
   }
   return 0;
 }
 
 /*
- * USB Bulk thread, times are in milliseconds.
+ * USB Serial thread, times are in milliseconds.
  */
 static WORKING_AREA(waThreadSDU, 256);
 static msg_t ThreadSDU(void *arg) {
@@ -149,6 +165,9 @@ int main(void) {
   halInit();
   chSysInit();
 
+  pwmStart(&PWMD2, &pwmcfg);
+  pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+
   /*
    * Initializes a serial-over-USB CDC driver.
    */
@@ -156,13 +175,13 @@ int main(void) {
   sduStart(&SDU1, &serusbcfg);
 
   /*
-   * Initializes a Bulk USB driver.
+   * Initializes and start a Bulk USB driver.
    */
   bduObjectInit(&BDU1);
   bduStart(&BDU1, &bulkusbcfg);
 
   /*
-   * Initializes a Serial driver.
+   * Starts a Serial driver.
    */
   sdStart(&SD1, &uartCfg);
 
@@ -171,16 +190,16 @@ int main(void) {
    * Note, a delay is inserted in order to not have to disconnect the cable
    * after a reset.
    */
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(500);
+  //usbDisconnectBus(serusbcfg.usbp);
+  //chThdSleepMilliseconds(500);
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
   /*
    * Creates the blinker and bulk threads.
    */
-  chThdCreateStatic(ThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
-  chThdCreateStatic(ThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), NORMALPRIO+1, ThreadIWDG, NULL);
 
   /*

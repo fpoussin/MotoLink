@@ -156,6 +156,52 @@ static msg_t ThreadUsb(void *arg) {
 }
 
 /*
+ * USB Serial thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThreadSDU, 256);
+static msg_t ThreadSDU(void *arg) {
+
+  uint8_t buffer[SERIAL_BUFFERS_SIZE];
+  EventListener el1, el2;
+  flagsmask_t flags_usb, flags_uart;
+  size_t read, available;
+  (void)arg;
+  chRegSetThreadName("Serial");
+  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
+  chEvtRegisterMask(chnGetEventSource(&SD1), &el2, CHN_INPUT_AVAILABLE);
+
+  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
+  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+
+  while (TRUE) {
+
+    chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
+    flags_usb = chEvtGetAndClearFlags(&el1);
+    flags_uart = chEvtGetAndClearFlags(&el2);
+
+    if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
+
+      available = chQSpaceI(&SDU1.iqueue);
+      if (available > sizeof(buffer)) available = sizeof(buffer);
+
+      read = chnReadTimeout((BaseChannel *)&SDU1, buffer, available, MS2ST(10));
+      chnWriteTimeout((BaseChannel *)&SD1, buffer, read, MS2ST(10));
+    }
+
+    if (flags_uart & CHN_INPUT_AVAILABLE) { /* Incoming data from UART */
+
+      available = chQSpaceI(&SD1.iqueue);
+      if (available > sizeof(buffer)) available = sizeof(buffer);
+
+      read = chnReadTimeout((BaseChannel *)&SD1, buffer, available, MS2ST(10));
+      chnWriteTimeout((BaseChannel *)&SDU1, buffer, read, MS2ST(10));
+    }
+
+  }
+  return 0;
+}
+
+/*
  * Application entry point.
  */
 int main(void) {
@@ -181,9 +227,13 @@ int main(void) {
   chSysInit();
 
   pwmStart(&PWMD2, &pwmcfg);
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
+  sdStart(&SD1, &uartCfg);
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
   /* If USB is plugged, probe it, else boot directly */
   if (usbConnected()) {

@@ -131,20 +131,25 @@ void UpdateWizard::connectBtl()
 {
     mMtl->disconnect();
 
+    mUi->lStatus->clear();
     if (mBtl->connect())
     {
-        mUi->lStatus->clear();
+        if (mBtl->getMode() == MODE_BL)
+        {
+            //mBtl->
+        }
+
         this->updateStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
         mTft->setParams(mBtl, &mFwData, true, true);
         //mTft->run();
         emit startTransfer();
-/*
-        while (mTft->isRunning())
-        {
-         _usleep(100000);
-        }*/
+    }
+    else
+    {
+        this->updateStatus(tr("Connection Failed"));
+        return;
     }
 /*
     if (mBtl->disconnect())
