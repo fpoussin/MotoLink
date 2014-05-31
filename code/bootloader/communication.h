@@ -1,5 +1,9 @@
+#ifndef COMMUNICATION_H
+#define COMMUNICATION_H
+
 #include "ch.h"
 #include "hal.h"
+#include "bootloader.h"
 #include "protocol.h"
 
 extern uint8_t bl_wake;
@@ -13,3 +17,5 @@ uint8_t sendFlags(BaseChannel * chn, uint8_t flags);
 uint8_t sendMode(BaseChannel * chn);
 uint8_t wakeHandler(BaseChannel * chn);
 uint8_t bootHandler(BaseChannel * chn);
+
+#endif

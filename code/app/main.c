@@ -48,41 +48,58 @@ static PWMConfig pwmcfg = {
 static WORKING_AREA(waThreadBDU, 128);
 static msg_t ThreadBDU(void *arg) {
 
-  uint8_t bp;
+  uint8_t clear_buff[64];
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
-  chRegSetThreadName("USB Bulk");
-  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, CHN_INPUT_AVAILABLE);
+  chRegSetThreadName("USB");
+
+  bduObjectInit(&BDU1);
   pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
 
-  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(100);
+  while (TRUE)
+  {
+    usbDisconnectBus(serusbcfg.usbp);
+    bduStop(&BDU1);
 
-  while (TRUE) {
+    /* Wait for USB connection */
+    while(!usbConnected()) chThdSleepMilliseconds(20);
 
-    chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
-    flags = chEvtGetAndClearFlags(&el1);
+    /*
+     * Activates the USB driver and then the USB bus pull-up on D+.
+     * Note, a delay is inserted in order to not have to disconnect the cable
+     * after a reset.
+     */
+    chThdSleepMilliseconds(100);
+    usbConnectBus(serusbcfg.usbp);
 
-    if (flags & CHN_INPUT_AVAILABLE) {
+    /*
+     * Start the Bulk USB driver.
+     */
+    bduStart(&BDU1, &bulkusbcfg);
 
-      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-      chnReadTimeout((BaseChannel *)&BDU1, &bp, 1, MS2ST(10));
+    chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
 
-      if (bp == 0xAB) {
+    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+    while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
-        chSysLockFromIsr();
+    while (USBD1.state != USB_STOP
+        && BDU1.state != BDU_STOP
+        && usbConnected())
+    {
+      chEvtWaitAny(ALL_EVENTS);
+      chSysLock();
+      flags = chEvtGetAndClearFlagsI(&el1);
+      chSysUnlock();
 
-        usbDisconnectBus(&USBD1);
-        usbStop(&USBD1);
+      if (flags & CHN_INPUT_AVAILABLE)
+      {
+        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
-        chSysDisable();
-
-        NVIC_SystemReset();
+        //read_cmd((BaseChannel *)&BDU1, reset_flags);
+        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
+        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
-
-      bp *=2;
-      chnWriteTimeout((BaseChannel *)&BDU1, &bp, 1, MS2ST(10));
-      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
     }
   }
   return 0;

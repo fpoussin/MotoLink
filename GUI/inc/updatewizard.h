@@ -16,7 +16,7 @@ class UpdateWizard : public QWizard
     Q_OBJECT
 
 public:
-    explicit UpdateWizard(Bootloader *btl, Motolink *mtl, QWidget *parent = 0);
+    explicit UpdateWizard(Motolink * const mtl, QWidget *parent = 0);
     ~UpdateWizard();
     void showWizard(void);
 
@@ -37,11 +37,9 @@ private slots:
 private:
     void setupConnections(void);
     void loadFirmareData(void);
-    void connectBtl(void);
+    void startFwUpdate(void);
     Ui::UpdateWizard *mUi;
-    Bootloader *mBtl;
-    Motolink *mMtl;
-    TransferThread *mTft;
+    Motolink * const mMtl;
     QByteArray mFwData;
     QString mCurVersion;
     QString mNewVersion;

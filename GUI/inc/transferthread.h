@@ -28,10 +28,10 @@ class TransferThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit TransferThread(Bootloader *btl, QObject *parent = 0);
+    explicit TransferThread(Bootloader * const btl, QObject *parent = 0);
     ~TransferThread();
     void run();
-    void setParams(Bootloader *btl, QByteArray *data, bool write, bool verify);
+    void setParams(QByteArray * const data, bool write, bool verify);
 
 signals:
     void sendProgress(int p);
@@ -49,7 +49,7 @@ private slots:
 
 private:
     QByteArray mData;
-    Bootloader *mBtl;
+    Bootloader * const mBtl;
     bool mWrite;
     bool mStop;
     bool mErase;

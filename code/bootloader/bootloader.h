@@ -1,9 +1,11 @@
-#include "ch.h"
-#include "hal.h"
+#ifndef BOOTLOADER_H
+#define BOOTLOADER_H
+
+#include "common.h"
+
 #include "stm32f30x_flash.h"
 #include "stm32f30x_iwdg.h"
 #include "usb_config.h"
-
 
 #define USER_APP_ADDR (uint32_t)0x08005000
 #define USER_APP_RESET_ADDR (uint32_t)0x08005281
@@ -20,5 +22,5 @@ uint8_t checkUserCode(uint32_t address);
 
 uint8_t eraseFlash(uint32_t len);
 uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len);
-inline uint32_t leToInt(uint8_t *ptr);
-inline uint32_t beToInt(uint8_t *ptr);
+
+#endif

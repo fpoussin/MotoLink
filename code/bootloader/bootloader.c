@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bootloader.h"
 
 typedef void (*FuncPtr)(void);
 
@@ -114,21 +114,3 @@ uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len) {
   FLASH_Lock();
   return 0;
 }
-
-uint32_t leToInt(uint8_t *ptr) {
-
-  return ((uint32_t)ptr[3] << 24) |
-      ((uint32_t)ptr[2] << 16) |
-      ((uint32_t)ptr[1] << 8) |
-      (uint32_t)ptr[0];
-}
-
-uint32_t beToInt(uint8_t *ptr) {
-
-  return ((uint32_t)ptr[0] << 24) |
-      ((uint32_t)ptr[1] << 16) |
-      ((uint32_t)ptr[2] << 8) |
-      (uint32_t)ptr[3];
-}
-
-

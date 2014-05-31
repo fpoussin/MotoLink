@@ -3,17 +3,6 @@
 
 uint8_t bl_wake = 0;
 
-uint8_t checksum(uint8_t *data, uint8_t length)
-{
-    uint8_t i;
-    uint8_t sum = 0;
-
-    for (i = 0; i < length; i++)
-      sum += data[i];
-
-    return sum;
-}
-
 uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
 {
   cmd_header_t header;
@@ -163,7 +152,7 @@ uint8_t resetHandler(BaseChannel * chn) {
 
   chThdSleepMilliseconds(100);
 
-  usbDisconnectBus(&USBD1);
+  //usbDisconnectBus(&USBD1);
   usbStop(&USBD1);
 
   chSysDisable();

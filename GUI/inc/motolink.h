@@ -4,23 +4,41 @@
 #include <QObject>
 #include <QUsb>
 #include "bootloader.h"
+#include "transferthread.h"
 
 class Motolink : public QObject
 {
     Q_OBJECT
 public:
-    explicit Motolink(QUsb *usb, QObject *parent = 0);
-
-signals:
+    explicit Motolink(QObject *parent = 0);
+    ~Motolink();
+    Bootloader * const getBtl(void) { return mBtl; }
+    TransferThread * const getTft(void) { return mTft; }
 
 public slots:
-    void connect(void);
-    void disconnect(void);
+    bool usbConnect(void);
+    bool probeConnect(void);
+    bool usbDisconnect(void);
 
+    quint8 getMode(void);
+    quint16 getVersion(void);
+    bool sendWake();
+
+signals:
+    void connectionProgress(int progress);
+    void connectionResult(bool result);
+    void timeElapsed(int time);
+
+private slots:
+    quint8 checkSum(const quint8 *data, quint8 length) const;
+    void setupConnection(void);
 
 private:
     QUsb *mUsb;
     Bootloader *mBtl;
+    TransferThread *mTft;
+    bool mConnected;
+    bool mAbortConnect;
     QString mGuid;
     quint16 mPid;
     quint16 mVid;

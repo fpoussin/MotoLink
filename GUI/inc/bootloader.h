@@ -20,30 +20,18 @@ public:
     ~Bootloader();
     
 public slots:
-    bool connect();
-    bool disconnect();
     quint8 getFlags();
-    quint8 getMode();
-    quint16 getVersion();
     qint32 writeFlash(quint32 addr, const QByteArray *data, quint32 len);
     qint32 readMem(quint32 addr, QByteArray *data, quint32 len);
     bool eraseFlash(quint32 len);
     bool reset(void);
-    bool isConnected(void) const;
-    bool sendWake(void);
-    void abortConnect(void);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;
 
 private:
     QUsb *mUsb;
-    bool mConnected;
-    bool mAbortConnect;
     QThread mThread;
-    QString mGuid;
-    quint16 mPid;
-    quint16 mVid;
 
 signals:
     void connectionResult(bool result);

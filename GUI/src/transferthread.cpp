@@ -17,11 +17,11 @@ This file is part of QSTLink2.
 #include "transferthread.h"
 #include <QDataStream>
 
-TransferThread::TransferThread(Bootloader *btl, QObject *parent) :
-    QThread(parent)
+TransferThread::TransferThread(Bootloader * const btl, QObject *parent) :
+    QThread(parent),
+    mBtl(btl)
 {
     qDebug() << "New Transfer Thread";
-    mBtl = btl;
     mStop = false;
 }
 
@@ -50,9 +50,8 @@ void TransferThread::halt()
     emit sendLog(tr("Transfer Aborted"));
 }
 
-void TransferThread::setParams(Bootloader *btl, QByteArray *data, bool write, bool verify)
+void TransferThread::setParams(QByteArray * const data, bool write, bool verify)
 {
-    mBtl = btl;
     mData = *data;
     mWrite = write;
     mVerify = verify;

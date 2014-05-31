@@ -2,22 +2,19 @@
 #include "ui_updatewizard.h"
 #include <QtXml>
 
-UpdateWizard::UpdateWizard(Bootloader *btl, Motolink *mtl, QWidget *parent) :
+UpdateWizard::UpdateWizard(Motolink * const mtl, QWidget *parent) :
     QWizard(parent),
-    mUi(new Ui::UpdateWizard)
+    mUi(new Ui::UpdateWizard),
+    mMtl(mtl)
 {
     mUi->setupUi(this);
     this->setOptions(QWizard::DisabledBackButtonOnLastPage
                      | QWizard::NoBackButtonOnStartPage);
-    mBtl = btl;
-    mMtl = mtl;
-    mTft = new TransferThread(btl);
     this->setupConnections();
 }
 
 UpdateWizard::~UpdateWizard()
 {
-    delete mTft;
     delete mUi;
 }
 
@@ -45,7 +42,9 @@ void UpdateWizard::pageUpdated(int page)
         case 0:
             break;
         case 1:
-            this->connectBtl();
+            this->startFwUpdate();
+            break;
+        case 2:
             break;
         default:
             break;
@@ -59,21 +58,19 @@ void UpdateWizard::updateStatus(QString text)
 
 void UpdateWizard::disableButtons(bool disable)
 {
-
+    (void)disable;
 }
 
 void UpdateWizard::setupConnections()
 {
+    QObject::connect(mMtl->getTft(), SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
+    QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
+    QObject::connect(mMtl->getTft(), SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
+
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
-    QObject::connect(mTft, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
-    QObject::connect(mTft, SIGNAL(sendProgress(int)), this->mUi->pbProgress, SLOT(setValue(int)));
-    QObject::connect(mTft, SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
-    QObject::connect(mTft, SIGNAL(finished()), mBtl, SLOT(disconnect()));
-
-    QObject::connect(this, SIGNAL(startTransfer()), mTft, SLOT(start()));
-    QObject::connect(this, SIGNAL(send(QByteArray*)), mTft, SLOT(send(QByteArray*)));
-    QObject::connect(this, SIGNAL(verify(QByteArray*)), mTft, SLOT(verify(QByteArray*)));
-
+    QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));
+    QObject::connect(this, SIGNAL(send(QByteArray*)), mMtl->getTft(), SLOT(send(QByteArray*)));
+    QObject::connect(this, SIGNAL(verify(QByteArray*)), mMtl->getTft(), SLOT(verify(QByteArray*)));
 }
 
 void UpdateWizard::loadFirmareData()
@@ -127,23 +124,23 @@ void UpdateWizard::loadFirmareData()
     }
 }
 
-void UpdateWizard::connectBtl()
+void UpdateWizard::startFwUpdate()
 {
-    mMtl->disconnect();
-
     mUi->lStatus->clear();
-    if (mBtl->connect())
+
+    if (mMtl->usbConnect())
     {
-        if (mBtl->getMode() == MODE_BL)
+        if (mMtl->getMode() == MODE_APP)
         {
-            //mBtl->
+            /* App mode, reset to bootloader */
+            this->updateStatus(tr("Reset to Bootloader"));
+
         }
 
         this->updateStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
-        mTft->setParams(mBtl, &mFwData, true, true);
-        //mTft->run();
+        mMtl->getTft()->setParams(&mFwData, true, true);
         emit startTransfer();
     }
     else
@@ -152,9 +149,9 @@ void UpdateWizard::connectBtl()
         return;
     }
 /*
-    if (mBtl->disconnect())
+    if (mMtl->disconnect())
     {
         this->updateStatus(tr("Disconnected"));
     }
-    */
+*/
 }

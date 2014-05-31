@@ -18,13 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mIgnModel(&mUndoStack),
     mKnockModel(&mUndoStack)
 {
-    mUndoStack.setUndoLimit(100);
-
-    mUsb = new QUsb();
-    mMtl = new Motolink(mUsb);
-    mBtl = new Bootloader(mUsb);
+    mMtl = new Motolink();
     mHrc = new Hrc();
-    mUpdateWizard = new UpdateWizard(mBtl, mMtl);
+    mUpdateWizard = new UpdateWizard(mMtl);
+
+    mUndoStack.setUndoLimit(100);
 
     mFuelModel.setName("Fuel");
     mStagingModel.setName("Staging");
@@ -63,8 +61,6 @@ MainWindow::~MainWindow()
     delete mUi;
     delete mUpdateWizard;
     delete mMtl;
-    delete mBtl;
-    delete mUsb;
     delete mHrc;
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i)

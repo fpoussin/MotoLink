@@ -89,9 +89,7 @@ private:
     QString mCurrentFile;
     bool mHasChanged;
     Hrc *mHrc;
-    QUsb *mUsb;
     Motolink *mMtl;
-    Bootloader *mBtl;
     UpdateWizard *mUpdateWizard;
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack;

@@ -84,6 +84,19 @@
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
+ * DAC driver system settings.
+ */
+#define STM32_DAC_USE_CHN1                  FALSE
+#define STM32_DAC_USE_CHN2                  FALSE
+#define STM32_DAC_CHN1_IRQ_PRIORITY         10
+#define STM32_DAC_CHN2_IRQ_PRIORITY         10
+#define STM32_DAC_CHN1_DMA_PRIORITY         2
+#define STM32_DAC_CHN2_DMA_PRIORITY         2
+#define STM32_DAC_DMA_ERROR_HOOK(dacp)      chSysHalt()
+#define STM32_DAC_CHN1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
+#define STM32_DAC_CHN2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
+
+/*
  * EXT driver system settings.
  */
 #define STM32_EXT_EXTI0_IRQ_PRIORITY        6
@@ -177,9 +190,9 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  TRUE
-#define STM32_SPI_USE_SPI2                  TRUE
-#define STM32_SPI_USE_SPI3                  TRUE
+#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
 #define STM32_SPI_SPI3_DMA_PRIORITY         1

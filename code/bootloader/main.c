@@ -21,8 +21,6 @@
 #include "hal.h"
 #include "chprintf.h"
 #include "common.h"
-#include "usb_config.h"
-#include "stm32f30x_iwdg.h"
 #include "communication.h"
 
 /*===========================================================================*/
@@ -55,13 +53,13 @@ static PWMConfig pwmcfg = {
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBlinker, 512);
+static WORKING_AREA(waThreadBlinker, 384);
 static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
 
-  const uint32_t dimmer[] = {D(0), D(200), D(400), D(600), D(800), D(1000), D(1200), D(1400), D(1600), D(1800), D(2000), D(2200),
+  const uint16_t dimmer[] = {D(0), D(200), D(400), D(600), D(800), D(1000), D(1200), D(1400), D(1600), D(1800), D(2000), D(2200),
                              D(2400), D(2600), D(2800), D(3000),  D(3200), D(3400), D(3600), D(3800), D(4000), D(4200), D(4400),
                              D(4600), D(4800), D(5000), D(5200), D(5400), D(5600), D(5800), D(6000), D(6200), D(6400), D(6600),
                              D(6800), D(7000), D(7200), D(7400), D(7600), D(7800), D(8000), D(7800), D(7600), D(7400), D(7200),
@@ -75,8 +73,8 @@ static msg_t ThreadBlinker(void *arg) {
   if (dmaStreamAllocate(STM32_DMA1_STREAM2, 0, NULL, NULL)) while (1) chThdSleepMilliseconds(20);
   dmaStreamSetPeripheral(STM32_DMA1_STREAM2, &TIM2->CCR3);
   dmaStreamSetMemory0(STM32_DMA1_STREAM2, dimmer);
-  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/4);
-  dmaStreamSetMode(STM32_DMA1_STREAM2, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD
+  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/2);
+  dmaStreamSetMode(STM32_DMA1_STREAM2, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
                    | STM32_DMA_CR_EN | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
 
   while (TRUE)
@@ -109,7 +107,6 @@ static msg_t ThreadUsb(void *arg) {
   {
     usbDisconnectBus(serusbcfg.usbp);
     bduStop(&BDU1);
-    usbStop(&USBD1);
 
     /* Wait for USB connection */
     while(!usbConnected()) chThdSleepMilliseconds(20);
@@ -119,7 +116,6 @@ static msg_t ThreadUsb(void *arg) {
      * Note, a delay is inserted in order to not have to disconnect the cable
      * after a reset.
      */
-    usbStart(&USBD1, &usbcfg);
     chThdSleepMilliseconds(100);
     usbConnectBus(serusbcfg.usbp);
 
@@ -169,6 +165,10 @@ static msg_t ThreadSDU(void *arg) {
   chRegSetThreadName("Serial");
   chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
   chEvtRegisterMask(chnGetEventSource(&SD1), &el2, CHN_INPUT_AVAILABLE);
+
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
+  sdStart(&SD1, &uartCfg);
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
@@ -227,9 +227,7 @@ int main(void) {
   chSysInit();
 
   pwmStart(&PWMD2, &pwmcfg);
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
-  sdStart(&SD1, &uartCfg);
+  usbStart(&USBD1, &usbcfg);
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
