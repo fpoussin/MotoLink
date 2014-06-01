@@ -130,13 +130,22 @@ void UpdateWizard::startFwUpdate()
 
     if (mMtl->usbConnect())
     {
-        if (mMtl->getMode() == MODE_APP)
+        if (mMtl->getMode() != MODE_BL)
         {
             /* App mode, reset to bootloader */
             this->updateStatus(tr("Reset to Bootloader"));
 
-        }
+            mMtl->reset();
+            mMtl->usbDisconnect();
+            mMtl->probeConnect();
 
+            if (mMtl->getMode() != MODE_BL)
+            {
+                this->updateStatus(tr("Failed to reset device"));
+                return;
+            }
+
+        }
         this->updateStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
@@ -148,10 +157,4 @@ void UpdateWizard::startFwUpdate()
         this->updateStatus(tr("Connection Failed"));
         return;
     }
-/*
-    if (mMtl->disconnect())
-    {
-        this->updateStatus(tr("Disconnected"));
-    }
-*/
 }

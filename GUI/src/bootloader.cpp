@@ -3,24 +3,17 @@
 Bootloader::Bootloader(QUsb *usb, QObject *parent) :
     QObject(parent)
 {
-    moveToThread(&mThread);
-    mThread.start();
-
     mUsb = usb;
 }
 
 Bootloader::~Bootloader()
 {
-    mThread.exit();
-    if(!mThread.wait(1000))
-    {
-      mThread.terminate();
-      mThread.wait();
-    }
+
 }
 
 quint8 Bootloader::getFlags()
 {
+    WAIT_USB
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -32,7 +25,7 @@ quint8 Bootloader::getFlags()
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 2);
 
-    if (recv.size() > 1 && recv.at(0) == MASK_REPLY_OK)
+    if (recv.size() > 1 && recv.at(0) & MASK_REPLY_OK)
         return recv.at(1);
 
     return 0;
@@ -40,6 +33,7 @@ quint8 Bootloader::getFlags()
 
 qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 {
+    //WAIT_USB
     QByteArray send, recv;
     quint8 buf_len[4];
     qToLittleEndian(len, buf_len);
@@ -63,7 +57,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     if (recv.size() < 1)
         return -1;
 
-    if (recv.at(0) != MASK_REPLY_OK)
+    if (!(recv.at(0) & MASK_REPLY_OK))
         return -1;
 
     return wr;
@@ -71,6 +65,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 
 qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
 {
+    //WAIT_USB
     QByteArray send;
     quint8 buf_len[4];
     qToLittleEndian(len, buf_len);
@@ -92,6 +87,7 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
 
 bool Bootloader::eraseFlash(quint32 len)
 {
+    WAIT_USB
     QByteArray send, recv;
     quint8 buf_len[4];
 
@@ -106,30 +102,14 @@ bool Bootloader::eraseFlash(quint32 len)
 
     mUsb->write(&send, send.size());
 
-    _usleep(12*len);
+    _usleep(13*len);
 
-    mUsb->read(&recv, 2);
-
-    if (recv.size() >= 2)
-        return ((recv.at(0) == MASK_REPLY_OK) && (recv.at(1) == ERASE_OK));
-
-    return false;
-}
-
-bool Bootloader::reset()
-{
-    QByteArray send, recv;
-
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_RESET);
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
-
-    mUsb->write(&send, send.size());
     mUsb->read(&recv, 1);
 
-    return true;
+    if (recv.size() > 0)
+        return ((recv.at(0) & (MASK_REPLY_OK | CMD_ERASE)));
+
+    return false;
 }
 
 quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const

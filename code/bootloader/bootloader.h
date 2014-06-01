@@ -2,6 +2,7 @@
 #define BOOTLOADER_H
 
 #include "common.h"
+#include "protocol.h"
 
 #include "stm32f30x_flash.h"
 #include "stm32f30x_iwdg.h"
@@ -22,5 +23,8 @@ uint8_t checkUserCode(uint32_t address);
 
 uint8_t eraseFlash(uint32_t len);
 uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len);
+
+extern uint8_t bl_wake;
+extern uint8_t reset_flags;
 
 #endif

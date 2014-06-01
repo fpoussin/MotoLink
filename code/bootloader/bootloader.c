@@ -1,6 +1,7 @@
 #include "bootloader.h"
 
-typedef void (*FuncPtr)(void);
+uint8_t bl_wake = 0;
+//typedef void (*FuncPtr)(void);
 
 void startUserApp(void) {
 

@@ -16,13 +16,11 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "ch.h"
 #include "hal.h"
-
 #include "chprintf.h"
-
 #include "usb_config.h"
+#include "communication.h"
 
 /*===========================================================================*/
 /* Generic code.                                                             */
@@ -56,6 +54,8 @@ static msg_t ThreadBDU(void *arg) {
 
   bduObjectInit(&BDU1);
   pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
+  TIM2->DIER &= ~TIM_DIER_UDE; /* Timer Update DMA request disable */
+  dmaStreamSetMode(STM32_DMA1_STREAM2, 0);
 
   while (TRUE)
   {
@@ -96,7 +96,7 @@ static msg_t ThreadBDU(void *arg) {
       {
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
-        //read_cmd((BaseChannel *)&BDU1, reset_flags);
+        read_cmd((BaseChannel *)&BDU1);
         chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }

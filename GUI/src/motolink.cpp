@@ -18,6 +18,8 @@ Motolink::Motolink(QObject *parent) :
 
     mConnected = false;
     mAbortConnect = false;
+
+    mUsb->setDebug(true);
 }
 
 Motolink::~Motolink()
@@ -34,7 +36,8 @@ bool Motolink::usbConnect()
 
     mConnected = (mUsb->open() == 0);
 
-    this->sendWake();
+    if (mConnected)
+        this->sendWake();
 
     return mConnected;
 }
@@ -91,6 +94,7 @@ bool Motolink::usbDisconnect(void)
 
 quint8 Motolink::getMode(void)
 {
+    WAIT_USB
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -102,8 +106,8 @@ quint8 Motolink::getMode(void)
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 2);
 
-    if (recv.size() > 1 && recv.at(0) == MASK_REPLY_OK)
-        return recv.at(1);
+    if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MODE))
+        return recv.at(1) & ~MASK_REPLY_OK;
 
     return 0;
 }
@@ -111,6 +115,7 @@ quint8 Motolink::getMode(void)
 
 quint16 Motolink::getVersion()
 {
+    WAIT_USB
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -122,7 +127,7 @@ quint16 Motolink::getVersion()
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 3);
 
-    if (recv.size() > 2 && recv.at(0) == MASK_REPLY_OK)
+    if (recv.size() > 2 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_VERSION))
         return recv.at(1) + (recv.at(2)*256);
 
     return 0;
@@ -130,6 +135,7 @@ quint16 Motolink::getVersion()
 
 bool Motolink::sendWake()
 {
+    WAIT_USB
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -141,7 +147,24 @@ bool Motolink::sendWake()
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 1);
 
-    return recv.at(0) == MASK_REPLY_OK;
+    return recv.at(0) == (MASK_REPLY_OK | CMD_WAKE);
+}
+
+bool Motolink::reset()
+{
+    WAIT_USB
+    QByteArray send, recv;
+
+    send.append(MAGIC1);
+    send.append(MAGIC2);
+    send.append(MASK_CMD | CMD_RESET);
+    send.insert(3, send.size()+2);
+    send.append(checkSum((quint8*)send.constData(), send.size()));
+
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 1);
+
+    return recv.at(0) == (MASK_REPLY_OK | CMD_RESET);
 }
 
 quint8 Motolink::checkSum(const quint8 *data, quint8 length) const

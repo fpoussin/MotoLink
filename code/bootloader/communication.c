@@ -1,8 +1,6 @@
 #include "communication.h"
 #include "common.h"
 
-uint8_t bl_wake = 0;
-
 uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
 {
   cmd_header_t header;
@@ -22,21 +20,24 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
     return 2;
   }
 
+  // Fetch data
   if ((uint8_t)chnReadTimeout(chn, data_buf, header.len-4, MS2ST(25)) < (header.len-4))
   {
     chnPutTimeout(chn, err_buf+3, MS2ST(25));
     return 3;
   }
 
+  // Fetch, compute and compare checksums
   const uint8_t cs1 = checksum((uint8_t *)&header, sizeof(header)) + checksum(data_buf, header.len-5);
   const uint8_t cs2 = data_buf[header.len-5];
 
   if (cs1 != cs2)
   {
-    chnPutTimeout(chn, err_buf+4, MS2ST(25));
+    chnPutTimeout(chn, err_buf+4, MS2ST(50));
     return 4;
   }
 
+  // Process command
   uint8_t status = 0;
   switch (header.type)
   {
@@ -60,6 +61,10 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
       status = sendFlags(chn, flags);
       break;
 
+    case MASK_CMD | CMD_GET_MODE:
+      status = sendMode(chn);
+      break;
+
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
       break;
@@ -69,7 +74,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
       break;
 
     default:
-      chnPutTimeout(chn, err_buf+5, MS2ST(25));
+      chnPutTimeout(chn, err_buf+5, MS2ST(50));
       break;
   }
 
@@ -85,18 +90,18 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
 uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
 
   if ((len-4) % 4) {
-    chnPutTimeout(chn, MASK_REPLY_ERR|CMD_WRITE, MS2ST(25));
+    chnPutTimeout(chn, MASK_REPLY_ERR | CMD_WRITE, MS2ST(50));
     return 1;
   }
 
   uint32_t offset = leToInt(buf);
   uint32_t *data_buf = (uint32_t*)(buf+4);
-  uint8_t replbuf = MASK_REPLY_OK;
+  uint8_t replbuf = MASK_REPLY_OK | CMD_WRITE;
 
   /* Deduct buffer space used by address */
   uint8_t res = writeFlash(offset, data_buf, (len-4)/4);
 
-  if (res != 0) replbuf = MASK_REPLY_ERR;
+  if (res != 0) replbuf =  MASK_REPLY_ERR | CMD_WRITE;
   chnPutTimeout(chn, replbuf, MS2ST(25));
 
   return res;
@@ -107,48 +112,46 @@ uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
   uint32_t address = leToInt(buf);
   uint32_t buf_len = leToInt(buf+4);
 
-  chnWriteTimeout(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len, MS2ST(25));
+  chnWriteTimeout(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len, MS2ST(50));
   return 0;
 }
 
 uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
 
   uint8_t buf[2];
-  buf[0] = MASK_REPLY_OK;
+  buf[0] = MASK_REPLY_OK  | CMD_GET_FLAGS;
   buf[1] = flags;
 
-  chnWriteTimeout(chn, buf, 2, MS2ST(25));
+  chnWriteTimeout(chn, buf, 2, MS2ST(50));
   return 0;
 }
 
 uint8_t sendMode(BaseChannel * chn) {
 
   uint8_t buf[2];
-  buf[0] = MASK_REPLY_OK;
+  buf[0] = MASK_REPLY_OK | CMD_GET_MODE;
   buf[1] = MODE_BL;
 
-  chnWriteTimeout(chn, buf, 2, MS2ST(25));
+  chnWriteTimeout(chn, buf, 2, MS2ST(50));
   return 0;
 }
 
 uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
 
-  uint8_t buf2[2];
   uint32_t len = leToInt(buf);
-  buf2[0] = MASK_REPLY_OK;
-  buf2[1] = ERASE_OK;
 
   if (eraseFlash(len)) {
-    buf2[1] = 0;
+    chnPutTimeout(chn, MASK_REPLY_ERR | CMD_ERASE, MS2ST(50));
+    return 1;
   }
 
-  chnWriteTimeout(chn, buf2, 2, MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_ERASE, MS2ST(50));
   return 0;
 }
 
 uint8_t resetHandler(BaseChannel * chn) {
 
-  chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(50));
 
   chThdSleepMilliseconds(100);
 
@@ -165,7 +168,7 @@ uint8_t resetHandler(BaseChannel * chn) {
 uint8_t wakeHandler(BaseChannel * chn) {
 
   bl_wake = 1;
-  chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, MS2ST(50));
   return 0;
 }
 
