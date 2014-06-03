@@ -23,6 +23,7 @@ public:
     
 public slots:
     quint8 getFlags();
+    bool boot();
     qint32 writeFlash(quint32 addr, const QByteArray *data, quint32 len);
     qint32 readMem(quint32 addr, QByteArray *data, quint32 len);
     bool eraseFlash(quint32 len);

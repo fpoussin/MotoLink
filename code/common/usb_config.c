@@ -438,14 +438,6 @@ const BulkUSBConfig bulkusbcfg = {
   USBD2_DATA_AVAILABLE_EP
 };
 
-const SerialConfig uartCfg =
-{
- 10400, // bit rate
- 0,
- USART_CR2_STOP1_BITS | USART_CR2_LINEN,
- 0
-};
-
 /*
  * USB will pull input low when connected.
  */

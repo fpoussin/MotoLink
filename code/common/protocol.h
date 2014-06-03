@@ -21,9 +21,11 @@
 #define CMD_GET_VERSION (uint8_t)0x09
 #define CMD_GET_SIZE (uint8_t)0x0A
 
-#define FLAG_OK (uint8_t)0x01
+#define FLAG_OK (uint8_t)0x00
 #define FLAG_IWDRST (uint8_t)0x02
 #define FLAG_SFTRST (uint8_t)0x04
+#define FLAG_NOAPP (uint8_t)0x08
+#define FLAG_WAKE (uint8_t)0x10
 
 #define MODE_BL (uint8_t)0x01
 #define MODE_APP (uint8_t)0x02

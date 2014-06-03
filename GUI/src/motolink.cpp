@@ -12,6 +12,7 @@ Motolink::Motolink(QObject *parent) :
     mUsb->setGuid(mGuid);
     mUsb->setDeviceIds(mPid, mVid);
     mUsb->setEndPoints(0x83, 0x03);
+    mUsb->setTimeout(300);
 
     mBtl = new Bootloader(mUsb);
     mTft = new TransferThread(mBtl);

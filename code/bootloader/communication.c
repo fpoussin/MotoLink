@@ -112,6 +112,7 @@ uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
   uint32_t address = leToInt(buf);
   uint32_t buf_len = leToInt(buf+4);
 
+  chnPutTimeout(chn, MASK_REPLY_OK  | CMD_READ, MS2ST(25));
   chnWriteTimeout(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len, MS2ST(50));
   return 0;
 }
@@ -155,7 +156,7 @@ uint8_t resetHandler(BaseChannel * chn) {
 
   chThdSleepMilliseconds(100);
 
-  //usbDisconnectBus(&USBD1);
+  usbDisconnectBus(&USBD1);
   usbStop(&USBD1);
 
   chSysDisable();
@@ -174,7 +175,10 @@ uint8_t wakeHandler(BaseChannel * chn) {
 
 uint8_t bootHandler(BaseChannel * chn) {
 
-  (void)chn;
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_BOOT, MS2ST(50));
+  chThdSleepMilliseconds(100);
+  usbStop(&USBD1);
+
   startUserApp();
   return 0;
 }

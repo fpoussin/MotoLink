@@ -31,6 +31,26 @@ quint8 Bootloader::getFlags()
     return 0;
 }
 
+bool Bootloader::boot()
+{
+    WAIT_USB
+    QByteArray send, recv;
+
+    send.append(MAGIC1);
+    send.append(MAGIC2);
+    send.append(MASK_CMD | CMD_BOOT);
+    send.insert(3, send.size()+2);
+    send.append(checkSum((quint8*)send.constData(), send.size()));
+
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 1);
+
+    if (recv.size() > 0 && recv.at(0) == (MASK_REPLY_OK | CMD_BOOT))
+        return true;
+
+    return false;
+}
+
 qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 {
     //WAIT_USB
@@ -66,7 +86,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
 {
     //WAIT_USB
-    QByteArray send;
+    QByteArray send, recv;
     quint8 buf_len[4];
     qToLittleEndian(len, buf_len);
     quint8 buf_addr[4];
@@ -81,8 +101,15 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
     mUsb->write(&send, send.size());
+    qint32 cnt = mUsb->read(&recv, len+1);
 
-    return mUsb->read(data, len);
+    if (!(recv.at(0) == (MASK_REPLY_OK | CMD_READ)))
+        return -1;
+
+    recv.remove(0, 1);
+    *data = recv;
+
+    return cnt-1;
 }
 
 bool Bootloader::eraseFlash(quint32 len)

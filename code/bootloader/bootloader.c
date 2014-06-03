@@ -1,7 +1,6 @@
 #include "bootloader.h"
 
 uint8_t bl_wake = 0;
-//typedef void (*FuncPtr)(void);
 
 void startUserApp(void) {
 
@@ -56,13 +55,14 @@ void jumpToUser(uint32_t address) {
 
 uint8_t checkUserCode(uint32_t address) {
 
-  uint32_t sp = *(vu32 *) address;
+  const uint32_t sp = *(vu32 *) address;
 
-  if ((sp & 0x2FFE0000) == 0x20000000) {
-    return (1);
-  } else {
-    return (0);
+  if ((sp & 0x2FFF0000) == 0x20000000 // SRAM
+      || (sp & 0x1FFF0000) == 0x10000000) // CCM RAM
+  {
+    return 1;
   }
+  return 0;
 }
 
 uint8_t eraseFlash(uint32_t len) {

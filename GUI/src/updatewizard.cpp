@@ -53,7 +53,7 @@ void UpdateWizard::pageUpdated(int page)
 
 void UpdateWizard::updateStatus(QString text)
 {
-    mUi->tbStatus->append(text+QString("\n"));
+    mUi->tbStatus->append(text);
 }
 
 void UpdateWizard::enableButtons(void)
@@ -76,6 +76,7 @@ void UpdateWizard::setupConnections()
     QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
     //QObject::connect(mMtl->getTft(), SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
     QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(enableButtons()));
+    QObject::connect(mMtl->getTft(), SIGNAL(finished()), mMtl->getBtl(), SLOT(boot()));
 
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
     QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));
@@ -167,6 +168,12 @@ void UpdateWizard::startFwUpdate()
 
         if (flags & FLAG_SFTRST)
             this->updateStatus(tr("Software reset"));
+
+        if (flags & FLAG_NOAPP)
+            this->updateStatus(tr("No valid user application"));
+
+        if (flags & FLAG_WAKE)
+            this->updateStatus(tr("Bootloader Wakeup"));
 
         mMtl->getTft()->setParams(&mFwData, true, true);
         emit startTransfer();

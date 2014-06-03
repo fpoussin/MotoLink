@@ -23,7 +23,6 @@ extern BulkUSBDriver BDU1;
 extern const USBConfig usbcfg;
 extern const SerialUSBConfig serusbcfg;
 extern const BulkUSBConfig bulkusbcfg;
-extern const SerialConfig uartCfg;
 
 bool_t usbConnected(void);
 bool_t usb_lld_connect_bus(USBDriver *usbp);

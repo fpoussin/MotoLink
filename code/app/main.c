@@ -26,6 +26,15 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+const SerialConfig uartCfg =
+{
+ 10400, // bit rate
+ 0,
+ USART_CR2_STOP1_BITS | USART_CR2_LINEN,
+ 0
+};
+
+
 static PWMConfig pwmcfg = {
   10000,    /* 10kHz PWM clock frequency.   */
   50,      /* Initial PWM period 10mS.       */

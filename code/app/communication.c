@@ -69,7 +69,7 @@ uint8_t read_cmd(BaseChannel *chn)
 uint8_t sendMode(BaseChannel * chn) {
 
   uint8_t buf[2];
-  buf[0] = MASK_REPLY_OK;
+  buf[0] = MASK_REPLY_OK | CMD_GET_MODE;
   buf[1] = MODE_APP;
 
   chnWriteTimeout(chn, buf, 2, MS2ST(25));
@@ -78,11 +78,11 @@ uint8_t sendMode(BaseChannel * chn) {
 
 uint8_t resetHandler(BaseChannel * chn) {
 
-  chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(25));
 
   chThdSleepMilliseconds(100);
 
-  //usbDisconnectBus(&USBD1);
+  usbDisconnectBus(&USBD1);
   usbStop(&USBD1);
 
   chSysDisable();
@@ -94,7 +94,6 @@ uint8_t resetHandler(BaseChannel * chn) {
 
 uint8_t wakeHandler(BaseChannel * chn) {
 
-  //bl_wake = 1;
-  chnPutTimeout(chn, MASK_REPLY_OK, MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, MS2ST(25));
   return 0;
 }

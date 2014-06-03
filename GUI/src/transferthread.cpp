@@ -136,7 +136,7 @@ void TransferThread::verify(QByteArray *data)
     QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStop = false;
-    const quint32 buf_size = 512;
+    const quint32 buf_size = 500;
     const quint32 from = 0;
     const quint32 to = data->size();
     char buf[buf_size];

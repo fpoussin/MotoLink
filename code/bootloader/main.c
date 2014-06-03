@@ -157,44 +157,27 @@ static msg_t ThreadUsb(void *arg) {
 static WORKING_AREA(waThreadSDU, 256);
 static msg_t ThreadSDU(void *arg) {
 
-  uint8_t buffer[SERIAL_BUFFERS_SIZE];
-  EventListener el1, el2;
-  flagsmask_t flags_usb, flags_uart;
-  size_t read, available;
+  uint8_t buffer[1];
+  EventListener el1;
+  flagsmask_t flags_usb;
   (void)arg;
   chRegSetThreadName("Serial");
   chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
-  chEvtRegisterMask(chnGetEventSource(&SD1), &el2, CHN_INPUT_AVAILABLE);
 
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
-  sdStart(&SD1, &uartCfg);
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
-  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
   while (TRUE) {
 
     chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
     flags_usb = chEvtGetAndClearFlags(&el1);
-    flags_uart = chEvtGetAndClearFlags(&el2);
 
     if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
 
-      available = chQSpaceI(&SDU1.iqueue);
-      if (available > sizeof(buffer)) available = sizeof(buffer);
-
-      read = chnReadTimeout((BaseChannel *)&SDU1, buffer, available, MS2ST(10));
-      chnWriteTimeout((BaseChannel *)&SD1, buffer, read, MS2ST(10));
-    }
-
-    if (flags_uart & CHN_INPUT_AVAILABLE) { /* Incoming data from UART */
-
-      available = chQSpaceI(&SD1.iqueue);
-      if (available > sizeof(buffer)) available = sizeof(buffer);
-
-      read = chnReadTimeout((BaseChannel *)&SD1, buffer, available, MS2ST(10));
-      chnWriteTimeout((BaseChannel *)&SDU1, buffer, read, MS2ST(10));
+      /* Does nothing with the data */
+      chnReadTimeout((BaseChannel *)&SDU1, buffer,2, MS2ST(10));
     }
 
   }
@@ -241,9 +224,19 @@ int main(void) {
   }
 
   /* If BL did not get wake up command, no reset flags and user app looks good, launch it */
-  if (!bl_wake && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
+  if (bl_wake == 0 && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
 
+    pwmStop(&PWMD2);
+    usbStop(&USBD1);
     startUserApp();
+  }
+
+  if (checkUserCode(USER_APP_ADDR != 1)) {
+    reset_flags |= FLAG_NOAPP;
+  }
+
+  if (bl_wake == 1) {
+    reset_flags |= FLAG_WAKE;
   }
 
   while (TRUE) {
