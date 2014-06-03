@@ -12,8 +12,8 @@ class Motolink : public QObject
 public:
     explicit Motolink(QObject *parent = 0);
     ~Motolink();
-    Bootloader * const getBtl(void) { return mBtl; }
-    TransferThread * const getTft(void) { return mTft; }
+    Bootloader * getBtl(void) { return mBtl; }
+    TransferThread * getTft(void) { return mTft; }
 
 public slots:
     bool usbConnect(void);

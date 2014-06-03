@@ -8,8 +8,7 @@ UpdateWizard::UpdateWizard(Motolink * const mtl, QWidget *parent) :
     mMtl(mtl)
 {
     mUi->setupUi(this);
-    this->setOptions(QWizard::DisabledBackButtonOnLastPage
-                     | QWizard::NoBackButtonOnStartPage);
+    this->setOptions(QWizard::NoBackButtonOnStartPage);
     this->setupConnections();
 }
 
@@ -22,6 +21,7 @@ void UpdateWizard::showWizard()
 {
     this->loadFirmareData();
     this->mUi->lNewVersion->setText(mNewVersion);
+    this->enableButtons();
     this->show();
 }
 
@@ -53,19 +53,29 @@ void UpdateWizard::pageUpdated(int page)
 
 void UpdateWizard::updateStatus(QString text)
 {
-    mUi->lStatus->setText(mUi->lStatus->text()+QString("\n")+text);
+    mUi->tbStatus->append(text+QString("\n"));
 }
 
-void UpdateWizard::disableButtons(bool disable)
+void UpdateWizard::enableButtons(void)
 {
-    (void)disable;
+    this->button(QWizard::CancelButton)->setEnabled(true);
+    this->button(QWizard::FinishButton)->setEnabled(true);
+    this->button(QWizard::BackButton)->setEnabled(true);
+}
+
+void UpdateWizard::disableButtons(void)
+{
+    this->button(QWizard::CancelButton)->setEnabled(false);
+    this->button(QWizard::FinishButton)->setEnabled(false);
+    this->button(QWizard::BackButton)->setEnabled(false);
 }
 
 void UpdateWizard::setupConnections()
 {
     QObject::connect(mMtl->getTft(), SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
     QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
-    QObject::connect(mMtl->getTft(), SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
+    //QObject::connect(mMtl->getTft(), SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
+    QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(enableButtons()));
 
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
     QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));
@@ -126,7 +136,8 @@ void UpdateWizard::loadFirmareData()
 
 void UpdateWizard::startFwUpdate()
 {
-    mUi->lStatus->clear();
+    mUi->tbStatus->clear();
+    this->disableButtons();
 
     if (mMtl->usbConnect())
     {
@@ -149,12 +160,21 @@ void UpdateWizard::startFwUpdate()
         this->updateStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
+        const quint8 flags = mMtl->getBtl()->getFlags();
+
+        if (flags & FLAG_IWDRST)
+            this->updateStatus(tr("Watchdog reset"));
+
+        if (flags & FLAG_SFTRST)
+            this->updateStatus(tr("Software reset"));
+
         mMtl->getTft()->setParams(&mFwData, true, true);
         emit startTransfer();
     }
     else
     {
         this->updateStatus(tr("Connection Failed"));
+        this->enableButtons();
         return;
     }
 }

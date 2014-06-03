@@ -2,6 +2,7 @@
 #define UPDATEWIZARD_H
 
 #include <QWizard>
+#include <qabstractbutton.h>
 
 #include "bootloader.h"
 #include "motolink.h"
@@ -32,7 +33,8 @@ signals:
 private slots:
     void pageUpdated(int page);
     void updateStatus(QString text);
-    void disableButtons(bool disable);
+    void enableButtons(void);
+    void disableButtons(void);
 
 private:
     void setupConnections(void);

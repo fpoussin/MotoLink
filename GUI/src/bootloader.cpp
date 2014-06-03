@@ -25,7 +25,7 @@ quint8 Bootloader::getFlags()
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 2);
 
-    if (recv.size() > 1 && recv.at(0) & MASK_REPLY_OK)
+    if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FLAGS))
         return recv.at(1);
 
     return 0;
@@ -57,7 +57,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     if (recv.size() < 1)
         return -1;
 
-    if (!(recv.at(0) & MASK_REPLY_OK))
+    if (!(recv.at(0) == (MASK_REPLY_OK | CMD_WRITE)))
         return -1;
 
     return wr;
@@ -107,7 +107,7 @@ bool Bootloader::eraseFlash(quint32 len)
     mUsb->read(&recv, 1);
 
     if (recv.size() > 0)
-        return ((recv.at(0) & (MASK_REPLY_OK | CMD_ERASE)));
+        return ((recv.at(0) == (MASK_REPLY_OK | CMD_ERASE)));
 
     return false;
 }
