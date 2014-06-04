@@ -4,7 +4,6 @@ uint8_t bl_wake = 0;
 
 void startUserApp(void) {
 
-  bduStop(&BDU1);
   usbStop(&USBD1);
   usbDisconnectBus(&USBD1);
 

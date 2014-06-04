@@ -70,18 +70,24 @@ void UpdateWizard::disableButtons(void)
     this->button(QWizard::BackButton)->setEnabled(false);
 }
 
+void UpdateWizard::updateDone()
+{
+    this->enableButtons();
+    emit sendStatus(tr("Booting app"));
+    mMtl->getBtl()->boot();
+}
+
 void UpdateWizard::setupConnections()
 {
     QObject::connect(mMtl->getTft(), SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
     QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
-    //QObject::connect(mMtl->getTft(), SIGNAL(sendLock(bool)), this, SLOT(disableButtons(bool)));
-    QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(enableButtons()));
-    QObject::connect(mMtl->getTft(), SIGNAL(finished()), mMtl->getBtl(), SLOT(boot()));
+    QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(updateDone()));
 
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
     QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));
     QObject::connect(this, SIGNAL(send(QByteArray*)), mMtl->getTft(), SLOT(send(QByteArray*)));
     QObject::connect(this, SIGNAL(verify(QByteArray*)), mMtl->getTft(), SLOT(verify(QByteArray*)));
+    QObject::connect(this, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
 }
 
 void UpdateWizard::loadFirmareData()
@@ -145,42 +151,51 @@ void UpdateWizard::startFwUpdate()
         if (mMtl->getMode() != MODE_BL)
         {
             /* App mode, reset to bootloader */
-            this->updateStatus(tr("Reset to Bootloader"));
+            emit sendStatus(tr("Reset to Bootloader..."));
 
-            mMtl->reset();
+            QCoreApplication::processEvents();
+            mMtl->resetDevice();
             mMtl->usbDisconnect();
+
+            /* Wait for windows to detect the bootloader */
+            for (int i = 0; i <= 20; i++)
+            {
+                 _usleep(100000);
+                 mUi->pbProgress->setValue(i*5);
+                 QCoreApplication::processEvents();
+            }
             mMtl->probeConnect();
 
             if (mMtl->getMode() != MODE_BL)
             {
-                this->updateStatus(tr("Failed to reset device"));
+                emit sendStatus(tr("Failed to reset device"));
                 return;
             }
 
         }
-        this->updateStatus(tr("Connected"));
+        emit sendStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
         const quint8 flags = mMtl->getBtl()->getFlags();
 
         if (flags & FLAG_IWDRST)
-            this->updateStatus(tr("Watchdog reset"));
+            emit sendStatus(tr("Watchdog reset"));
 
         if (flags & FLAG_SFTRST)
-            this->updateStatus(tr("Software reset"));
+            emit sendStatus(tr("Software reset"));
 
         if (flags & FLAG_NOAPP)
-            this->updateStatus(tr("No valid user application"));
+            emit sendStatus(tr("No valid user application"));
 
         if (flags & FLAG_WAKE)
-            this->updateStatus(tr("Bootloader Wakeup"));
+            emit sendStatus(tr("Bootloader Wakeup"));
 
         mMtl->getTft()->setParams(&mFwData, true, true);
         emit startTransfer();
     }
     else
     {
-        this->updateStatus(tr("Connection Failed"));
+        emit sendStatus(tr("Connection Failed"));
         this->enableButtons();
         return;
     }

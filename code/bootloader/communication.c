@@ -154,7 +154,7 @@ uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(50));
 
-  chThdSleepMilliseconds(100);
+  chThdSleepMilliseconds(500);
 
   usbDisconnectBus(&USBD1);
   usbStop(&USBD1);

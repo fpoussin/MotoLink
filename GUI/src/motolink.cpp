@@ -52,7 +52,9 @@ bool Motolink::probeConnect()
     emit connectionProgress(0);
 
     timer.start();
-    while (timer.elapsed() < 10000) {
+    while (timer.elapsed() < 10000)
+    {
+        qDebug("Probing...");
 
         emit timeElapsed(timer.elapsed());
         ret = mUsb->open();
@@ -64,6 +66,7 @@ bool Motolink::probeConnect()
     }
 
     if (ret < 0) {
+        qDebug("Probing Failed");
         emit connectionResult(false);
         mConnected = false;
         emit connectionProgress(0);
@@ -74,7 +77,10 @@ bool Motolink::probeConnect()
     mUsb->read(&tmp, 256);
     mConnected = true;
 
-    this->sendWake();
+    qDebug("Probing success");
+
+    //_usleep(200000);
+    //this->sendWake();
 
     emit connectionProgress(100);
     emit connectionResult(true);
@@ -151,7 +157,7 @@ bool Motolink::sendWake()
     return recv.at(0) == (MASK_REPLY_OK | CMD_WAKE);
 }
 
-bool Motolink::reset()
+bool Motolink::resetDevice()
 {
     WAIT_USB
     QByteArray send, recv;

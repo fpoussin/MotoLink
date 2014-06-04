@@ -19,7 +19,7 @@ public slots:
     bool usbConnect(void);
     bool probeConnect(void);
     bool usbDisconnect(void);
-    bool reset(void);
+    bool resetDevice(void);
 
     quint8 getMode(void);
     quint16 getVersion(void);

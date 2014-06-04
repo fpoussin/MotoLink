@@ -29,12 +29,14 @@ signals:
     void startTransfer(void);
     void send(QByteArray *data);
     void verify(QByteArray *data);
+    void sendStatus(QString str);
 
 private slots:
     void pageUpdated(int page);
     void updateStatus(QString text);
     void enableButtons(void);
     void disableButtons(void);
+    void updateDone(void);
 
 private:
     void setupConnections(void);
