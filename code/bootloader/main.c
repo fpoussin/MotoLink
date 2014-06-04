@@ -94,7 +94,7 @@ static msg_t ThreadBlinker(void *arg) {
 static WORKING_AREA(waThreadUsb, 4096);
 static msg_t ThreadUsb(void *arg) {
 
-  uint8_t clear_buff[64];
+  //uint8_t clear_buff[64];
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
@@ -143,7 +143,7 @@ static msg_t ThreadUsb(void *arg) {
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
         read_cmd((BaseChannel *)&BDU1, reset_flags);
-        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
+        //chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
     }
@@ -157,7 +157,7 @@ static msg_t ThreadUsb(void *arg) {
 static WORKING_AREA(waThreadSDU, 256);
 static msg_t ThreadSDU(void *arg) {
 
-  uint8_t buffer[1];
+  uint8_t buffer[16];
   EventListener el1;
   flagsmask_t flags_usb;
   (void)arg;
@@ -171,13 +171,13 @@ static msg_t ThreadSDU(void *arg) {
 
   while (TRUE) {
 
-    chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
+    chEvtWaitOne(EVENT_MASK(1));
     flags_usb = chEvtGetAndClearFlags(&el1);
 
     if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
 
       /* Does nothing with the data */
-      chnReadTimeout((BaseChannel *)&SDU1, buffer,2, MS2ST(10));
+      chnReadTimeout((BaseChannel *)&SDU1, buffer, sizeof(buffer), MS2ST(5));
     }
 
   }

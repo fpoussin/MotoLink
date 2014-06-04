@@ -55,7 +55,7 @@ static PWMConfig pwmcfg = {
 static WORKING_AREA(waThreadBDU, 128);
 static msg_t ThreadBDU(void *arg) {
 
-  uint8_t clear_buff[64];
+  //uint8_t clear_buff[64];
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
@@ -106,7 +106,7 @@ static msg_t ThreadBDU(void *arg) {
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
         read_cmd((BaseChannel *)&BDU1);
-        chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
+        //chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
     }

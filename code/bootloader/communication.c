@@ -7,7 +7,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
   uint8_t data_buf[DATA_BUF_SIZE];
   uint8_t err_buf = MASK_REPLY_ERR;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(50)) < sizeof(cmd_header_t))
+  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(cmd_header_t), MS2ST(50)) < sizeof(cmd_header_t))
   {
     chnPutTimeout(chn, err_buf+1, MS2ST(25));
     return 1;
@@ -16,7 +16,7 @@ uint8_t read_cmd(BaseChannel *chn, uint8_t flags)
   // Decode header
   if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 || !(header.type & MASK_CMD) || header.len < 5 )
   {
-    chSequentialStreamPut(chn, err_buf+2);
+    chnPutTimeout(chn, err_buf+2, MS2ST(25));
     return 2;
   }
 
@@ -101,7 +101,7 @@ uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
   /* Deduct buffer space used by address */
   uint8_t res = writeFlash(offset, data_buf, (len-4)/4);
 
-  if (res != 0) replbuf =  MASK_REPLY_ERR | CMD_WRITE;
+  if (res != 0) replbuf = MASK_REPLY_ERR | CMD_WRITE;
   chnPutTimeout(chn, replbuf, MS2ST(25));
 
   return res;

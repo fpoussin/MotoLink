@@ -1,5 +1,6 @@
 #include "communication.h"
 #include "common.h"
+#include "usb_config.h"
 
 uint8_t read_cmd(BaseChannel *chn)
 {
@@ -7,7 +8,7 @@ uint8_t read_cmd(BaseChannel *chn)
   uint8_t data_buf[DATA_BUF_SIZE];
   uint8_t err_buf = MASK_REPLY_ERR;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, 4, MS2ST(50)) < sizeof(cmd_header_t))
+  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(cmd_header_t), MS2ST(50)) < sizeof(cmd_header_t))
   {
     chnPutTimeout(chn, err_buf+1, MS2ST(25));
     return 1;
@@ -16,7 +17,7 @@ uint8_t read_cmd(BaseChannel *chn)
   // Decode header
   if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 || !(header.type & MASK_CMD) || header.len < 5 )
   {
-    chSequentialStreamPut(chn, err_buf+2);
+    chnPutTimeout(chn, err_buf+2, MS2ST(25));
     return 2;
   }
 

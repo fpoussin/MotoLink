@@ -30,8 +30,6 @@
 #define MODE_BL (uint8_t)0x01
 #define MODE_APP (uint8_t)0x02
 
-#define ERASE_OK (uint8_t)0x10
-
 #define DATA_BUF_SIZE 256
 
 typedef struct {
