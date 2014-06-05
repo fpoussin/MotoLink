@@ -3,6 +3,7 @@
 
 #include <QWizard>
 #include <qabstractbutton.h>
+#include <QFileDialog>
 
 #include "bootloader.h"
 #include "motolink.h"
@@ -24,6 +25,7 @@ public:
 public slots:
     void startUpdate(void);
     void retranslate(void);
+    void openCustomFw(void);
 
 signals:
     void startTransfer(void);
@@ -37,16 +39,17 @@ private slots:
     void enableButtons(void);
     void disableButtons(void);
     void updateDone(void);
+    void loadDefaultFirmareData(void);
 
 private:
     void setupConnections(void);
-    void loadFirmareData(void);
     void startFwUpdate(void);
     Ui::UpdateWizard *mUi;
     Motolink * const mMtl;
     QByteArray mFwData;
     QString mCurVersion;
     QString mNewVersion;
+    QString msError;
 };
 
 #endif // UPDATEWIZARD_H

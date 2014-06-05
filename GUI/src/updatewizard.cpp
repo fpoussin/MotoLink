@@ -10,6 +10,8 @@ UpdateWizard::UpdateWizard(Motolink * const mtl, QWidget *parent) :
     mUi->setupUi(this);
     this->setOptions(QWizard::NoBackButtonOnStartPage);
     this->setupConnections();
+
+    msError = tr("Error: ");
 }
 
 UpdateWizard::~UpdateWizard()
@@ -19,8 +21,8 @@ UpdateWizard::~UpdateWizard()
 
 void UpdateWizard::showWizard()
 {
-    this->loadFirmareData();
-    this->mUi->lNewVersion->setText(mNewVersion);
+    this->loadDefaultFirmareData();
+    mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->show();
 }
@@ -33,6 +35,34 @@ void UpdateWizard::startUpdate()
 void UpdateWizard::retranslate()
 {
     mUi->retranslateUi(this);
+}
+
+void UpdateWizard::openCustomFw()
+{
+    QString fileName(QFileDialog::getOpenFileName(this,
+                       tr("Open firmware file"), "", tr("Firmware files (*.bin)")));
+
+    if (fileName.isEmpty())
+    {
+        mUi->rbBundledFW->setChecked(true);
+        this->loadDefaultFirmareData();
+        return;
+    }
+
+    QFile fwFile(fileName);
+
+    if(!fwFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << msError << tr("Couldn't open ") << fileName;
+        fwFile.close();
+        return;
+    }
+
+    mFwData = fwFile.readAll();
+    mNewVersion = "Custom";
+    mUi->lNewVersion->setText(mNewVersion);
+
+    fwFile.close();
 }
 
 void UpdateWizard::pageUpdated(int page)
@@ -59,6 +89,7 @@ void UpdateWizard::updateStatus(QString text)
 void UpdateWizard::enableButtons(void)
 {
     this->button(QWizard::CancelButton)->setEnabled(true);
+    this->button(QWizard::NextButton)->setEnabled(true);
     this->button(QWizard::FinishButton)->setEnabled(true);
     this->button(QWizard::BackButton)->setEnabled(true);
 }
@@ -66,6 +97,7 @@ void UpdateWizard::enableButtons(void)
 void UpdateWizard::disableButtons(void)
 {
     this->button(QWizard::CancelButton)->setEnabled(false);
+    this->button(QWizard::NextButton)->setEnabled(false);
     this->button(QWizard::FinishButton)->setEnabled(false);
     this->button(QWizard::BackButton)->setEnabled(false);
 }
@@ -88,9 +120,12 @@ void UpdateWizard::setupConnections()
     QObject::connect(this, SIGNAL(send(QByteArray*)), mMtl->getTft(), SLOT(send(QByteArray*)));
     QObject::connect(this, SIGNAL(verify(QByteArray*)), mMtl->getTft(), SLOT(verify(QByteArray*)));
     QObject::connect(this, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
+
+    QObject::connect(mUi->rbCustomFW, SIGNAL(clicked()), this, SLOT(openCustomFw()));
+    QObject::connect(mUi->rbBundledFW, SIGNAL(clicked()), this, SLOT(loadDefaultFirmareData()));
 }
 
-void UpdateWizard::loadFirmareData()
+void UpdateWizard::loadDefaultFirmareData()
 {
     QDomDocument doc("firmware");
     QFile file(":/fw/firmware.xml");
@@ -121,7 +156,7 @@ void UpdateWizard::loadFirmareData()
                 {
                     if (ce.tagName() == "version")
                     {
-                        this->mNewVersion = ce.text();
+                        mNewVersion = ce.text();
                     }
                 }
                 cn = cn.nextSibling();
@@ -133,12 +168,14 @@ void UpdateWizard::loadFirmareData()
             {
                 if (e.tagName() == "data")
                 {
-                    this->mFwData = QByteArray::fromBase64(e.text().toLocal8Bit());
+                    mFwData = QByteArray::fromBase64(e.text().toLocal8Bit());
                 }
             }
         }
         n = n.nextSibling();
     }
+
+    mUi->lNewVersion->setText(mNewVersion);
 }
 
 void UpdateWizard::startFwUpdate()

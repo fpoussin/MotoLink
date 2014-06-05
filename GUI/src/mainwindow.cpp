@@ -109,7 +109,7 @@ void MainWindow::openFile(void)
 
 void MainWindow::openFile(const QString &filename)
 {
-    if (!filename.length())
+    if (filename.isEmpty())
         return;
 
     qWarning() << "Opening" << filename;
@@ -139,7 +139,7 @@ void MainWindow::saveFileAs(void)
     QString fileName(QFileDialog::getSaveFileName(this,
                        tr("Save Tune File"), "", tr("Tune Files (*.xml)")));
 
-    if (fileName.length() == 0)
+    if (fileName.isEmpty())
     {
         return;
     }
@@ -240,23 +240,6 @@ void MainWindow::setupConnections(void)
                      this, SLOT(openRecenFile()));
              mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
          }
-
-    /*
-     * Signals from old bootloader GUI, just for reference, will remove later
-    // Thread
-    QObject::connect(this->tfThread, SIGNAL(sendProgress(quint32)), this, SLOT(updateProgress(quint32)));
-    QObject::connect(this->tfThread, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
-    QObject::connect(this->tfThread, SIGNAL(sendLock(bool)), this, SLOT(lockUI(bool)));
-    QObject::connect(this->ui->b_stop, SIGNAL(clicked()), this->tfThread, SLOT(halt()));
-    QObject::connect(this->tfThread, SIGNAL(sendLog(QString)), this, SLOT(log(QString)));
-
-    QObject::connect(this, SIGNAL(doConnect()), this->btl, SLOT(connect()));
-    QObject::connect(this->btl, SIGNAL(connectionResult(bool)), this, SLOT(connectSlot(bool)));
-    QObject::connect(&this->connectDialog, SIGNAL(canceled()), this, SLOT(connectAbortSlot()));
-    QObject::connect(this->btl, SIGNAL(timeElapsed(int)), &this->connectDialog, SLOT(setValue(int)));
-    */
-
-
 }
 
 void MainWindow::setupTabShortcuts()
@@ -305,7 +288,6 @@ void MainWindow::setLanguageEnglish()
     qApp->removeTranslator(&mTranslator);
     this->retranslate();
     mSettings.setValue("main/language", "English");
-
 }
 
 void MainWindow::setLanguageFrench()
@@ -437,6 +419,7 @@ void MainWindow::showSettingsTab()
 void MainWindow::showFuelContextMenu(const QPoint &pos)
 {
     QPoint globalPos = mUi->tableFuel->viewport()->mapToGlobal(pos);
+    /* TODO */
 
     QMenu myMenu;
 //    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));
