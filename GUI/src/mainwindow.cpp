@@ -54,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
     this->uiDisable();
+
+    emit startupComplete();
 }
 
 MainWindow::~MainWindow()
@@ -210,6 +212,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
+
     QObject::connect(mUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
     QObject::connect(mUi->actionUndo, SIGNAL(triggered()), &mUndoStack, SLOT(undo()));
     QObject::connect(mUi->actionRedo, SIGNAL(triggered()), &mUndoStack, SLOT(redo()));
@@ -228,6 +231,9 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+
+    QObject::connect(this, SIGNAL(startupComplete()), &mUpdate, SLOT(getLatestVersion()));
+    QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), mUi->statusBar, SLOT(showMessage(QString)));
 
     mUi->tableFuel->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(mUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));

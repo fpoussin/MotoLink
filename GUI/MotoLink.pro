@@ -4,9 +4,9 @@
 #
 #-------------------------------------------------
 
-QT += core gui xml webkit webkitwidgets
+QT += core gui xml webkit network script scripttools
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 TARGET = MotoLink
 TEMPLATE = app
@@ -32,7 +32,8 @@ SOURCES += src/main.cpp \
     src/helpviewer.cpp \
     src/commands.cpp \
     src/tablemodel.cpp \
-    src/spinbox.cpp
+    src/spinbox.cpp \
+    src/update.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -46,7 +47,8 @@ HEADERS  += \
     inc/helpviewer.h \
     inc/commands.h \
     inc/tablemodel.h \
-    inc/spinbox.h
+    inc/spinbox.h \
+    inc/update.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

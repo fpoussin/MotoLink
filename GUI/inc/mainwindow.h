@@ -24,6 +24,8 @@
 #include "commands.h"
 #include "tablemodel.h"
 
+#include "update.h"
+
 #define MAX_RECENT_FILES 5
 #define SETTINGS_RECENT_FILES "main/recent_files"
 #define SETTINGS_LANGUAGE "main/language"
@@ -54,6 +56,8 @@ public slots:
     void importHrc(void);
     void exportHrc(void);
 
+signals:
+    void startupComplete(void);
 
 private slots:
     void setLanguageEnglish(void);
@@ -102,6 +106,7 @@ private:
     TableModel mAFRTgtModel;
     TableModel mIgnModel;
     TableModel mKnockModel;
+    Update mUpdate;
 };
 
 #endif // MAINWINDOW_H
