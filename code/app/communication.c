@@ -50,6 +50,10 @@ uint8_t read_cmd(BaseChannel *chn)
       status = sendMode(chn);
       break;
 
+    case MASK_CMD | CMD_GET_SENSORS:
+      status = sendSensors(chn);
+      break;
+
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
       break;
@@ -83,7 +87,7 @@ uint8_t sendSensors(BaseChannel * chn) {
   buf[0] = MASK_REPLY_OK | CMD_GET_SENSORS;
   memcpy(buf+1, &sensors_data, sizeof(sensors_t));
 
-  chnWriteTimeout(chn, buf, 2, MS2ST(25));
+  chnWriteTimeout(chn, buf, sizeof(buf), MS2ST(25));
   return 0;
 }
 

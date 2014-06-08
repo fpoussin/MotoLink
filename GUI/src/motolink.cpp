@@ -140,6 +140,29 @@ quint16 Motolink::getVersion()
     return 0;
 }
 
+bool Motolink::getSensors(QByteArray* data)
+{
+    WAIT_USB
+    QByteArray send, recv;
+
+    send.append(MAGIC1);
+    send.append(MAGIC2);
+    send.append(MASK_CMD | CMD_GET_SENSORS);
+    send.insert(3, send.size()+2);
+    send.append(checkSum((quint8*)send.constData(), send.size()));
+
+    mUsb->write(&send, send.size());
+    mUsb->read(&recv, 7);
+
+    if (recv.size() > 6 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
+    {
+        *data = recv.remove(0, 1);
+        return true;
+    }
+
+    return false;
+}
+
 bool Motolink::sendWake()
 {
     WAIT_USB

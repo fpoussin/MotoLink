@@ -18,7 +18,6 @@
 #include <string.h>
 #include "ch.h"
 #include "hal.h"
-#include "chprintf.h"
 #include "usb_config.h"
 #include "communication.h"
 #include "sensors.h"

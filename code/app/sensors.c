@@ -3,16 +3,16 @@
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 
-sensors_t sensors_data = {0,0,0};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F};
 
 static void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
   (void)n;
 
-  sensors_data.an7 = ((buffer[0]+buffer[3]+buffer[7])/3)*VOLT_RATIO;
-  sensors_data.an8 = ((buffer[1]+buffer[4]+buffer[8])/3)*VOLT_RATIO;
-  sensors_data.an9 = ((buffer[2]+buffer[5]+buffer[9])/3)*VOLT_RATIO;
+  sensors_data.an7 = (float)buffer[0]*VOLT_RATIO;
+  sensors_data.an8 = (float)buffer[1]*VOLT_RATIO;
+  sensors_data.an9 = (float)buffer[2]*VOLT_RATIO;
 }
 
 /* ADC12 Clk is 72Mhz/128 562Khz  */

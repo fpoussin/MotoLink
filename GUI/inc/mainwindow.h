@@ -15,6 +15,7 @@
 #include <QTextBrowser>
 #include <QAction>
 #include <QUndoView>
+#include <QTimer>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -78,6 +79,8 @@ private slots:
 
     void showFuelContextMenu(const QPoint& pos);
 
+    void updateSensors(void);
+
 private:
     void setupDefaults(void);
     void setupConnections(void);
@@ -106,6 +109,7 @@ private:
     TableModel mIgnModel;
     TableModel mKnockModel;
     Update mUpdate;
+    QTimer mSensorsTimer;
 };
 
 #endif // MAINWINDOW_H

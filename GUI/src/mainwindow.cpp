@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
+    mSensorsTimer.setInterval(500);
+
     this->uiDisable();
 
     emit startupComplete();
@@ -153,10 +155,12 @@ void MainWindow::connectMtl()
     mMtl->usbConnect();
     mMtl->bootAppIfNeeded();
     this->uiEnable();
+    this->mSensorsTimer.start();
 }
 
 void MainWindow::disconnectMtl()
 {
+    this->mSensorsTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
 }
@@ -249,6 +253,9 @@ void MainWindow::setupConnections(void)
                      this, SLOT(openRecenFile()));
              mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
          }
+
+    QObject::connect(&mSensorsTimer, SIGNAL(timeout()), this, SLOT(updateSensors()));
+
 }
 
 void MainWindow::setupTabShortcuts()
@@ -325,6 +332,7 @@ void MainWindow::uiEnable()
     mUi->actionSave_As->setEnabled(toggle);
     mUi->actionImport->setEnabled(toggle);
     mUi->actionExport->setEnabled(toggle);
+    mUi->actionConnect->setEnabled(!toggle);
     mUi->actionDisconnect->setEnabled(toggle);
     mUi->actionGet_Configuration->setEnabled(toggle);
     mUi->actionSend_Configuration->setEnabled(toggle);
@@ -340,6 +348,7 @@ void MainWindow::uiDisable()
     mUi->actionSave_As->setEnabled(toggle);
     mUi->actionImport->setEnabled(toggle);
     mUi->actionExport->setEnabled(toggle);
+    mUi->actionConnect->setEnabled(!toggle);
     mUi->actionDisconnect->setEnabled(toggle);
     mUi->actionGet_Configuration->setEnabled(toggle);
     mUi->actionSend_Configuration->setEnabled(toggle);
@@ -444,6 +453,25 @@ void MainWindow::showFuelContextMenu(const QPoint &pos)
     else
     {
         // nothing was chosen
+    }
+
+}
+
+void MainWindow::updateSensors()
+{
+    QByteArray tmp;
+    tmp.fill(0, 6);
+    if (mMtl->getSensors(&tmp))
+    {
+        float vAn7 = (tmp.at(0)+(tmp.at(1)*256))/1000.0; /* VBAT */
+        float vAn8 = (tmp.at(2)+(tmp.at(3)*256))/1000.0; /* TPS */
+        float vAn9 = (tmp.at(4)+(tmp.at(5)*256))/1000.0; /* AFR */
+        mUi->lVbat->setText(QString::number(vAn7)+" Volts");
+        mUi->lTpsVolts->setText(QString::number(vAn8)+" Volts");
+        mUi->lAfrVolts->setText(QString::number(vAn9)+" Volts");
+    }
+    else {
+        qDebug("updateSensors Failed");
     }
 
 }

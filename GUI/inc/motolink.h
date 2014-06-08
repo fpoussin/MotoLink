@@ -24,6 +24,7 @@ public slots:
 
     quint8 getMode(void);
     quint16 getVersion(void);
+    bool getSensors(QByteArray* data);
     bool sendWake();
 
 signals:

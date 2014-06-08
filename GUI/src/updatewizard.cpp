@@ -230,7 +230,7 @@ void UpdateWizard::startFwUpdate()
         if (flags & FLAG_WAKE)
             emit sendStatus(tr("Bootloader Wakeup"));
 
-        mMtl->getTft()->setParams(&mFwData, true, true);
+        mMtl->getTft()->setParams(&mFwData, true, false);
         emit startTransfer();
     }
     else

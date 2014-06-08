@@ -303,34 +303,7 @@
            <set>Qt::AlignCenter</set>
           </property>
           <layout class="QGridLayout" name="gridLayout_8">
-           <item row="0" column="0">
-            <widget class="Line" name="line_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <spacer name="verticalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="3" column="0">
-            <widget class="Line" name="line_7">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
+           <item row="5" column="0">
             <widget class="QFrame" name="frame_8">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -374,7 +347,7 @@
              </layout>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QFrame" name="frame_9">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -425,6 +398,26 @@
                </widget>
               </item>
              </layout>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <spacer name="verticalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="0">
+            <widget class="Line" name="line_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
             </widget>
            </item>
           </layout>
@@ -816,20 +809,7 @@
            <string>ECU Settings</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
-           <item row="6" column="0">
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="5" column="0">
+           <item row="4" column="0">
             <widget class="QFrame" name="frame_3">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -882,14 +862,7 @@
              </layout>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="Line" name="line_5">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QFrame" name="frame">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -939,7 +912,7 @@
              </layout>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="2" column="0">
             <widget class="QFrame" name="frame_2">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -989,15 +962,28 @@
              </layout>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="Line" name="line_4">
+           <item row="5" column="0">
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="3" column="0">
+            <widget class="Line" name="line_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="Line" name="line_14">
+           <item row="1" column="0">
+            <widget class="Line" name="line_4">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -1038,159 +1024,32 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_11">
            <item row="5" column="0">
-            <widget class="QFrame" name="frame_5">
+            <widget class="QFrame" name="frame_10">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Plain</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="QLabel" name="ltRpm">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
+               <widget class="QLabel" name="ltVbat">
                 <property name="text">
-                 <string notr="true">RPM</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                 <string>Battery:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="lRpmPct">
+               <widget class="QLabel" name="lVbat">
                 <property name="text">
-                 <string notr="true">0 RPM</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lRpmHertz">
-                <property name="text">
-                 <string notr="true">0 Hertz</string>
+                 <string>0.0 Volts</string>
                 </property>
                </widget>
               </item>
              </layout>
             </widget>
            </item>
-           <item row="7" column="0">
-            <widget class="QFrame" name="frame_7">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <widget class="QLabel" name="ltSpeed">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Speed</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lSpeedKph">
-                <property name="text">
-                 <string notr="true">0 KPH</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lSpeedHertz">
-                <property name="text">
-                 <string notr="true">0 Hertz</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="Line" name="line_9">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="Line" name="line_10">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="3" column="0">
-            <widget class="QFrame" name="frame_6">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="QLabel" name="ltAFR_2">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string notr="true">AFR</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lAfrPct">
-                <property name="text">
-                 <string notr="true">0 AFR</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lAfrVolts">
-                <property name="text">
-                 <string notr="true">0.0 Volts</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QFrame" name="frame_4">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -1232,19 +1091,150 @@
              </layout>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="Line" name="line_13">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="1" column="0">
+            <widget class="QFrame" name="frame_6">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QLabel" name="ltAFR_2">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string notr="true">AFR</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lAfrPct">
+                <property name="text">
+                 <string notr="true">0 AFR</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lAfrVolts">
+                <property name="text">
+                 <string notr="true">0.0 Volts</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="Line" name="line_11">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QFrame" name="frame_5">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QLabel" name="ltRpm">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string notr="true">RPM</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lRpmPct">
+                <property name="text">
+                 <string notr="true">0 RPM</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lRpmHertz">
+                <property name="text">
+                 <string notr="true">0 Hertz</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QFrame" name="frame_7">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QLabel" name="ltSpeed">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Speed</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lSpeedKph">
+                <property name="text">
+                 <string notr="true">0 KPH</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lSpeedHertz">
+                <property name="text">
+                 <string notr="true">0 Hertz</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>

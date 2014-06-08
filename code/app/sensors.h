@@ -5,10 +5,10 @@
 #include "hal.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      3
+#define ADC_GRP1_BUF_DEPTH      1
 
 #define ADC_GRP2_NUM_CHANNELS   1
-#define ADC_GRP2_BUF_DEPTH      16
+#define ADC_GRP2_BUF_DEPTH      256
 
 #define VOLT_RATIO 1.611328125f
 
