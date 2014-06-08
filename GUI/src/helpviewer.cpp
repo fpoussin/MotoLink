@@ -16,6 +16,6 @@ HelpViewer::~HelpViewer()
 
 void HelpViewer::show()
 {
-    mUi->webView->load(QUrl("qrc:/doc/html/index.html"));
+    //mUi->webView->load(QUrl("qrc:/doc/html/index.html"));
     QWidget::show();
 }

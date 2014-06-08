@@ -4,9 +4,9 @@
 #
 #-------------------------------------------------
 
-QT += core gui xml webkit network script scripttools
+QT += core gui xml network script scripttools
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MotoLink
 TEMPLATE = app

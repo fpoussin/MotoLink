@@ -20,6 +20,7 @@
 #define CMD_GET_MODE (uint8_t)0x08
 #define CMD_GET_VERSION (uint8_t)0x09
 #define CMD_GET_SIZE (uint8_t)0x0A
+#define CMD_GET_SENSORS (uint8_t)0x0B
 
 #define FLAG_OK (uint8_t)0x00
 #define FLAG_IWDRST (uint8_t)0x02

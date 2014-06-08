@@ -49,8 +49,8 @@ public slots:
     void openFile(const QString &filename);
     void saveFile(void);
     void saveFileAs(void);
-    void connectToEcu(void);
-    void disconnectFromEcu(void);
+    void connectMtl(void);
+    void disconnectMtl(void);
     void showAbout(void);
     void showUpdateDialog(void);
     void importHrc(void);
@@ -79,7 +79,6 @@ private slots:
     void showFuelContextMenu(const QPoint& pos);
 
 private:
-
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);

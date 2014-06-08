@@ -174,6 +174,23 @@ bool Motolink::resetDevice()
     return recv.at(0) == (MASK_REPLY_OK | CMD_RESET);
 }
 
+bool Motolink::bootAppIfNeeded()
+{
+    if (!mConnected)
+        this->usbConnect();
+
+    if (this->getMode() == MODE_BL)
+    {
+        mBtl->boot();
+        _usleep(100000);
+        this->usbDisconnect();
+        _usleep(2000000);
+        this->usbConnect();
+        return true;
+    }
+    return false;
+}
+
 quint8 Motolink::checkSum(const quint8 *data, quint8 length) const
 {
     quint8 i;

@@ -48,8 +48,8 @@
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#define STM32_ADC12PRES                     STM32_ADC12PRES_DIV1
-#define STM32_ADC34PRES                     STM32_ADC34PRES_DIV1
+#define STM32_ADC12PRES                     STM32_ADC12PRES_DIV128
+#define STM32_ADC34PRES                     STM32_ADC34PRES_DIV32
 #define STM32_USART1SW                      STM32_USART1SW_PCLK
 #define STM32_USART2SW                      STM32_USART2SW_PCLK
 #define STM32_USART3SW                      STM32_USART3SW_PCLK
@@ -74,8 +74,8 @@
 #define STM32_ADC_ADC34_IRQ_PRIORITY        5
 #define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    5
 #define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    5
-#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_ADCCK
 #define STM32_ADC_DUAL_MODE                 FALSE
 
 /*
@@ -88,7 +88,7 @@
  * DAC driver system settings.
  */
 #define STM32_DAC_USE_CHN1                  TRUE
-#define STM32_DAC_USE_CHN2                  TRUE
+#define STM32_DAC_USE_CHN2                  FALSE
 #define STM32_DAC_CHN1_IRQ_PRIORITY         10
 #define STM32_DAC_CHN2_IRQ_PRIORITY         10
 #define STM32_DAC_CHN1_DMA_PRIORITY         2

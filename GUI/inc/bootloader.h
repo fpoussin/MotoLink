@@ -10,6 +10,8 @@
 #include <QUsb>
 
 typedef quint8 uint8_t;
+typedef quint16 uint16_t;
+typedef quint32 uint32_t;
 #include "protocol.h"
 
 //#define WAIT_USB _usleep(40000);

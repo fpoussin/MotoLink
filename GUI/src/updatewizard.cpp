@@ -107,6 +107,7 @@ void UpdateWizard::updateDone()
     this->enableButtons();
     emit sendStatus(tr("Booting app"));
     mMtl->getBtl()->boot();
+    mMtl->usbDisconnect();
 }
 
 void UpdateWizard::setupConnections()
@@ -114,6 +115,8 @@ void UpdateWizard::setupConnections()
     QObject::connect(mMtl->getTft(), SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
     QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
     QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(updateDone()));
+
+    QObject::connect(mMtl, SIGNAL(connectionProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
 
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
     QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));

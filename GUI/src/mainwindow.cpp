@@ -148,13 +148,16 @@ void MainWindow::saveFileAs(void)
     mCurrentFile = fileName;
 }
 
-void MainWindow::connectToEcu()
+void MainWindow::connectMtl()
 {
+    mMtl->usbConnect();
+    mMtl->bootAppIfNeeded();
     this->uiEnable();
 }
 
-void MainWindow::disconnectFromEcu()
+void MainWindow::disconnectMtl()
 {
+    mMtl->usbDisconnect();
     this->uiDisable();
 }
 
@@ -204,8 +207,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
     QObject::connect(mUi->actionSave, SIGNAL(triggered()), this, SLOT(saveFile()));
     QObject::connect(mUi->actionSave_As, SIGNAL(triggered()), this, SLOT(saveFileAs()));
-    QObject::connect(mUi->actionConnect, SIGNAL(triggered()), this, SLOT(connectToEcu()));
-    QObject::connect(mUi->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromEcu()));
+    QObject::connect(mUi->actionConnect, SIGNAL(triggered()), this, SLOT(connectMtl()));
+    QObject::connect(mUi->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectMtl()));
     QObject::connect(mUi->actionUpdate, SIGNAL(triggered()), this, SLOT(showUpdateDialog()));
     QObject::connect(mUi->actionImport, SIGNAL(triggered()), this, SLOT(importHrc()));
     QObject::connect(mUi->actionExport, SIGNAL(triggered()), this, SLOT(exportHrc()));

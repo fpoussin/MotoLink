@@ -77,6 +77,16 @@ uint8_t sendMode(BaseChannel * chn) {
   return 0;
 }
 
+uint8_t sendSensors(BaseChannel * chn) {
+
+  uint8_t buf[1+sizeof(sensors_t)];
+  buf[0] = MASK_REPLY_OK | CMD_GET_SENSORS;
+  memcpy(buf+1, &sensors_data, sizeof(sensors_t));
+
+  chnWriteTimeout(chn, buf, 2, MS2ST(25));
+  return 0;
+}
+
 uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(25));

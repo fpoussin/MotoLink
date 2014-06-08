@@ -21,6 +21,7 @@
 #include "chprintf.h"
 #include "usb_config.h"
 #include "communication.h"
+#include "sensors.h"
 
 /*===========================================================================*/
 /* Generic code.                                                             */
@@ -55,21 +56,19 @@ static PWMConfig pwmcfg = {
 static WORKING_AREA(waThreadBDU, 2048);
 static msg_t ThreadBDU(void *arg) {
 
-  //uint8_t clear_buff[64];
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
   chRegSetThreadName("USB");
 
   bduObjectInit(&BDU1);
-  pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
-  TIM2->DIER &= ~TIM_DIER_UDE; /* Timer Update DMA request disable */
-  dmaStreamSetMode(STM32_DMA1_STREAM2, 0);
 
   while (TRUE)
   {
     usbDisconnectBus(serusbcfg.usbp);
     bduStop(&BDU1);
+
+    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0));
 
     /* Wait for USB connection */
     while(!usbConnected()) chThdSleepMilliseconds(20);
@@ -87,6 +86,8 @@ static msg_t ThreadBDU(void *arg) {
      */
     bduStart(&BDU1, &bulkusbcfg);
 
+    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
+
     chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
 
     while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
@@ -96,7 +97,7 @@ static msg_t ThreadBDU(void *arg) {
         && BDU1.state != BDU_STOP
         && usbConnected())
     {
-      chEvtWaitAny(ALL_EVENTS);
+      chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(10));
       chSysLock();
       flags = chEvtGetAndClearFlagsI(&el1);
       chSysUnlock();
@@ -106,7 +107,6 @@ static msg_t ThreadBDU(void *arg) {
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
         read_cmd((BaseChannel *)&BDU1);
-        //chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
     }
@@ -207,7 +207,7 @@ int main(void) {
   bduStart(&BDU1, &bulkusbcfg);
 
   /*
-   * Starts a Serial driver.
+   * Start peripherals
    */
   sdStart(&SD1, &uartCfg);
 
@@ -222,11 +222,18 @@ int main(void) {
   usbConnectBus(serusbcfg.usbp);
 
   /*
-   * Creates the blinker and bulk threads.
+   * Creates the threads.
    */
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), NORMALPRIO+1, ThreadIWDG, NULL);
+  chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), HIGHPRIO, ThreadIWDG, NULL);
+
+  /* Start remaining peripherals */
+  adcStart(&ADCD1, NULL);
+  adcStart(&ADCD3, NULL);
+
+  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
+  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
