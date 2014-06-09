@@ -152,8 +152,6 @@ void TransferThread::verify(QByteArray *data)
         if (mStop)
             break;
 
-        _usleep(50000);
-
         int read = file.readRawData(buf, buf_size);
         data_local.setRawData(buf, read);
         qDebug() << tr("Read") << data_local.size() << tr("Bytes from disk");

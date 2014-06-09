@@ -71,7 +71,6 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 
     qint32 wr = mUsb->write(&send, send.size());
 
-    _usleep(30000);
     mUsb->read(&recv, 1);
 
     if (recv.size() < 1)

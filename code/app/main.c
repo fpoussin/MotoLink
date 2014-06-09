@@ -52,7 +52,7 @@ static PWMConfig pwmcfg = {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBDU, 2048);
+static WORKING_AREA(waThreadBDU, 256);
 static msg_t ThreadBDU(void *arg) {
 
   EventListener el1;
@@ -162,7 +162,7 @@ static msg_t ThreadSDU(void *arg) {
 /*
  * IWDG thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadIWDG, 64);
+static WORKING_AREA(waThreadIWDG, 16);
 static msg_t ThreadIWDG(void *arg) {
 
   (void)arg;
@@ -189,20 +189,23 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  timcapInit();
 
   pwmStart(&PWMD2, &pwmcfg);
   pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
   /*
-   * Initializes a serial-over-USB CDC driver.
+   * Initialize extra drivers.
    */
   sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  bduObjectInit(&BDU1);
+  timcapObjectInit(&TIMCAPD3);
+
 
   /*
-   * Initializes and start a Bulk USB driver.
+   * Start USB drivers.
    */
-  bduObjectInit(&BDU1);
+  sduStart(&SDU1, &serusbcfg);
   bduStart(&BDU1, &bulkusbcfg);
 
   /*
@@ -234,8 +237,8 @@ int main(void) {
 
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
-  timcapEnable(&TIMCAPD3);
-  startCapture();
+  //timcapEnable(&TIMCAPD3);
+  //chVTSetI(&capture_vt, MS2ST(100), startCapture, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

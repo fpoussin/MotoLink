@@ -123,6 +123,7 @@ void UpdateWizard::setupConnections()
     QObject::connect(this, SIGNAL(send(QByteArray*)), mMtl->getTft(), SLOT(send(QByteArray*)));
     QObject::connect(this, SIGNAL(verify(QByteArray*)), mMtl->getTft(), SLOT(verify(QByteArray*)));
     QObject::connect(this, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
+    QObject::connect(this->button(QWizard::CancelButton), SIGNAL(clicked()), mMtl->getTft(), SLOT(halt()));
 
     QObject::connect(mUi->rbCustomFW, SIGNAL(clicked()), this, SLOT(openCustomFw()));
     QObject::connect(mUi->rbBundledFW, SIGNAL(clicked()), this, SLOT(loadDefaultFirmareData()));
@@ -230,7 +231,7 @@ void UpdateWizard::startFwUpdate()
         if (flags & FLAG_WAKE)
             emit sendStatus(tr("Bootloader Wakeup"));
 
-        mMtl->getTft()->setParams(&mFwData, true, false);
+        mMtl->getTft()->setParams(&mFwData, true, true);
         emit startTransfer();
     }
     else
