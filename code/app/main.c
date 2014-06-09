@@ -230,9 +230,12 @@ int main(void) {
   /* Start remaining peripherals */
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
+  timcapStart(&TIMCAPD3, &tc_conf);
 
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
+  timcapEnable(&TIMCAPD3);
+  startCapture();
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

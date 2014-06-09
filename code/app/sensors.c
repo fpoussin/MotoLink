@@ -3,9 +3,100 @@
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
+uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
+uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
+uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
+VirtualTimer capture_vt;
 
-static void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+void startCapture(void)
+{
+  TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+
+  chSysLockFromIsr();
+  chVTSetI(&capture_vt, MS2ST(100), (vtfunc_t)startCapture, NULL);
+  chSysUnlockFromIsr();
+}
+
+void capture1_cb(TIMCAPDriver *timcapp)
+{
+  if(TIM3CC1CaptureNumber == 0)
+  {
+    /* Get the Input Capture value */
+    TIM3CC1ReadValue1 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_1);
+    TIM3CC1CaptureNumber = 1;
+  }
+  else if(TIM3CC1CaptureNumber == 1)
+  {
+      uint32_t Capture;
+      /* Get the Input Capture value */
+      TIM3CC1ReadValue2 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_1);
+
+      /* Capture computation */
+      if (TIM3CC1ReadValue2 > TIM3CC1ReadValue1)
+      {
+          Capture = ((uint32_t)TIM3CC1ReadValue2 - (uint32_t)TIM3CC1ReadValue1);
+      }
+      else
+      {
+          Capture = (((uint32_t)TIM3CC1ReadValue2 + 0x10000) - (uint32_t)TIM3CC1ReadValue1);
+      }
+
+      /* Frequency computation */
+      sensors_data.freq1 = (tc_conf.frequency / Capture);
+
+      TIM3CC1ReadValue1 = TIM3CC1ReadValue2;
+      TIM3CC1CaptureNumber = 0;
+
+      /* Disable CC1 interrupt */
+      TIM3->DIER &= ~TIM_DIER_CC1IE;
+  }
+}
+
+void capture2_cb(TIMCAPDriver *timcapp)
+{
+  if(TIM3CC2CaptureNumber == 0)
+  {
+    /* Get the Input Capture value */
+    TIM3CC2ReadValue1 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_2);
+    TIM3CC2CaptureNumber = 1;
+  }
+  else if(TIM3CC2CaptureNumber == 1)
+  {
+      uint32_t Capture;
+      /* Get the Input Capture value */
+      TIM3CC2ReadValue2 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_2);
+
+      /* Capture computation */
+      if (TIM3CC2ReadValue2 > TIM3CC2ReadValue1)
+      {
+          Capture = ((uint32_t)TIM3CC2ReadValue2 - (uint32_t)TIM3CC2ReadValue1);
+      }
+      else
+      {
+          Capture = (((uint32_t)TIM3CC2ReadValue2 + 0x10000) - (uint32_t)TIM3CC2ReadValue1);
+      }
+
+      /* Frequency computation */
+      sensors_data.freq2 = (tc_conf.frequency / Capture);
+
+      TIM3CC2ReadValue1 = TIM3CC2ReadValue2;
+      TIM3CC2CaptureNumber = 0;
+
+      /* Disable CC2 interrupt */
+      TIM3->DIER &= ~TIM_DIER_CC2IE;
+  }
+}
+
+TIMCAPConfig tc_conf = {
+   {TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_DISABLED, TIMCAP_INPUT_DISABLED},
+   1000,
+   {capture1_cb, capture2_cb, NULL, NULL},
+   NULL,
+   0
+};
+
+void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
   (void)n;

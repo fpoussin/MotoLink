@@ -152,10 +152,15 @@ void MainWindow::saveFileAs(void)
 
 void MainWindow::connectMtl()
 {
-    mMtl->usbConnect();
-    mMtl->bootAppIfNeeded();
-    this->uiEnable();
-    this->mSensorsTimer.start();
+    if (mMtl->usbConnect())
+    {
+        mMtl->bootAppIfNeeded();
+        this->uiEnable();
+        this->mSensorsTimer.start();
+    }
+    else {
+        mUi->statusBar->showMessage("Connection Failed");
+    }
 }
 
 void MainWindow::disconnectMtl()
@@ -440,7 +445,7 @@ void MainWindow::showFuelContextMenu(const QPoint &pos)
     /* TODO */
 
     QMenu myMenu;
-//    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));
+    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));
 //    myMenu.addSeparator();
 //    myMenu.addAction("Menu Item 2");
 
@@ -454,25 +459,27 @@ void MainWindow::showFuelContextMenu(const QPoint &pos)
     {
         // nothing was chosen
     }
-
 }
 
 void MainWindow::updateSensors()
 {
     QByteArray tmp;
-    tmp.fill(0, 6);
+    tmp.fill(0, sizeof(sensors_t));
     if (mMtl->getSensors(&tmp))
     {
-        float vAn7 = (tmp.at(0)+(tmp.at(1)*256))/1000.0; /* VBAT */
-        float vAn8 = (tmp.at(2)+(tmp.at(3)*256))/1000.0; /* TPS */
-        float vAn9 = (tmp.at(4)+(tmp.at(5)*256))/1000.0; /* AFR */
+        const sensors_t * sensors =  (sensors_t *)tmp.constData();
+
+        float vAn7 = sensors->an7/1000.0; /* VBAT */
+        float vAn8 = sensors->an8/1000.0; /* TPS */
+        float vAn9 = sensors->an9/1000.0; /* AFR */
         mUi->lVbat->setText(QString::number(vAn7)+" Volts");
         mUi->lTpsVolts->setText(QString::number(vAn8)+" Volts");
         mUi->lAfrVolts->setText(QString::number(vAn9)+" Volts");
+        mUi->lRpmHertz->setText(QString::number(sensors->freq1)+" Hertz");
+        mUi->lSpeedHertz->setText(QString::number(sensors->freq2)+" Hertz");
     }
     else {
         qDebug("updateSensors Failed");
     }
-
 }
 

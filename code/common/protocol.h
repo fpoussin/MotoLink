@@ -40,5 +40,12 @@ typedef struct {
   uint8_t len;
 } cmd_header_t;
 
+typedef struct {
+  uint16_t an7;
+  uint16_t an8;
+  uint16_t an9;
+  uint16_t freq1;
+  uint16_t freq2;
+} sensors_t;
 
 #endif

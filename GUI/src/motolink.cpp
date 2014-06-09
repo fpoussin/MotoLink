@@ -152,9 +152,9 @@ bool Motolink::getSensors(QByteArray* data)
     send.append(checkSum((quint8*)send.constData(), send.size()));
 
     mUsb->write(&send, send.size());
-    mUsb->read(&recv, 7);
+    mUsb->read(&recv, sizeof(sensors_t)+1);
 
-    if (recv.size() > 6 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
+    if ((size_t)recv.size() > sizeof(sensors_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
     {
         *data = recv.remove(0, 1);
         return true;

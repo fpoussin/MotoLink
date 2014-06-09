@@ -17,6 +17,8 @@ public:
 
 public slots:
     void show(void);
+    bool cpDir(const QString &srcPath, const QString &dstPath);
+    bool rmDir(const QString &dirPath);
 
 private:
     Ui::HelpViewer *mUi;

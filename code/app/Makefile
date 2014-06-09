@@ -66,6 +66,7 @@ PROJECT = motolink
 # Imported source files and paths
 CHIBIOS = ../../../chibios
 include ../common/common.mk
+include drivers/drivers.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
@@ -82,6 +83,7 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(DRIVERSRC) \
        $(CHIBIOS)/os/various/chprintf.c \
        main.c communication.c sensors.c
 
@@ -113,7 +115,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(DRIVERINC) \
          $(CHIBIOS)/os/various
 
 #

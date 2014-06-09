@@ -59,7 +59,7 @@ NOTE styles
 }
 
 .note, .tip, .fastpath {
-    background: #F2F2F2 url('qrc:/doc/images/ico_note.png');
+    background: #F2F2F2 url('../images/ico_note.png');
     background-repeat: no-repeat;
     background-position: top left;
     padding: 5px;
@@ -71,7 +71,7 @@ NOTE styles
 }
 
 .attention, .caution, .danger, .important, .remember, .restriction {
-    background: #F2F2F2 url('qrc:/doc/images/ico_note_attention.png');
+    background: #F2F2F2 url('../images/ico_note_attention.png');
     background-repeat: no-repeat;
     background-position: top left;
     padding: 5px;
@@ -101,7 +101,7 @@ NOTE styles
 }
 
 .naviNextPrevious > a.nextPage {
-     background-image: url('qrc:/doc/images/btn_next.png');
+     background-image: url('../images/btn_next.png');
      background-repeat: no-repeat;
      background-position: right;
      padding-right: 20px;
@@ -110,7 +110,7 @@ NOTE styles
  }
 
 .naviNextPrevious > a.prevPage {
-     background-image: url('qrc:/doc/images/btn_prev.png');
+     background-image: url('../images/btn_prev.png');
      background-repeat: no-repeat;
      background-position: left;
      padding-left: 20px;
@@ -144,7 +144,7 @@ NOTE styles
   .navigationbar li a {
       display: block;
       text-decoration: none;
-      background: url('qrc:/doc/images/arrow.png');
+      background: url('../images/arrow.png');
       background-repeat: no-repeat;
       background-position: right;
       padding-right: 25px;
@@ -438,7 +438,7 @@ Content table
         padding-bottom: 10px;
         padding-top: 50px;
         width: 100%;
-        background-image: url('qrc:/doc/images/bgrContent.png');
+        background-image: url('../images/bgrContent.png');
         background-position: top;
         background-repeat: no-repeat;
     }
@@ -455,7 +455,7 @@ Content table
         -moz-border-radius: 7px 7px 7px 7px;
         -webkit-border-radius: 7px 7px 7px 7px;
         border-radius: 7px 7px 7px 7px;
-        background: #FFF url('qrc:/doc/images/bgrContent.png');
+        background: #FFF url('../images/bgrContent.png');
         background-position: top;
         background-repeat: repeat-x;
         border: 1px solid #E6E6E6;
@@ -489,7 +489,7 @@ Content table
 
 .toc ul li {
      margin-left: 15px;
-     list-style-image: url('qrc:/doc/images/blu_dot.png');
+     list-style-image: url('../images/blu_dot.png');
      list-style: outside;
      marker-offset: 0px;
      margin-bottom: 8px;
