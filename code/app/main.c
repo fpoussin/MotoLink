@@ -174,6 +174,23 @@ static msg_t ThreadIWDG(void *arg) {
   return 0;
 }
 
+/*
+ * Sensors thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThreadSensors, 64);
+static msg_t ThreadSensors(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("Sensors");
+  while (TRUE)
+  {
+    chThdSleepMilliseconds(50);
+    TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+    //timcapEnable(&TIMCAPD3);
+  }
+  return 0;
+}
+
 
 /*
  * Application entry point.
@@ -229,6 +246,7 @@ int main(void) {
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), HIGHPRIO, ThreadIWDG, NULL);
+  chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
 
   /* Start remaining peripherals */
   adcStart(&ADCD1, NULL);
@@ -237,8 +255,6 @@ int main(void) {
 
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
-  //timcapEnable(&TIMCAPD3);
-  //chVTSetI(&capture_vt, MS2ST(100), startCapture, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

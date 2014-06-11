@@ -9,16 +9,6 @@ uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 VirtualTimer capture_vt;
 
-void startCapture(void *arg)
-{
-  (void) arg;
-  TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
-
-  //chSysLockFromIsr();
-  chVTSetI(&capture_vt, MS2ST(100), startCapture, NULL);
-  //chSysUnlockFromIsr();
-}
-
 void capture1_cb(TIMCAPDriver *timcapp)
 {
   if(TIM3CC1CaptureNumber == 0)

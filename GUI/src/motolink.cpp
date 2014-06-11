@@ -41,16 +41,15 @@ Motolink::~Motolink()
 
 bool Motolink::usbConnect()
 {
-    _LOCK_
     if (mConnected)
         return true;
-
+    _LOCK_
     mConnected = (mUsb->open() == 0);
+    _UNLOCK_
 
     if (mConnected)
         this->sendWake();
 
-    _UNLOCK_
     return mConnected;
 }
 
@@ -82,7 +81,6 @@ bool Motolink::usbProbeConnect()
         emit connectionResult(false);
         mConnected = false;
         emit connectionProgress(0);
-        _UNLOCK_
         return false;
     }
 
@@ -98,7 +96,6 @@ bool Motolink::usbProbeConnect()
     emit connectionProgress(100);
     emit connectionResult(true);
 
-    _UNLOCK_
     return true;
 }
 
@@ -112,7 +109,6 @@ bool Motolink::usbDisconnect(void)
     mUsb->close();
     mConnected = false;
 
-    _UNLOCK_
     return true;
 }
 
@@ -124,10 +120,12 @@ quint8 Motolink::getMode(void)
     prepareSimpleCmd(&send, CMD_GET_MODE);
 
 
-    mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
     mUsb->read(&recv, 2);
 
-    _UNLOCK_
     if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MODE))
         return recv.at(1) & ~MASK_REPLY_OK;
 
@@ -142,10 +140,12 @@ quint16 Motolink::getVersion()
     QByteArray send, recv;
     prepareSimpleCmd(&send, CMD_GET_VERSION);
 
-    mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
     mUsb->read(&recv, 3);
 
-    _UNLOCK_
     if (recv.size() > 2 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_VERSION))
         return recv.at(1) + (recv.at(2)*256);
 
@@ -159,10 +159,12 @@ bool Motolink::getSensors(QByteArray* data)
     QByteArray send, recv;
     prepareSimpleCmd(&send, CMD_GET_SENSORS);
 
-    mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
     mUsb->read(&recv, sizeof(sensors_t)+1);
 
-    _UNLOCK_
     if ((size_t)recv.size() > sizeof(sensors_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
     {
         *data = recv.remove(0, 1);
@@ -180,10 +182,12 @@ bool Motolink::sendWake()
     QByteArray send, recv;
     prepareSimpleCmd(&send, CMD_WAKE);
 
-    mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
     mUsb->read(&recv, 1);
 
-    _UNLOCK_
     return recv.at(0) == (MASK_REPLY_OK | CMD_WAKE);
 }
 
@@ -191,6 +195,8 @@ void Motolink::startUpdate(QByteArray *data)
 {
     this->sendFirmware(data);
     this->verifyFirmware(data);
+
+    emit updateDone();
 }
 
 bool Motolink::resetDevice()
@@ -200,10 +206,12 @@ bool Motolink::resetDevice()
     QByteArray send, recv;
     prepareSimpleCmd(&send, CMD_RESET);
 
-    mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
     mUsb->read(&recv, 1);
 
-    _UNLOCK_
     return recv.at(0) == (MASK_REPLY_OK | CMD_RESET);
 }
 
@@ -278,7 +286,6 @@ void Motolink::sendFirmware(QByteArray *data)
         emit sendStatus(tr("Erase failed"));
         qDebug() << tr("Erase failed");
         emit sendLock(false);
-        _UNLOCK_
         return;
     }
     else {

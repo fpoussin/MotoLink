@@ -6,10 +6,11 @@
 #include <QTimer>
 #include <QThread>
 #include <QMutex>
+#include <QMutexLocker>
 #include "bootloader.h"
 
-#define _LOCK_ mMutex.lock();
-#define _UNLOCK_ mMutex.unlock();
+#define _LOCK_ QMutexLocker locker(&mMutex);
+#define _UNLOCK_ locker.unlock();
 
 class Motolink : public QObject
 {

@@ -23,7 +23,4 @@ extern const ADCConversionGroup adcgrpcfg_knock;
 extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;
 
-extern VirtualTimer capture_vt;
-void startCapture(void *arg);
-
 #endif
