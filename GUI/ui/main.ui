@@ -1042,7 +1042,7 @@
               <item>
                <widget class="QLabel" name="lVbat">
                 <property name="text">
-                 <string>0.0 Volts</string>
+                 <string notr="true">0.0 Volts</string>
                 </property>
                </widget>
               </item>

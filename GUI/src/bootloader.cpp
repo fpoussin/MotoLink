@@ -13,7 +13,7 @@ Bootloader::~Bootloader()
 
 quint8 Bootloader::getFlags()
 {
-    WAIT_USB
+    _WAIT_USB_
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -33,7 +33,7 @@ quint8 Bootloader::getFlags()
 
 bool Bootloader::boot()
 {
-    WAIT_USB
+    _WAIT_USB_
     QByteArray send, recv;
 
     send.append(MAGIC1);
@@ -113,7 +113,7 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
 
 bool Bootloader::eraseFlash(quint32 len)
 {
-    WAIT_USB
+    _WAIT_USB_
     QByteArray send, recv;
     quint8 buf_len[4];
 

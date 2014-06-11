@@ -106,24 +106,26 @@ void UpdateWizard::updateDone()
 {
     this->enableButtons();
     emit sendStatus(tr("Booting app"));
-    mMtl->getBtl()->boot();
+    mMtl->boot();
+
     mMtl->usbDisconnect();
 }
 
 void UpdateWizard::setupConnections()
 {
-    QObject::connect(mMtl->getTft(), SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
-    QObject::connect(mMtl->getTft(), SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
-    QObject::connect(mMtl->getTft(), SIGNAL(finished()), this, SLOT(updateDone()));
+    /* Tranfer control */
+    QObject::connect(this, SIGNAL(startTransfer(QByteArray*)), mMtl, SLOT(startUpdate(QByteArray*)));
+    QObject::connect(this->button(QWizard::CancelButton), SIGNAL(clicked()), mMtl, SLOT(haltTransfer()));
+
+    /* Tranfer status update */
+    QObject::connect(mMtl, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
+    QObject::connect(mMtl, SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
+    QObject::connect(mMtl, SIGNAL(updateDone()), this, SLOT(updateDone()));
 
     QObject::connect(mMtl, SIGNAL(connectionProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
 
     QObject::connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(pageUpdated(int)));
-    QObject::connect(this, SIGNAL(startTransfer()), mMtl->getTft(), SLOT(start()));
-    QObject::connect(this, SIGNAL(send(QByteArray*)), mMtl->getTft(), SLOT(send(QByteArray*)));
-    QObject::connect(this, SIGNAL(verify(QByteArray*)), mMtl->getTft(), SLOT(verify(QByteArray*)));
     QObject::connect(this, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
-    QObject::connect(this->button(QWizard::CancelButton), SIGNAL(clicked()), mMtl->getTft(), SLOT(halt()));
 
     QObject::connect(mUi->rbCustomFW, SIGNAL(clicked()), this, SLOT(openCustomFw()));
     QObject::connect(mUi->rbBundledFW, SIGNAL(clicked()), this, SLOT(loadDefaultFirmareData()));
@@ -198,14 +200,14 @@ void UpdateWizard::startFwUpdate()
             mMtl->resetDevice();
             mMtl->usbDisconnect();
 
-            /* Wait for windows to detect the bootloader */
-            for (int i = 0; i <= 20; i++)
+            /* Wait 2s for windows to detect the bootloader */
+            for (uint i = 0; i <= 20; i++)
             {
                  _usleep(100000);
                  mUi->pbProgress->setValue(i*5);
                  QCoreApplication::processEvents();
             }
-            mMtl->probeConnect();
+            mMtl->usbProbeConnect();
 
             if (mMtl->getMode() != MODE_BL)
             {
@@ -217,7 +219,7 @@ void UpdateWizard::startFwUpdate()
         emit sendStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
 
-        const quint8 flags = mMtl->getBtl()->getFlags();
+        const quint8 flags = mMtl->getBtlFlags();
 
         if (flags & FLAG_IWDRST)
             emit sendStatus(tr("Watchdog reset"));
@@ -231,8 +233,7 @@ void UpdateWizard::startFwUpdate()
         if (flags & FLAG_WAKE)
             emit sendStatus(tr("Bootloader Wakeup"));
 
-        mMtl->getTft()->setParams(&mFwData, true, true);
-        emit startTransfer();
+        emit startTransfer(&mFwData);
     }
     else
     {

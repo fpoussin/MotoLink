@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
-    mSensorsTimer.setInterval(500);
+    mSensorsTimer.setInterval(200);
 
     this->uiDisable();
 
@@ -159,7 +159,7 @@ void MainWindow::connectMtl()
         this->mSensorsTimer.start();
     }
     else {
-        mUi->statusBar->showMessage("Connection Failed");
+        mUi->statusBar->showMessage(tr("Connection Failed"));
     }
 }
 
@@ -259,8 +259,10 @@ void MainWindow::setupConnections(void)
              mUi->menuRecent_files->addAction(mRecentFilesActions[i]);
          }
 
+    /* Sensors UI update */
     QObject::connect(&mSensorsTimer, SIGNAL(timeout()), this, SLOT(updateSensors()));
-
+    QObject::connect(this, SIGNAL(sendUpdateSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(receiveSensors(QByteArray*)));
 }
 
 void MainWindow::setupTabShortcuts()
@@ -445,7 +447,7 @@ void MainWindow::showFuelContextMenu(const QPoint &pos)
     /* TODO */
 
     QMenu myMenu;
-    myMenu.addAction("Menu Item 1", this, SLOT(showAFRTab()));
+    myMenu.addAction("Test", this, SLOT(showAFRTab()));
 //    myMenu.addSeparator();
 //    myMenu.addAction("Menu Item 2");
 
@@ -463,23 +465,23 @@ void MainWindow::showFuelContextMenu(const QPoint &pos)
 
 void MainWindow::updateSensors()
 {
-    QByteArray tmp;
-    tmp.fill(0, sizeof(sensors_t));
-    if (mMtl->getSensors(&tmp))
-    {
-        const sensors_t * sensors =  (sensors_t *)tmp.constData();
+    if (mMtl->isConnected())
+        emit sendUpdateSensors(&mSensorsData);
+    else
+        mSensorsTimer.stop();
+}
 
-        float vAn7 = sensors->an7/1000.0; /* VBAT */
-        float vAn8 = sensors->an8/1000.0; /* TPS */
-        float vAn9 = sensors->an9/1000.0; /* AFR */
-        mUi->lVbat->setText(QString::number(vAn7)+" Volts");
-        mUi->lTpsVolts->setText(QString::number(vAn8)+" Volts");
-        mUi->lAfrVolts->setText(QString::number(vAn9)+" Volts");
-        mUi->lRpmHertz->setText(QString::number(sensors->freq1)+" Hertz");
-        mUi->lSpeedHertz->setText(QString::number(sensors->freq2)+" Hertz");
-    }
-    else {
-        qDebug("updateSensors Failed");
-    }
+void MainWindow::receiveSensors(QByteArray *data)
+{
+    const sensors_t * sensors =  (sensors_t *)data->constData();
+
+    float vAn7 = sensors->an7/1000.0; /* VBAT */
+    float vAn8 = sensors->an8/1000.0; /* TPS */
+    float vAn9 = sensors->an9/1000.0; /* AFR */
+    mUi->lVbat->setText(QString::number(vAn7)+tr(" Volts"));
+    mUi->lTpsVolts->setText(QString::number(vAn8)+tr(" Volts"));
+    mUi->lAfrVolts->setText(QString::number(vAn9)+tr(" Volts"));
+    mUi->lRpmHertz->setText(QString::number(sensors->freq1)+tr(" Hertz"));
+    mUi->lSpeedHertz->setText(QString::number(sensors->freq2)+tr(" Hertz"));
 }
 

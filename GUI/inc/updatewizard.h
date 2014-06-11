@@ -7,7 +7,6 @@
 
 #include "bootloader.h"
 #include "motolink.h"
-#include "transferthread.h"
 
 namespace Ui {
     class UpdateWizard;
@@ -28,7 +27,7 @@ public slots:
     void openCustomFw(void);
 
 signals:
-    void startTransfer(void);
+    void startTransfer(QByteArray *data);
     void send(QByteArray *data);
     void verify(QByteArray *data);
     void sendStatus(QString str);

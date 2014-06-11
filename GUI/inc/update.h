@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QScriptEngine>
 #include <QScriptValueIterator>
+#include <QDebug>
 
 class Update : public QObject
 {

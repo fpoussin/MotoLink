@@ -34,21 +34,28 @@ void Update::onResult(QNetworkReply* reply)
         return;
 
     QScriptValueIterator it(result);
-    while (it.hasNext()) {
+    while (it.hasNext())
+    {
         it.next();
         QScriptValue release = it.value();
 
         QString version = release.property("tag").toString();
 
+        if (version.isEmpty()) {
+            qDebug() << tr("Unable to get latest version");
+            return;
+        }
+
+
         mNewVersion = version;
         if (mCurrentVersion.compare(mNewVersion) < 0)
         {
-            qDebug("New version available");
+            qDebug() << tr("New version available");
             emit newVersionAvailable(version);
         }
         else
         {
-            qDebug("Using latest version");
+            qDebug() << tr("Using latest version");
         }
 
         break; // Only latest release

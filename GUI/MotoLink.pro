@@ -25,7 +25,6 @@ include(QtUsb/QtUsb.pri)
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/bootloader.cpp \
-    src/transferthread.cpp \
     src/hrc.cpp \
     src/updatewizard.cpp \
     src/motolink.cpp \
@@ -39,7 +38,6 @@ HEADERS  += \
     inc/compat.h \
     inc/mainwindow.h \
     inc/bootloader.h \
-    inc/transferthread.h \
     inc/datastructures.h \
     inc/hrc.h \
     inc/updatewizard.h \

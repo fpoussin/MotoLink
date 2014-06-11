@@ -59,6 +59,7 @@ public slots:
 
 signals:
     void startupComplete(void);
+    void sendUpdateSensors(QByteArray *data);
 
 private slots:
     void setLanguageEnglish(void);
@@ -80,6 +81,7 @@ private slots:
     void showFuelContextMenu(const QPoint& pos);
 
     void updateSensors(void);
+    void receiveSensors(QByteArray *data);
 
 private:
     void setupDefaults(void);
@@ -109,7 +111,9 @@ private:
     TableModel mIgnModel;
     TableModel mKnockModel;
     Update mUpdate;
+
     QTimer mSensorsTimer;
+    QByteArray mSensorsData;
 };
 
 #endif // MAINWINDOW_H
