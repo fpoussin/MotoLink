@@ -11,12 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
-    mFuelModel(&mUndoStack),
-    mStagingModel(&mUndoStack),
-    mAFRModel(&mUndoStack),
-    mAFRTgtModel(&mUndoStack),
-    mIgnModel(&mUndoStack),
-    mKnockModel(&mUndoStack)
+    mFuelModel(&mUndoStack, -30, 30),
+    mStagingModel(&mUndoStack, -30, 30),
+    mAFRModel(&mUndoStack, 8, 22),
+    mAFRTgtModel(&mUndoStack, 8, 22),
+    mIgnModel(&mUndoStack, -20, 10),
+    mKnockModel(&mUndoStack, 0, 256)
 {
     mMtl = new Motolink();
     mHrc = new Hrc();
@@ -30,15 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mAFRTgtModel.setName("AFR Target");
     mIgnModel.setName("Ignition");
     mKnockModel.setName("Knock");
-
-    mAFRModel.setMin(5);
-    mAFRModel.setMax(25);
-    mAFRTgtModel.setMin(5);
-    mAFRTgtModel.setMax(25);
-    mIgnModel.setMin(-20);
-    mIgnModel.setMax(10);
-    mKnockModel.setMin(0);
-    mKnockModel.setMax(4096);
 
     mUi->setupUi(this);
     this->setupDefaults();

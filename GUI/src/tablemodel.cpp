@@ -1,12 +1,12 @@
 #include "tablemodel.h"
 #include <QLineEdit>
 
-TableModel::TableModel(QUndoStack *stack, QObject *parent) :
+TableModel::TableModel(QUndoStack *stack, int min, int max, QObject *parent) :
     QStandardItemModel(parent), mStack(stack)
 {
-    mMin = -30;
-    mMax = 30;
-    this->fill();
+    mMin = min;
+    mMax = max;
+    this->fill(true);
 }
 
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -51,12 +51,24 @@ void TableModel::setMax(int max)
 
 QColor TableModel::NumberToColor(float value, bool greenIsNegative)
 {
-    value += mMax;
-    if (greenIsNegative) /* Green to Red */
-        value = (mMax*2) - value;
     QColor color;
-    const float hue = value * (mMax/10.0) / 360.0;
+    const float range = mMax - mMin;
 
+    if (mMin > 0) {
+        value -= mMin;
+        //value -= (range*3.0);
+    }
+    else {
+        value += (range/2.0);
+    }
+    if (greenIsNegative) /* - Green to + Red */
+        value = range - value;
+
+    value /= (range / 250.0);
+
+    if (value < 0)
+        value = 0;
+    const float hue = value * 0.75 / 360.0;
     color.setHslF(hue, 0.70, 0.30, 1.0);
 
     return color;
