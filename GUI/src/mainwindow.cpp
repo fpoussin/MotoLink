@@ -31,6 +31,15 @@ MainWindow::MainWindow(QWidget *parent) :
     mIgnModel.setName("Ignition");
     mKnockModel.setName("Knock");
 
+    mAFRModel.setMin(5);
+    mAFRModel.setMax(25);
+    mAFRTgtModel.setMin(5);
+    mAFRTgtModel.setMax(25);
+    mIgnModel.setMin(-20);
+    mIgnModel.setMax(10);
+    mKnockModel.setMin(0);
+    mKnockModel.setMax(4096);
+
     mUi->setupUi(this);
     this->setupDefaults();
     this->setupConnections();
@@ -201,6 +210,13 @@ void MainWindow::exportHrc()
 void MainWindow::setupDefaults(void)
 {
     mUi->statusBar->showMessage(tr("Disconnected"));
+
+    mDegreeSuffix.setSuffix(QString::fromUtf8("°"));
+    mPercentSuffix.setSuffix("%");
+
+    mUi->tableFuel->setItemDelegate(&mPercentSuffix);
+    mUi->tableIgnMap->setItemDelegate(&mDegreeSuffix);
+
     mUi->tableFuel->setModel(&mFuelModel);
     mUi->tableIgnMap->setModel(&mIgnModel);
     mUi->tableAfrMap->setModel(&mAFRModel);
@@ -247,8 +263,16 @@ void MainWindow::setupConnections(void)
     QObject::connect(this, SIGNAL(startupComplete()), &mUpdate, SLOT(getLatestVersion()));
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), mUi->statusBar, SLOT(showMessage(QString)));
 
+    mUi->tableAfrMap->setContextMenuPolicy(Qt::CustomContextMenu);
+    mUi->tableAfrTgt->setContextMenuPolicy(Qt::CustomContextMenu);
     mUi->tableFuel->setContextMenuPolicy(Qt::CustomContextMenu);
+    mUi->tableIgnMap->setContextMenuPolicy(Qt::CustomContextMenu);
+    mUi->tableKnk->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(mUi->tableAfrMap, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showAfrMapContextMenu(QPoint)));
+    QObject::connect(mUi->tableAfrTgt, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showAfrTgtContextMenu(QPoint)));
     QObject::connect(mUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));
+    QObject::connect(mUi->tableIgnMap, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showIgnContextMenu(QPoint)));
+    QObject::connect(mUi->tableKnk, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showKnkContextMenu(QPoint)));
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
@@ -441,15 +465,40 @@ void MainWindow::showSettingsTab()
         mUi->tabMain->setCurrentIndex(index);
 }
 
+void MainWindow::showAfrMapContextMenu(const QPoint &pos)
+{
+    this->showDefaultContextMenu(pos, mUi->tableAfrMap);
+}
+
+void MainWindow::showAfrTgtContextMenu(const QPoint &pos)
+{
+    this->showDefaultContextMenu(pos, mUi->tableAfrTgt);
+}
+
 void MainWindow::showFuelContextMenu(const QPoint &pos)
 {
-    QPoint globalPos = mUi->tableFuel->viewport()->mapToGlobal(pos);
+    this->showDefaultContextMenu(pos, mUi->tableFuel);
+}
+
+void MainWindow::showIgnContextMenu(const QPoint &pos)
+{
+    this->showDefaultContextMenu(pos, mUi->tableIgnMap);
+}
+
+void MainWindow::showKnkContextMenu(const QPoint &pos)
+{
+    this->showDefaultContextMenu(pos, mUi->tableKnk);
+}
+
+void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
+{
+    QPoint globalPos = view->viewport()->mapToGlobal(pos);
     /* TODO */
 
     QMenu myMenu;
-    myMenu.addAction("Test", this, SLOT(showAFRTab()));
-//    myMenu.addSeparator();
-//    myMenu.addAction("Menu Item 2");
+    myMenu.addAction("Increase selection");
+    myMenu.addSeparator();
+    myMenu.addAction("Decrease selection");
 
     QAction* selectedItem = myMenu.exec(globalPos);
 

@@ -16,6 +16,7 @@
 #include <QAction>
 #include <QUndoView>
 #include <QTimer>
+#include <QTableView>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -78,7 +79,11 @@ private slots:
     void showKnockTab(void);
     void showSettingsTab(void);
 
-    void showFuelContextMenu(const QPoint& pos);
+    void showAfrMapContextMenu(const QPoint &pos);
+    void showAfrTgtContextMenu(const QPoint &pos);
+    void showFuelContextMenu(const QPoint &pos);
+    void showIgnContextMenu(const QPoint &pos);
+    void showKnkContextMenu(const QPoint &pos);
 
     void updateSensors(void);
     void receiveSensors(QByteArray *data);
@@ -90,6 +95,7 @@ private:
     void setupSettings(void);
     void makeDefaultModel(void);
     void retranslate(void);
+    void showDefaultContextMenu(const QPoint &pos, QTableView *view);
 
     Ui::MainWindow *mUi;
     QTranslator mTranslator;
@@ -111,6 +117,9 @@ private:
     TableModel mIgnModel;
     TableModel mKnockModel;
     Update mUpdate;
+    NumberFormatDelegate mDegreeSuffix;
+    NumberFormatDelegate mPercentSuffix;
+    NumberFormatDelegate mEmptySuffix;
 
     QTimer mSensorsTimer;
     QByteArray mSensorsData;

@@ -1,4 +1,5 @@
 #include "tablemodel.h"
+#include <QLineEdit>
 
 TableModel::TableModel(QUndoStack *stack, QObject *parent) :
     QStandardItemModel(parent), mStack(stack)
@@ -13,6 +14,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     int val = value.toInt();
     int newvalue = val;
     QStandardItem * item = this->itemFromIndex(index);
+    QString valueStr;
 
     if (val > mMax)
         newvalue = mMax;
@@ -32,7 +34,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return QStandardItemModel::setData(index, newvalue, role);
 }
 
-void TableModel::setName(QString name)
+void TableModel::setName(const QString name)
 {
     mName = name;
 }
@@ -60,10 +62,11 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative)
     return color;
 }
 
-void TableModel::fill()
+void TableModel::fill(bool random)
 {
     mNumRow = 11;
     mNumCol = 16;
+    int rd = 0;
 
     for (int row = 0; row < mNumRow; ++row)
     {
@@ -74,9 +77,33 @@ void TableModel::fill()
             this->setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
             this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
 
-            int rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
+            if (random)
+                rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
 
             this->setData(this->indexFromItem(item), rd, Qt::UserRole);
         }
     }
+}
+
+NumberFormatDelegate::NumberFormatDelegate(QObject *parent) :
+    QStyledItemDelegate(parent)
+{
+}
+
+QString NumberFormatDelegate::displayText(const QVariant &value, const QLocale &locale) const
+{
+    if (value.toInt() > 0)
+        return QString("+")+locale.toString(value.toInt())+mSuffix;
+
+    return locale.toString(value.toInt())+mSuffix;
+}
+
+QWidget * NumberFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+    QWidget* editor = QStyledItemDelegate::createEditor(parent, option, index);
+    QLineEdit* lineEditEditor = qobject_cast<QLineEdit*>(editor);
+    if( lineEditEditor )
+        lineEditEditor->setValidator(&mValidator);
+
+    return editor;
 }
