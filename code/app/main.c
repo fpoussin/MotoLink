@@ -30,8 +30,8 @@ const SerialConfig uartCfg =
 {
  10400, // bit rate
  0,
- USART_CR2_STOP1_BITS | USART_CR2_LINEN,
- 0
+ USART_CR2_STOP1_BITS,
+ USART_CR3_HDSEL
 };
 
 
@@ -142,6 +142,7 @@ static msg_t ThreadSDU(void *arg) {
       available = chQSpaceI(&SDU1.iqueue);
       if (available > sizeof(buffer)) available = sizeof(buffer);
 
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
       read = chnReadTimeout((BaseChannel *)&SDU1, buffer, available, MS2ST(10));
       chnWriteTimeout((BaseChannel *)&SD1, buffer, read, MS2ST(10));
     }
@@ -151,9 +152,11 @@ static msg_t ThreadSDU(void *arg) {
       available = chQSpaceI(&SD1.iqueue);
       if (available > sizeof(buffer)) available = sizeof(buffer);
 
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
       read = chnReadTimeout((BaseChannel *)&SD1, buffer, available, MS2ST(10));
       chnWriteTimeout((BaseChannel *)&SDU1, buffer, read, MS2ST(10));
     }
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
   }
   return 0;

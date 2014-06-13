@@ -18,7 +18,7 @@ void startUserApp(void) {
 
   IWDG_SetReload(LsiFreq/128);
 
-  //IWDG_Enable();
+  IWDG_Enable();
 
   jumpToUser(USER_APP_ADDR);
 }
