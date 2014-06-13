@@ -26,6 +26,27 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+const uint16_t dac_buffer[1] = {0x800};
+
+/*
+ * DAC config
+ */
+static const DACConfig daccfg1 = {
+  1000, /* Multiply the buffer size to the desired frequency in Hz */
+  DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
+  0 /* DAC CR flags */
+};
+
+/*
+ * DAC conversion groups, with callbacks.
+ */
+static const DACConversionGroup dacconvgrp1 = {
+  1, /* Channels */
+  NULL, /* End of transfer callback */
+  NULL, /* Error callback */
+  false /*circular mode */
+};
+
 const SerialConfig uartCfg =
 {
  10400, // bit rate
@@ -221,7 +242,6 @@ int main(void) {
   bduObjectInit(&BDU1);
   timcapObjectInit(&TIMCAPD3);
 
-
   /*
    * Start USB drivers.
    */
@@ -243,6 +263,16 @@ int main(void) {
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
+  /* Start remaining peripherals */
+  dacStart(&DACD1, &daccfg1);
+  adcStart(&ADCD1, NULL);
+  adcStart(&ADCD3, NULL);
+  timcapStart(&TIMCAPD3, &tc_conf);
+
+  dacStartConversion(&DACD1, &dacconvgrp1, dac_buffer, 1);
+  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
+  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
+
   /*
    * Creates the threads.
    */
@@ -250,14 +280,6 @@ int main(void) {
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), HIGHPRIO, ThreadIWDG, NULL);
   chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
-
-  /* Start remaining peripherals */
-  adcStart(&ADCD1, NULL);
-  adcStart(&ADCD3, NULL);
-  timcapStart(&TIMCAPD3, &tc_conf);
-
-  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
-  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

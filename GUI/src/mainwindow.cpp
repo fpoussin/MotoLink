@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mStagingModel(&mUndoStack, -30, 30, 0),
     mAFRModel(&mUndoStack, 80, 200, 130),
     mAFRTgtModel(&mUndoStack, 80, 200, 130),
-    mIgnModel(&mUndoStack, -20, 10, 0),
+    mIgnModel(&mUndoStack, -20, 3, 0),
     mKnockModel(&mUndoStack, 0, 255, 0)
 {
     mMtl = new Motolink();

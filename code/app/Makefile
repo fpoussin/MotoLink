@@ -42,7 +42,6 @@ endif
 #
 
 # Enables the use of FPU on Cortex-M4.
-# Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FPU),)
   USE_FPU = yes
 endif
