@@ -11,12 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
-    mFuelModel(&mUndoStack, -30, 30),
-    mStagingModel(&mUndoStack, -30, 30),
-    mAFRModel(&mUndoStack, 8, 22),
-    mAFRTgtModel(&mUndoStack, 8, 22),
-    mIgnModel(&mUndoStack, -20, 10),
-    mKnockModel(&mUndoStack, 0, 256)
+    mFuelModel(&mUndoStack, -30, 30, 0),
+    mStagingModel(&mUndoStack, -30, 30, 0),
+    mAFRModel(&mUndoStack, 80, 200, 130),
+    mAFRTgtModel(&mUndoStack, 80, 200, 130),
+    mIgnModel(&mUndoStack, -20, 10, 0),
+    mKnockModel(&mUndoStack, 0, 255, 0)
 {
     mMtl = new Motolink();
     mHrc = new Hrc();
@@ -207,6 +207,8 @@ void MainWindow::setupDefaults(void)
 
     mUi->tableFuel->setItemDelegate(&mPercentSuffix);
     mUi->tableIgnMap->setItemDelegate(&mDegreeSuffix);
+    mUi->tableAfrMap->setItemDelegate(&mAfrDisplay);
+    mUi->tableAfrTgt->setItemDelegate(&mAfrDisplay);
 
     mUi->tableFuel->setModel(&mFuelModel);
     mUi->tableIgnMap->setModel(&mIgnModel);
@@ -487,9 +489,10 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
     /* TODO */
 
     QMenu myMenu;
-    myMenu.addAction("Increase selection");
+    myMenu.addAction(tr("Increase selection"));
+    myMenu.addAction(tr("Decrease selection"));
     myMenu.addSeparator();
-    myMenu.addAction("Decrease selection");
+    myMenu.addAction(tr("Change all cells..."));
 
     QAction* selectedItem = myMenu.exec(globalPos);
 

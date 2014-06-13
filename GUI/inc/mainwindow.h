@@ -120,6 +120,7 @@ private:
     NumberFormatDelegate mDegreeSuffix;
     NumberFormatDelegate mPercentSuffix;
     NumberFormatDelegate mEmptySuffix;
+    AfrFormatDelegate mAfrDisplay;
 
     QTimer mSensorsTimer;
     QByteArray mSensorsData;

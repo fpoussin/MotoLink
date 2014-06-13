@@ -12,7 +12,7 @@ class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, QObject *parent = 0);
+    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, QObject *parent = 0);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     QString getName(void) { return mName; }
     int getMin(void) { return mMin; }
@@ -34,6 +34,7 @@ private:
     QString mSuffix;
     int mMin;
     int mMax;
+    int mDefault;
     quint8 mNumCol;
     quint8 mNumRow;
 
@@ -55,6 +56,23 @@ public slots:
 private:
     QIntValidator mValidator;
     QString mSuffix;
+
+};
+
+class AfrFormatDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    explicit AfrFormatDelegate(QObject *parent = 0);
+    virtual QString displayText(const QVariant &value, const QLocale &locale) const;
+    QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+
+signals:
+
+public slots:
+
+private:
+    QDoubleValidator mValidator;
 
 };
 

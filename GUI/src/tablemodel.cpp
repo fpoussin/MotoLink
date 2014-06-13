@@ -1,12 +1,13 @@
 #include "tablemodel.h"
 #include <QLineEdit>
 
-TableModel::TableModel(QUndoStack *stack, int min, int max, QObject *parent) :
+TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *parent) :
     QStandardItemModel(parent), mStack(stack)
 {
     mMin = min;
     mMax = max;
-    this->fill(true);
+    mDefault = def;
+    this->fill(false);
 }
 
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -14,7 +15,6 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     int val = value.toInt();
     int newvalue = val;
     QStandardItem * item = this->itemFromIndex(index);
-    QString valueStr;
 
     if (val > mMax)
         newvalue = mMax;
@@ -56,7 +56,6 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative)
 
     if (mMin > 0) {
         value -= mMin;
-        //value -= (range*3.0);
     }
     else {
         value += (range/2.0);
@@ -64,10 +63,10 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative)
     if (greenIsNegative) /* - Green to + Red */
         value = range - value;
 
-    value /= (range / 250.0);
+    value /= (range / 280);
 
-    if (value < 0)
-        value = 0;
+    if (value < 0.0)
+        value = 0.0;
     const float hue = value * 0.75 / 360.0;
     color.setHslF(hue, 0.70, 0.30, 1.0);
 
@@ -78,7 +77,7 @@ void TableModel::fill(bool random)
 {
     mNumRow = 11;
     mNumCol = 16;
-    int rd = 0;
+    int value = mDefault;
 
     for (int row = 0; row < mNumRow; ++row)
     {
@@ -90,9 +89,9 @@ void TableModel::fill(bool random)
             this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
 
             if (random)
-                rd = qrand() % ((mMax + 1) - -mMax) + -mMax;
+                value = mMin + (rand() % (int)(mMax - mMin + 1));
 
-            this->setData(this->indexFromItem(item), rd, Qt::UserRole);
+            this->setData(this->indexFromItem(item), value, Qt::UserRole);
         }
     }
 }
@@ -111,6 +110,28 @@ QString NumberFormatDelegate::displayText(const QVariant &value, const QLocale &
 }
 
 QWidget * NumberFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+    QWidget* editor = QStyledItemDelegate::createEditor(parent, option, index);
+    QLineEdit* lineEditEditor = qobject_cast<QLineEdit*>(editor);
+    if( lineEditEditor )
+        lineEditEditor->setValidator(&mValidator);
+
+    return editor;
+}
+
+AfrFormatDelegate::AfrFormatDelegate(QObject *parent) :
+    QStyledItemDelegate(parent)
+{
+}
+
+QString AfrFormatDelegate::displayText(const QVariant &value, const QLocale &locale) const
+{
+    const float display = value.toFloat()/10;
+
+    return locale.toString(display, 'f', 1);
+}
+
+QWidget * AfrFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     QWidget* editor = QStyledItemDelegate::createEditor(parent, option, index);
     QLineEdit* lineEditEditor = qobject_cast<QLineEdit*>(editor);
