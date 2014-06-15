@@ -95,11 +95,7 @@ uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(25));
 
-  chThdSleepMilliseconds(500);
-
-  usbDisconnectBus(&USBD1);
-  usbStop(&USBD1);
-
+  chThdSleepMilliseconds(100);
   chSysDisable();
 
   NVIC_SystemReset();

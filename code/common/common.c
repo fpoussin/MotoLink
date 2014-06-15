@@ -26,3 +26,8 @@ uint8_t checksum(uint8_t *data, uint8_t length)
 
     return sum;
 }
+
+bool_t getSwitch1(void)
+{
+	return palReadPad(SWITCH_PORT, SWITCH_PAD) == PAL_HIGH;
+}

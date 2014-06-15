@@ -233,6 +233,9 @@ void UpdateWizard::startFwUpdate()
         if (flags & FLAG_WAKE)
             emit sendStatus(tr("Bootloader Wakeup"));
 
+        if (flags & FLAG_SWITCH)
+            emit sendStatus(tr("Boot Switch ON"));
+
         emit startTransfer(&mFwData);
     }
     else

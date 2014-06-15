@@ -26,13 +26,26 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+void iwdgGptCb(GPTDriver *gptp)
+{
+  (void) gptp;
+  IWDG->KR = ((uint16_t)0xAAAA);
+}
+
+GPTConfig gpt1Cfg =
+{
+  100000,    /* timer clock.*/
+  iwdgGptCb,        /* Timer callback.*/
+  0
+};
+
 const uint16_t dac_buffer[1] = {0x800};
 
 /*
  * DAC config
  */
 static const DACConfig daccfg1 = {
-  1000, /* Multiply the buffer size to the desired frequency in Hz */
+  10000, /* Multiply the buffer size to the desired frequency in Hz */
   DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
   0 /* DAC CR flags */
 };
@@ -79,56 +92,29 @@ static msg_t ThreadBDU(void *arg) {
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
-  chRegSetThreadName("USB");
+  chRegSetThreadName("BDU");
+  uint16_t idle_duty = 0;
 
-  bduObjectInit(&BDU1);
+  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
+
+  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
   while (TRUE)
   {
-    usbDisconnectBus(serusbcfg.usbp);
-    bduStop(&BDU1);
+    chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
+    chSysLock();
+    flags = chEvtGetAndClearFlagsI(&el1);
+    chSysUnlock();
 
-    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0));
+    idle_duty = usbConnected() ? 500 : 0;
 
-    /* Wait for USB connection */
-    while(!usbConnected()) chThdSleepMilliseconds(20);
+    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, idle_duty));
 
-    /*
-     * Activates the USB driver and then the USB bus pull-up on D+.
-     * Note, a delay is inserted in order to not have to disconnect the cable
-     * after a reset.
-     */
-    chThdSleepMilliseconds(100);
-    usbConnectBus(serusbcfg.usbp);
-
-    /*
-     * Start the Bulk USB driver.
-     */
-    bduStart(&BDU1, &bulkusbcfg);
-
-    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
-
-    chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
-
-    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-    while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
-
-    while (USBD1.state != USB_STOP
-        && BDU1.state != BDU_STOP
-        && usbConnected())
+    if (flags & CHN_INPUT_AVAILABLE)
     {
-      chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(10));
-      chSysLock();
-      flags = chEvtGetAndClearFlagsI(&el1);
-      chSysUnlock();
-
-      if (flags & CHN_INPUT_AVAILABLE)
-      {
-        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-
-        read_cmd((BaseChannel *)&BDU1);
-        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
-      }
+      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      read_cmd((BaseChannel *)&BDU1);
     }
   }
   return 0;
@@ -145,7 +131,7 @@ static msg_t ThreadSDU(void *arg) {
   flagsmask_t flags_usb, flags_uart;
   size_t read, available;
   (void)arg;
-  chRegSetThreadName("USB Serial");
+  chRegSetThreadName("SDU");
   chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
   chEvtRegisterMask(chnGetEventSource(&SD1), &el2, CHN_INPUT_AVAILABLE);
 
@@ -154,7 +140,7 @@ static msg_t ThreadSDU(void *arg) {
 
   while (TRUE) {
 
-    chEvtWaitOneTimeout(EVENT_MASK(1), MS2ST(10));
+    chEvtWaitOneTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
     flags_usb = chEvtGetAndClearFlags(&el1);
     flags_uart = chEvtGetAndClearFlags(&el2);
 
@@ -184,24 +170,9 @@ static msg_t ThreadSDU(void *arg) {
 }
 
 /*
- * IWDG thread, times are in milliseconds.
- */
-static WORKING_AREA(waThreadIWDG, 16);
-static msg_t ThreadIWDG(void *arg) {
-
-  (void)arg;
-  chRegSetThreadName("IWDG");
-  while (TRUE) {
-    chThdSleepMilliseconds(10);
-    IWDG->KR = ((uint16_t)0xAAAA);
-  }
-  return 0;
-}
-
-/*
  * Sensors thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadSensors, 64);
+static WORKING_AREA(waThreadSensors, 32);
 static msg_t ThreadSensors(void *arg) {
 
   (void)arg;
@@ -210,7 +181,6 @@ static msg_t ThreadSensors(void *arg) {
   {
     chThdSleepMilliseconds(50);
     TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
-    //timcapEnable(&TIMCAPD3);
   }
   return 0;
 }
@@ -232,6 +202,9 @@ int main(void) {
   chSysInit();
   timcapInit();
 
+  gptStart(&GPTD1, &gpt1Cfg);
+  gptStartContinuous(&GPTD1, 5000);
+
   pwmStart(&PWMD2, &pwmcfg);
   pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
@@ -243,25 +216,12 @@ int main(void) {
   timcapObjectInit(&TIMCAPD3);
 
   /*
-   * Start USB drivers.
-   */
-  sduStart(&SDU1, &serusbcfg);
-  bduStart(&BDU1, &bulkusbcfg);
-
-  /*
    * Start peripherals
    */
   sdStart(&SD1, &uartCfg);
-
-  /*
-   * Activates the USB driver and then the USB bus pull-up on D+.
-   * Note, a delay is inserted in order to not have to disconnect the cable
-   * after a reset.
-   */
-  //usbDisconnectBus(serusbcfg.usbp);
-  //chThdSleepMilliseconds(500);
   usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
+  sduStart(&SDU1, &serusbcfg);
+  bduStart(&BDU1, &bulkusbcfg);
 
   /* Start remaining peripherals */
   dacStart(&DACD1, &daccfg1);
@@ -278,14 +238,23 @@ int main(void) {
    */
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  chThdCreateStatic(waThreadIWDG, sizeof(waThreadIWDG), HIGHPRIO, ThreadIWDG, NULL);
   chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
-  while (TRUE) {
-    chThdSleepMilliseconds(1000);
+  while (TRUE)
+  {
+    chThdSleepMilliseconds(100);
+
+    if (usbConnected())
+    {
+      usbConnectBus(serusbcfg.usbp);
+    }
+    else
+    {
+      usbDisconnectBus(serusbcfg.usbp);
+    }
   }
 }

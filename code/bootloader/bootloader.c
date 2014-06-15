@@ -2,6 +2,20 @@
 
 uint8_t bl_wake = 0;
 
+void startIWDG(void) {
+
+    const uint16_t LsiFreq = 40000;
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+
+    IWDG_SetPrescaler(IWDG_Prescaler_32); // 1250
+
+    IWDG_SetReload(LsiFreq/128); // (1/1250)*(40000/128) = 250ms
+    IWDG_ReloadCounter();
+
+    IWDG_Enable();
+
+}
+
 void startUserApp(void) {
 
   usbStop(&USBD1);
@@ -10,15 +24,7 @@ void startUserApp(void) {
   chSysDisable();
 
   /* Setup IWDG in case the target application does not load */
-
-  const uint32_t LsiFreq = 42000;
-  IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-
-  IWDG_SetPrescaler(IWDG_Prescaler_32);
-
-  IWDG_SetReload(LsiFreq/128);
-
-  IWDG_Enable();
+  startIWDG();
 
   jumpToUser(USER_APP_ADDR);
 }

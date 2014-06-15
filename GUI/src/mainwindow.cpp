@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
-    mSensorsTimer.setInterval(100);
+    mSensorsTimer.setInterval(50);
 
     this->uiDisable();
 

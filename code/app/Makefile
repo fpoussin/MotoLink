@@ -84,7 +84,7 @@ CSRC = $(PORTSRC) \
        $(BOARDSRC) \
        $(DRIVERSRC) \
        $(CHIBIOS)/os/various/chprintf.c \
-       main.c communication.c sensors.c
+       main.c communication.c sensors.c debug.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

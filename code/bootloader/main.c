@@ -91,22 +91,24 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadUsb, 4096);
+static WORKING_AREA(waThreadUsb, 512);
 static msg_t ThreadUsb(void *arg) {
 
-  //uint8_t clear_buff[64];
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
   chRegSetThreadName("USB");
 
+  /*
+   * Start the Bulk USB driver.
+   */
   bduObjectInit(&BDU1);
+  bduStart(&BDU1, &bulkusbcfg);
   pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
 
   while (TRUE)
   {
     usbDisconnectBus(serusbcfg.usbp);
-    bduStop(&BDU1);
 
     /* Wait for USB connection */
     while(!usbConnected()) chThdSleepMilliseconds(20);
@@ -119,11 +121,6 @@ static msg_t ThreadUsb(void *arg) {
     chThdSleepMilliseconds(100);
     usbConnectBus(serusbcfg.usbp);
 
-    /*
-     * Start the Bulk USB driver.
-     */
-    bduStart(&BDU1, &bulkusbcfg);
-
     chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
 
     while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
@@ -133,7 +130,7 @@ static msg_t ThreadUsb(void *arg) {
         && BDU1.state != BDU_STOP
         && usbConnected())
     {
-      chEvtWaitAny(ALL_EVENTS);
+      chEvtWaitOneTimeout(ALL_EVENTS, TIME_IMMEDIATE);
       chSysLock();
       flags = chEvtGetAndClearFlagsI(&el1);
       chSysUnlock();
@@ -143,7 +140,6 @@ static msg_t ThreadUsb(void *arg) {
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
         read_cmd((BaseChannel *)&BDU1, reset_flags);
-        //chnReadTimeout((BaseChannel *)&BDU1, clear_buff, sizeof(clear_buff), MS2ST(25) );
         pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
       }
     }
@@ -169,9 +165,9 @@ static msg_t ThreadSDU(void *arg) {
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
 
-  while (TRUE) {
-
-    chEvtWaitOne(EVENT_MASK(1));
+  while (TRUE)
+  {
+    chEvtWaitOneTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
     flags_usb = chEvtGetAndClearFlags(&el1);
 
     if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
@@ -189,6 +185,8 @@ static msg_t ThreadSDU(void *arg) {
  */
 int main(void) {
 
+  halInit();
+
   /*!< Independent Watchdog reset flag */
   if (RCC->CSR & RCC_CSR_IWDGRSTF) {
     /* User App did not start properly */
@@ -197,16 +195,31 @@ int main(void) {
   }
 
   /*!< Software Reset flag */
-  else if (RCC->CSR & RCC_CSR_SFTRSTF) {
+  if (RCC->CSR & RCC_CSR_SFTRSTF) {
     /* Bootloader called by user app */
 
     reset_flags |= FLAG_SFTRST;
   }
 
+  /* Check user app */
+  if (checkUserCode(USER_APP_ADDR) != 1) {
+    reset_flags |= FLAG_NOAPP;
+  }
+
+  /* Check boot switch */
+  if (getSwitch1()) {
+    reset_flags |= FLAG_SWITCH;
+  }
+
   /*!< Remove reset flags */
   RCC->CSR |= RCC_CSR_RMVF;
 
-  halInit();
+  if (reset_flags == FLAG_OK)
+  {
+    jumpToUser(USER_APP_ADDR);
+    while (1);
+  }
+
   chSysInit();
 
   pwmStart(&PWMD2, &pwmcfg);
@@ -215,29 +228,6 @@ int main(void) {
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-
-  /* If USB is plugged, probe it, else boot directly */
-  if (usbConnected()) {
-
-    /* Wait one second for the bootloader GUI to send wake up command */
-    chThdSleepMilliseconds(1000);
-  }
-
-  /* If BL did not get wake up command, no reset flags and user app looks good, launch it */
-  if (bl_wake == 0 && reset_flags == FLAG_OK && checkUserCode(USER_APP_ADDR) == 1) {
-
-    pwmStop(&PWMD2);
-    usbStop(&USBD1);
-    startUserApp();
-  }
-
-  if (checkUserCode(USER_APP_ADDR != 1)) {
-    reset_flags |= FLAG_NOAPP;
-  }
-
-  if (bl_wake == 1) {
-    reset_flags |= FLAG_WAKE;
-  }
 
   while (TRUE) {
     chThdSleepMilliseconds(1000);
