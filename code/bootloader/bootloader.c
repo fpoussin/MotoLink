@@ -4,16 +4,15 @@ uint8_t bl_wake = 0;
 
 void startIWDG(void) {
 
-    const uint16_t LsiFreq = 40000;
+    const uint16_t LsiFreq = 40000; // 40KHz
     IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
 
-    IWDG_SetPrescaler(IWDG_Prescaler_32); // 1250
+    IWDG_SetPrescaler(IWDG_Prescaler_32); // 40000/32 = 1250Hz
 
     IWDG_SetReload(LsiFreq/128); // (1/1250)*(40000/128) = 250ms
     IWDG_ReloadCounter();
 
     IWDG_Enable();
-
 }
 
 void startUserApp(void) {

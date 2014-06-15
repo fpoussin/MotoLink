@@ -91,57 +91,35 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadUsb, 512);
-static msg_t ThreadUsb(void *arg) {
+static WORKING_AREA(waThreadBDU, 512);
+static msg_t ThreadBDU(void *arg) {
 
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
-  chRegSetThreadName("USB");
+  chRegSetThreadName("BDU");
+  uint16_t idle_duty = 0;
 
-  /*
-   * Start the Bulk USB driver.
-   */
-  bduObjectInit(&BDU1);
-  bduStart(&BDU1, &bulkusbcfg);
-  pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
+  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
+
+  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
 
   while (TRUE)
   {
-    usbDisconnectBus(serusbcfg.usbp);
+    chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
+    chSysLock();
+    flags = chEvtGetAndClearFlagsI(&el1);
+    chSysUnlock();
 
-    /* Wait for USB connection */
-    while(!usbConnected()) chThdSleepMilliseconds(20);
+    idle_duty = usbConnected() ? 500 : 0;
 
-    /*
-     * Activates the USB driver and then the USB bus pull-up on D+.
-     * Note, a delay is inserted in order to not have to disconnect the cable
-     * after a reset.
-     */
-    chThdSleepMilliseconds(100);
-    usbConnectBus(serusbcfg.usbp);
+    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, idle_duty));
 
-    chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
-
-    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-    while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
-
-    while (USBD1.state != USB_STOP
-        && BDU1.state != BDU_STOP
-        && usbConnected())
+    if (flags & CHN_INPUT_AVAILABLE)
     {
-      chEvtWaitOneTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-      chSysLock();
-      flags = chEvtGetAndClearFlagsI(&el1);
-      chSysUnlock();
-
-      if (flags & CHN_INPUT_AVAILABLE)
-      {
-        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-
-        read_cmd((BaseChannel *)&BDU1, reset_flags);
-        pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 500));
-      }
+      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      read_cmd((BaseChannel *)&BDU1, reset_flags);
     }
   }
   return 0;
@@ -157,11 +135,9 @@ static msg_t ThreadSDU(void *arg) {
   EventListener el1;
   flagsmask_t flags_usb;
   (void)arg;
-  chRegSetThreadName("Serial");
+  chRegSetThreadName("SDU");
   chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
-
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
 
@@ -185,7 +161,8 @@ static msg_t ThreadSDU(void *arg) {
  */
 int main(void) {
 
-  halInit();
+  /* Begin charging switch cap */
+  palInit(&pal_default_config);
 
   /*!< Independent Watchdog reset flag */
   if (RCC->CSR & RCC_CSR_IWDGRSTF) {
@@ -206,12 +183,21 @@ int main(void) {
     reset_flags |= FLAG_NOAPP;
   }
 
+  /* Give enough time for the switch's debounce cap to charge
+   * Given the 25<->55k pullup and 100nf cap,
+   * it takes between 2.5ms to 5.5ms to fully charge */
+  uint32_t i = 0;
+  while (i++ < 200000) // 2.8ms * 3
+  {
+    asm ("nop");
+  }
+
   /* Check boot switch */
   if (getSwitch1()) {
     reset_flags |= FLAG_SWITCH;
   }
 
-  /*!< Remove reset flags */
+  /*!< Remove hardware reset flags */
   RCC->CSR |= RCC_CSR_RMVF;
 
   if (reset_flags == FLAG_OK)
@@ -220,16 +206,32 @@ int main(void) {
     while (1);
   }
 
+  halInit();
   chSysInit();
 
   pwmStart(&PWMD2, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
 
+  bduObjectInit(&BDU1);
+  sduObjectInit(&SDU1);
+
+  bduStart(&BDU1, &bulkusbcfg);
+  sduStart(&SDU1, &serusbcfg);;
+
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
-  chThdCreateStatic(waThreadUsb, sizeof(waThreadUsb), NORMALPRIO+1, ThreadUsb, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
-  while (TRUE) {
-    chThdSleepMilliseconds(1000);
-  }
+  while (TRUE)    {
+      chThdSleepMilliseconds(100);
+
+      if (usbConnected())
+      {
+        usbConnectBus(serusbcfg.usbp);
+      }
+      else
+      {
+        usbDisconnectBus(serusbcfg.usbp);
+      }
+    }
 }

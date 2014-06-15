@@ -87,8 +87,8 @@ static PWMConfig pwmcfg = {
  * USB Bulk thread, times are in milliseconds.
  */
 static WORKING_AREA(waThreadBDU, 256);
-static msg_t ThreadBDU(void *arg) {
-
+static msg_t ThreadBDU(void *arg)
+{
   EventListener el1;
   flagsmask_t flags;
   (void)arg;
