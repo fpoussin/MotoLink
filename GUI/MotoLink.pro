@@ -62,6 +62,12 @@ RESOURCES += \
 TRANSLATIONS = res/motolink_fr.ts
 CODECFORTR = UTF-8
 
+buildscripts.target = .buildscripts
+buildscripts.commands = cd ../GUI/res; python makefw.py -v 0.1
+
+QMAKE_EXTRA_TARGETS += buildscripts
+PRE_TARGETDEPS += .buildscripts
+
 # Icon for windows
 win32:RC_FILE = res/motolink.rc
 # OSX

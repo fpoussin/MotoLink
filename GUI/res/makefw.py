@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
-import base64
+from base64 import b64encode
 import xml.etree.cElementTree as ET
 from textwrap import fill
 import argparse
+from datetime import datetime
 
 FIRMWARE_PATH = "../../code/app/build/motolink.bin"
 XML_PATH = "firmware.xml"
@@ -39,7 +40,7 @@ def indent(elem, level=0):
 
 
 with open(args.file, "rb") as bin_file:
-    encoded = base64.b64encode(bin_file.read())
+    encoded = b64encode(bin_file.read())
 
 top = ET.Element('firmware')
 comment = ET.Comment('Generated from makefw.py')
@@ -48,6 +49,9 @@ top.append(comment)
 info = ET.SubElement(top, 'info')
 rev = ET.SubElement(info, 'board-rev')
 rev.text = args.revision
+
+date = ET.SubElement(info, 'build-date')
+date.text = str(datetime.utcnow())
 
 version = ET.SubElement(info, 'version')
 version.text = args.version
