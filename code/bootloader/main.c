@@ -184,10 +184,10 @@ int main(void) {
   }
 
   /* Give enough time for the switch's debounce cap to charge
-   * Given the 25<->55k pullup and 100nf cap,
-   * it takes between 2.5ms to 5.5ms to fully charge */
+   * Given the 25<->55k pullup, 100nf cap, 0.8v threshold voltage
+   * it takes 0.7ms<->1.5ms to reach the High level voltage */
   uint32_t i = 0;
-  while (i++ < 200000) // 2.8ms * 3
+  while (i++ < 100000) // 1.4ms * 3
   {
     asm ("nop");
   }

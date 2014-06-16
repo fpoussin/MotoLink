@@ -2,6 +2,7 @@
 
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
+uint16_t data_knock[sizeof(samples_sensors)/2];
 
 sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
@@ -121,11 +122,30 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
+void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+
+  (void)adcp;
+  uint32_t i;
+  const uint16_t size = sizeof(data_knock);
+  const uint32_t toggle = 0x80008000; /* Convert two 16bits to signed */
+  uint32_t* sample = (uint32_t*)buffer+n;
+  uint32_t* data = (uint32_t*)data_knock;
+
+  /* Convert to signed 32bits at a time */
+  for (i=0; i<size; i+=8)
+  {
+    *(data+i) = *(sample+i) ^toggle;
+    *((data+i)+4) = *((sample+i)+4) ^toggle;
+  }
+
+  // Do FFT + Mag in a thread
+}
+
 /* ADC34 Clk is 72Mhz/32 2.25Mhz  */
 const ADCConversionGroup adcgrpcfg_knock = {
   TRUE,
   ADC_GRP2_NUM_CHANNELS,
-  NULL,
+  knockCallback,
   NULL,
   0,                                /* CFGR    */
   ADC_TR(0, 4095),                  /* TR1     */
