@@ -185,6 +185,42 @@ static msg_t ThreadSensors(void *arg) {
   return 0;
 }
 
+/*
+ * Knock processing thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThreadKnock, 64);
+static msg_t ThreadKnock(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("Knock");
+
+  q15_t maxValue = 0;
+  uint32_t maxIndex = 0;
+
+  /* Initialize the CFFT/CIFFT module */
+  arm_cfft_radix4_instance_q15 S;
+  arm_cfft_radix4_init_q15(&S, FFT_SIZE, 0, 1);
+
+  while (TRUE)
+  {
+    while (!knockDataReady) chThdSleepMilliseconds(5);
+    knockDataReady = false;
+
+    /* Process the data through the CFFT/CIFFT module */
+    arm_cfft_radix4_q15(&S, data_knock);
+
+    /* Process the data through the Complex Magnitude Module for
+    calculating the magnitude at each bin */
+    memset(output_knock, 0, sizeof(output_knock));
+    arm_cmplx_mag_q15(data_knock, output_knock, FFT_SIZE/2); // We only care about the first half
+    arm_max_q15(output_knock, FFT_SIZE/2, &maxValue, &maxIndex); // We only care about the first half
+
+    sensors_data.knock_value = maxValue;
+    sensors_data.knock_freq = (SAMPLING_RATE*maxIndex)/FFT_SIZE;
+  }
+  return 0;
+}
+
 
 /*
  * Application entry point.
@@ -239,6 +275,7 @@ int main(void) {
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
+  chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

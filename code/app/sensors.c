@@ -2,13 +2,15 @@
 
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
-uint16_t data_knock[sizeof(samples_sensors)/2];
+q15_t data_knock[sizeof(samples_sensors)/2];
+q15_t output_knock[sizeof(samples_sensors)/2];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 VirtualTimer capture_vt;
+bool knockDataReady = false;
 
 void capture1_cb(TIMCAPDriver *timcapp)
 {
@@ -125,7 +127,7 @@ const ADCConversionGroup adcgrpcfg_sensors = {
 void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
-  uint32_t i;
+  uint16_t i;
   const uint16_t size = sizeof(data_knock);
   const uint32_t toggle = 0x80008000; /* Convert two 16bits to signed */
   uint32_t* sample = (uint32_t*)buffer+n;
@@ -139,6 +141,7 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   }
 
   // Do FFT + Mag in a thread
+  knockDataReady = true;
 }
 
 /* ADC34 Clk is 72Mhz/32 2.25Mhz  */

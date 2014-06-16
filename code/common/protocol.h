@@ -47,6 +47,8 @@ typedef struct {
   uint16_t an9;
   uint16_t freq1;
   uint16_t freq2;
+  uint16_t knock_value;
+  uint16_t knock_freq;
 } sensors_t;
 
 #endif

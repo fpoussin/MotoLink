@@ -70,6 +70,7 @@ include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
+include dsp_lib/dsp.mk
 
 # Define linker script file here
 LDSCRIPT= link.ld
@@ -113,7 +114,7 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+INCDIR = $(PORTINC) $(KERNINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(DRIVERINC) \
          $(CHIBIOS)/os/various
 
@@ -172,7 +173,7 @@ DADEFS =
 DINCDIR =
 
 # List the default directory to look for the libraries here
-DLIBDIR =
+DLIBDIR = 
 
 # List all default libraries here
 DLIBS =
@@ -186,7 +187,7 @@ DLIBS =
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DARM_MATH_CM4
 
 # Define ASM defines here
 UADEFS =
@@ -195,10 +196,10 @@ UADEFS =
 UINCDIR =
 
 # List the user directory to look for the libraries here
-ULIBDIR =
+ULIBDIR = dsp_lib
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lmath_cm4f -lm
 
 #
 # End of user defines
