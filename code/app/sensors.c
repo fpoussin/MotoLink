@@ -105,7 +105,7 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   NULL,
   0,                        /* CFGR    */
   ADC_TR(0, 4095),          /* TR1     */
-  0, /* CCR     */
+  ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5) | /* Sampling rate = 562000/(19.5+12.5) = 17.5Khz  */
     ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5) |
