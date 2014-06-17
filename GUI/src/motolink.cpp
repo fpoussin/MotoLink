@@ -119,7 +119,6 @@ quint8 Motolink::getMode(void)
     QByteArray send, recv;
     prepareSimpleCmd(&send, CMD_GET_MODE);
 
-
     if (mUsb->write(&send, send.size()) < send.size())
     {
         return 0;

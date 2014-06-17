@@ -238,6 +238,8 @@ int main(void) {
   chSysInit();
   timcapInit();
 
+  usbDisconnectBus(serusbcfg.usbp);
+
   gptStart(&GPTD1, &gpt1Cfg);
   gptStartContinuous(&GPTD1, 5000);
 
@@ -261,6 +263,9 @@ int main(void) {
 
   /* Start remaining peripherals */
   dacStart(&DACD1, &daccfg1);
+
+  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; //erase register
+  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // set precalers
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);

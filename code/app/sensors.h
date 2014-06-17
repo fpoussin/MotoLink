@@ -8,12 +8,13 @@
 #include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      1
+#define ADC_GRP1_BUF_DEPTH      20
 
 #define ADC_GRP2_NUM_CHANNELS   1
 #define ADC_GRP2_BUF_DEPTH      512
 
-#define VOLT_RATIO 1.611328125f
+#define AN_RATIO 1.611328125f
+#define VBAT_RATIO AN_RATIO /* TODO: Fix resistor values */
 
 #define FFT_SIZE 256 // 4096-1024-256-64-16 lengths supported by DSP library
 #define SAMPLING_RATE 112500

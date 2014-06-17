@@ -94,10 +94,37 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
   (void)n;
+  uint16_t i, pos;
+  float an[3] = {0.0,0.0,0.0};
+  const uint8_t len = ADC_GRP1_BUF_DEPTH;
+/*
+  for (i=0; i<len; i++)
+  {
+    pos = i * ADC_GRP1_NUM_CHANNELS;
+    an[0] += (float)buffer[pos];
+    an[1] += (float)buffer[pos+1];
+    an[2] += (float)buffer[pos+2];
+  }
 
-  sensors_data.an7 = (float)buffer[0]*VOLT_RATIO;
-  sensors_data.an8 = (float)buffer[1]*VOLT_RATIO;
-  sensors_data.an9 = (float)buffer[2]*VOLT_RATIO;
+  an[0] *= VBAT_RATIO;
+  an[1] *= AN_RATIO;
+  an[2] *= AN_RATIO;
+*/
+
+  an[0]  = (buffer[0] + buffer[3] + buffer[6] + buffer[9]
+           + buffer[12] + buffer[15] + buffer[18] + buffer[21])*VBAT_RATIO;
+  an[1]  = (buffer[1] + buffer[4] + buffer[7] + buffer[10]
+           + buffer[13] + buffer[16] + buffer[19] + buffer[22])*AN_RATIO;
+  an[2]  = (buffer[2] + buffer[5] + buffer[8] + buffer[11]
+           + buffer[14] + buffer[17] + buffer[20] + buffer[23])*AN_RATIO;
+
+  an[0] /= 8;
+  an[1] /= 8;
+  an[2] /= 8;
+
+  sensors_data.an7 = an[0];
+  sensors_data.an8 = an[1];
+  sensors_data.an9 = an[2];
 }
 
 /* ADC12 Clk is 72Mhz/128 562Khz  */
