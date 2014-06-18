@@ -108,9 +108,7 @@ static msg_t ThreadBDU(void *arg) {
   while (TRUE)
   {
     chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-    chSysLock();
-    flags = chEvtGetAndClearFlagsI(&el1);
-    chSysUnlock();
+    flags = chEvtGetAndClearFlags(&el1);
 
     idle_duty = usbConnected() ? 500 : 0;
 
