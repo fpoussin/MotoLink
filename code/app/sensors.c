@@ -95,22 +95,27 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   (void)adcp;
   (void)n;
   uint16_t i, pos;
-  float an[3] = {0.0,0.0,0.0};
+  uint32_t an[3] = {0, 0, 0};
   const uint8_t len = ADC_GRP1_BUF_DEPTH;
-/*
+
   for (i=0; i<len; i++)
   {
     pos = i * ADC_GRP1_NUM_CHANNELS;
-    an[0] += (float)buffer[pos];
-    an[1] += (float)buffer[pos+1];
-    an[2] += (float)buffer[pos+2];
+    an[0] += buffer[pos];
+    an[1] += buffer[pos+1];
+    an[2] += buffer[pos+2];
   }
+
+  /* n >> 5 */
+  an[0] /= len;
+  an[1] /= len;
+  an[2] /= len;
 
   an[0] *= VBAT_RATIO;
   an[1] *= AN_RATIO;
   an[2] *= AN_RATIO;
-*/
 
+/*
   an[0]  = (buffer[0] + buffer[3] + buffer[6] + buffer[9]
            + buffer[12] + buffer[15] + buffer[18] + buffer[21])*VBAT_RATIO;
   an[1]  = (buffer[1] + buffer[4] + buffer[7] + buffer[10]
@@ -121,7 +126,7 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   an[0] /= 8;
   an[1] /= 8;
   an[2] /= 8;
-
+*/
   sensors_data.an7 = an[0];
   sensors_data.an8 = an[1];
   sensors_data.an9 = an[2];

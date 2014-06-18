@@ -117,7 +117,7 @@ static msg_t ThreadBDU(void *arg) {
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-      read_cmd((BaseChannel *)&BDU1, reset_flags);
+      readCommand((BaseChannel *)&BDU1, reset_flags);
     }
   }
   return 0;

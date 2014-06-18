@@ -1,8 +1,8 @@
-#include "communication.h"
+#include "commands.h"
 #include "common.h"
 #include "usb_config.h"
 
-uint8_t read_cmd(BaseChannel *chn)
+uint8_t readCommand(BaseChannel *chn)
 {
   cmd_header_t header;
   uint8_t data_buf[DATA_BUF_SIZE];

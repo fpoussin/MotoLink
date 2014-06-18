@@ -3,12 +3,12 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "communication.h"
+#include "protocol.h"
 #include "timcap.h"
 #include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      20
+#define ADC_GRP1_BUF_DEPTH      16
 
 #define ADC_GRP2_NUM_CHANNELS   1
 #define ADC_GRP2_BUF_DEPTH      512

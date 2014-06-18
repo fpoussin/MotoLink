@@ -19,12 +19,18 @@
 #include "ch.h"
 #include "hal.h"
 #include "usb_config.h"
-#include "communication.h"
+#include "commands.h"
 #include "sensors.h"
 
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
+
+const CANConfig cancfg = {
+  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
+  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
+  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
+};
 
 void iwdgGptCb(GPTDriver *gptp)
 {
@@ -53,7 +59,7 @@ static const DACConfig daccfg1 = {
 /*
  * DAC conversion groups, with callbacks.
  */
-static const DACConversionGroup dacconvgrp1 = {
+const DACConversionGroup dacconvgrp1 = {
   1, /* Channels */
   NULL, /* End of transfer callback */
   NULL, /* Error callback */
@@ -69,7 +75,7 @@ const SerialConfig uartCfg =
 };
 
 
-static PWMConfig pwmcfg = {
+PWMConfig pwmcfg = {
   10000,    /* 10kHz PWM clock frequency.   */
   50,      /* Initial PWM period 10mS.       */
   NULL,
@@ -83,11 +89,32 @@ static PWMConfig pwmcfg = {
   0
 };
 
+WORKING_AREA(waThreadCAN, 256);
+msg_t ThreadCAN(void *p)
+{
+  EventListener el;
+  CANRxFrame rxmsg;
+
+  (void)p;
+  chRegSetThreadName("CAN Bus");
+  chEvtRegister(&CAND1.rxfull_event, &el, 0);
+
+  while(!chThdShouldTerminate()) {
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE) == 0)
+      continue;
+    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+      /* Process message.*/
+    }
+  }
+  chEvtUnregister(&CAND1.rxfull_event, &el);
+  return 0;
+}
+
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBDU, 256);
-static msg_t ThreadBDU(void *arg)
+WORKING_AREA(waThreadBDU, 256);
+msg_t ThreadBDU(void *arg)
 {
   EventListener el1;
   flagsmask_t flags;
@@ -112,7 +139,7 @@ static msg_t ThreadBDU(void *arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-      read_cmd((BaseChannel *)&BDU1);
+      readCommand((BaseChannel *)&BDU1);
     }
   }
   return 0;
@@ -121,9 +148,9 @@ static msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadSDU, 256);
-static msg_t ThreadSDU(void *arg) {
-
+WORKING_AREA(waThreadSDU, 256);
+msg_t ThreadSDU(void *arg)
+{
   uint8_t buffer[SERIAL_BUFFERS_SIZE];
   EventListener el1, el2;
   flagsmask_t flags_usb, flags_uart;
@@ -170,9 +197,9 @@ static msg_t ThreadSDU(void *arg) {
 /*
  * Sensors thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadSensors, 32);
-static msg_t ThreadSensors(void *arg) {
-
+WORKING_AREA(waThreadSensors, 32);
+msg_t ThreadSensors(void *arg)
+{
   (void)arg;
   chRegSetThreadName("Sensors");
   while (TRUE)
@@ -186,9 +213,9 @@ static msg_t ThreadSensors(void *arg) {
 /*
  * Knock processing thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadKnock, 64);
-static msg_t ThreadKnock(void *arg) {
-
+WORKING_AREA(waThreadKnock, 64);
+msg_t ThreadKnock(void *arg)
+{
   (void)arg;
   chRegSetThreadName("Knock");
 
@@ -223,8 +250,8 @@ static msg_t ThreadKnock(void *arg) {
 /*
  * Application entry point.
  */
-int main(void) {
-
+int main(void)
+{
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -258,6 +285,7 @@ int main(void) {
   usbStart(serusbcfg.usbp, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
   bduStart(&BDU1, &bulkusbcfg);
+  canStart(&CAND1, &cancfg);
 
   /* Start remaining peripherals */
   dacStart(&DACD1, &daccfg1);
@@ -279,6 +307,7 @@ int main(void) {
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
   chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
+  chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
