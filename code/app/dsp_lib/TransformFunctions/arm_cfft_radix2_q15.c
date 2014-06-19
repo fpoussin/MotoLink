@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------   
-* Copyright (C) 2010 ARM Limited. All rights reserved.   
+* Copyright (C) 2010-2013 ARM Limited. All rights reserved.   
 *   
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
+* $Date:        16. October 2013  
+* $Revision: 	V1.4.2  
 *   
 * Project: 	    CMSIS DSP Library   
 * Title:	    arm_cfft_radix2_q15.c   
@@ -12,30 +12,59 @@
 *   
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
 *  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 0.0.3  2010/03/10    
-*    Initial version   
+* Redistribution and use in source and binary forms, with or without 
+* modification, are permitted provided that the following conditions
+* are met:
+*   - Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+*   - Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in
+*     the documentation and/or other materials provided with the 
+*     distribution.
+*   - Neither the name of ARM LIMITED nor the names of its contributors
+*     may be used to endorse or promote products derived from this
+*     software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+* COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.   
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
+
+void arm_radix2_butterfly_q15(
+  q15_t * pSrc,
+  uint32_t fftLen,
+  q15_t * pCoef,
+  uint16_t twidCoefModifier);
+
+void arm_radix2_butterfly_inverse_q15(
+  q15_t * pSrc,
+  uint32_t fftLen,
+  q15_t * pCoef,
+  uint16_t twidCoefModifier);
+	
+void arm_bitreversal_q15(
+  q15_t * pSrc,
+  uint32_t fftLen,
+  uint16_t bitRevFactor,
+  uint16_t * pBitRevTab);
 
 /**   
  * @ingroup groupTransforms   
  */
 
 /**   
- * @defgroup Radix2_CFFT_CIFFT Radix-2 Complex FFT Functions   
- *   
- * \par   
- * Complex Fast Fourier Transform(CFFT) and Complex Inverse Fast Fourier Transform(CIFFT) is an efficient algorithm to compute Discrete Fourier Transform(DFT) and Inverse Discrete Fourier Transform(IDFT).   
- * Computational complexity of CFFT reduces drastically when compared to DFT.    
- */
-
-
-/**   
- * @addtogroup Radix2_CFFT_CIFFT   
+ * @addtogroup ComplexFFT   
  * @{   
  */
 
@@ -67,7 +96,7 @@ void arm_cfft_radix2_q15(
 }
 
 /**   
- * @} end of Radix2_CFFT_CIFFT group   
+ * @} end of ComplexFFT group   
  */
 
 void arm_radix2_butterfly_q15(
@@ -76,10 +105,10 @@ void arm_radix2_butterfly_q15(
   q15_t * pCoef,
   uint16_t twidCoefModifier)
 {
-#ifndef ARM_MATH_CM0
+#ifndef ARM_MATH_CM0_FAMILY
 
-  int i, j, k, l;
-  int n1, n2, ia;
+  unsigned i, j, k, l;
+  unsigned n1, n2, ia;
   q15_t in;
   q31_t T, S, R;
   q31_t coeff, out1, out2;
@@ -101,12 +130,12 @@ void arm_radix2_butterfly_q15(
     l = i + n2;
 
     T = _SIMD32_OFFSET(pSrc + (2 * i));
-    in = ((int16_t) (T & 0xFFFF)) >> 2;
-    T = ((T >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (T & 0xFFFF)) >> 1;
+    T = ((T >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     S = _SIMD32_OFFSET(pSrc + (2 * l));
-    in = ((int16_t) (S & 0xFFFF)) >> 2;
-    S = ((S >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (S & 0xFFFF)) >> 1;
+    S = ((S >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     R = __QSUB16(T, S);
 
@@ -136,12 +165,12 @@ void arm_radix2_butterfly_q15(
     l++;
 
     T = _SIMD32_OFFSET(pSrc + (2 * i));
-    in = ((int16_t) (T & 0xFFFF)) >> 2;
-    T = ((T >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (T & 0xFFFF)) >> 1;
+    T = ((T >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     S = _SIMD32_OFFSET(pSrc + (2 * l));
-    in = ((int16_t) (S & 0xFFFF)) >> 2;
-    S = ((S >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (S & 0xFFFF)) >> 1;
+    S = ((S >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     R = __QSUB16(T, S);
 
@@ -283,8 +312,8 @@ void arm_radix2_butterfly_q15(
 
 #else
 
-  int i, j, k, l;
-  int n1, n2, ia;
+  unsigned i, j, k, l;
+  unsigned n1, n2, ia;
   q15_t xt, yt, cosVal, sinVal;
 
 
@@ -306,12 +335,12 @@ void arm_radix2_butterfly_q15(
     for (i = j; i < fftLen; i += n1)
     {
       l = i + n2;
-      xt = (pSrc[2 * i] >> 2u) - (pSrc[2 * l] >> 2u);
-      pSrc[2 * i] = ((pSrc[2 * i] >> 2u) + (pSrc[2 * l] >> 2u)) >> 1u;
+      xt = (pSrc[2 * i] >> 1u) - (pSrc[2 * l] >> 1u);
+      pSrc[2 * i] = ((pSrc[2 * i] >> 1u) + (pSrc[2 * l] >> 1u)) >> 1u;
 
-      yt = (pSrc[2 * i + 1] >> 2u) - (pSrc[2 * l + 1] >> 2u);
+      yt = (pSrc[2 * i + 1] >> 1u) - (pSrc[2 * l + 1] >> 1u);
       pSrc[2 * i + 1] =
-        ((pSrc[2 * l + 1] >> 2u) + (pSrc[2 * i + 1] >> 2u)) >> 1u;
+        ((pSrc[2 * l + 1] >> 1u) + (pSrc[2 * i + 1] >> 1u)) >> 1u;
 
       pSrc[2u * l] = (((int16_t) (((q31_t) xt * cosVal) >> 16)) +
                       ((int16_t) (((q31_t) yt * sinVal) >> 16)));
@@ -394,7 +423,7 @@ void arm_radix2_butterfly_q15(
 
   twidCoefModifier = twidCoefModifier << 1u;
 
-#endif //             #ifndef ARM_MATH_CM0
+#endif //             #ifndef ARM_MATH_CM0_FAMILY
 
 }
 
@@ -405,10 +434,10 @@ void arm_radix2_butterfly_inverse_q15(
   q15_t * pCoef,
   uint16_t twidCoefModifier)
 {
-#ifndef ARM_MATH_CM0
+#ifndef ARM_MATH_CM0_FAMILY
 
-  int i, j, k, l;
-  int n1, n2, ia;
+  unsigned i, j, k, l;
+  unsigned n1, n2, ia;
   q15_t in;
   q31_t T, S, R;
   q31_t coeff, out1, out2;
@@ -430,12 +459,12 @@ void arm_radix2_butterfly_inverse_q15(
     l = i + n2;
 
     T = _SIMD32_OFFSET(pSrc + (2 * i));
-    in = ((int16_t) (T & 0xFFFF)) >> 2;
-    T = ((T >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (T & 0xFFFF)) >> 1;
+    T = ((T >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     S = _SIMD32_OFFSET(pSrc + (2 * l));
-    in = ((int16_t) (S & 0xFFFF)) >> 2;
-    S = ((S >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (S & 0xFFFF)) >> 1;
+    S = ((S >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     R = __QSUB16(T, S);
 
@@ -464,12 +493,12 @@ void arm_radix2_butterfly_inverse_q15(
     l++;
 
     T = _SIMD32_OFFSET(pSrc + (2 * i));
-    in = ((int16_t) (T & 0xFFFF)) >> 2;
-    T = ((T >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (T & 0xFFFF)) >> 1;
+    T = ((T >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     S = _SIMD32_OFFSET(pSrc + (2 * l));
-    in = ((int16_t) (S & 0xFFFF)) >> 2;
-    S = ((S >> 2) & 0xFFFF0000) | (in & 0xFFFF);
+    in = ((int16_t) (S & 0xFFFF)) >> 1;
+    S = ((S >> 1) & 0xFFFF0000) | (in & 0xFFFF);
 
     R = __QSUB16(T, S);
 
@@ -603,8 +632,8 @@ void arm_radix2_butterfly_inverse_q15(
 #else
 
 
-  int i, j, k, l;
-  int n1, n2, ia;
+  unsigned i, j, k, l;
+  unsigned n1, n2, ia;
   q15_t xt, yt, cosVal, sinVal;
 
   //N = fftLen; 
@@ -625,12 +654,12 @@ void arm_radix2_butterfly_inverse_q15(
     for (i = j; i < fftLen; i += n1)
     {
       l = i + n2;
-      xt = (pSrc[2 * i] >> 2u) - (pSrc[2 * l] >> 2u);
-      pSrc[2 * i] = ((pSrc[2 * i] >> 2u) + (pSrc[2 * l] >> 2u)) >> 1u;
+      xt = (pSrc[2 * i] >> 1u) - (pSrc[2 * l] >> 1u);
+      pSrc[2 * i] = ((pSrc[2 * i] >> 1u) + (pSrc[2 * l] >> 1u)) >> 1u;
 
-      yt = (pSrc[2 * i + 1] >> 2u) - (pSrc[2 * l + 1] >> 2u);
+      yt = (pSrc[2 * i + 1] >> 1u) - (pSrc[2 * l + 1] >> 1u);
       pSrc[2 * i + 1] =
-        ((pSrc[2 * l + 1] >> 2u) + (pSrc[2 * i + 1] >> 2u)) >> 1u;
+        ((pSrc[2 * l + 1] >> 1u) + (pSrc[2 * i + 1] >> 1u)) >> 1u;
 
       pSrc[2u * l] = (((int16_t) (((q31_t) xt * cosVal) >> 16)) -
                       ((int16_t) (((q31_t) yt * sinVal) >> 16)));
@@ -707,6 +736,6 @@ void arm_radix2_butterfly_inverse_q15(
   }                             // groups loop end 
 
 
-#endif //             #ifndef ARM_MATH_CM0
+#endif //             #ifndef ARM_MATH_CM0_FAMILY
 
 }

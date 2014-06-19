@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
+* Copyright (C) 2010-2013 ARM Limited. All rights reserved.    
 *    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
+* $Date:        16. October 2013  
+* $Revision: 	V1.4.2  
 *    
 * Project: 	    CMSIS DSP Library    
 * Title:	    arm_rfft_q15.c    
@@ -12,32 +12,54 @@
 *    
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
 *  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated    
-*    
-* Version 0.0.7  2010/06/10     
-*    Misra-C changes done    
+* Redistribution and use in source and binary forms, with or without 
+* modification, are permitted provided that the following conditions
+* are met:
+*   - Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+*   - Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in
+*     the documentation and/or other materials provided with the 
+*     distribution.
+*   - Neither the name of ARM LIMITED nor the names of its contributors
+*     may be used to endorse or promote products derived from this
+*     software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+* COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.     
 * -------------------------------------------------------------------- */
-
 
 #include "arm_math.h"
 
-/*--------------------------------------------------------------------    
+void arm_radix4_butterfly_q15(
+  q15_t * pSrc16,
+  uint32_t fftLen,
+  q15_t * pCoef16,
+  uint32_t twidCoefModifier);
+
+void arm_radix4_butterfly_inverse_q15(
+  q15_t * pSrc16,
+  uint32_t fftLen,
+  q15_t * pCoef16,
+  uint32_t twidCoefModifier);
+
+void arm_bitreversal_q15(
+  q15_t * pSrc,
+  uint32_t fftLen,
+  uint16_t bitRevFactor,
+  uint16_t * pBitRevTab);
+	
+	/*--------------------------------------------------------------------    
 *		Internal functions prototypes    
 --------------------------------------------------------------------*/
 
@@ -58,7 +80,7 @@ void arm_split_rifft_q15(
   uint32_t modifier);
 
 /**    
- * @addtogroup RFFT_RIFFT    
+ * @addtogroup RealFFT    
  * @{    
  */
 
@@ -86,6 +108,7 @@ void arm_rfft_q15(
   q15_t * pDst)
 {
   const arm_cfft_radix4_instance_q15 *S_CFFT = S->pCfft;
+  uint32_t i;
 
   /* Calculation of RIFFT of input */
   if(S->ifftFlagR == 1u)
@@ -104,6 +127,11 @@ void arm_rfft_q15(
     {
       arm_bitreversal_q15(pDst, S_CFFT->fftLen,
                           S_CFFT->bitRevFactor, S_CFFT->pBitRevTable);
+    }
+    
+    for(i=0;i<S->fftLenReal;i++)
+    {
+      pDst[i] = pDst[i] << 1;
     }
   }
   else
@@ -128,7 +156,7 @@ void arm_rfft_q15(
 }
 
   /**    
-   * @} end of RFFT_RIFFT group    
+   * @} end of RealFFT group    
    */
 
 /**    
@@ -166,7 +194,7 @@ void arm_split_rfft_q15(
   pSrc1 = &pSrc[2];
   pSrc2 = &pSrc[(2u * fftLen) - 2u];
 
-#ifndef ARM_MATH_CM0
+#ifndef ARM_MATH_CM0_FAMILY
 
   /* Run the below code for Cortex-M4 and Cortex-M3 */
 
@@ -199,7 +227,7 @@ void arm_split_rfft_q15(
 
     /* pSrc[2 * n - 2 * i] * pBTable[2 * i] +    
        pSrc[2 * n - 2 * i + 1] * pBTable[2 * i + 1]) */
-    outR = __SMLAD(*__SIMD32(pSrc2), *__SIMD32(pCoefB), outR) >> 15u;
+    outR = __SMLAD(*__SIMD32(pSrc2), *__SIMD32(pCoefB), outR) >> 16u;
 
     /* pIn[2 * n - 2 * i] * pBTable[2 * i + 1] -    
        pIn[2 * n - 2 * i + 1] * pBTable[2 * i] */
@@ -219,11 +247,11 @@ void arm_split_rfft_q15(
 
     /* write output */
     pDst[2u * i] = (q15_t) outR;
-    pDst[(2u * i) + 1u] = outI >> 15u;
+    pDst[(2u * i) + 1u] = outI >> 16u;
 
     /* write complex conjugate output */
     pDst[(4u * fftLen) - (2u * i)] = (q15_t) outR;
-    pDst[((4u * fftLen) - (2u * i)) + 1u] = -(outI >> 15u);
+    pDst[((4u * fftLen) - (2u * i)) + 1u] = -(outI >> 16u);
 
     /* update coefficient pointer */
     pCoefB = pCoefB + (2u * modifier);
@@ -233,10 +261,10 @@ void arm_split_rfft_q15(
 
   }
 
-  pDst[2u * fftLen] = pSrc[0] - pSrc[1];
+  pDst[2u * fftLen] = (pSrc[0] - pSrc[1]) >> 1;
   pDst[(2u * fftLen) + 1u] = 0;
 
-  pDst[0] = pSrc[0] + pSrc[1];
+  pDst[0] = (pSrc[0] + pSrc[1]) >> 1;
   pDst[1] = 0;
 
 
@@ -257,7 +285,7 @@ void arm_split_rfft_q15(
     outR = *pSrc1 * *pCoefA;
     outR = outR - (*(pSrc1 + 1) * *(pCoefA + 1));
     outR = outR + (*pSrc2 * *pCoefB);
-    outR = (outR + (*(pSrc2 + 1) * *(pCoefB + 1))) >> 15;
+    outR = (outR + (*(pSrc2 + 1) * *(pCoefB + 1))) >> 16;
 
 
     /* outI = (pIn[2 * i + 1] * pATable[2 * i] + pIn[2 * i] * pATable[2 * i + 1] +    
@@ -276,11 +304,11 @@ void arm_split_rfft_q15(
 
     /* write output */
     pDst[2u * i] = (q15_t) outR;
-    pDst[(2u * i) + 1u] = outI >> 15u;
+    pDst[(2u * i) + 1u] = outI >> 16u;
 
     /* write complex conjugate output */
     pDst[(4u * fftLen) - (2u * i)] = (q15_t) outR;
-    pDst[((4u * fftLen) - (2u * i)) + 1u] = -(outI >> 15u);
+    pDst[((4u * fftLen) - (2u * i)) + 1u] = -(outI >> 16u);
 
     /* update coefficient pointer */
     pCoefB = pCoefB + (2u * modifier);
@@ -290,13 +318,13 @@ void arm_split_rfft_q15(
 
   }
 
-  pDst[2u * fftLen] = pSrc[0] - pSrc[1];
+  pDst[2u * fftLen] = (pSrc[0] - pSrc[1]) >> 1;
   pDst[(2u * fftLen) + 1u] = 0;
 
-  pDst[0] = pSrc[0] + pSrc[1];
+  pDst[0] = (pSrc[0] + pSrc[1]) >> 1;
   pDst[1] = 0;
 
-#endif /* #ifndef ARM_MATH_CM0 */
+#endif /* #ifndef ARM_MATH_CM0_FAMILY */
 
 }
 
@@ -332,7 +360,7 @@ void arm_split_rifft_q15(
   pSrc1 = &pSrc[0];
   pSrc2 = &pSrc[2u * fftLen];
 
-#ifndef ARM_MATH_CM0
+#ifndef ARM_MATH_CM0_FAMILY
 
   /* Run the below code for Cortex-M4 and Cortex-M3 */
 
@@ -369,7 +397,7 @@ void arm_split_rifft_q15(
 
     /* pIn[2 * i] * pATable[2 * i] + pIn[2 * i + 1] * pATable[2 * i + 1] +    
        pIn[2 * n - 2 * i] * pBTable[2 * i] */
-    outR = __SMLAD(*__SIMD32(pSrc1), *__SIMD32(pCoefA), outR) >> 15u;
+    outR = __SMLAD(*__SIMD32(pSrc1), *__SIMD32(pCoefA), outR) >> 16u;
 
     /*    
        -pIn[2 * n - 2 * i] * pBTable[2 * i + 1] +    
@@ -391,11 +419,11 @@ void arm_split_rifft_q15(
 
 #ifndef ARM_MATH_BIG_ENDIAN
 
-    *__SIMD32(pDst1)++ = __PKHBT(outR, (outI >> 15u), 16);
+    *__SIMD32(pDst1)++ = __PKHBT(outR, (outI >> 16u), 16);
 
 #else
 
-    *__SIMD32(pDst1)++ = __PKHBT((outI >> 15u), outR, 16);
+    *__SIMD32(pDst1)++ = __PKHBT((outI >> 16u), outR, 16);
 
 #endif /*      #ifndef ARM_MATH_BIG_ENDIAN     */
 
@@ -426,7 +454,7 @@ void arm_split_rifft_q15(
     outR = *pSrc2 * *pCoefB;
     outR = outR - (*(pSrc2 + 1) * *(pCoefB + 1));
     outR = outR + (*pSrc1 * *pCoefA);
-    outR = (outR + (*(pSrc1 + 1) * *(pCoefA + 1))) >> 15;
+    outR = (outR + (*(pSrc1 + 1) * *(pCoefA + 1))) >> 16;
 
     /*   
        outI = (pIn[2 * i + 1] * pATable[2 * i] - pIn[2 * i] * pATable[2 * i + 1] -   
@@ -445,7 +473,7 @@ void arm_split_rifft_q15(
 
     /* write output */
     *pDst1++ = (q15_t) outR;
-    *pDst1++ = (q15_t) (outI >> 15);
+    *pDst1++ = (q15_t) (outI >> 16);
 
     /* update coefficient pointer */
     pCoefB = pCoefB + (2u * modifier);
@@ -455,6 +483,6 @@ void arm_split_rifft_q15(
 
   }
 
-#endif /* #ifndef ARM_MATH_CM0 */
+#endif /* #ifndef ARM_MATH_CM0_FAMILY */
 
 }
