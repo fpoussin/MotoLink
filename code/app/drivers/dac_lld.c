@@ -179,6 +179,7 @@ void dac_lld_init(void) {
  * @notapi
  */
 void dac_lld_start(DACDriver *dacp) {
+
   uint32_t arr, regshift, trgo, dataoffset;
   bool_t b;
   /* If in stopped state then enables the DAC and DMA clocks.*/

@@ -1,6 +1,8 @@
 #ifndef _EXTRA_RCC_
 #define _EXTRA_RCC_
 
+#include "stm32_rcc.h"
+
 /**
  * @name    DAC peripheral specific RCC operations
  * @{

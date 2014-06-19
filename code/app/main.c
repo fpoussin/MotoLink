@@ -63,7 +63,7 @@ const DACConversionGroup dacconvgrp1 = {
   1, /* Channels */
   NULL, /* End of transfer callback */
   NULL, /* Error callback */
-  false /*circular mode */
+  TRUE /*circular mode */
 };
 
 const SerialConfig uartCfg =
@@ -113,7 +113,7 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-WORKING_AREA(waThreadBDU, 256);
+WORKING_AREA(waThreadBDU, 512);
 msg_t ThreadBDU(void *arg)
 {
   EventListener el1;
@@ -148,7 +148,7 @@ msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread, times are in milliseconds.
  */
-WORKING_AREA(waThreadSDU, 256);
+WORKING_AREA(waThreadSDU, 512);
 msg_t ThreadSDU(void *arg)
 {
   uint8_t buffer[SERIAL_BUFFERS_SIZE];
@@ -213,7 +213,7 @@ msg_t ThreadSensors(void *arg)
 /*
  * Knock processing thread, times are in milliseconds.
  */
-WORKING_AREA(waThreadKnock, 64);
+WORKING_AREA(waThreadKnock, 128);
 msg_t ThreadKnock(void *arg)
 {
   (void)arg;
@@ -262,6 +262,7 @@ int main(void)
   halInit();
   chSysInit();
   timcapInit();
+  dacInit();
 
   usbDisconnectBus(serusbcfg.usbp);
 
@@ -277,21 +278,19 @@ int main(void)
   sduObjectInit(&SDU1);
   bduObjectInit(&BDU1);
   timcapObjectInit(&TIMCAPD3);
+  dacObjectInit(&DACD1);
 
   /*
    * Start peripherals
    */
+  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; //erase register
+  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // set precalers
   sdStart(&SD1, &uartCfg);
   usbStart(serusbcfg.usbp, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
   bduStart(&BDU1, &bulkusbcfg);
   canStart(&CAND1, &cancfg);
-
-  /* Start remaining peripherals */
   dacStart(&DACD1, &daccfg1);
-
-  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; //erase register
-  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // set precalers
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);

@@ -29,9 +29,9 @@
 #ifndef _DAC_LLD_H_
 #define _DAC_LLD_H_
 
+#include "stm32_tim.h"
 #include "extra_registry.h"
 #include "extra_rcc.h"
-#include "stm32_tim.h"
 
 #if HAL_USE_DAC || defined(__DOXYGEN__)
 
