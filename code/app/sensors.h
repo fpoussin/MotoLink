@@ -8,7 +8,7 @@
 #include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      32
+#define ADC_GRP1_BUF_DEPTH      64
 
 #define ADC_GRP2_NUM_CHANNELS   1
 #define ADC_GRP2_BUF_DEPTH      1024 /* 2x512 for continuous FFT256 */
