@@ -71,6 +71,7 @@ PROJECT = motolink
 CHIBIOS = ../ChibiOS-RT
 include ../common/common.mk
 include drivers/drivers.mk
+include dsp_lib/dsp.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
@@ -116,7 +117,7 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(DRIVERINC) \
+INCDIR = $(DSPINC) $(PORTINC) $(KERNINC) $(DRIVERINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
 
