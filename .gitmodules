@@ -2,3 +2,7 @@
 [submodule "GUI/QtUsb"]
 	path = GUI/QtUsb
 	url = git@github.com:mobyfab/QtUsb.git
+[submodule "code/ChibiOS-RT"]
+	path = code/ChibiOS-RT
+	url = git@github.com:ChibiOS/ChibiOS-RT.git
+	branch = stable_2.6.x

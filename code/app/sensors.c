@@ -2,8 +2,8 @@
 
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
-q15_t data_knock[sizeof(samples_sensors)/2];
-q15_t output_knock[sizeof(samples_sensors)/2];
+q15_t data_knock[sizeof(samples_knock)/2];
+q15_t output_knock[sizeof(samples_knock)/2];
 
 sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
@@ -90,15 +90,15 @@ TIMCAPConfig tc_conf = {
    0
 };
 
-void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
-
+/* Every 16 samples at 5.83Kz each, triggers at around 364Hz */
+void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+{
   (void)adcp;
-  (void)n;
   uint16_t i, pos;
   uint32_t an[3] = {0, 0, 0};
-  const uint8_t len = ADC_GRP1_BUF_DEPTH;
 
-  for (i=0; i<len; i++)
+  /* n is always depth/2 */
+  for (i=0; i<n; i++)
   {
     pos = i * ADC_GRP1_NUM_CHANNELS;
     an[0] += buffer[pos];
@@ -106,27 +106,15 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
     an[2] += buffer[pos+2];
   }
 
-  /* n >> 5 */
-  an[0] /= len;
-  an[1] /= len;
-  an[2] /= len;
+  /* n >> 4 */
+  an[0] /= n;
+  an[1] /= n;
+  an[2] /= n;
 
   an[0] *= VBAT_RATIO;
   an[1] *= AN_RATIO;
   an[2] *= AN_RATIO;
 
-/*
-  an[0]  = (buffer[0] + buffer[3] + buffer[6] + buffer[9]
-           + buffer[12] + buffer[15] + buffer[18] + buffer[21])*VBAT_RATIO;
-  an[1]  = (buffer[1] + buffer[4] + buffer[7] + buffer[10]
-           + buffer[13] + buffer[16] + buffer[19] + buffer[22])*AN_RATIO;
-  an[2]  = (buffer[2] + buffer[5] + buffer[8] + buffer[11]
-           + buffer[14] + buffer[17] + buffer[20] + buffer[23])*AN_RATIO;
-
-  an[0] /= 8;
-  an[1] /= 8;
-  an[2] /= 8;
-*/
   sensors_data.an7 = an[0];
   sensors_data.an8 = an[1];
   sensors_data.an9 = an[2];
@@ -143,7 +131,7 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5) | /* Sampling rate = 562000/(19.5+12.5) = 17.5Khz  */
-    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5) |
+    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5) | /* 17.5Khz for 3 channels = 5.83Khz */
     ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_19P5),
     0
   },
@@ -156,20 +144,26 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
-void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
-
+/* Every 512 samples at 112.5Kz each, triggers at around 220Hz */
+void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+{
   (void)adcp;
   uint16_t i;
-  const uint16_t size = sizeof(data_knock);
-  const uint32_t toggle = 0x80008000; /* Convert two 16bits to signed */
-  uint32_t* sample = (uint32_t*)buffer+n;
-  uint32_t* data = (uint32_t*)data_knock;
+  const int32_t* samples = (int32_t*)buffer;
+  int32_t* data = (int32_t*)data_knock;
 
-  /* Convert to signed 32bits at a time */
-  for (i=0; i<size; i+=8)
+  /* n is always depth/2 */
+  if (n % 16)
+	  return;
+
+  /* Copy to signed array 32bits at a time */
+  /* ADC has offset setup and outputs Q15 values directly */
+  for (i=0; i<n/2; i+=4)
   {
-    *(data+i) = *(sample+i) ^toggle;
-    *((data+i)+4) = *((sample+i)+4) ^toggle;
+	data[i] = samples[i];
+	data[i+1] = samples[i+1];
+	data[i+2] = samples[i+2];
+	data[i+3] = samples[i+3];
   }
 
   // Do FFT + Mag in a thread
@@ -182,7 +176,7 @@ const ADCConversionGroup adcgrpcfg_knock = {
   ADC_GRP2_NUM_CHANNELS,
   knockCallback,
   NULL,
-  0,                                /* CFGR    */
+  ADC_CFGR_ALIGN,                   /* CFGR    */
   ADC_TR(0, 4095),                  /* TR1     */
   0,    /* CCR     */
   {                                 /* SMPR[2] */

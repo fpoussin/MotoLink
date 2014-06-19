@@ -1,0 +1,17 @@
+
+#ifndef _EXTRA_REGISTRY_H_
+#define _EXTRA_REGISTRY_H_
+
+ 
+/* DAC attributes.*/
+#define STM32_HAS_DAC           TRUE
+
+#define STM32_HAS_DAC_CHN1          TRUE
+#define STM32_DAC_CHN1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 3) | STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_DAC_CHN1_DMA_CHN      0x00000000
+
+#define STM32_HAS_DAC_CHN2          TRUE
+#define STM32_DAC_CHN2_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 4) | STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_DAC_CHN2_DMA_CHN      0x00000000
+
+#endif

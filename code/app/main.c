@@ -228,7 +228,7 @@ msg_t ThreadKnock(void *arg)
 
   while (TRUE)
   {
-    while (!knockDataReady) chThdSleepMilliseconds(5);
+    while (!knockDataReady) chThdSleepMilliseconds(2);
     knockDataReady = false;
 
     /* Process the data through the CFFT/CIFFT module */
@@ -295,6 +295,9 @@ int main(void)
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
+
+  /* ADC 3 Ch1 Offset. -2048 */
+  ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | 0x0800;
 
   dacStartConversion(&DACD1, &dacconvgrp1, dac_buffer, 1);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);

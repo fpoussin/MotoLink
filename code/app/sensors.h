@@ -4,14 +4,14 @@
 #include "ch.h"
 #include "hal.h"
 #include "protocol.h"
-#include "timcap.h"
+#include "drivers.h"
 #include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      16
+#define ADC_GRP1_BUF_DEPTH      32
 
 #define ADC_GRP2_NUM_CHANNELS   1
-#define ADC_GRP2_BUF_DEPTH      512
+#define ADC_GRP2_BUF_DEPTH      1024 /* 2x512 for continuous FFT256 */
 
 #define AN_RATIO 1.611328125f
 #define VBAT_RATIO AN_RATIO /* TODO: Fix resistor values */
@@ -21,8 +21,8 @@
 
 extern adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 extern adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
-extern q15_t data_knock[sizeof(samples_sensors)/2];
-extern q15_t output_knock[sizeof(samples_sensors)/2];
+extern q15_t data_knock[sizeof(samples_knock)/2];
+extern q15_t output_knock[sizeof(samples_knock)/2];
 
 extern const ADCConversionGroup adcgrpcfg_sensors;
 extern const ADCConversionGroup adcgrpcfg_knock;
