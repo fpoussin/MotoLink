@@ -9,7 +9,7 @@ uint32_t * eeFindCurrentPage(void)
 
 	for (addr=from; addr <= to; addr+=EE_PAGE_SIZE)
 	{
-		if ((*(uint32_t*)addr) != EE_MAGIC)
+		if ((*(uint32_t*)addr) == EE_MAGIC)
 		{
 			break;
 		}
