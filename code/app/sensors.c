@@ -95,7 +95,7 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
   uint16_t i, pos;
-  uint16_t an[3] = {0, 0, 0};
+  uint32_t an[3] = {0, 0, 0};
 
   /* n is always depth/2 */
   for (i=0; i<n; i++)

@@ -13,8 +13,8 @@
 #define ADC_GRP2_NUM_CHANNELS   1
 #define ADC_GRP2_BUF_DEPTH      1024 /* 2x512 for continuous FFT256 */
 
-#define AN_RATIO 1.611328125f /* 6600mV/4096 */
-#define VBAT_RATIO 8.056640625f /* 33000mV/4096 * TODO: Fix resistor values */
+#define AN_RATIO 1.58 /* 6600mV/4096 */
+#define VBAT_RATIO 8.0f /* 33000mV/4096 * TODO: Fix resistor values */
 
 #define FFT_SIZE 256 // 4096-1024-256-64-16 lengths supported by DSP library
 #define SAMPLING_RATE 112500
