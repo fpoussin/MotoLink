@@ -90,12 +90,12 @@ TIMCAPConfig tc_conf = {
    0
 };
 
-/* Every 16 samples at 5.83Kz each, triggers at around 364Hz */
+/* Every 32 samples at 2.53Kz each, triggers at around 79Hz */
 void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
   uint16_t i, pos;
-  uint32_t an[3] = {0, 0, 0};
+  uint16_t an[3] = {0, 0, 0};
 
   /* n is always depth/2 */
   for (i=0; i<n; i++)
@@ -130,9 +130,9 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   ADC_TR(0, 4095),          /* TR1     */
   ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
-    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5) | /* Sampling rate = 562000/(19.5+12.5) = 17.5Khz  */
-    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5) | /* 17.5Khz for 3 channels = 5.83Khz */
-    ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_19P5),
+    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_61P5) | /* Sampling rate = 562000/(61.5+12.5) = 7.56Khz  */
+    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_61P5) | /* 7.56Khz for 3 channels = 2.53Khz */
+    ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_61P5),
     0
   },
   {                         /* SQR[4]  */
