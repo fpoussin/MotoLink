@@ -8,13 +8,13 @@
 #include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
-#define ADC_GRP1_BUF_DEPTH      64
+#define ADC_GRP1_BUF_DEPTH      128
 
 #define ADC_GRP2_NUM_CHANNELS   1
 #define ADC_GRP2_BUF_DEPTH      1024 /* 2x512 for continuous FFT256 */
 
-#define AN_RATIO 1.58 /* 6600mV/4096 */
-#define VBAT_RATIO 8.0f /* 33000mV/4096 * TODO: Fix resistor values */
+#define AN_RATIO 1.56 /* 6600mV/4096 voltage divider ratio is 1 */
+#define VBAT_RATIO 8.86f /* 36300mV/4096 voltage divider ratio is 10 */
 
 #define FFT_SIZE 256 // 4096-1024-256-64-16 lengths supported by DSP library
 #define SAMPLING_RATE 112500

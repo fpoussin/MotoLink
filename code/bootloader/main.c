@@ -149,7 +149,9 @@ static msg_t ThreadSDU(void *arg) {
       /* Does nothing with the data */
       chnReadTimeout((BaseChannel *)&SDU1, buffer, sizeof(buffer), MS2ST(5));
     }
-
+    else {
+      chThdSleepMilliseconds(10);
+    }
   }
   return 0;
 }

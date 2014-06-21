@@ -12,19 +12,29 @@ uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 VirtualTimer capture_vt;
 bool knockDataReady = false;
 
-void capture1_cb(TIMCAPDriver *timcapp)
+void captureOverflowCb(TIMCAPDriver *timcapp)
+{
+  (void)timcapp;
+  sensors_data.freq1 = 0;
+  sensors_data.freq2 = 0;
+
+  TIM3->DIER &= ~TIM_DIER_CC1IE;
+  TIM3->DIER &= ~TIM_DIER_CC2IE;
+}
+
+void capture1Cb(TIMCAPDriver *timcapp)
 {
   if(TIM3CC1CaptureNumber == 0)
   {
     /* Get the Input Capture value */
-    TIM3CC1ReadValue1 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_1);
+    TIM3CC1ReadValue1 = TIM3->CCR1;
     TIM3CC1CaptureNumber = 1;
   }
   else if(TIM3CC1CaptureNumber == 1)
   {
       uint32_t Capture;
       /* Get the Input Capture value */
-      TIM3CC1ReadValue2 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_1);
+      TIM3CC1ReadValue2 = TIM3->CCR1;
 
       /* Capture computation */
       if (TIM3CC1ReadValue2 > TIM3CC1ReadValue1)
@@ -47,19 +57,19 @@ void capture1_cb(TIMCAPDriver *timcapp)
   }
 }
 
-void capture2_cb(TIMCAPDriver *timcapp)
+void capture2Cb(TIMCAPDriver *timcapp)
 {
   if(TIM3CC2CaptureNumber == 0)
   {
     /* Get the Input Capture value */
-    TIM3CC2ReadValue1 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_2);
+    TIM3CC2ReadValue1 = TIM3->CCR2;
     TIM3CC2CaptureNumber = 1;
   }
   else if(TIM3CC2CaptureNumber == 1)
   {
       uint32_t Capture;
       /* Get the Input Capture value */
-      TIM3CC2ReadValue2 = timcap_lld_get_ccr(timcapp, TIMCAP_CHANNEL_2);
+      TIM3CC2ReadValue2 = TIM3->CCR2;
 
       /* Capture computation */
       if (TIM3CC2ReadValue2 > TIM3CC2ReadValue1)
@@ -84,9 +94,9 @@ void capture2_cb(TIMCAPDriver *timcapp)
 
 TIMCAPConfig tc_conf = {
    {TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_DISABLED, TIMCAP_INPUT_DISABLED},
-   10000,
-   {capture1_cb, capture2_cb, NULL, NULL},
-   NULL,
+   50000, /* TIM3 Runs at 36Mhz max. (1/50000)*65536 = 1.31s Max */
+   {capture1Cb, capture2Cb, NULL, NULL},
+   captureOverflowCb,
    0
 };
 
@@ -115,9 +125,9 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   an[1] *= AN_RATIO;
   an[2] *= AN_RATIO;
 
-  sensors_data.an7 = an[0];
-  sensors_data.an8 = an[1];
-  sensors_data.an9 = an[2];
+  sensors_data.an7 = an[0] & 0xFFF0;
+  sensors_data.an8 = an[1] & 0xFFF0;
+  sensors_data.an9 = an[2] & 0xFFF0;
 }
 
 /* ADC12 Clk is 72Mhz/128 562Khz  */

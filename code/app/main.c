@@ -301,13 +301,14 @@ int main(void)
   dacStartConversion(&DACD1, &dacconvgrp1, dac_buffer, 1);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
+  timcapEnable(&TIMCAPD3);
 
   /*
    * Creates the threads.
    */
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), NORMALPRIO, ThreadSensors, NULL);
+  chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), HIGHPRIO, ThreadSensors, NULL);
   chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
   chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
 
