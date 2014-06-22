@@ -13,6 +13,9 @@ enum MAP_TYPE {
 #define HEX_START ":"
 #define CBR600RR07_SIGN_HEX "30374342523630304B4541364B4F"
 #define CBR600RR07_SIGN_STRING "07CBR600KEA6KO"
+#define CBR1000RR08_SIGN_HEX "3038434252314B454C4E41524B4F"
+#define CBR1000RR08_SIGN_STRING "08CBR1KELNARKO"
+
 
 struct cbr600rr07_map_t {
 
@@ -36,5 +39,9 @@ struct cbr600rr07_map_t {
     char signature[14]; /* "07CBR600KEA6KO" */
 };
 
+struct cbr1000rr08_map_t {
+
+    char signature[14]; /* "08CBR1KELNARKO" */
+};
 
 #endif // DATASTRUCTURES_H
