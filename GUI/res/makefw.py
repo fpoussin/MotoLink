@@ -5,6 +5,7 @@ import xml.etree.cElementTree as ET
 from textwrap import fill
 import argparse
 from datetime import datetime
+import sys
 
 FIRMWARE_PATH = "../../code/app/build/motolink.bin"
 XML_PATH = "firmware.xml"
@@ -38,9 +39,12 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-
-with open(args.file, "rb") as bin_file:
-    encoded = b64encode(bin_file.read())
+try:
+    with open(args.file, "rb") as bin_file:
+        encoded = b64encode(bin_file.read())
+except IOError:
+    print "Could not find bin file, skipping..."
+    sys.exit(0)
 
 top = ET.Element('firmware')
 comment = ET.Comment('Generated from makefw.py')

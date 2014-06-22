@@ -7,8 +7,8 @@ Motolink::Motolink(QObject *parent) :
     mThread = new QThread;
 
     mGuid = "656d69a0-4f42-45c4-b92c-bffa3b9e6bd1";
-    mPid = 0x0483;
-    mVid = 0xABCD;
+    mVid = 0x0483;
+    mPid = 0xABCD;
 
     mUsb->setGuid(mGuid);
     mUsb->setDeviceIds(mPid, mVid);
