@@ -87,7 +87,7 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(DRIVERSRC) \
+       $(STM32DRIVERSRC) \
        main.c commands.c sensors.c debug.c eeprom.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -117,7 +117,7 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
-INCDIR = $(DSPINC) $(PORTINC) $(KERNINC) $(DRIVERINC) \
+INCDIR = $(DSPINC) $(PORTINC) $(KERNINC) $(STM32DRIVERINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
 

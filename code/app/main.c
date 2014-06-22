@@ -260,9 +260,8 @@ int main(void)
    *   RTOS is active.
    */
   halInit();
+  driversInit();
   chSysInit();
-  timcapInit();
-  dacInit();
 
   usbDisconnectBus(serusbcfg.usbp);
 
