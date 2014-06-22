@@ -402,6 +402,7 @@ extern "C" {
   void dac_lld_init(void);
   void dac_lld_start(DACDriver *dacp);
   void dac_lld_stop(DACDriver *dacp);
+  void dac_lld_single_convert(DACDriver *dacp, dacsample_t value);
   void dac_lld_start_conversion(DACDriver *dacp);
   void dac_lld_stop_conversion(DACDriver *dacp);
 #ifdef __cplusplus

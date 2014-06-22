@@ -26,6 +26,8 @@
  * @{
  */
 
+#include "hal.h"
+
 #ifndef _DAC_H_
 #define _DAC_H_
 
@@ -305,6 +307,7 @@ extern "C" {
   void dacObjectInit(DACDriver *dacp);
   void dacStart(DACDriver *dacp, const DACConfig *config);
   void dacStop(DACDriver *dacp);
+  void dacSingleConvert(DACDriver *dacp, dacsample_t value);
   void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
                           const dacsample_t *samples, size_t depth);
   void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,

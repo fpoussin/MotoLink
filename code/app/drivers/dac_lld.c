@@ -237,12 +237,10 @@ void dac_lld_start(DACDriver *dacp) {
     dacp->tim->CNT  = 0;                        /* Reset counter.       */
     dacp->tim->SR   = 0;                        /* Clear pending IRQs.  */
     /* Update Event IRQ enabled. */
-    /* Timer start.*/
-    dacp->tim->CR1  = TIM_CR1_CEN;
 
     /* DAC configuration */
-    dacp->dac->CR |= ( (dacp->dac->CR & ~STM32_DAC_CR_MASK) | \
-      (STM32_DAC_CR_EN | STM32_DAC_CR_DMAEN | dacp->config->cr_flags) ) << regshift;
+    dacp->dac->CR &=  ~(STM32_DAC_CR_MASK << regshift);
+    dacp->dac->CR |= (STM32_DAC_CR_EN | STM32_DAC_CR_DMAEN | dacp->config->cr_flags) << regshift;
       
     /* DMA setup. */
     b = dmaStreamAllocate(dacp->dma,
@@ -302,6 +300,8 @@ void dac_lld_stop(DACDriver *dacp) {
 
   /* If in ready state then disables the DAC clock.*/
   if (dacp->state == DAC_READY) {
+
+    dmaStreamRelease(dacp->dma);
 	  
 #if STM32_DAC_USE_CHN1
     if (&DACD1 == dacp) {
@@ -348,6 +348,58 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   dmaStreamSetTransactionSize(dacp->dma, dacp->depth);
   dmaStreamSetMode(dacp->dma, dacp->dmamode | STM32_DMA_CR_EN |
   STM32_DMA_CR_CIRC);
+
+  /* Timer start.*/
+  dacp->tim->CNT  = 0;
+  dacp->tim->CR1  = TIM_CR1_CEN;
+}
+
+void dac_lld_single_convert(DACDriver *dacp, dacsample_t value) {
+
+  uint32_t dataoffset;
+
+#if STM32_DAC_USE_CHN1
+    if (&DACD1 == dacp) {
+      /* DAC1 CR data is at bits 0:15 */
+      dataoffset = 0;
+    }
+#endif
+#if STM32_DAC_USE_CHN2
+    if (&DACD2 == dacp) {
+      /* DAC2 CR data is at bits 16:31 */
+      dataoffset = &dacp->dac->DHR12R2 - &dacp->dac->DHR12R1;
+    }
+#endif
+#if STM32_DAC_USE_CHN3
+    if (&DACD3 == dacp) {
+      /* DAC3 CR data is at bits 0:15 */
+      dataoffset = 0;
+    }
+#endif
+
+    switch (dacp->config->dhrm) {
+      /* Sets the DAC data register */
+      case DAC_DHRM_12BIT_RIGHT:
+        *(&dacp->dac->DHR12R1 + dataoffset) = value;
+        break;
+      case DAC_DHRM_12BIT_LEFT:
+        *(&dacp->dac->DHR12L1 + dataoffset) = value;
+        break;
+      case DAC_DHRM_8BIT_RIGHT:
+        *(&dacp->dac->DHR8R1 + dataoffset) = value;
+        break;
+#if defined(STM32_HAS_DAC_CHN2) && STM32_HAS_DAC_CHN2
+      case DAC_DHRM_12BIT_RIGHT_DUAL:
+        *(&dacp->dac->DHR12RD) = value;
+        break;
+      case DAC_DHRM_12BIT_LEFT_DUAL:
+        *(&dacp->dac->DHR12LD) = value;
+        break;
+      case DAC_DHRM_8BIT_RIGHT_DUAL:
+        *(&dacp->dac->DHR8RD) = value;
+        break;
+#endif
+    }
 }
 
 void dac_lld_stop_conversion(DACDriver *dacp) {
@@ -355,8 +407,11 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
   /* If in active state then disables the DAC.*/
   if (dacp->state == DAC_ACTIVE) {
 
+    /* Timer stop.*/
+    dacp->tim->CR1  &= ~TIM_CR1_CEN;
+
     /* DMA disable.*/
-    dmaStreamRelease(dacp->dma);
+    dmaStreamDisable(dacp->dma);
     dacp->state = DAC_READY;
   }
 

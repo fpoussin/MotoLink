@@ -135,6 +135,28 @@ void dacStop(DACDriver *dacp) {
 }
 
 /**
+ * @brief   Starts a single DAC conversion.
+ * @details Starts a single synchronous conversion operation.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @param[in] value     the value to output
+ *
+ * @api
+ */
+void dacSingleConvert(DACDriver *dacp, dacsample_t value) {
+
+  chDbgCheck(dacp != NULL, "dacSingleConvert");
+  chDbgAssert((dacp->state == DAC_READY) ||
+              (dacp->state == DAC_COMPLETE) ||
+              (dacp->state == DAC_ERROR),
+              "dacSingleConvert(), #1", "not ready");
+
+  dacp->state = DAC_ACTIVE;
+  dac_lld_single_convert(dacp, value);
+  dacp->state = DAC_COMPLETE;
+}
+
+/**
  * @brief   Starts a DAC conversion.
  * @details Starts an asynchronous conversion operation.
  * @note    The buffer is organized as a matrix of M*N elements where M is the
