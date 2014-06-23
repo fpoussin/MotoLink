@@ -118,8 +118,8 @@
     PIN_MODE_OUTPUT(0) | \
     PIN_MODE_ANALOG(1) | \
     PIN_MODE_ANALOG(2) | \
-    PIN_MODE_ANALOG(3) | \
-    PIN_MODE_ANALOG(4) | \
+    PIN_MODE_ALTERNATE(3) | \
+    PIN_MODE_ALTERNATE(4) | \
     PIN_MODE_ANALOG(5) | \
     PIN_MODE_OUTPUT(6) | \
     PIN_MODE_ANALOG(7) | \
@@ -136,8 +136,8 @@
     PIN_OTYPE_PUSHPULL(0) | \
     PIN_OTYPE_PUSHPULL(1) | \
     PIN_OTYPE_PUSHPULL(2) | \
-    PIN_OTYPE_PUSHPULL(3) | \
-    PIN_OTYPE_PUSHPULL(4) | \
+    PIN_OTYPE_OPENDRAIN(3) | \
+    PIN_OTYPE_OPENDRAIN(4) | \
     PIN_OTYPE_PUSHPULL(5) | \
     PIN_OTYPE_PUSHPULL(6) | \
     PIN_OTYPE_PUSHPULL(7) | \
@@ -154,8 +154,8 @@
     PIN_OSPEED_50M(0) | \
     PIN_OSPEED_2M(1) | \
     PIN_OSPEED_2M(2) | \
-    PIN_OSPEED_2M(3) | \
-    PIN_OSPEED_2M(4) | \
+    PIN_OSPEED_50M(3) | \
+    PIN_OSPEED_50M(4) | \
     PIN_OSPEED_2M(5) | \
     PIN_OSPEED_50M(6) | \
     PIN_OSPEED_2M(7) | \
@@ -208,8 +208,8 @@
     PIN_AFIO_AF(0, 0) | \
     PIN_AFIO_AF(1, 0) | \
     PIN_AFIO_AF(2, 0) | \
-    PIN_AFIO_AF(3, 0) | \
-    PIN_AFIO_AF(4, 0) | \
+    PIN_AFIO_AF(3, 7) | \
+    PIN_AFIO_AF(4, 7) | \
     PIN_AFIO_AF(5, 0) | \
     PIN_AFIO_AF(6, 0) | \
     PIN_AFIO_AF(7, 0))
