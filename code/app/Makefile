@@ -70,7 +70,7 @@ PROJECT = motolink
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT
 include ../common/common.mk
-include drivers/drivers.mk
+include ../ChibiOS-Drivers/drivers.mk
 include dsp_lib/dsp.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
