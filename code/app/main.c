@@ -282,7 +282,7 @@ int main(void)
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | 0x0800;
 
-  dacSingleConvert(&DACD1, 0x800);
+  dacConvert(&DACD1, 0x800);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
