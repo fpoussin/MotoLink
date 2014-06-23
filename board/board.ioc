@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Sat Jun 21 18:35:41 CEST 2014
+#Mon Jun 23 23:48:52 CEST 2014
 ADC1.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_8
 ADC1.IPParameters=Rank-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,OffsetNumber-0\#ChannelRegularConversion,Offset-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SingleDiff-0\#ChannelRegularConversion,master,NbrOfConversionFlag
 ADC1.NbrOfConversionFlag=1
@@ -22,9 +22,10 @@ KeepUserPlacement=true
 Mcu.Family=STM32F3
 Mcu.IP0=ADC1
 Mcu.IP1=ADC3
-Mcu.IP10=USART3
-Mcu.IP11=USB
-Mcu.IP12=USB_DEVICE
+Mcu.IP10=USART2
+Mcu.IP11=USART3
+Mcu.IP12=USB
+Mcu.IP13=USB_DEVICE
 Mcu.IP2=DAC
 Mcu.IP3=IWDG
 Mcu.IP4=NVIC
@@ -33,7 +34,7 @@ Mcu.IP6=SYS
 Mcu.IP7=TIM3
 Mcu.IP8=TIM6
 Mcu.IP9=USART1
-Mcu.IPNb=13
+Mcu.IPNb=14
 Mcu.Name=STM32F303R(B-C)Tx
 Mcu.Package=LQFP64
 Mcu.Pin0=PC13
@@ -135,8 +136,10 @@ PB13.Signal=GPIO_Output
 PB14.Signal=GPIO_Analog
 PB15.Signal=GPIO_Analog
 PB2.Signal=GPIO_Analog
-PB3.Signal=GPIO_Analog
-PB4.Signal=GPIO_Analog
+PB3.Mode=Asynchronous
+PB3.Signal=USART2_TX
+PB4.Mode=Asynchronous
+PB4.Signal=USART2_RX
 PB5.Signal=GPIO_Analog
 PB6.Signal=GPIO_Output
 PB7.Signal=GPIO_Analog
