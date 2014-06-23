@@ -45,25 +45,12 @@ GPTConfig gpt1Cfg =
   0
 };
 
-const uint16_t dac_buffer[1] = {0x800};
-
 /*
  * DAC config
  */
 static const DACConfig daccfg1 = {
-  10000, /* Multiply the buffer size to the desired frequency in Hz */
   DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
   0 /* DAC CR flags */
-};
-
-/*
- * DAC conversion groups, with callbacks.
- */
-const DACConversionGroup dacconvgrp1 = {
-  1, /* Channels */
-  NULL, /* End of transfer callback */
-  NULL, /* Error callback */
-  TRUE /*circular mode */
 };
 
 const SerialConfig uartCfg =
@@ -272,18 +259,16 @@ int main(void)
   pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
 
   /*
-   * Initialize extra drivers.
+   * Initialize extra driver objects.
    */
   sduObjectInit(&SDU1);
   bduObjectInit(&BDU1);
-  timcapObjectInit(&TIMCAPD3);
-  dacObjectInit(&DACD1);
 
   /*
    * Start peripherals
    */
-  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; //erase register
-  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // set precalers
+  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; // Erase registers
+  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // Set prescalers
   sdStart(&SD1, &uartCfg);
   usbStart(serusbcfg.usbp, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
@@ -297,7 +282,7 @@ int main(void)
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | 0x0800;
 
-  dacStartConversion(&DACD1, &dacconvgrp1, dac_buffer, 1);
+  dacSingleConvert(&DACD1, 0x800);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
