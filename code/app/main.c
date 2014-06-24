@@ -22,6 +22,20 @@
 #include "commands.h"
 #include "sensors.h"
 
+
+/*===========================================================================*/
+/* Thread pointers.                                                          */
+/*===========================================================================*/
+
+Thread* pThreadBDU = NULL;
+Thread* pThreadSDU = NULL;
+Thread* pThreadSensors = NULL;
+Thread* pThreadKnock = NULL;
+Thread* pThreadCAN = NULL;
+
+monitor_t monitoring = {0,0,0,0,0,0,0,100};
+unsigned int runtime_total = 0;
+
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
@@ -40,8 +54,8 @@ void iwdgGptCb(GPTDriver *gptp)
 
 GPTConfig gpt1Cfg =
 {
-  100000,    /* timer clock.*/
-  iwdgGptCb,        /* Timer callback.*/
+  100000,      /* timer clock.*/
+  iwdgGptCb,  /* Timer callback.*/
   0
 };
 
@@ -98,7 +112,7 @@ msg_t ThreadCAN(void *p)
 }
 
 /*
- * USB Bulk thread, times are in milliseconds.
+ * USB Bulk thread.
  */
 WORKING_AREA(waThreadBDU, 512);
 msg_t ThreadBDU(void *arg)
@@ -133,7 +147,7 @@ msg_t ThreadBDU(void *arg)
 }
 
 /*
- * USB Serial thread, times are in milliseconds.
+ * USB Serial thread.
  */
 WORKING_AREA(waThreadSDU, 512);
 msg_t ThreadSDU(void *arg)
@@ -182,7 +196,7 @@ msg_t ThreadSDU(void *arg)
 }
 
 /*
- * Sensors thread, times are in milliseconds.
+ * Sensors thread.
  */
 WORKING_AREA(waThreadSensors, 32);
 msg_t ThreadSensors(void *arg)
@@ -198,7 +212,7 @@ msg_t ThreadSensors(void *arg)
 }
 
 /*
- * Knock processing thread, times are in milliseconds.
+ * Knock processing thread.
  */
 WORKING_AREA(waThreadKnock, 128);
 msg_t ThreadKnock(void *arg)
@@ -233,6 +247,66 @@ msg_t ThreadKnock(void *arg)
   return 0;
 }
 
+/*
+ * CPU Load Monitoring thread.
+ */
+WORKING_AREA(waThreadMonitor, 256);
+msg_t ThreadMonitor(void *arg)
+{
+  (void)arg;
+  chRegSetThreadName("Monitor");
+  uint32_t thTicks[7];
+  Thread* pThreadMonitor = chThdSelf();
+
+  while (TRUE)
+  {
+	chSysLock();
+
+	runtime_total = 0;
+	pThreadBDU->runtime = 0;
+	pThreadSDU->runtime = 0;
+	pThreadCAN->runtime = 0;
+	pThreadKnock->runtime = 0;
+	pThreadSensors->runtime = 0;
+	pThreadMonitor->runtime = 0;
+	chSysGetIdleThread()->runtime = 0;
+
+	chSysUnlock();
+
+	/* Populate load data */
+	chThdSleepMilliseconds(500);
+
+	chSysLock();
+
+	thTicks[0] = pThreadBDU->runtime;
+	thTicks[1] = pThreadSDU->runtime;
+	thTicks[2] = pThreadCAN->runtime;
+	thTicks[3] = pThreadKnock->runtime;
+	thTicks[4] = pThreadSensors->runtime;
+	thTicks[5] = pThreadMonitor->runtime;
+	thTicks[6] = chSysGetIdleThread()->runtime;
+
+	monitoring.bdu = (thTicks[0]*200)/runtime_total;
+	monitoring.sdu = (thTicks[1]*200)/runtime_total;
+	monitoring.can = (thTicks[2]*200)/runtime_total;
+	monitoring.knock = (thTicks[3]*200)/runtime_total;
+	monitoring.sensors = (thTicks[4]*200)/runtime_total;
+	monitoring.monitor = (thTicks[5]*200)/runtime_total;
+	monitoring.idle = (thTicks[6]*200)/runtime_total;
+	monitoring.irq = 200
+			-monitoring.idle
+			-monitoring.bdu
+			-monitoring.sdu
+			-monitoring.can
+			-monitoring.knock
+			-monitoring.sensors
+			-monitoring.monitor;
+
+	chSysUnlock();
+  }
+  return 0;
+}
+
 
 /*
  * Application entry point.
@@ -253,7 +327,7 @@ int main(void)
   usbDisconnectBus(serusbcfg.usbp);
 
   gptStart(&GPTD1, &gpt1Cfg);
-  gptStartContinuous(&GPTD1, 5000);
+  gptStartContinuous(&GPTD1, 20000);
 
   pwmStart(&PWMD2, &pwmcfg);
   pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
@@ -290,11 +364,13 @@ int main(void)
   /*
    * Creates the threads.
    */
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
-  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), HIGHPRIO, ThreadSensors, NULL);
-  chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
-  chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
+  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
+  pThreadSensors = chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), HIGHPRIO, ThreadSensors, NULL);
+  pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
+  pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
+  /* Create last as it uses pointers from above */
+  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+1, ThreadMonitor, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

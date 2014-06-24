@@ -174,6 +174,29 @@ bool Motolink::getSensors(QByteArray* data)
     return false;
 }
 
+bool Motolink::getMonitoring(QByteArray *data)
+{
+    _WAIT_USB_
+    _LOCK_
+    QByteArray send, recv;
+    prepareSimpleCmd(&send, CMD_GET_MONITOR);
+
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
+    mUsb->read(&recv, sizeof(monitor_t)+1);
+
+    if ((size_t)recv.size() > sizeof(monitor_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MONITOR))
+    {
+        *data = recv.remove(0, 1);
+        emit sendMonitoring(data);
+        return true;
+    }
+
+    return false;
+}
+
 bool Motolink::sendWake()
 {
     _WAIT_USB_

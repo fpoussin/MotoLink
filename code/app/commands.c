@@ -108,3 +108,13 @@ uint8_t wakeHandler(BaseChannel * chn) {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, MS2ST(25));
   return 0;
 }
+
+uint8_t sendMonitoring(BaseChannel * chn) {
+
+  uint8_t buf[1+sizeof(monitor_t)];
+  buf[0] = MASK_REPLY_OK | CMD_GET_MONITOR;
+  memcpy(buf+1, &monitoring, sizeof(sensors_t));
+
+  chnWriteTimeout(chn, buf, sizeof(buf), MS2ST(25));
+  return 0;
+}

@@ -21,6 +21,7 @@
 #define CMD_GET_VERSION (uint8_t)0x09
 #define CMD_GET_SIZE (uint8_t)0x0A
 #define CMD_GET_SENSORS (uint8_t)0x0B
+#define CMD_GET_MONITOR (uint8_t)0x0C
 
 #define FLAG_OK (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02
@@ -49,6 +50,18 @@ typedef struct {
   uint16_t freq2;
   uint16_t knock_value;
   uint16_t knock_freq;
+  uint16_t reserved1;
 } sensors_t;
+
+typedef struct {
+  uint8_t bdu;
+  uint8_t sdu;
+  uint8_t can;
+  uint8_t knock;
+  uint8_t sensors;
+  uint8_t monitor;
+  uint8_t irq;
+  uint8_t idle;
+} monitor_t;
 
 #endif

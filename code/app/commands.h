@@ -8,11 +8,13 @@
 #include <string.h>
 
 extern uint8_t bl_wake;
+extern monitor_t monitoring;
 
 uint8_t readCommand(BaseChannel *chn);
 uint8_t resetHandler(BaseChannel * chn);
 uint8_t sendMode(BaseChannel * chn);
 uint8_t wakeHandler(BaseChannel * chn);
 uint8_t sendSensors(BaseChannel * chn);
+uint8_t sendMonitoring(BaseChannel * chn);
 
 #endif

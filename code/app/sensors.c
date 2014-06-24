@@ -24,6 +24,7 @@ void captureOverflowCb(TIMCAPDriver *timcapp)
 
 void capture1Cb(TIMCAPDriver *timcapp)
 {
+  (void)timcapp;
   if(TIM3CC1CaptureNumber == 0)
   {
     /* Get the Input Capture value */
@@ -59,6 +60,7 @@ void capture1Cb(TIMCAPDriver *timcapp)
 
 void capture2Cb(TIMCAPDriver *timcapp)
 {
+  (void)timcapp;
   if(TIM3CC2CaptureNumber == 0)
   {
     /* Get the Input Capture value */

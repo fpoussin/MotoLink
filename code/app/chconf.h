@@ -29,6 +29,7 @@
 #define _CHCONF_H_
 
 #define CORTEX_VTOR_INIT 0x08005000
+extern unsigned int runtime_total;
 
 /*===========================================================================*/
 /**
@@ -450,7 +451,9 @@
  */
 #if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
 #define THREAD_EXT_FIELDS                                                   \
-  /* Add threads custom fields here.*/
+  /* Add threads custom fields here.*/                                      \
+  uint32_t lasttick; \
+  uint32_t runtime;
 #endif
 
 /**
@@ -463,6 +466,8 @@
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
   /* Add threads initialization code here.*/                                \
+  tp->lasttick = chTimeNow();\
+  tp->runtime = 0;\
 }
 #endif
 
@@ -487,6 +492,9 @@
 #if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
 #define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* System halt code here.*/                                               \
+  otp->runtime += chTimeNow() - otp->lasttick; \
+  runtime_total += otp->runtime; \
+  otp->lasttick = chTimeNow(); \
 }
 #endif
 
