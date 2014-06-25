@@ -69,6 +69,8 @@ private:
     quint16 mPid;
     quint16 mVid;
     bool mStopTranfer;
+    sensors_t mSensors;
+    monitor_t mMonitoring;
 };
 
 #endif // MOTOLINK_H

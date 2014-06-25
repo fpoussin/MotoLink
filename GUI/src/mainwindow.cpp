@@ -571,14 +571,40 @@ void MainWindow::receiveSensors(QByteArray *data)
 void MainWindow::receiveMonitoring(QByteArray *data)
 {
     const monitor_t * monitor =  (monitor_t *)data->constData();
+    const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
+    const quint16 maskState = 0x8000; /* Remove thread state */
+    QTableWidgetItem *item;
 
-    mTasks->tableWidget->item(0, 0)->setData(Qt::DisplayRole, float(monitor->bdu)/100.0);
-    mTasks->tableWidget->item(1, 0)->setData(Qt::DisplayRole, float(monitor->sdu)/100.0);
-    mTasks->tableWidget->item(2, 0)->setData(Qt::DisplayRole, float(monitor->can)/100.0);
-    mTasks->tableWidget->item(3, 0)->setData(Qt::DisplayRole, float(monitor->knock)/100.0);
-    mTasks->tableWidget->item(4, 0)->setData(Qt::DisplayRole, float(monitor->sensors)/100.0);
-    mTasks->tableWidget->item(5, 0)->setData(Qt::DisplayRole, float(monitor->monitor)/100.0);
-    mTasks->tableWidget->item(6, 0)->setData(Qt::DisplayRole, float(monitor->irq)/100.0);
-    mTasks->tableWidget->item(7, 0)->setData(Qt::DisplayRole, float(monitor->idle)/100.0);
+    item = mTasks->tableWidget->item(0, 0);
+    item->setData(Qt::DisplayRole, float(monitor->bdu & maskUsage)/100.0);
+    if (monitor->bdu & maskState) mTasks->tableWidget->selectRow(0);
+
+    item = mTasks->tableWidget->item(1, 0);
+    item->setData(Qt::DisplayRole, float(monitor->sdu & maskUsage)/100.0);
+    if (monitor->sdu & maskState) mTasks->tableWidget->selectRow(1);
+
+    item = mTasks->tableWidget->item(2, 0);
+    item->setData(Qt::DisplayRole, float(monitor->can & maskUsage)/100.0);
+    if (monitor->can & maskState) mTasks->tableWidget->selectRow(2);
+
+    item = mTasks->tableWidget->item(3, 0);
+    item->setData(Qt::DisplayRole, float(monitor->knock & maskUsage)/100.0);
+    if (monitor->knock & maskState) mTasks->tableWidget->selectRow(3);
+
+    item = mTasks->tableWidget->item(4, 0);
+    item->setData(Qt::DisplayRole, float(monitor->sensors & maskUsage)/100.0);
+    if (monitor->sensors & maskState) mTasks->tableWidget->selectRow(4);
+
+    item = mTasks->tableWidget->item(5, 0);
+    item->setData(Qt::DisplayRole, float(monitor->monitor & maskUsage)/100.0);
+    if (monitor->monitor & maskState) mTasks->tableWidget->selectRow(5);
+
+    item = mTasks->tableWidget->item(6, 0);
+    item->setData(Qt::DisplayRole, float(monitor->irq & maskUsage)/100.0);
+
+    item = mTasks->tableWidget->item(7, 0);
+    item->setData(Qt::DisplayRole, float(monitor->idle & maskUsage)/100.0);
+    if (monitor->idle & maskState) mTasks->tableWidget->selectRow(7);
+
 }
 

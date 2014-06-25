@@ -167,6 +167,7 @@ bool Motolink::getSensors(QByteArray* data)
     if ((size_t)recv.size() > sizeof(sensors_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
     {
         *data = recv.remove(0, 1);
+        memcpy((void*)&mSensors, (void*)data->constData(), sizeof(sensors_t));
         emit sendSensors(data);
         return true;
     }
@@ -190,6 +191,7 @@ bool Motolink::getMonitoring(QByteArray *data)
     if ((size_t)recv.size() > sizeof(monitor_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MONITOR))
     {
         *data = recv.remove(0, 1);
+        memcpy((void*)&mMonitoring, (void*)data->constData(), sizeof(monitor_t));
         emit sendMonitoring(data);
         return true;
     }
