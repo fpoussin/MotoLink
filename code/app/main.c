@@ -261,7 +261,8 @@ msg_t ThreadKnock(void *arg)
   return 0;
 }
 
-#define RUNNING(tp) (((tp->p_state == THD_STATE_CURRENT)&0x1) << 15)
+/* Check is thread was preempted or was sleeping */
+#define RUNNING(tp) (uint16_t)(((tp->previousstate == THD_STATE_CURRENT)&0x1) << 15)
 
 /*
  * CPU Load Monitoring thread.
