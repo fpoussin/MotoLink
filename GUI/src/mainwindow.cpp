@@ -482,6 +482,7 @@ void MainWindow::showSettingsTab()
 void MainWindow::showTasks()
 {
     mTasksWidget->show();
+    mTasksWidget->raise();
 }
 
 void MainWindow::showAfrMapContextMenu(const QPoint &pos)
@@ -572,8 +573,9 @@ void MainWindow::receiveMonitoring(QByteArray *data)
 {
     const monitor_t * monitor =  (monitor_t *)data->constData();
     const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
-    const quint16 maskState = 0x8000; /* Remove thread state */
+    const quint16 maskState = 0x8000; /* Thread state */
     QTableWidgetItem *item;
+    mTasks->tableWidget->selectRow(7);
 
     item = mTasks->tableWidget->item(0, 0);
     item->setData(Qt::DisplayRole, float(monitor->bdu & maskUsage)/100.0);

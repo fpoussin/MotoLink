@@ -75,7 +75,7 @@ const SerialConfig uartCfg =
  10400, // bit rate
  0,
  USART_CR2_STOP1_BITS,
- USART_CR3_HDSEL
+ 0
 };
 
 
@@ -166,17 +166,18 @@ msg_t ThreadSDU(void *arg)
   size_t read, available;
   (void)arg;
   chRegSetThreadName("SDU");
-  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
-  chEvtRegisterMask(chnGetEventSource(&SD1), &el2, CHN_INPUT_AVAILABLE);
+  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, ALL_EVENTS);
+  chEvtRegisterMask(chnGetEventSource(&SD1), &el2, ALL_EVENTS);
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-  /* TODO: Unstable? */
+  /* FIXME: Serial->USB Stops afert some time. USB->Serial is OK. */
   while (TRUE) {
 
-    chEvtWaitAnyTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
+    chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     flags_usb = chEvtGetAndClearFlags(&el1);
+    flags_uart = chEvtGetAndClearFlags(&el2);
 
     if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
 
@@ -190,7 +191,6 @@ msg_t ThreadSDU(void *arg)
     else
       chThdSleepMilliseconds(1);
 
-    flags_uart = chEvtGetAndClearFlags(&el2);
     if (flags_uart & CHN_INPUT_AVAILABLE) { /* Incoming data from UART */
 
       available = chQSpaceI(&SD1.iqueue);
@@ -220,7 +220,10 @@ msg_t ThreadSensors(void *arg)
   while (TRUE)
   {
     chThdSleepMilliseconds(50);
-    TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+    //if (TIM3->DIER & ~(TIM_DIER_CC1IE | TIM_DIER_CC2IE)) {
+      //TIM3->CNT = 0;
+      TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+    //}
   }
   return 0;
 }
@@ -262,7 +265,7 @@ msg_t ThreadKnock(void *arg)
 }
 
 /* Check if tp was the previous thread */
-#define RUNNING(tp) (uint16_t)(((tp == pThreadMonitor->p_prev)&0x1) << 15)
+#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_prev) << 15)
 
 /*
  * CPU Load Monitoring thread.

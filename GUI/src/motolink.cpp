@@ -293,7 +293,7 @@ void Motolink::sendFirmware(QByteArray *data)
     QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStopTranfer = false;
-    quint32 step_size = 112;
+    quint32 step_size = 240;
     const quint32 from = 0;
     const quint32 to = data->size();
 
@@ -371,7 +371,7 @@ void Motolink::verifyFirmware(QByteArray *data)
     QDataStream file(data, QIODevice::ReadOnly);
     emit sendLock(true);
     mStopTranfer = false;
-    const quint32 buf_size = 500;
+    const quint32 buf_size = 508;
     const quint32 from = 0;
     const quint32 to = data->size();
     char buf[buf_size];

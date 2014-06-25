@@ -91,7 +91,7 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBDU, 512);
+static WORKING_AREA(waThreadBDU, 1024);
 static msg_t ThreadBDU(void *arg) {
 
   EventListener el1;
@@ -126,7 +126,7 @@ static msg_t ThreadBDU(void *arg) {
 /*
  * USB Serial thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadSDU, 256);
+static WORKING_AREA(waThreadSDU, 1024);
 static msg_t ThreadSDU(void *arg) {
 
   uint8_t buffer[16];

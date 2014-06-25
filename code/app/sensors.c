@@ -17,11 +17,18 @@ void captureOverflowCb(TIMCAPDriver *timcapp)
 {
   (void)timcapp;
   tmStartMeasurement(&irqtime);
-  sensors_data.freq1 = 0;
-  sensors_data.freq2 = 0;
 
-  TIM3->DIER &= ~TIM_DIER_CC1IE;
-  TIM3->DIER &= ~TIM_DIER_CC2IE;
+  if ((TIM3->DIER & TIM_DIER_CC1IE)
+      && TIM3CC1CaptureNumber == 0) {
+    TIM3->DIER &= ~TIM_DIER_CC1IE;
+    sensors_data.freq1 = 0;
+  }
+
+  if ((TIM3->DIER & TIM_DIER_CC2IE)
+      && TIM3CC2CaptureNumber == 0) {
+    TIM3->DIER &= ~TIM_DIER_CC2IE;
+    sensors_data.freq2 = 0;
+  }
 
   tmStopMeasurement(&irqtime);
   irqtotal += irqtime.last;
