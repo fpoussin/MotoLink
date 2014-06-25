@@ -313,12 +313,12 @@ msg_t ThreadMonitor(void *arg)
 
 	chSysUnlock();
 
-	monitoring.bdu = (thTicks[0]*10000)/runtime_total | RUNNING(pThreadBDU);
-	monitoring.sdu = (thTicks[1]*10000)/runtime_total | RUNNING(pThreadSDU);
-	monitoring.can = (thTicks[2]*10000)/runtime_total | RUNNING(pThreadCAN);
-	monitoring.knock = (thTicks[3]*10000)/runtime_total | RUNNING(pThreadKnock);
-	monitoring.sensors = (thTicks[4]*10000)/runtime_total | RUNNING(pThreadSensors);
-	monitoring.monitor = (thTicks[5]*10000)/runtime_total | RUNNING(pThreadMonitor);
+	monitoring.bdu = ((thTicks[0]*10000)/runtime_total) | RUNNING(pThreadBDU);
+	monitoring.sdu = ((thTicks[1]*10000)/runtime_total) | RUNNING(pThreadSDU);
+	monitoring.can = ((thTicks[2]*10000)/runtime_total) | RUNNING(pThreadCAN);
+	monitoring.knock = ((thTicks[3]*10000)/runtime_total) | RUNNING(pThreadKnock);
+	monitoring.sensors = ((thTicks[4]*10000)/runtime_total) | RUNNING(pThreadSensors);
+	monitoring.monitor = ((thTicks[5]*10000)/runtime_total) | RUNNING(pThreadMonitor);
 	monitoring.irq = ((float)irqtotal/0.72f)/(float)runtime_total; /* From 72Mhz cycle counter, == ((n*10000)/72000) */
 	monitoring.idle = (((thTicks[6]*10000)/runtime_total) - monitoring.irq)  | RUNNING(chSysGetIdleThread());
 
