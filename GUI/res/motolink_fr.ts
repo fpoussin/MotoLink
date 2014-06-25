@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
-<defaultcodec>UTF-8</defaultcodec>
+<TS version="2.1" language="fr_FR">
 <context>
     <name>HelpViewer</name>
     <message>
@@ -254,218 +253,248 @@
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1304"/>
+        <location filename="../ui/main.ui" line="1305"/>
         <source>Edit</source>
         <translation>Editer</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1312"/>
+        <location filename="../ui/main.ui" line="1313"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1334"/>
+        <location filename="../ui/main.ui" line="1335"/>
         <source>Open...</source>
         <translation>Ouvrir...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1337"/>
+        <location filename="../ui/main.ui" line="1338"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1349"/>
+        <location filename="../ui/main.ui" line="1350"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1352"/>
+        <location filename="../ui/main.ui" line="1353"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1364"/>
+        <location filename="../ui/main.ui" line="1365"/>
         <source>Save As...</source>
         <translation>Enregistrer sous...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1367"/>
+        <location filename="../ui/main.ui" line="1368"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1379"/>
+        <location filename="../ui/main.ui" line="1380"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1382"/>
+        <location filename="../ui/main.ui" line="1383"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1394"/>
+        <location filename="../ui/main.ui" line="1395"/>
         <source>About</source>
         <translation>à propos</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1406"/>
+        <location filename="../ui/main.ui" line="1407"/>
         <source>About QT</source>
         <translation>à propos de QT</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1418"/>
+        <location filename="../ui/main.ui" line="1419"/>
         <source>Connect</source>
         <translation>Connecter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1421"/>
+        <location filename="../ui/main.ui" line="1422"/>
         <source>F3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1433"/>
+        <location filename="../ui/main.ui" line="1434"/>
         <source>Disconnect</source>
         <translation>Déconnecter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1436"/>
+        <location filename="../ui/main.ui" line="1437"/>
         <source>F4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1448"/>
+        <location filename="../ui/main.ui" line="1449"/>
         <source>Import from HRC...</source>
         <translation>Importer depuis HRC...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1457"/>
+        <location filename="../ui/main.ui" line="1458"/>
         <source>Export to HRC...</source>
         <translation>Exporter vers HRC...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1466"/>
+        <location filename="../ui/main.ui" line="1467"/>
         <source>New...</source>
         <translation>Nouveau...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1469"/>
+        <location filename="../ui/main.ui" line="1470"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1481"/>
+        <location filename="../ui/main.ui" line="1482"/>
         <source>Index</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1484"/>
+        <location filename="../ui/main.ui" line="1485"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1496"/>
+        <location filename="../ui/main.ui" line="1497"/>
         <source>Update Firmware...</source>
         <translation>Mise à jour du Firmware...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1508"/>
+        <location filename="../ui/main.ui" line="1500"/>
+        <source>Ctrl+U</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1512"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1511"/>
+        <location filename="../ui/main.ui" line="1515"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1526"/>
+        <location filename="../ui/main.ui" line="1530"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1529"/>
+        <location filename="../ui/main.ui" line="1533"/>
         <source>Ctrl+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1544"/>
+        <location filename="../ui/main.ui" line="1548"/>
         <source>Auto Send</source>
         <translation>Envoi automatique</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1553"/>
+        <location filename="../ui/main.ui" line="1557"/>
         <source>Send Configuration</source>
         <translation>Envoyer la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1562"/>
+        <location filename="../ui/main.ui" line="1566"/>
         <source>Get Configuration</source>
         <translation>Recevoir la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1589"/>
+        <location filename="../ui/main.ui" line="1593"/>
         <source>Show actions</source>
         <translation>Monter les actions</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="81"/>
+        <location filename="../ui/main.ui" line="1602"/>
+        <source>Show tasks...</source>
+        <translation>Montrer les taches...</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1605"/>
+        <source>Ctrl+T</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="88"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="82"/>
+        <location filename="../src/mainwindow.cpp" line="89"/>
         <source>Unsaved changes!
 Save file before closing?</source>
         <translation>Des changements sont en cours !
 Sauvegarder avant la fermeture ?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="109"/>
+        <location filename="../src/mainwindow.cpp" line="116"/>
         <source>Open Tune File</source>
         <translation>Ouvrir une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="109"/>
-        <location filename="../src/mainwindow.cpp" line="144"/>
+        <location filename="../src/mainwindow.cpp" line="116"/>
+        <location filename="../src/mainwindow.cpp" line="151"/>
         <source>Tune Files (*.xml)</source>
         <translation>Fichier de cartographie (*.xml)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="144"/>
+        <location filename="../src/mainwindow.cpp" line="151"/>
         <source>Save Tune File</source>
         <translation>Enregistrer une cartographie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="162"/>
+        <location filename="../src/mainwindow.cpp" line="171"/>
         <source>Connection Failed</source>
         <translation>Echec de la connection</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="175"/>
+        <location filename="../src/mainwindow.cpp" line="186"/>
         <source>About Motolink</source>
         <translation>à propos de MotoLink</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="176"/>
+        <location filename="../src/mainwindow.cpp" line="187"/>
         <source>&lt;strong&gt;Version: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="177"/>
+        <location filename="../src/mainwindow.cpp" line="188"/>
         <source>Motolink is a smart interface designed for Honda HRC ECUs.&lt;br/&gt;&lt;br/&gt;You can find more information &lt;a href=&quot;https://github.com/fpoussin/MotoLink&quot;&gt;here.&lt;/a&gt;</source>
         <translation>MotoLink est une interface intelligente conçue pour les calculateurs HRC.&lt;br/&gt;&lt;br/&gt;Vous pouvez trouver plus d&apos;informations &lt;a href=&quot;https://github.com/fpoussin/MotoLink&quot;&gt;ici.&lt;/a&gt; (En Anglais)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="481"/>
-        <location filename="../src/mainwindow.cpp" line="482"/>
-        <location filename="../src/mainwindow.cpp" line="483"/>
+        <location filename="../src/mainwindow.cpp" line="518"/>
+        <source>Increase selection</source>
+        <translation>Incrémenter la sélection</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="519"/>
+        <source>Decrease selection</source>
+        <translation>Décrémenter la sélection</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="521"/>
+        <source>Change all cells...</source>
+        <translation>Changer toutes les cellules</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="564"/>
+        <location filename="../src/mainwindow.cpp" line="565"/>
+        <location filename="../src/mainwindow.cpp" line="566"/>
         <source> Volts</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="484"/>
-        <location filename="../src/mainwindow.cpp" line="485"/>
+        <location filename="../src/mainwindow.cpp" line="567"/>
+        <location filename="../src/mainwindow.cpp" line="568"/>
         <source> Hertz</source>
         <translation></translation>
     </message>
@@ -474,23 +503,23 @@ Sauvegarder avant la fermeture ?</translation>
         <translation type="obsolete">MotoLink est une interface intelligente conçue pour les calculateurs HRC.&lt;br/&gt;&lt;br/&gt;Vous pouvez trouver plus d&apos;informations &lt;a href=&quot;https://github.com/mobyfab/MotoLink&quot;&gt;ici.&lt;/a&gt; (En Anglais)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="190"/>
+        <location filename="../src/mainwindow.cpp" line="201"/>
         <source>Import HRC File</source>
         <translation>Importer un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="190"/>
-        <location filename="../src/mainwindow.cpp" line="197"/>
+        <location filename="../src/mainwindow.cpp" line="201"/>
+        <location filename="../src/mainwindow.cpp" line="208"/>
         <source>HRC File (*.E2P)</source>
         <translation>Fichier HRC (*.E2P)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="197"/>
+        <location filename="../src/mainwindow.cpp" line="208"/>
         <source>Export HRC File</source>
         <translation>Exporter un fichier HRC</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="203"/>
+        <location filename="../src/mainwindow.cpp" line="214"/>
         <source>Disconnected</source>
         <translation>Déconnecter</translation>
     </message>
@@ -498,127 +527,127 @@ Sauvegarder avant la fermeture ?</translation>
 <context>
     <name>Motolink</name>
     <message>
-        <location filename="../src/motolink.cpp" line="256"/>
+        <location filename="../src/motolink.cpp" line="286"/>
         <source>Aborted</source>
         <translation>Annulé</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="272"/>
+        <location filename="../src/motolink.cpp" line="302"/>
         <source>File size</source>
         <translation>Taille du fichier</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="274"/>
+        <location filename="../src/motolink.cpp" line="304"/>
         <source>Erasing...</source>
         <translation>Effacement...</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="278"/>
-        <location filename="../src/motolink.cpp" line="279"/>
+        <location filename="../src/motolink.cpp" line="308"/>
+        <location filename="../src/motolink.cpp" line="309"/>
         <source>Erase failed</source>
         <translation>échec de l&apos;éffacement</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="285"/>
-        <location filename="../src/motolink.cpp" line="286"/>
+        <location filename="../src/motolink.cpp" line="314"/>
+        <location filename="../src/motolink.cpp" line="315"/>
         <source>Erase OK</source>
         <translation>Effacement OK</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="290"/>
+        <location filename="../src/motolink.cpp" line="319"/>
         <source>Writing from</source>
         <translation>écriture de</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="292"/>
+        <location filename="../src/motolink.cpp" line="321"/>
         <source>Writing Flash</source>
         <translation>Ecriture en cours</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="301"/>
+        <location filename="../src/motolink.cpp" line="330"/>
         <source>End Of File</source>
         <translation>Fin du fichier</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="308"/>
-        <location filename="../src/motolink.cpp" line="361"/>
+        <location filename="../src/motolink.cpp" line="337"/>
+        <location filename="../src/motolink.cpp" line="390"/>
         <source>Read</source>
         <translation>Lu</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="308"/>
-        <location filename="../src/motolink.cpp" line="361"/>
+        <location filename="../src/motolink.cpp" line="337"/>
+        <location filename="../src/motolink.cpp" line="390"/>
         <source>Bytes from disk</source>
         <translation>Octets depuis le disque</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="316"/>
-        <location filename="../src/motolink.cpp" line="317"/>
+        <location filename="../src/motolink.cpp" line="345"/>
+        <location filename="../src/motolink.cpp" line="346"/>
         <source>Transfer failed</source>
         <translation>échec du transfert</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="325"/>
-        <location filename="../src/motolink.cpp" line="397"/>
+        <location filename="../src/motolink.cpp" line="354"/>
+        <location filename="../src/motolink.cpp" line="426"/>
         <source>Progress:</source>
         <translation>Avancement:</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="332"/>
-        <location filename="../src/motolink.cpp" line="333"/>
+        <location filename="../src/motolink.cpp" line="361"/>
+        <location filename="../src/motolink.cpp" line="362"/>
         <source>Transfer done</source>
         <translation>Transfert terminé</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="347"/>
+        <location filename="../src/motolink.cpp" line="376"/>
         <source>Reading from</source>
         <translation>Lecture depuis</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="347"/>
+        <location filename="../src/motolink.cpp" line="376"/>
         <source>to</source>
         <translation>vers</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="351"/>
+        <location filename="../src/motolink.cpp" line="380"/>
         <source>Verifying flash</source>
         <translation>Vérification de la mémoire flash</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="371"/>
-        <location filename="../src/motolink.cpp" line="372"/>
+        <location filename="../src/motolink.cpp" line="400"/>
+        <location filename="../src/motolink.cpp" line="401"/>
         <source>Verification Failed</source>
         <translation>échec de la vérification</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="373"/>
+        <location filename="../src/motolink.cpp" line="402"/>
         <source>read</source>
         <translation>lu</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="373"/>
+        <location filename="../src/motolink.cpp" line="402"/>
         <source>valid</source>
         <translation>valide</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="381"/>
-        <location filename="../src/motolink.cpp" line="388"/>
+        <location filename="../src/motolink.cpp" line="410"/>
+        <location filename="../src/motolink.cpp" line="417"/>
         <source>Verification failed at 0x</source>
         <translation>échec de la vérification à 0x</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="389"/>
+        <location filename="../src/motolink.cpp" line="418"/>
         <source>Expecting:</source>
         <translation>Attendu:</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="389"/>
+        <location filename="../src/motolink.cpp" line="418"/>
         <source>Got:</source>
         <translation>Reçu:</translation>
     </message>
     <message>
-        <location filename="../src/motolink.cpp" line="403"/>
-        <location filename="../src/motolink.cpp" line="404"/>
+        <location filename="../src/motolink.cpp" line="432"/>
+        <location filename="../src/motolink.cpp" line="433"/>
         <source>Verification OK</source>
         <translation>Vérification OK</translation>
     </message>
@@ -654,19 +683,84 @@ Sauvegarder avant la fermeture ?</translation>
     </message>
 </context>
 <context>
-    <name>Update</name>
+    <name>Tasks</name>
     <message>
-        <location filename="../src/update.cpp" line="44"/>
-        <source>Unable to get latest version</source>
-        <translation type="unfinished">Impossible de vérifier la dernière version disponible</translation>
+        <location filename="../ui/tasks.ui" line="26"/>
+        <source>Tasks</source>
+        <translation>Taches</translation>
     </message>
     <message>
-        <location filename="../src/update.cpp" line="52"/>
+        <location filename="../ui/tasks.ui" line="45"/>
+        <source>Main USB</source>
+        <translation>USB Principal</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="54"/>
+        <source>Serial USB</source>
+        <translation>USB Série</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="63"/>
+        <source>CAN BUS</source>
+        <translation>BUS CAN</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="72"/>
+        <source>Knock Sensor</source>
+        <translation>Capteur Détonations</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="81"/>
+        <source>Other Sensors</source>
+        <translation>Autres Capteurs</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="90"/>
+        <source>Monitoring</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="99"/>
+        <source>Interrupts</source>
+        <translation>Interruptions</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="108"/>
+        <source>Idle</source>
+        <translation>Repos</translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="117"/>
+        <source>CPU %</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/tasks.ui" line="125"/>
+        <location filename="../ui/tasks.ui" line="136"/>
+        <location filename="../ui/tasks.ui" line="147"/>
+        <location filename="../ui/tasks.ui" line="158"/>
+        <location filename="../ui/tasks.ui" line="169"/>
+        <location filename="../ui/tasks.ui" line="180"/>
+        <location filename="../ui/tasks.ui" line="191"/>
+        <location filename="../ui/tasks.ui" line="202"/>
+        <source>0</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Update</name>
+    <message>
+        <location filename="../src/update.cpp" line="45"/>
+        <source>Unable to get latest version</source>
+        <translation>Impossible de vérifier la dernière version disponible</translation>
+    </message>
+    <message>
+        <location filename="../src/update.cpp" line="53"/>
         <source>New version available</source>
         <translation>Nouvelle version disponible</translation>
     </message>
     <message>
-        <location filename="../src/update.cpp" line="57"/>
+        <location filename="../src/update.cpp" line="58"/>
         <source>Using latest version</source>
         <translation>MotoLink est à jour</translation>
     </message>
@@ -728,62 +822,67 @@ Sauvegarder avant la fermeture ?</translation>
         <translation>Erreur:</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="43"/>
+        <location filename="../src/updatewizard.cpp" line="44"/>
         <source>Open firmware file</source>
         <translation>Ouvrir un fichier Firmware</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="43"/>
+        <location filename="../src/updatewizard.cpp" line="44"/>
         <source>Firmware files (*.bin)</source>
         <translation>Fichiers Firmware (*.bin)</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="56"/>
+        <location filename="../src/updatewizard.cpp" line="57"/>
         <source>Couldn&apos;t open </source>
         <translation>Impossible d&apos;ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="108"/>
+        <location filename="../src/updatewizard.cpp" line="109"/>
         <source>Booting app</source>
         <translation>Démarrage de l&apos;application</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="197"/>
+        <location filename="../src/updatewizard.cpp" line="198"/>
         <source>Reset to Bootloader...</source>
         <translation>Redémarrage en mode mise à jour</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="214"/>
+        <location filename="../src/updatewizard.cpp" line="215"/>
         <source>Failed to reset device</source>
         <translation>Impossible de redémarrer</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="219"/>
+        <location filename="../src/updatewizard.cpp" line="220"/>
         <source>Connected</source>
         <translation>Connecté</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="225"/>
+        <location filename="../src/updatewizard.cpp" line="226"/>
         <source>Watchdog reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset Watchdog</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="228"/>
+        <location filename="../src/updatewizard.cpp" line="229"/>
         <source>Software reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset Logiciel</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="231"/>
+        <location filename="../src/updatewizard.cpp" line="232"/>
         <source>No valid user application</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune application valide trouvée</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="234"/>
+        <location filename="../src/updatewizard.cpp" line="235"/>
         <source>Bootloader Wakeup</source>
-        <translation type="unfinished"></translation>
+        <translation>Bootloader</translation>
     </message>
     <message>
-        <location filename="../src/updatewizard.cpp" line="240"/>
+        <location filename="../src/updatewizard.cpp" line="238"/>
+        <source>Boot Switch ON</source>
+        <translation>Commutateur de boot enclanché</translation>
+    </message>
+    <message>
+        <location filename="../src/updatewizard.cpp" line="244"/>
         <source>Connection Failed</source>
         <translation>Echec de la connection</translation>
     </message>

@@ -42,7 +42,7 @@
      </attribute>
      <row>
       <property name="text">
-       <string>USB</string>
+       <string>Main USB</string>
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
@@ -64,7 +64,7 @@
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/devices/network-wired.png</normaloff>:/oxygen/32x32/devices/network-wired.png</iconset>
+        <normaloff>:/oxygen/32x32/apps/esd.png</normaloff>:/oxygen/32x32/apps/esd.png</iconset>
       </property>
      </row>
      <row>
@@ -91,7 +91,7 @@
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/devices/cpu.png</normaloff>:/oxygen/32x32/devices/cpu.png</iconset>
+        <normaloff>:/oxygen/32x32/apps/utilities-system-monitor.png</normaloff>:/oxygen/32x32/apps/utilities-system-monitor.png</iconset>
       </property>
      </row>
      <row>
@@ -100,7 +100,7 @@
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/actions/help-hint.png</normaloff>:/oxygen/32x32/actions/help-hint.png</iconset>
+        <normaloff>:/oxygen/32x32/actions/quickopen-function.png</normaloff>:/oxygen/32x32/actions/quickopen-function.png</iconset>
       </property>
      </row>
      <row>
