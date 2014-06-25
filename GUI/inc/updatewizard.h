@@ -27,6 +27,7 @@ public slots:
     void openCustomFw(void);
 
 signals:
+    void sendDisconnect(void);
     void startTransfer(QByteArray *data);
     void send(QByteArray *data);
     void verify(QByteArray *data);

@@ -34,7 +34,6 @@ Thread* pThreadKnock = NULL;
 Thread* pThreadCAN = NULL;
 
 monitor_t monitoring = {0,0,0,0,0,0,0,100};
-unsigned int runtime_total = 0;
 
 /*===========================================================================*/
 /* Generic code.                                                             */
@@ -49,7 +48,11 @@ const CANConfig cancfg = {
 void iwdgGptCb(GPTDriver *gptp)
 {
   (void) gptp;
+  systime_t time = chTimeNow();
   IWDG->KR = ((uint16_t)0xAAAA);
+  time = time - chTimeNow();
+  monitoring.irq += time;
+  chThdSelf()->runtime -= time;
 }
 
 GPTConfig gpt1Cfg =
@@ -101,8 +104,10 @@ msg_t ThreadCAN(void *p)
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
   while(!chThdShouldTerminate()) {
-    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE) == 0)
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE) == 0) {
+      chThdSleepMilliseconds(2);
       continue;
+    }
     while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
       /* Process message.*/
     }
@@ -142,6 +147,8 @@ msg_t ThreadBDU(void *arg)
       pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       readCommand((BaseChannel *)&BDU1);
     }
+    else
+     chThdSleepMilliseconds(2);
   }
   return 0;
 }
@@ -149,10 +156,11 @@ msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread.
  */
-WORKING_AREA(waThreadSDU, 512);
+WORKING_AREA(waThreadSDU, 1024);
 msg_t ThreadSDU(void *arg)
 {
-  uint8_t buffer[SERIAL_BUFFERS_SIZE];
+  uint8_t ubuffer[SERIAL_BUFFERS_SIZE];
+  uint8_t sbuffer[SERIAL_BUFFERS_SIZE];
   EventListener el1, el2;
   flagsmask_t flags_usb, flags_uart;
   size_t read, available;
@@ -164,33 +172,39 @@ msg_t ThreadSDU(void *arg)
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
+  /* TODO: Unstable? */
   while (TRUE) {
 
-    chEvtWaitOneTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
+    chEvtWaitAnyTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
     flags_usb = chEvtGetAndClearFlags(&el1);
-    flags_uart = chEvtGetAndClearFlags(&el2);
 
     if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
 
       available = chQSpaceI(&SDU1.iqueue);
-      if (available > sizeof(buffer)) available = sizeof(buffer);
+      if (available > sizeof(ubuffer)) available = sizeof(ubuffer);
 
       pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
-      read = chnReadTimeout((BaseChannel *)&SDU1, buffer, available, MS2ST(10));
-      chnWriteTimeout((BaseChannel *)&SD1, buffer, read, MS2ST(10));
+      read = chnReadTimeout((BaseChannel *)&SDU1, ubuffer, available, MS2ST(1));
+      chnWriteTimeout((BaseChannel *)&SD1, ubuffer, read, MS2ST(10));
     }
+    else
+      chThdSleepMilliseconds(1);
 
+    flags_uart = chEvtGetAndClearFlags(&el2);
     if (flags_uart & CHN_INPUT_AVAILABLE) { /* Incoming data from UART */
 
       available = chQSpaceI(&SD1.iqueue);
-      if (available > sizeof(buffer)) available = sizeof(buffer);
+      if (available > sizeof(sbuffer)) available = sizeof(sbuffer);
 
+      /* Read seems incorrect */
       pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
-      read = chnReadTimeout((BaseChannel *)&SD1, buffer, available, MS2ST(10));
-      chnWriteTimeout((BaseChannel *)&SDU1, buffer, read, MS2ST(10));
+      read = chnReadTimeout((BaseChannel *)&SD1, sbuffer, available, MS2ST(1));
+      chnWriteTimeout((BaseChannel *)&SDU1, sbuffer, read, MS2ST(10));
     }
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+    else
+      chThdSleepMilliseconds(1);
 
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
   }
   return 0;
 }
@@ -256,13 +270,13 @@ msg_t ThreadMonitor(void *arg)
   (void)arg;
   chRegSetThreadName("Monitor");
   uint32_t thTicks[7];
+  uint32_t runtime_total;
   Thread* pThreadMonitor = chThdSelf();
 
   while (TRUE)
   {
 	chSysLock();
 
-	runtime_total = 0;
 	pThreadBDU->runtime = 0;
 	pThreadSDU->runtime = 0;
 	pThreadCAN->runtime = 0;
@@ -270,6 +284,7 @@ msg_t ThreadMonitor(void *arg)
 	pThreadSensors->runtime = 0;
 	pThreadMonitor->runtime = 0;
 	chSysGetIdleThread()->runtime = 0;
+	irqtotal = 0;
 
 	chSysUnlock();
 
@@ -286,21 +301,22 @@ msg_t ThreadMonitor(void *arg)
 	thTicks[5] = pThreadMonitor->runtime;
 	thTicks[6] = chSysGetIdleThread()->runtime;
 
-	monitoring.bdu = (thTicks[0]*200)/runtime_total;
-	monitoring.sdu = (thTicks[1]*200)/runtime_total;
-	monitoring.can = (thTicks[2]*200)/runtime_total;
-	monitoring.knock = (thTicks[3]*200)/runtime_total;
-	monitoring.sensors = (thTicks[4]*200)/runtime_total;
-	monitoring.monitor = (thTicks[5]*200)/runtime_total;
-	monitoring.idle = (thTicks[6]*200)/runtime_total;
-	monitoring.irq = 200
-			-monitoring.idle
-			-monitoring.bdu
-			-monitoring.sdu
-			-monitoring.can
-			-monitoring.knock
-			-monitoring.sensors
-			-monitoring.monitor;
+	runtime_total = pThreadBDU->runtime
+	    +pThreadSDU->runtime
+	    +pThreadCAN->runtime
+	    +pThreadKnock->runtime
+	    +pThreadSensors->runtime
+	    +pThreadMonitor->runtime
+	    +chSysGetIdleThread()->runtime;
+
+	monitoring.bdu = (thTicks[0]*10000)/runtime_total;
+	monitoring.sdu = (thTicks[1]*10000)/runtime_total;
+	monitoring.can = (thTicks[2]*10000)/runtime_total;
+	monitoring.knock = (thTicks[3]*10000)/runtime_total;
+	monitoring.sensors = (thTicks[4]*10000)/runtime_total;
+	monitoring.monitor = (thTicks[5]*10000)/runtime_total;
+	monitoring.irq = ((float)irqtotal/0.72f)/(float)runtime_total; /* From 72Mhz cycle counter, == ((n*10000)/72000) */
+	monitoring.idle = ((thTicks[6]*10000)/runtime_total) - monitoring.irq;
 
 	chSysUnlock();
   }
@@ -337,6 +353,7 @@ int main(void)
    */
   sduObjectInit(&SDU1);
   bduObjectInit(&BDU1);
+  tmObjectInit(&irqtime);
 
   /*
    * Start peripherals

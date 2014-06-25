@@ -5,26 +5,32 @@ adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 q15_t data_knock[sizeof(samples_knock)/2];
 q15_t output_knock[sizeof(samples_knock)/2];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
-VirtualTimer capture_vt;
+TimeMeasurement irqtime;
+uint32_t irqtotal = 0;
 bool knockDataReady = false;
 
 void captureOverflowCb(TIMCAPDriver *timcapp)
 {
   (void)timcapp;
+  tmStartMeasurement(&irqtime);
   sensors_data.freq1 = 0;
   sensors_data.freq2 = 0;
 
   TIM3->DIER &= ~TIM_DIER_CC1IE;
   TIM3->DIER &= ~TIM_DIER_CC2IE;
+
+  tmStopMeasurement(&irqtime);
+  irqtotal += irqtime.last;
 }
 
 void capture1Cb(TIMCAPDriver *timcapp)
 {
   (void)timcapp;
+  tmStartMeasurement(&irqtime);
   if(TIM3CC1CaptureNumber == 0)
   {
     /* Get the Input Capture value */
@@ -56,11 +62,14 @@ void capture1Cb(TIMCAPDriver *timcapp)
       /* Disable CC1 interrupt */
       TIM3->DIER &= ~TIM_DIER_CC1IE;
   }
+  tmStopMeasurement(&irqtime);
+  irqtotal += irqtime.last;
 }
 
 void capture2Cb(TIMCAPDriver *timcapp)
 {
   (void)timcapp;
+  tmStartMeasurement(&irqtime);
   if(TIM3CC2CaptureNumber == 0)
   {
     /* Get the Input Capture value */
@@ -92,6 +101,8 @@ void capture2Cb(TIMCAPDriver *timcapp)
       /* Disable CC2 interrupt */
       TIM3->DIER &= ~TIM_DIER_CC2IE;
   }
+  tmStopMeasurement(&irqtime);
+  irqtotal += irqtime.last;
 }
 
 TIMCAPConfig tc_conf = {
@@ -108,6 +119,7 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   (void)adcp;
   uint16_t i, pos;
   uint32_t an[3] = {0, 0, 0};
+  tmStartMeasurement(&irqtime);
 
   /* n is always depth/2 */
   for (i=0; i<n; i++)
@@ -130,6 +142,9 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   sensors_data.an7 = an[0] & 0xFFF0;
   sensors_data.an8 = an[1] & 0xFFF0;
   sensors_data.an9 = an[2] & 0xFFF0;
+
+  tmStopMeasurement(&irqtime);
+  irqtotal += irqtime.last;
 }
 
 /* ADC12 Clk is 72Mhz/128 562Khz  */
@@ -163,6 +178,7 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   uint16_t i;
   const int32_t* samples = (int32_t*)buffer;
   int32_t* data = (int32_t*)data_knock;
+  tmStartMeasurement(&irqtime);
 
   /* n is always depth/2 */
   if (n % 16)
@@ -180,6 +196,9 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 
   // Do FFT + Mag in a thread
   knockDataReady = true;
+
+  tmStopMeasurement(&irqtime);
+  irqtotal += irqtime.last;
 }
 
 /* ADC34 Clk is 72Mhz/32 2.25Mhz  */

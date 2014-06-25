@@ -54,6 +54,10 @@ uint8_t readCommand(BaseChannel *chn)
       status = sendSensors(chn);
       break;
 
+    case MASK_CMD | CMD_GET_MONITOR:
+      status = sendMonitoring(chn);
+      break;
+
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
       break;
@@ -113,7 +117,7 @@ uint8_t sendMonitoring(BaseChannel * chn) {
 
   uint8_t buf[1+sizeof(monitor_t)];
   buf[0] = MASK_REPLY_OK | CMD_GET_MONITOR;
-  memcpy(buf+1, &monitoring, sizeof(sensors_t));
+  memcpy(buf+1, &monitoring, sizeof(monitor_t));
 
   chnWriteTimeout(chn, buf, sizeof(buf), MS2ST(25));
   return 0;

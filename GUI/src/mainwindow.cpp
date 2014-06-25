@@ -2,12 +2,15 @@
 #include <QShortcut>
 #include <QSignalMapper>
 #include <ui_main.h>
+#include <ui_tasks.h>
 #include <QFileInfo>
 #include <QModelIndex>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mUi(new Ui::MainWindow),
+    mTasks(new Ui::Tasks),
+    mTasksWidget(new QWidget),
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
@@ -32,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mKnockModel.setName("Knock");
 
     mUi->setupUi(this);
+    mTasks->setupUi(mTasksWidget);
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
@@ -53,7 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
-    mSensorsTimer.setInterval(50);
+    mFastPollingTimer.setInterval(50);
+    mSlowPollingTimer.setInterval(500);
 
     this->uiDisable();
 
@@ -64,6 +69,8 @@ MainWindow::~MainWindow()
 {
     delete mUi;
     delete mUpdateWizard;
+    delete mTasks;
+    delete mTasksWidget;
     delete mMtl;
     delete mHrc;
 
@@ -156,7 +163,9 @@ void MainWindow::connectMtl()
     {
         mMtl->bootAppIfNeeded();
         this->uiEnable();
-        this->mSensorsTimer.start();
+        this->mFastPollingTimer.start();
+        this->mSlowPollingTimer.start();
+        this->mUi->statusBar->showMessage("Connected");
     }
     else {
         mUi->statusBar->showMessage(tr("Connection Failed"));
@@ -165,9 +174,11 @@ void MainWindow::connectMtl()
 
 void MainWindow::disconnectMtl()
 {
-    this->mSensorsTimer.stop();
+    this->mFastPollingTimer.stop();
+    this->mSlowPollingTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
+    this->mUi->statusBar->showMessage("Disconnected");
 }
 
 void MainWindow::showAbout()
@@ -233,6 +244,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
     QObject::connect(mUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
+    QObject::connect(mUi->actionShow_tasks, SIGNAL(triggered()),this, SLOT(showTasks()));
 
     QObject::connect(mUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
     QObject::connect(mUi->actionUndo, SIGNAL(triggered()), &mUndoStack, SLOT(undo()));
@@ -255,6 +267,8 @@ void MainWindow::setupConnections(void)
 
     QObject::connect(this, SIGNAL(startupComplete()), &mUpdate, SLOT(getLatestVersion()));
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), mUi->statusBar, SLOT(showMessage(QString)));
+    QObject::connect(mUpdateWizard, SIGNAL(sendDisconnect()), this, SLOT(disconnectMtl()));
+
 
     mUi->tableAfrMap->setContextMenuPolicy(Qt::CustomContextMenu);
     mUi->tableAfrTgt->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -277,9 +291,14 @@ void MainWindow::setupConnections(void)
          }
 
     /* Sensors UI update */
-    QObject::connect(&mSensorsTimer, SIGNAL(timeout()), this, SLOT(updateSensors()));
+    QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
+    QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
+
     QObject::connect(this, SIGNAL(sendUpdateSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
     QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(receiveSensors(QByteArray*)));
+
+    QObject::connect(this, SIGNAL(sendUpdateMonitoring(QByteArray*)), mMtl, SLOT(getMonitoring(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(sendMonitoring(QByteArray*)), this, SLOT(receiveMonitoring(QByteArray*)));
 }
 
 void MainWindow::setupTabShortcuts()
@@ -361,6 +380,7 @@ void MainWindow::uiEnable()
     mUi->actionGet_Configuration->setEnabled(toggle);
     mUi->actionSend_Configuration->setEnabled(toggle);
     mUi->actionAuto_Send->setEnabled(toggle);
+    mUi->actionShow_tasks->setEnabled(toggle);
 }
 
 void MainWindow::uiDisable()
@@ -377,6 +397,7 @@ void MainWindow::uiDisable()
     mUi->actionGet_Configuration->setEnabled(toggle);
     mUi->actionSend_Configuration->setEnabled(toggle);
     mUi->actionAuto_Send->setEnabled(toggle);
+    mUi->actionShow_tasks->setEnabled(toggle);
 }
 
 void MainWindow::updateRecentFilesActions()
@@ -458,6 +479,11 @@ void MainWindow::showSettingsTab()
         mUi->tabMain->setCurrentIndex(index);
 }
 
+void MainWindow::showTasks()
+{
+    mTasksWidget->show();
+}
+
 void MainWindow::showAfrMapContextMenu(const QPoint &pos)
 {
     this->showDefaultContextMenu(pos, mUi->tableAfrMap);
@@ -506,12 +532,26 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
     }
 }
 
-void MainWindow::updateSensors()
+void MainWindow::doFastPolling()
 {
     if (mMtl->isConnected())
+    {
         emit sendUpdateSensors(&mSensorsData);
-    else
-        mSensorsTimer.stop();
+    }
+    else {
+        mFastPollingTimer.stop();
+    }
+}
+
+void MainWindow::doSlowPolling()
+{
+    if (mMtl->isConnected())
+    {
+        emit sendUpdateMonitoring(&mMonitoringData);
+    }
+    else {
+        mSlowPollingTimer.stop();
+    }
 }
 
 void MainWindow::receiveSensors(QByteArray *data)
@@ -526,5 +566,19 @@ void MainWindow::receiveSensors(QByteArray *data)
     mUi->lAfrVolts->setText(QString::number(vAn9)+tr(" Volts"));
     mUi->lRpmHertz->setText(QString::number(sensors->freq1)+tr(" Hertz"));
     mUi->lSpeedHertz->setText(QString::number(sensors->freq2)+tr(" Hertz"));
+}
+
+void MainWindow::receiveMonitoring(QByteArray *data)
+{
+    const monitor_t * monitor =  (monitor_t *)data->constData();
+
+    mTasks->tableWidget->item(0, 0)->setData(Qt::DisplayRole, float(monitor->bdu)/100.0);
+    mTasks->tableWidget->item(1, 0)->setData(Qt::DisplayRole, float(monitor->sdu)/100.0);
+    mTasks->tableWidget->item(2, 0)->setData(Qt::DisplayRole, float(monitor->can)/100.0);
+    mTasks->tableWidget->item(3, 0)->setData(Qt::DisplayRole, float(monitor->knock)/100.0);
+    mTasks->tableWidget->item(4, 0)->setData(Qt::DisplayRole, float(monitor->sensors)/100.0);
+    mTasks->tableWidget->item(5, 0)->setData(Qt::DisplayRole, float(monitor->monitor)/100.0);
+    mTasks->tableWidget->item(6, 0)->setData(Qt::DisplayRole, float(monitor->irq)/100.0);
+    mTasks->tableWidget->item(7, 0)->setData(Qt::DisplayRole, float(monitor->idle)/100.0);
 }
 

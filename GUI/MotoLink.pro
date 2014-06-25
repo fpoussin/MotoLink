@@ -50,7 +50,8 @@ HEADERS  += \
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \
-    ui/helpviewer.ui
+    ui/helpviewer.ui \
+    ui/tasks.ui
 
 RESOURCES += \
     res/oxygen.qrc \

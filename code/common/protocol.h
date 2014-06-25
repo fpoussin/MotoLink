@@ -54,14 +54,14 @@ typedef struct {
 } sensors_t;
 
 typedef struct {
-  uint8_t bdu;
-  uint8_t sdu;
-  uint8_t can;
-  uint8_t knock;
-  uint8_t sensors;
-  uint8_t monitor;
-  uint8_t irq;
-  uint8_t idle;
+  uint16_t bdu;
+  uint16_t sdu;
+  uint16_t can;
+  uint16_t knock;
+  uint16_t sensors;
+  uint16_t monitor;
+  uint16_t irq;
+  uint16_t idle;
 } monitor_t;
 
 #endif

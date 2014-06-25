@@ -305,8 +305,11 @@
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE         64
+#define SERIAL_BUFFERS_SIZE         256
 #endif
+
+#define BULK_USB_BUFFERS_SIZE     512
+#define SERIAL_USB_BUFFERS_SIZE   512
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */

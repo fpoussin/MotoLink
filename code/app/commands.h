@@ -8,7 +8,6 @@
 #include <string.h>
 
 extern uint8_t bl_wake;
-extern monitor_t monitoring;
 
 uint8_t readCommand(BaseChannel *chn);
 uint8_t resetHandler(BaseChannel * chn);

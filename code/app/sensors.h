@@ -30,5 +30,8 @@ extern bool knockDataReady;
 
 extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;
+extern monitor_t monitoring;
+extern TimeMeasurement irqtime;
+extern uint32_t irqtotal;
 
 #endif

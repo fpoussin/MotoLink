@@ -29,7 +29,6 @@
 #define _CHCONF_H_
 
 #define CORTEX_VTOR_INIT 0x08005000
-extern unsigned int runtime_total;
 
 /*===========================================================================*/
 /**
@@ -44,7 +43,7 @@ extern unsigned int runtime_total;
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_FREQUENCY                    1000
+#define CH_FREQUENCY                    10000
 #endif
 
 /**
@@ -59,7 +58,7 @@ extern unsigned int runtime_total;
  *          and generally faster.
  */
 #if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
-#define CH_TIME_QUANTUM                 3
+#define CH_TIME_QUANTUM                 50
 #endif
 
 /**
@@ -493,8 +492,7 @@ extern unsigned int runtime_total;
 #define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* System halt code here.*/                                               \
   otp->runtime += chTimeNow() - otp->lasttick; \
-  runtime_total += otp->runtime; \
-  otp->lasttick = chTimeNow(); \
+  ntp->lasttick = chTimeNow(); \
 }
 #endif
 

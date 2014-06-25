@@ -24,6 +24,7 @@ void UpdateWizard::showWizard()
     this->loadDefaultFirmareData();
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
+    this->restart();
     this->show();
 }
 
@@ -198,7 +199,7 @@ void UpdateWizard::startFwUpdate()
 
             QCoreApplication::processEvents();
             mMtl->resetDevice();
-            mMtl->usbDisconnect();
+            emit sendDisconnect();
 
             /* Wait 2s for windows to detect the bootloader */
             for (uint i = 0; i <= 20; i++)

@@ -34,6 +34,7 @@
 
 namespace Ui {
     class MainWindow;
+    class Tasks;
 }
 
 class MainWindow : public QMainWindow
@@ -61,6 +62,7 @@ public slots:
 signals:
     void startupComplete(void);
     void sendUpdateSensors(QByteArray *data);
+    void sendUpdateMonitoring(QByteArray *data);
 
 private slots:
     void setLanguageEnglish(void);
@@ -78,6 +80,7 @@ private slots:
     void showIgnTab(void);
     void showKnockTab(void);
     void showSettingsTab(void);
+    void showTasks(void);
 
     void showAfrMapContextMenu(const QPoint &pos);
     void showAfrTgtContextMenu(const QPoint &pos);
@@ -85,8 +88,10 @@ private slots:
     void showIgnContextMenu(const QPoint &pos);
     void showKnkContextMenu(const QPoint &pos);
 
-    void updateSensors(void);
+    void doFastPolling(void);
+    void doSlowPolling(void);
     void receiveSensors(QByteArray *data);
+    void receiveMonitoring(QByteArray *data);
 
 private:
     void setupDefaults(void);
@@ -98,6 +103,8 @@ private:
     void showDefaultContextMenu(const QPoint &pos, QTableView *view);
 
     Ui::MainWindow *mUi;
+    Ui::Tasks *mTasks;
+    QWidget *mTasksWidget;
     QTranslator mTranslator;
     QSettings mSettings;
     QString mCurrentFile;
@@ -122,8 +129,10 @@ private:
     NumberFormatDelegate mEmptySuffix;
     AfrFormatDelegate mAfrDisplay;
 
-    QTimer mSensorsTimer;
+    QTimer mFastPollingTimer;
+    QTimer mSlowPollingTimer;
     QByteArray mSensorsData;
+    QByteArray mMonitoringData;
 };
 
 #endif // MAINWINDOW_H

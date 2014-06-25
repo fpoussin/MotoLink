@@ -1297,6 +1297,7 @@
     <addaction name="actionSend_Configuration"/>
     <addaction name="actionGet_Configuration"/>
     <addaction name="separator"/>
+    <addaction name="actionShow_tasks"/>
     <addaction name="actionUpdate"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -1495,6 +1496,9 @@
    <property name="text">
     <string>Update Firmware...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionUndo">
    <property name="enabled">
@@ -1587,6 +1591,18 @@
    </property>
    <property name="text">
     <string>Show actions</string>
+   </property>
+  </action>
+  <action name="actionShow_tasks">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/view-process-system.png</normaloff>:/oxygen/32x32/actions/view-process-system.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show tasks...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

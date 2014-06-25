@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Tasks</class>
+ <widget class="QWidget" name="Tasks">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>200</width>
+    <height>290</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>200</width>
+    <height>290</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>200</width>
+    <height>290</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Tasks</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="showGrid">
+      <bool>true</bool>
+     </property>
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>USB</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/devices/drive-removable-media-usb.png</normaloff>:/oxygen/32x32/devices/drive-removable-media-usb.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Serial USB</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>CAN BUS</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/devices/network-wired.png</normaloff>:/oxygen/32x32/devices/network-wired.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Knock Sensor</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/images/images.qrc">
+        <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Other Sensors</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/images/images.qrc">
+        <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Monitoring</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/devices/cpu.png</normaloff>:/oxygen/32x32/devices/cpu.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Interrupts</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/actions/help-hint.png</normaloff>:/oxygen/32x32/actions/help-hint.png</iconset>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Idle</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/actions/view-refresh.png</normaloff>:/oxygen/32x32/actions/view-refresh.png</iconset>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>CPU %</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="6" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="7" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../res/oxygen.qrc"/>
+  <include location="../res/images/images.qrc"/>
+ </resources>
+ <connections/>
+</ui>
