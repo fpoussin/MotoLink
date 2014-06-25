@@ -452,8 +452,7 @@
 #define THREAD_EXT_FIELDS                                                   \
   /* Add threads custom fields here.*/                                      \
   uint32_t lasttick; \
-  uint32_t runtime; \
-  tstate_t 	previousstate;
+  uint32_t runtime;
 #endif
 
 /**
@@ -467,8 +466,7 @@
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
   /* Add threads initialization code here.*/                                \
   tp->lasttick = chTimeNow();\
-  tp->runtime = 0;\
-  tp->previousstate = tp->p_state; \
+  tp->runtime = 0; \
 }
 #endif
 
@@ -495,7 +493,6 @@
   /* System halt code here.*/                                               \
   otp->runtime += chTimeNow() - otp->lasttick; \
   ntp->lasttick = chTimeNow(); \
-  otp->previousstate = otp->p_state; \
 }
 #endif
 
