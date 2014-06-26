@@ -159,50 +159,29 @@ msg_t ThreadBDU(void *arg)
 WORKING_AREA(waThreadSDU, 1024);
 msg_t ThreadSDU(void *arg)
 {
-  uint8_t ubuffer[SERIAL_BUFFERS_SIZE];
-  uint8_t sbuffer[SERIAL_BUFFERS_SIZE];
-  EventListener el1, el2;
-  flagsmask_t flags_usb, flags_uart;
-  size_t read, available;
   (void)arg;
+  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  size_t read;
   chRegSetThreadName("SDU");
-  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, ALL_EVENTS);
-  chEvtRegisterMask(chnGetEventSource(&SD1), &el2, ALL_EVENTS);
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-  /* FIXME: Serial->USB Stops afert some time. USB->Serial is OK. */
   while (TRUE) {
 
-    chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
-    flags_usb = chEvtGetAndClearFlags(&el1);
-    flags_uart = chEvtGetAndClearFlags(&el2);
-
-    if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
-
-      available = chQSpaceI(&SDU1.iqueue);
-      if (available > sizeof(ubuffer)) available = sizeof(ubuffer);
-
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
-      read = chnReadTimeout((BaseChannel *)&SDU1, ubuffer, available, MS2ST(1));
-      chnWriteTimeout((BaseChannel *)&SD1, ubuffer, read, MS2ST(10));
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
+    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_IMMEDIATE);
+    if (read > 0)
+    {
+      sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
+      sdReadTimeout(&SD1, buffer,read, MS2ST(10)); // Ignore reply
     }
-    else
-      chThdSleepMilliseconds(1);
 
-    if (flags_uart & CHN_INPUT_AVAILABLE) { /* Incoming data from UART */
+    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), TIME_IMMEDIATE);
+    if (read > 0)
+      sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
 
-      available = chQSpaceI(&SD1.iqueue);
-      if (available > sizeof(sbuffer)) available = sizeof(sbuffer);
-
-      /* Read seems incorrect */
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
-      read = chnReadTimeout((BaseChannel *)&SD1, sbuffer, available, MS2ST(1));
-      chnWriteTimeout((BaseChannel *)&SDU1, sbuffer, read, MS2ST(10));
-    }
-    else
-      chThdSleepMilliseconds(1);
+    chThdSleepMilliseconds(1);
 
     pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
   }
