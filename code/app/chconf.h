@@ -451,9 +451,7 @@
 #if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
 #define THREAD_EXT_FIELDS                                                   \
   /* Add threads custom fields here.*/                                      \
-  uint32_t runoffset; \
   uint32_t runtime; \
-  uint32_t irqoffset; \
   uint32_t irqtime;
 #endif
 
@@ -467,9 +465,7 @@
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
   /* Add threads initialization code here.*/                                \
-  tp->runoffset = DWT_CYCCNT;\
   tp->runtime = 0; \
-  tp->irqoffset = DWT_EXCCNT; \
   tp->irqtime = 0; \
 }
 #endif
@@ -495,10 +491,6 @@
 #if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
 #define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* System halt code here.*/                                               \
-  otp->irqtime = (DWT_EXCCNT - otp->irqoffset); \
-  otp->runtime += DWT_CYCCNT - otp->runoffset - otp->irqtime; \
-  ntp->runoffset = DWT_CYCCNT; \
-  ntp->irqoffset = DWT_EXCCNT; \
 }
 #endif
 
@@ -520,6 +512,8 @@
 #if !defined(SYSTEM_TICK_EVENT_HOOK) || defined(__DOXYGEN__)
 #define SYSTEM_TICK_EVENT_HOOK() {                                          \
   /* System tick event code here.*/                                         \
+  /* SCB_ICSR_RETTOBASE: Only systick ISR is active */ \
+  if (SCB_ICSR & (1u << 11)) chThdSelf()->runtime++; else chThdSelf()->irqtime++; \
 }
 #endif
 

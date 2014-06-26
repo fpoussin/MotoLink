@@ -69,7 +69,7 @@
  * @brief   Enables the EXT subsystem.
  */
 #if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
-#define HAL_USE_EXT                 TRUE
+#define HAL_USE_EXT                 FALSE
 #endif
 
 /**
@@ -97,7 +97,7 @@
  * @brief   Enables the TIMCAP subsystem.
  */
 #if !defined(HAL_USE_TIMCAP) || defined(__DOXYGEN__)
-#define HAL_USE_TIMCAP             TRUE
+#define HAL_USE_TIMCAP              TRUE
 #endif
 
 /**
@@ -153,7 +153,7 @@
  * @brief   Enables the  Bulk USB subsystem.
  */
 #if !defined(HAL_USE_BULK_USB) || defined(__DOXYGEN__)
-#define HAL_USE_BULK_USB          TRUE
+#define HAL_USE_BULK_USB           TRUE
 #endif
 
 /**

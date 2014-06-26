@@ -265,7 +265,7 @@ msg_t ThreadKnock(void *arg)
 }
 
 /* Check if tp was the previous thread */
-#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_prev) << 15)
+#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
 
 /*
  * CPU Load Monitoring thread.
@@ -275,9 +275,10 @@ msg_t ThreadMonitor(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
-  uint32_t thTicks[7];
-  uint32_t irq_offset, run_offset, irq_ticks, total_ticks;
+  uint32_t  run_offset, irq_ticks, total_ticks;
   Thread* pThreadMonitor = chThdSelf();
+
+  DWT->CTRL |= DWT_CTRL_EXCEVTENA_Msk;
 
   while (TRUE)
   {
@@ -291,43 +292,43 @@ msg_t ThreadMonitor(void *arg)
 	pThreadMonitor->runtime = 0;
 	chSysGetIdleThread()->runtime = 0;
 
-	irq_offset = DWT_EXCCNT;
-	run_offset = DWT_CYCCNT;
+    pThreadBDU->irqtime = 0;
+    pThreadSDU->irqtime = 0;
+    pThreadCAN->irqtime = 0;
+    pThreadKnock->irqtime = 0;
+    pThreadSensors->irqtime = 0;
+    pThreadMonitor->irqtime = 0;
+    chSysGetIdleThread()->irqtime = 0;
+
+	run_offset = DWT->CYCCNT;
 
 	chSysUnlock();
 
 	/* Populate load data */
 	chThdSleepMilliseconds(500);
 
-	/* Check for counters wrapping */
-	if (irq_offset > DWT_EXCCNT || run_offset > DWT_CYCCNT)
-		continue;
-
 	chSysLock();
 
-	total_ticks = (DWT_CYCCNT - run_offset) / 100000; // Should be ~3600 for 500ms
-	irq_ticks = (DWT_EXCCNT - irq_offset);
-
-	thTicks[0] = pThreadBDU->runtime;
-	thTicks[1] = pThreadSDU->runtime;
-	thTicks[2] = pThreadCAN->runtime;
-	thTicks[3] = pThreadKnock->runtime;
-	thTicks[4] = pThreadSensors->runtime;
-	thTicks[5] = pThreadMonitor->runtime;
-	thTicks[6] = chSysGetIdleThread()->runtime;
+	/* Convert to systick time base */
+	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_FREQUENCY);
+	irq_ticks = pThreadBDU->irqtime
+	    +pThreadSDU->irqtime
+	    +pThreadCAN->irqtime
+	    +pThreadKnock->irqtime
+	    +pThreadSensors->irqtime
+	    +pThreadMonitor->irqtime
+	    +chSysGetIdleThread()->irqtime;
 
 	chSysUnlock();
 
-	/* Total ticks are already divided by 100000
-	 * 36000000/3600 = 10000 or 100.00%          */
-	monitoring.bdu = ((thTicks[0])/total_ticks) | RUNNING(pThreadBDU);
-	monitoring.sdu = ((thTicks[1])/total_ticks) | RUNNING(pThreadSDU);
-	monitoring.can = ((thTicks[2])/total_ticks) | RUNNING(pThreadCAN);
-	monitoring.knock = ((thTicks[3])/total_ticks) | RUNNING(pThreadKnock);
-	monitoring.sensors = ((thTicks[4])/total_ticks) | RUNNING(pThreadSensors);
-	monitoring.monitor = ((thTicks[5])/total_ticks) | RUNNING(pThreadMonitor);
-	monitoring.idle = (((thTicks[6])/total_ticks))  | RUNNING(chSysGetIdleThread());
-	monitoring.irq = ((irq_ticks)/total_ticks);
+	monitoring.bdu = ((pThreadBDU->runtime*10000)/total_ticks) | RUNNING(pThreadBDU);
+	monitoring.sdu = ((pThreadSDU->runtime*10000)/total_ticks) | RUNNING(pThreadSDU);
+	monitoring.can = ((pThreadCAN->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
+	monitoring.knock = ((pThreadKnock->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
+	monitoring.sensors = ((pThreadSensors->runtime*10000)/total_ticks) | RUNNING(pThreadSensors);
+	monitoring.monitor = ((pThreadMonitor->runtime*10000)/total_ticks) | RUNNING(pThreadMonitor);
+	monitoring.idle = (((chSysGetIdleThread()->runtime*10000)/total_ticks)) | RUNNING(chSysGetIdleThread());
+	monitoring.irq = ((irq_ticks*10000)/total_ticks);
   }
   return 0;
 }
