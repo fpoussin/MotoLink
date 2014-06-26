@@ -254,9 +254,9 @@ msg_t ThreadKnock(void *arg)
 
     /* Process the data through the Complex Magnitude Module for
     calculating the magnitude at each bin */
-    memset(output_knock, 0, sizeof(output_knock));
-    arm_cmplx_mag_q15(data_knock, output_knock, FFT_SIZE/2); // We only care about the first half
-    arm_max_q15(output_knock, FFT_SIZE/2, &maxValue, &maxIndex); // We only care about the first half
+    memset(output_knock, 0, sizeof(output_knock)); // Clear buffer
+    arm_cmplx_mag_q15(data_knock, output_knock, FFT_SIZE); // Calculate magnitude
+    arm_max_q15(output_knock, FFT_SIZE, &maxValue, &maxIndex); // Find max magnitude
 
     sensors_data.knock_value = maxValue;
     sensors_data.knock_freq = (SAMPLING_RATE*maxIndex)/FFT_SIZE;
@@ -276,7 +276,7 @@ msg_t ThreadMonitor(void *arg)
   (void)arg;
   chRegSetThreadName("Monitor");
   uint32_t thTicks[7];
-  uint32_t runtime_total;
+  uint32_t irq_offset, run_offset, irq_ticks, total_ticks;
   Thread* pThreadMonitor = chThdSelf();
 
   while (TRUE)
@@ -290,14 +290,24 @@ msg_t ThreadMonitor(void *arg)
 	pThreadSensors->runtime = 0;
 	pThreadMonitor->runtime = 0;
 	chSysGetIdleThread()->runtime = 0;
-	irqtotal = 0;
+
+	/* Populate load data */
+	irq_offset = DWT_EXCCNT;
+	run_offset = DWT_CYCCNT;
 
 	chSysUnlock();
 
-	/* Populate load data */
 	chThdSleepMilliseconds(500);
 
+	/* Check for counters wrapping */
+	if (irq_offset > DWT_EXCCNT || run_offset > DWT_CYCCNT)
+		continue;
+
 	chSysLock();
+
+	/* Convert from instructions counts to systicks */
+	total_ticks = (DWT_CYCCNT - run_offset) / 100000; // Should be ~3600 for 500ms
+	irq_ticks = (DWT_EXCCNT - irq_offset);
 
 	thTicks[0] = pThreadBDU->runtime;
 	thTicks[1] = pThreadSDU->runtime;
@@ -307,25 +317,18 @@ msg_t ThreadMonitor(void *arg)
 	thTicks[5] = pThreadMonitor->runtime;
 	thTicks[6] = chSysGetIdleThread()->runtime;
 
-	runtime_total = pThreadBDU->runtime
-	    +pThreadSDU->runtime
-	    +pThreadCAN->runtime
-	    +pThreadKnock->runtime
-	    +pThreadSensors->runtime
-	    +pThreadMonitor->runtime
-	    +chSysGetIdleThread()->runtime;
-
 	chSysUnlock();
 
-	monitoring.bdu = ((thTicks[0]*10000)/runtime_total) | RUNNING(pThreadBDU);
-	monitoring.sdu = ((thTicks[1]*10000)/runtime_total) | RUNNING(pThreadSDU);
-	monitoring.can = ((thTicks[2]*10000)/runtime_total) | RUNNING(pThreadCAN);
-	monitoring.knock = ((thTicks[3]*10000)/runtime_total) | RUNNING(pThreadKnock);
-	monitoring.sensors = ((thTicks[4]*10000)/runtime_total) | RUNNING(pThreadSensors);
-	monitoring.monitor = ((thTicks[5]*10000)/runtime_total) | RUNNING(pThreadMonitor);
-	monitoring.irq = ((float)irqtotal/0.72f)/(float)runtime_total; /* From 72Mhz cycle counter, == ((n*10000)/72000) */
-	monitoring.idle = (((thTicks[6]*10000)/runtime_total) - monitoring.irq)  | RUNNING(chSysGetIdleThread());
-
+	/* Total ticks are already divided by 100000
+	 * That gives us nnn.nn% result */
+	monitoring.bdu = ((thTicks[0])/total_ticks) | RUNNING(pThreadBDU);
+	monitoring.sdu = ((thTicks[1])/total_ticks) | RUNNING(pThreadSDU);
+	monitoring.can = ((thTicks[2])/total_ticks) | RUNNING(pThreadCAN);
+	monitoring.knock = ((thTicks[3])/total_ticks) | RUNNING(pThreadKnock);
+	monitoring.sensors = ((thTicks[4])/total_ticks) | RUNNING(pThreadSensors);
+	monitoring.monitor = ((thTicks[5])/total_ticks) | RUNNING(pThreadMonitor);
+	monitoring.irq = ((irq_ticks)/total_ticks);
+	monitoring.idle = (((thTicks[6])/total_ticks) - monitoring.irq)  | RUNNING(chSysGetIdleThread());
   }
   return 0;
 }
@@ -360,7 +363,6 @@ int main(void)
    */
   sduObjectInit(&SDU1);
   bduObjectInit(&BDU1);
-  tmObjectInit(&irqtime);
 
   /*
    * Start peripherals

@@ -15,5 +15,6 @@ uint8_t sendMode(BaseChannel * chn);
 uint8_t wakeHandler(BaseChannel * chn);
 uint8_t sendSensors(BaseChannel * chn);
 uint8_t sendMonitoring(BaseChannel * chn);
+uint8_t sendFFT(BaseChannel * chn);
 
 #endif

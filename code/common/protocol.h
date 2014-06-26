@@ -22,6 +22,7 @@
 #define CMD_GET_SIZE (uint8_t)0x0A
 #define CMD_GET_SENSORS (uint8_t)0x0B
 #define CMD_GET_MONITOR (uint8_t)0x0C
+#define CMD_GET_FFT (uint8_t)0x0D
 
 #define FLAG_OK (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02
@@ -34,6 +35,7 @@
 #define MODE_APP (uint8_t)0x02
 
 #define DATA_BUF_SIZE 256
+#define FFT_SIZE 256
 
 typedef struct {
   uint8_t magic1;

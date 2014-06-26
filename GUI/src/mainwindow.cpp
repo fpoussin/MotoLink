@@ -163,9 +163,9 @@ void MainWindow::connectMtl()
     {
         mMtl->bootAppIfNeeded();
         this->uiEnable();
-        this->mFastPollingTimer.start();
-        this->mSlowPollingTimer.start();
-        this->mUi->statusBar->showMessage("Connected");
+        mFastPollingTimer.start();
+        mSlowPollingTimer.start();
+        mUi->statusBar->showMessage("Connected");
     }
     else {
         mUi->statusBar->showMessage(tr("Connection Failed"));
@@ -174,11 +174,11 @@ void MainWindow::connectMtl()
 
 void MainWindow::disconnectMtl()
 {
-    this->mFastPollingTimer.stop();
-    this->mSlowPollingTimer.stop();
+    mFastPollingTimer.stop();
+    mSlowPollingTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
-    this->mUi->statusBar->showMessage("Disconnected");
+    mUi->statusBar->showMessage("Disconnected");
 }
 
 void MainWindow::showAbout()

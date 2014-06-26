@@ -58,6 +58,10 @@ uint8_t readCommand(BaseChannel *chn)
       status = sendMonitoring(chn);
       break;
 
+    case MASK_CMD | CMD_GET_FFT:
+      status = sendFFT(chn);
+      break;
+
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
       break;
@@ -120,5 +124,14 @@ uint8_t sendMonitoring(BaseChannel * chn) {
   memcpy(buf+1, &monitoring, sizeof(monitor_t));
 
   chnWriteTimeout(chn, buf, sizeof(buf), MS2ST(25));
+  return 0;
+}
+
+uint8_t sendFFT(BaseChannel * chn) {
+
+  uint8_t buf = MASK_REPLY_OK | CMD_GET_FFT;
+
+  chnWriteTimeout(chn, &buf, 1, MS2ST(10));
+  chnWriteTimeout(chn, (uint8_t*)output_knock, sizeof(output_knock), MS2ST(25));
   return 0;
 }
