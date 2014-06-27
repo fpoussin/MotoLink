@@ -174,6 +174,7 @@ msg_t ThreadSDU(void *arg)
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_IMMEDIATE);
     if (read > 0)
     {
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
       sdReadTimeout(&SD1, buffer_check, read, MS2ST(10)); // Read back what we wrote
       for (i=0; i<sizeof(buffer_check); i++)
@@ -185,13 +186,15 @@ msg_t ThreadSDU(void *arg)
       }
     }
 
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), TIME_IMMEDIATE);
     if (read > 0)
+    {
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
+    }
 
     chThdSleepMilliseconds(1);
-
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
   }
   return 0;
 }
