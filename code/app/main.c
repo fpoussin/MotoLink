@@ -161,7 +161,8 @@ msg_t ThreadSDU(void *arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
-  size_t read;
+  uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
+  size_t read, i;
   chRegSetThreadName("SDU");
 
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
@@ -174,7 +175,14 @@ msg_t ThreadSDU(void *arg)
     if (read > 0)
     {
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
-      sdReadTimeout(&SD1, buffer,read, MS2ST(10)); // Ignore reply
+      sdReadTimeout(&SD1, buffer_check, read, MS2ST(10)); // Read back what we wrote
+      for (i=0; i<sizeof(buffer_check); i++)
+      {
+    	  if (buffer[i] != buffer_check[i])
+    	  {
+    		  // Echo check has failed
+    	  }
+      }
     }
 
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), TIME_IMMEDIATE);
