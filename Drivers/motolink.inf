@@ -1,0 +1,91 @@
+[Version]
+Signature = "$Windows NT$"
+Class = USB
+ClassGUID = {36FC9E60-C465-11CF-8056-444553540000}
+Provider = %ProviderName%
+DriverPackageDisplayName = %Product%
+DriverVer = 06/27/2014,1.0
+;CatalogFile = MyCatFile.cat
+
+; ========== Manufacturer/Models sections ===========
+
+[Manufacturer]
+%ProviderName% = DeviceInstall,NTx86,NTamd64
+
+[DeviceInstall.NTx86]
+%Product% = DDInstall, USB\VID_0483&PID_ABCD&MI_02
+
+[DeviceInstall.NTamd64]
+%Product% = DDInstall, USB\VID_0483&PID_ABCD&MI_02
+
+; =================== Installation ===================
+
+[DDInstall]
+Include=winusb.inf
+Needs=WINUSB.NT
+
+[DDInstall.Services]
+Include=winusb.inf
+AddService=WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[DDInstall.Wdf]
+KmdfService=WINUSB, WinUsb_Install
+UmdfServiceOrder=WINUSB
+
+[WinUSB_Install]
+KmdfLibraryVersion=1.9
+
+[DDInstall.HW]
+AddReg=Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}"
+
+[DDInstall.CoInstallers]
+AddReg=CoInstallers_AddReg
+CopyFiles=CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WinUSBCoInstaller2.dll","WUDFUpdate_01009.dll","WdfCoInstaller01009.dll,WdfCoInstaller"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01009.dll
+WUDFUpdate_01009.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+; ================= Source Media Section =====================
+
+[SourceDisksNames.x86]
+1 = %DISK_NAME%,,,\x86
+
+[SourceDisksNames.amd64]
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll=1
+WdfCoInstaller01009.dll=1
+WUDFUpdate_01009.dll=1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll=2
+WdfCoInstaller01009.dll=2
+WUDFUpdate_01009.dll=2
+
+; =================== Strings ===================
+
+[Strings]
+ProviderName="ST"
+Product="Motolink USB"
+WinUSB_SvcDesc="Motolink USB"
+DISK_NAME="Driver Disk"
+
