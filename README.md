@@ -9,15 +9,17 @@ Includes some digital (RPM, VSS) and analog inputs (TPS, Wideband), as well as a
 
 ###File tree:###
 
-**├── board**  *Eagle board files*  
-**├── code**  
+**├── Board**  *Eagle board files*  
+**├── Code**  
+**│   ├── App**  *Motolink code*  
+**│   ├── Bootloader**  *STM32 Bootloader*  
 **│   ├── ChibiOS-RT**  *ChibiOS/RT submodule*  
-**│   ├── app**  *Motolink code*  
-**│   ├── bootloader**  *STM32 Bootloader*  
-**│   └── common**  *Common files for bootloader and Motolink*  
-**├── GUI**  
-**│   └── MotoLink**  *Motolink Graphic User Interface*  
+**│   ├── ChibiOS-Drivers**  *ChibiOS extra Drivers submodule*  
+**│   └── Common**  *Common files for bootloader and Motolink*  
+**├── Drivers**  *Windows drivers installer*  
+**├── GUI**  *Motolink's graphical user interface*  
+**│   └── QtUsb**  *Qt USB submodule*  
 **├── LICENSE**  *GPL Licence file*  
 **└── README.md**  *This readme file*  
 
-You will need to init and update the git submodules (QtUsb, ChibiOS) to build the projects.
+You will need to init and update the git submodules (QtUsb, ChibiOS-RT, ChibiOS-Drivers) to build the projects.
