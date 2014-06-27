@@ -170,7 +170,7 @@ msg_t ThreadSDU(void *arg)
 
   while (TRUE) {
 
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 0500));
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_IMMEDIATE);
     if (read > 0)
     {
