@@ -6152,7 +6152,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="R18" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="4.7K"/>
 <part name="R22" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="56R"/>
 <part name="R21" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="56R"/>
-<part name="JP1" library="SparkFun-Connectors" deviceset="M04" device="LOCK"/>
+<part name="CON_USB" library="SparkFun-Connectors" deviceset="M04" device="LOCK"/>
 <part name="TP2" library="microbuilder" deviceset="TESTPOINT" device="ROUND1MM"/>
 <part name="TP4" library="microbuilder" deviceset="TESTPOINT" device="ROUND1MM"/>
 <part name="F1" library="misc" deviceset="PTC" device="1812K" value="24V 0.75A"/>
@@ -6308,7 +6308,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="R18" gate="G$1" x="355.6" y="182.88" rot="R90"/>
 <instance part="R22" gate="G$1" x="233.68" y="179.07" rot="R180"/>
 <instance part="R21" gate="G$1" x="242.57" y="176.53" rot="R180"/>
-<instance part="JP1" gate="G$1" x="300.99" y="125.73" rot="R180"/>
+<instance part="CON_USB" gate="G$1" x="300.99" y="125.73" rot="R180"/>
 <instance part="TP2" gate="G$1" x="74.93" y="22.86"/>
 <instance part="TP4" gate="G$1" x="289.56" y="118.11" rot="R180"/>
 <instance part="F1" gate="G$1" x="39.37" y="27.94" rot="R90"/>
@@ -6504,7 +6504,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </segment>
 <segment>
 <pinref part="GND8" gate="1" pin="GND"/>
-<pinref part="JP1" gate="G$1" pin="4"/>
+<pinref part="CON_USB" gate="G$1" pin="4"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -6706,7 +6706,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="295.91" y1="123.19" x2="289.56" y2="123.19" width="0.1524" layer="91"/>
 <label x="289.56" y="119.38" size="1.778" layer="95" rot="R180"/>
 <wire x1="289.56" y1="123.19" x2="289.56" y2="118.11" width="0.1524" layer="91"/>
-<pinref part="JP1" gate="G$1" pin="3"/>
+<pinref part="CON_USB" gate="G$1" pin="3"/>
 <pinref part="TP4" gate="G$1" pin="P$1"/>
 </segment>
 <segment>
@@ -7050,7 +7050,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="TVS2" gate="G$1" pin="IO@4"/>
 <wire x1="251.46" y1="129.54" x2="251.46" y2="123.19" width="0.1524" layer="91"/>
 <wire x1="251.46" y1="123.19" x2="285.75" y2="123.19" width="0.1524" layer="91"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
+<pinref part="CON_USB" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -7266,7 +7266,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="226.06" y1="129.54" x2="226.06" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="132.08" x2="295.91" y2="132.08" width="0.1524" layer="91"/>
 <junction x="295.91" y="132.08"/>
-<pinref part="JP1" gate="G$1" pin="1"/>
+<pinref part="CON_USB" gate="G$1" pin="1"/>
 <junction x="295.91" y="128.27"/>
 </segment>
 </net>

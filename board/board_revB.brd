@@ -1551,7 +1551,10 @@ design rules under a new name.</description>
 <attribute name="NAME" x="34.611" y="38.988" size="1.27" layer="26" font="vector" ratio="16" rot="MR180"/>
 <attribute name="VALUE" x="38.984" y="39.393" size="0.4064" layer="28" font="vector" rot="MR180"/>
 </element>
-<element name="JP1" library="SparkFun-Connectors" package="1X04_LOCK" value="" x="92" y="10.5" rot="MR90"/>
+<element name="CON_USB" library="SparkFun-Connectors" package="1X04_LOCK" value="" x="92" y="10.5" smashed="yes" rot="MR90">
+<attribute name="NAME" x="89.0788" y="10.4038" size="1.27" layer="26" font="vector" ratio="16" rot="MR90"/>
+<attribute name="VALUE" x="88.825" y="9.23" size="1.27" layer="28" rot="MR90"/>
+</element>
 <element name="TP2" library="microbuilder" package="TESTPOINT_ROUND_1MM" value="" x="92.5" y="26" smashed="yes" rot="MR90">
 <attribute name="NAME" x="93.377" y="25.357" size="1.27" layer="26" font="vector" ratio="16" rot="MR270"/>
 <attribute name="VALUE" x="91.865" y="27.143" size="0.4064" layer="28" ratio="10" rot="MR90"/>
@@ -1656,7 +1659,7 @@ design rules under a new name.</description>
 <via x="2.75" y="12.75" extent="1-16" drill="0.5"/>
 <via x="58.625" y="23.5" extent="1-16" drill="0.5"/>
 <via x="58.625" y="21.5" extent="1-16" drill="0.5"/>
-<contactref element="JP1" pad="4"/>
+<contactref element="CON_USB" pad="4"/>
 </signal>
 <signal name="+3V3">
 <contactref element="IC_REG" pad="4"/>
@@ -1985,7 +1988,7 @@ design rules under a new name.</description>
 <wire x1="81.15" y1="25.35" x2="81.75" y2="24.75" width="0.4064" layer="16"/>
 <wire x1="81.75" y1="24.75" x2="81.75" y2="21.5" width="0.4064" layer="16"/>
 <wire x1="77.5" y1="26.5" x2="78.1" y2="26.5" width="0.3" layer="16"/>
-<contactref element="JP1" pad="3"/>
+<contactref element="CON_USB" pad="3"/>
 <wire x1="92.127" y1="15.58" x2="90.42" y2="15.58" width="0.4" layer="16"/>
 <wire x1="90.42" y1="15.58" x2="88.25" y2="17.75" width="0.4" layer="16"/>
 <wire x1="88.25" y1="17.75" x2="86.25" y2="17.75" width="0.4" layer="16"/>
@@ -2416,7 +2419,7 @@ design rules under a new name.</description>
 <signal name="N$17">
 <contactref element="R16" pad="1"/>
 <contactref element="TVS2" pad="4"/>
-<contactref element="JP1" pad="2"/>
+<contactref element="CON_USB" pad="2"/>
 <wire x1="81.1975" y1="19.28" x2="82.22" y2="19.28" width="0.4" layer="16"/>
 <wire x1="82.22" y1="19.28" x2="84.25" y2="17.25" width="0.4" layer="16"/>
 <wire x1="84.25" y1="17.25" x2="84.25" y2="16.25" width="0.4" layer="16"/>
@@ -2708,7 +2711,7 @@ design rules under a new name.</description>
 <wire x1="81.6975" y1="15.105" x2="81.6975" y2="16.4425" width="0.5" layer="16"/>
 <wire x1="81.6975" y1="16.4425" x2="81.6975" y2="17.1925" width="0.5" layer="16"/>
 <contactref element="TVS2" pad="3"/>
-<contactref element="JP1" pad="1"/>
+<contactref element="CON_USB" pad="1"/>
 <wire x1="92.127" y1="10.5" x2="86.8025" y2="10.5" width="0.4" layer="16"/>
 <wire x1="85.3" y1="13.1249" x2="85.3" y2="12.0025" width="0.4" layer="16"/>
 <wire x1="85.3" y1="12.0025" x2="86.8025" y2="10.5" width="0.4" layer="16"/>
