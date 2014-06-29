@@ -26,6 +26,7 @@ void UpdateWizard::showWizard()
     this->enableButtons();
     this->restart();
     this->show();
+    this->raise();
 }
 
 void UpdateWizard::startUpdate()
