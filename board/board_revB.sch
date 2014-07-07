@@ -6014,6 +6014,124 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </deviceset>
 </devicesets>
 </library>
+<library name="microchip">
+<description>&lt;b&gt;Microchip PIC Microcontrollers and other Devices&lt;/b&gt;&lt;p&gt;
+Based on the following sources :
+&lt;ul&gt;
+&lt;li&gt;Microchip Data Book, 1993
+&lt;li&gt;THE EMERGING WORLD STANDARD, 1995/1996
+&lt;li&gt;Microchip, Technical Library CD-ROM, June 1998
+&lt;li&gt;www.microchip.com
+&lt;/ul&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="SOT23">
+<description>&lt;b&gt;SMALL OUTLINE TRANSISTOR&lt;/b&gt;&lt;p&gt;
+reflow soldering</description>
+<wire x1="-1.973" y1="1.983" x2="1.973" y2="1.983" width="0.0508" layer="39"/>
+<wire x1="1.973" y1="-1.983" x2="-1.973" y2="-1.983" width="0.0508" layer="39"/>
+<wire x1="-1.973" y1="-1.983" x2="-1.973" y2="1.983" width="0.0508" layer="39"/>
+<wire x1="1.973" y1="1.983" x2="1.973" y2="-1.983" width="0.0508" layer="39"/>
+<wire x1="1.422" y1="0.66" x2="1.422" y2="-0.66" width="0.1524" layer="51"/>
+<wire x1="1.422" y1="-0.66" x2="-1.422" y2="-0.66" width="0.1524" layer="51"/>
+<wire x1="-1.422" y1="-0.66" x2="-1.422" y2="0.66" width="0.1524" layer="51"/>
+<wire x1="-1.422" y1="0.66" x2="1.422" y2="0.66" width="0.1524" layer="51"/>
+<smd name="3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<text x="-1.905" y="1.905" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.905" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.2286" y1="0.7112" x2="0.2286" y2="1.2954" layer="51"/>
+<rectangle x1="0.7112" y1="-1.2954" x2="1.1684" y2="-0.7112" layer="51"/>
+<rectangle x1="-1.1684" y1="-1.2954" x2="-0.7112" y2="-0.7112" layer="51"/>
+<rectangle x1="-0.5001" y1="-0.3" x2="0.5001" y2="0.3" layer="35"/>
+</package>
+<package name="TO92">
+<description>&lt;b&gt;TO 92&lt;/b&gt;</description>
+<wire x1="-2.0946" y1="-1.651" x2="-2.6549" y2="-0.254" width="0.127" layer="21" curve="-32.78104"/>
+<wire x1="-2.6549" y1="-0.254" x2="-0.7863" y2="2.5485" width="0.127" layer="21" curve="-78.318477"/>
+<wire x1="0.7863" y1="2.5484" x2="2.0945" y2="-1.651" width="0.127" layer="21" curve="-111.09954"/>
+<wire x1="-2.0945" y1="-1.651" x2="2.0945" y2="-1.651" width="0.127" layer="21"/>
+<wire x1="-2.2537" y1="-0.254" x2="-0.2863" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-2.6549" y1="-0.254" x2="-2.2537" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="-0.2863" y1="-0.254" x2="0.2863" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="2.2537" y1="-0.254" x2="2.6549" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="0.2863" y1="-0.254" x2="2.2537" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-0.7863" y1="2.5485" x2="0.7863" y2="2.5485" width="0.127" layer="51" curve="-34.293591"/>
+<pad name="3" x="1.27" y="0" drill="0.8128" shape="octagon"/>
+<pad name="2" x="0" y="1.905" drill="0.8128" shape="octagon"/>
+<pad name="1" x="-1.27" y="0" drill="0.8128" shape="octagon"/>
+<text x="3.175" y="0.635" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="3.175" y="-1.27" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+</package>
+</packages>
+<symbols>
+<symbol name="MCP1525">
+<wire x1="-7.62" y1="5.08" x2="7.62" y2="5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="5.08" x2="7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-5.08" x2="-7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-5.08" x2="-7.62" y2="5.08" width="0.254" layer="94"/>
+<text x="-7.62" y="6.35" size="1.778" layer="95">&gt;NAME</text>
+<text x="-7.62" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="VIN" x="-10.16" y="2.54" length="short" direction="in"/>
+<pin name="VO" x="10.16" y="2.54" length="short" direction="out" rot="R180"/>
+<pin name="GND" x="-10.16" y="-2.54" length="short" direction="pas"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="MC15*" prefix="IC">
+<description>&lt;b&gt;2.5V and 4.096V Voltage References&lt;/b&gt;&lt;p&gt;
+Source: http://www.microchip.com .. 21653b.pdf</description>
+<gates>
+<gate name="G$1" symbol="MCP1525" x="0" y="0"/>
+</gates>
+<devices>
+<device name="TT" package="SOT23">
+<connects>
+<connect gate="G$1" pin="GND" pad="3"/>
+<connect gate="G$1" pin="VIN" pad="1"/>
+<connect gate="G$1" pin="VO" pad="2"/>
+</connects>
+<technologies>
+<technology name="25">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+<technology name="41">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+</technologies>
+</device>
+<device name="TO" package="TO92">
+<connects>
+<connect gate="G$1" pin="GND" pad="1"/>
+<connect gate="G$1" pin="VIN" pad="3"/>
+<connect gate="G$1" pin="VO" pad="2"/>
+</connects>
+<technologies>
+<technology name="25">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+<technology name="41">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -6027,9 +6145,8 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </class>
 </classes>
 <parts>
-<part name="IC_REG" library="v-reg" deviceset="LD117A?*" device="DT" technology="33TR" value="LM1117-3.3"/>
+<part name="IC_REG1" library="v-reg" deviceset="LD117A?*" device="DT" technology="33TR" value="LM1117-3.3"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
-<part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="C1" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="C2" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="4.7uF"/>
 <part name="P+2" library="supply1" deviceset="+12V" device=""/>
@@ -6051,7 +6168,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="C30" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="100nF"/>
 <part name="C31" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value="1uF"/>
 <part name="GND33" library="supply1" deviceset="GND" device=""/>
-<part name="+3V15" library="supply1" deviceset="+3V3" device=""/>
 <part name="CON_DBG" library="SparkFun-Connectors" deviceset="M03X2" device="2X3_SILK_SM"/>
 <part name="IC_OPA" library="linear" deviceset="LMV324?*" device="MZ" value="MCP6004"/>
 <part name="+3V19" library="supply1" deviceset="+3V3" device=""/>
@@ -6153,9 +6269,12 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <part name="R22" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="56R"/>
 <part name="R21" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="56R"/>
 <part name="CON_USB" library="SparkFun-Connectors" deviceset="M04" device="LOCK"/>
-<part name="TP2" library="microbuilder" deviceset="TESTPOINT" device="ROUND1MM"/>
 <part name="TP4" library="microbuilder" deviceset="TESTPOINT" device="ROUND1MM"/>
 <part name="F1" library="misc" deviceset="PTC" device="1812K" value="24V 0.75A"/>
+<part name="IC_REF" library="microchip" deviceset="MC15*" device="TT" technology="25"/>
+<part name="GND22" library="supply1" deviceset="GND" device=""/>
+<part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
+<part name="+3V6" library="supply1" deviceset="+3V3" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6167,9 +6286,8 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="252.73" y1="105.41" x2="214.63" y2="105.41" width="0.1524" layer="97"/>
 </plain>
 <instances>
-<instance part="IC_REG" gate="G$1" x="52.07" y="22.86"/>
+<instance part="IC_REG1" gate="G$1" x="52.07" y="22.86"/>
 <instance part="GND1" gate="1" x="52.07" y="7.62"/>
-<instance part="+3V1" gate="G$1" x="63.5" y="30.48"/>
 <instance part="C1" gate="G$1" x="39.37" y="17.78"/>
 <instance part="C2" gate="G$1" x="63.5" y="17.78"/>
 <instance part="P+2" gate="1" x="39.37" y="46.99"/>
@@ -6191,7 +6309,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="C30" gate="G$1" x="223.52" y="57.15"/>
 <instance part="C31" gate="G$1" x="233.68" y="57.15"/>
 <instance part="GND33" gate="1" x="233.68" y="52.07"/>
-<instance part="+3V15" gate="G$1" x="233.68" y="64.77"/>
 <instance part="CON_DBG" gate="G$1" x="133.35" y="152.4"/>
 <instance part="IC_OPA" gate="P" x="110.49" y="114.3"/>
 <instance part="+3V19" gate="G$1" x="110.49" y="124.46" rot="MR0"/>
@@ -6267,7 +6384,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="IC_OPA" gate="C" x="73.66" y="118.11"/>
 <instance part="IC_OPA" gate="A" x="87.63" y="148.59"/>
 <instance part="IC_OPA" gate="B" x="73.66" y="106.68"/>
-<instance part="GND3" gate="1" x="182.88" y="27.94"/>
+<instance part="GND3" gate="1" x="187.96" y="27.94"/>
 <instance part="GND7" gate="1" x="44.45" y="113.03"/>
 <instance part="+3V2" gate="G$1" x="190.5" y="38.1"/>
 <instance part="CON_KNK" gate="G$1" x="35.56" y="86.36"/>
@@ -6309,16 +6426,19 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <instance part="R22" gate="G$1" x="233.68" y="179.07" rot="R180"/>
 <instance part="R21" gate="G$1" x="242.57" y="176.53" rot="R180"/>
 <instance part="CON_USB" gate="G$1" x="300.99" y="125.73" rot="R180"/>
-<instance part="TP2" gate="G$1" x="74.93" y="22.86"/>
 <instance part="TP4" gate="G$1" x="289.56" y="118.11" rot="R180"/>
 <instance part="F1" gate="G$1" x="39.37" y="27.94" rot="R90"/>
+<instance part="IC_REF" gate="G$1" x="217.17" y="26.67"/>
+<instance part="GND22" gate="1" x="207.01" y="21.59"/>
+<instance part="+3V1" gate="G$1" x="205.74" y="38.1"/>
+<instance part="+3V6" gate="G$1" x="74.93" y="29.21"/>
 </instances>
 <busses>
 </busses>
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="IC_REG" gate="G$1" pin="ADJ"/>
+<pinref part="IC_REG1" gate="G$1" pin="ADJ"/>
 <wire x1="52.07" y1="15.24" x2="52.07" y2="10.16" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="C1" gate="G$1" pin="2"/>
@@ -6466,7 +6586,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <segment>
 <pinref part="GND3" gate="1" pin="GND"/>
 <pinref part="STM32" gate="AN_POWER" pin="VSSA"/>
-<wire x1="182.88" y1="30.48" x2="177.8" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="30.48" x2="177.8" y2="30.48" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="D7" gate="G$1" pin="A1"/>
@@ -6506,21 +6626,12 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <pinref part="GND8" gate="1" pin="GND"/>
 <pinref part="CON_USB" gate="G$1" pin="4"/>
 </segment>
+<segment>
+<pinref part="IC_REF" gate="G$1" pin="GND"/>
+<pinref part="GND22" gate="1" pin="GND"/>
+</segment>
 </net>
 <net name="+3V3" class="0">
-<segment>
-<pinref part="IC_REG" gate="G$1" pin="OUT"/>
-<wire x1="59.69" y1="22.86" x2="63.5" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="+3V1" gate="G$1" pin="+3V3"/>
-<wire x1="63.5" y1="27.94" x2="63.5" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="1"/>
-<junction x="63.5" y="22.86"/>
-<pinref part="C34" gate="G$1" pin="1"/>
-<wire x1="64.77" y1="22.86" x2="74.93" y2="22.86" width="0.1524" layer="91"/>
-<wire x1="64.77" y1="22.86" x2="63.5" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="TP2" gate="G$1" pin="P$1"/>
-<junction x="74.93" y="22.86"/>
-</segment>
 <segment>
 <pinref part="C24" gate="G$1" pin="1"/>
 <pinref part="C26" gate="G$1" pin="1"/>
@@ -6538,13 +6649,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="233.68" y1="97.79" x2="223.52" y2="97.79" width="0.1524" layer="91"/>
 <junction x="233.68" y="97.79"/>
 <pinref part="C28" gate="G$1" pin="1"/>
-</segment>
-<segment>
-<pinref part="C30" gate="G$1" pin="1"/>
-<pinref part="C31" gate="G$1" pin="1"/>
-<wire x1="223.52" y1="62.23" x2="233.68" y2="62.23" width="0.1524" layer="91"/>
-<pinref part="+3V15" gate="G$1" pin="+3V3"/>
-<junction x="233.68" y="62.23"/>
 </segment>
 <segment>
 <pinref part="CON_DBG" gate="G$1" pin="1"/>
@@ -6614,13 +6718,15 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="73.66" y1="160.02" x2="73.66" y2="156.21" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="STM32" gate="AN_POWER" pin="VDDA"/>
-<wire x1="177.8" y1="25.4" x2="190.5" y2="25.4" width="0.1524" layer="91"/>
+<pinref part="+3V1" gate="G$1" pin="+3V3"/>
+<pinref part="IC_REF" gate="G$1" pin="VIN"/>
+<wire x1="207.01" y1="29.21" x2="205.74" y2="29.21" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="29.21" x2="205.74" y2="35.56" width="0.1524" layer="91"/>
+</segment>
+<segment>
 <pinref part="STM32" gate="AN_POWER" pin="VBAT"/>
 <wire x1="177.8" y1="35.56" x2="190.5" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="190.5" y1="35.56" x2="190.5" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="+3V2" gate="G$1" pin="+3V3"/>
-<junction x="190.5" y="35.56"/>
 </segment>
 <segment>
 <pinref part="R1" gate="G$1" pin="2"/>
@@ -6631,6 +6737,18 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <segment>
 <pinref part="R2" gate="G$1" pin="2"/>
 <pinref part="+3V11" gate="G$1" pin="+3V3"/>
+</segment>
+<segment>
+<pinref part="IC_REG1" gate="G$1" pin="OUT"/>
+<wire x1="59.69" y1="22.86" x2="63.5" y2="22.86" width="0.1524" layer="91"/>
+<pinref part="C2" gate="G$1" pin="1"/>
+<junction x="63.5" y="22.86"/>
+<pinref part="C34" gate="G$1" pin="1"/>
+<wire x1="64.77" y1="22.86" x2="74.93" y2="22.86" width="0.1524" layer="91"/>
+<wire x1="64.77" y1="22.86" x2="63.5" y2="22.86" width="0.1524" layer="91"/>
+<wire x1="74.93" y1="22.86" x2="74.93" y2="26.67" width="0.1524" layer="91"/>
+<junction x="74.93" y="22.86"/>
+<pinref part="+3V6" gate="G$1" pin="+3V3"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -7426,7 +7544,7 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="IC_REG" gate="G$1" pin="IN"/>
+<pinref part="IC_REG1" gate="G$1" pin="IN"/>
 <wire x1="44.45" y1="22.86" x2="39.37" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="C1" gate="G$1" pin="1"/>
 <pinref part="F1" gate="G$1" pin="1"/>
@@ -7434,6 +7552,24 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <wire x1="39.37" y1="22.86" x2="24.13" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="TVS1" gate="G$1" pin="2"/>
 <wire x1="22.86" y1="22.86" x2="24.13" y2="22.86" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="VAN" class="0">
+<segment>
+<pinref part="STM32" gate="AN_POWER" pin="VDDA"/>
+<wire x1="177.8" y1="25.4" x2="182.88" y2="25.4" width="0.1524" layer="91"/>
+<label x="177.8" y="25.4" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC_REF" gate="G$1" pin="VO"/>
+<wire x1="227.33" y1="29.21" x2="238.76" y2="29.21" width="0.1524" layer="91"/>
+<label x="228.6" y="29.21" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="C30" gate="G$1" pin="1"/>
+<pinref part="C31" gate="G$1" pin="1"/>
+<wire x1="223.52" y1="62.23" x2="233.68" y2="62.23" width="0.1524" layer="91"/>
+<label x="226.06" y="62.23" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
@@ -7452,18 +7588,12 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 <approved hash="104,1,176.53,86.36,STM32POWER,VSS_4,GND,,,"/>
 <approved hash="104,1,177.8,35.56,STM32AN_POWER,VBAT,+3V3,,,"/>
 <approved hash="104,1,177.8,30.48,STM32AN_POWER,VSSA,GND,,,"/>
-<approved hash="104,1,177.8,25.4,STM32AN_POWER,VDDA,+3V3,,,"/>
 <approved hash="104,1,226.06,134.62,TVS2,VN,GND,,,"/>
 <approved hash="104,1,251.46,134.62,TVS2,VBUS,USB_VBUS,,,"/>
-<approved hash="111,1,345.44,63.5,+12V,,,,,"/>
 <approved hash="113,1,133.35,153.437,CON_DBG,,,,,"/>
-<approved hash="113,1,78.74,58.4285,S1,,,,,"/>
 <approved hash="113,1,41.2327,59.8847,CON_PWR,,,,,"/>
-<approved hash="113,1,246.702,182.88,LED1,,,,,"/>
-<approved hash="113,1,254.322,180.34,LED2,,,,,"/>
 <approved hash="113,1,28.5327,108.145,CON_AN,,,,,"/>
 <approved hash="113,1,183.322,160.215,CON_RPM-VSS,,,,,"/>
-<approved hash="113,1,355.007,58.2253,CON_KL,,,,,"/>
 <approved hash="113,1,39.9627,87.8247,CON_KNK,,,,,"/>
 </errors>
 </schematic>
