@@ -199,6 +199,29 @@ bool Motolink::getMonitoring(QByteArray *data)
     return false;
 }
 
+bool Motolink::getKnockSpectrum(QByteArray *data)
+{
+    _WAIT_USB_
+    _LOCK_
+    QByteArray send, recv;
+    prepareSimpleCmd(&send, CMD_GET_FFT);
+
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
+    mUsb->read(&recv, (FFT_SIZE)+1);
+
+    if ((size_t)recv.size() > FFT_SIZE && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FFT))
+    {
+        *data = recv.remove(0, 1);
+        emit sendKockSpectrum(data);
+        return true;
+    }
+
+    return false;
+}
+
 bool Motolink::sendWake()
 {
     _WAIT_USB_

@@ -1298,6 +1298,8 @@
     <addaction name="actionGet_Configuration"/>
     <addaction name="separator"/>
     <addaction name="actionShow_tasks"/>
+    <addaction name="actionShow_Knock_Spectrum"/>
+    <addaction name="separator"/>
     <addaction name="actionUpdate"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -1599,10 +1601,22 @@
      <normaloff>:/oxygen/32x32/actions/view-process-system.png</normaloff>:/oxygen/32x32/actions/view-process-system.png</iconset>
    </property>
    <property name="text">
-    <string>Show tasks...</string>
+    <string>Show Tasks...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionShow_Knock_Spectrum">
+   <property name="icon">
+    <iconset resource="../res/images/images.qrc">
+     <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Knock Spectrum...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
    </property>
   </action>
  </widget>

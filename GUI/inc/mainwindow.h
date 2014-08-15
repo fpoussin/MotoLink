@@ -35,6 +35,7 @@
 namespace Ui {
     class MainWindow;
     class Tasks;
+    class KnockGraph;
 }
 
 class MainWindow : public QMainWindow
@@ -60,9 +61,10 @@ public slots:
     void exportHrc(void);
 
 signals:
-    void startupComplete(void);
-    void sendUpdateSensors(QByteArray *data);
-    void sendUpdateMonitoring(QByteArray *data);
+    void signalStartupComplete(void);
+    void signalUpdateSensors(QByteArray *data);
+    void signalUpdateMonitoring(QByteArray *data);
+    void signalUpdateKnock(QByteArray *data);
 
 private slots:
     void setLanguageEnglish(void);
@@ -81,6 +83,7 @@ private slots:
     void showKnockTab(void);
     void showSettingsTab(void);
     void showTasks(void);
+    void showKnockGraph(void);
 
     void showAfrMapContextMenu(const QPoint &pos);
     void showAfrTgtContextMenu(const QPoint &pos);
@@ -92,19 +95,23 @@ private slots:
     void doSlowPolling(void);
     void receiveSensors(QByteArray *data);
     void receiveMonitoring(QByteArray *data);
+    void receiveKnockSpectrum(QByteArray *data);
 
 private:
     void setupDefaults(void);
     void setupConnections(void);
     void setupTabShortcuts(void);
     void setupSettings(void);
+    void setupKnockGraph(void);
     void makeDefaultModel(void);
     void retranslate(void);
     void showDefaultContextMenu(const QPoint &pos, QTableView *view);
 
-    Ui::MainWindow *mUi;
-    Ui::Tasks *mTasks;
+    Ui::MainWindow *mMainUi;
+    Ui::Tasks *mTasksUi;
+    Ui::KnockGraph *mKnockGraphUi;
     QWidget *mTasksWidget;
+    QWidget *mKnockGraphWidget;
     QTranslator mTranslator;
     QSettings mSettings;
     QString mCurrentFile;
@@ -133,6 +140,7 @@ private:
     QTimer mSlowPollingTimer;
     QByteArray mSensorsData;
     QByteArray mMonitoringData;
+    QByteArray mKnockSpectrumData;
 };
 
 #endif // MAINWINDOW_H

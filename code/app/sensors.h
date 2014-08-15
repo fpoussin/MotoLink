@@ -22,7 +22,8 @@
 extern adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 extern adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 extern q15_t data_knock[sizeof(samples_knock)/2];
-extern q15_t output_knock[sizeof(samples_knock)/2];
+extern q15_t mag_knock[sizeof(samples_knock)/2];
+extern uint8_t output_knock[FFT_SIZE];
 
 extern const ADCConversionGroup adcgrpcfg_sensors;
 extern const ADCConversionGroup adcgrpcfg_knock;

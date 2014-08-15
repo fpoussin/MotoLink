@@ -6,7 +6,7 @@
 
 QT += core gui xml network script scripttools
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
@@ -32,7 +32,8 @@ SOURCES += src/main.cpp \
     src/commands.cpp \
     src/tablemodel.cpp \
     src/spinbox.cpp \
-    src/update.cpp
+    src/update.cpp \
+    src/qcustomplot.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -46,12 +47,14 @@ HEADERS  += \
     inc/commands.h \
     inc/tablemodel.h \
     inc/spinbox.h \
-    inc/update.h
+    inc/update.h \
+    inc/qcustomplot.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \
     ui/helpviewer.ui \
-    ui/tasks.ui
+    ui/tasks.ui \
+    ui/knock.ui
 
 RESOURCES += \
     res/oxygen.qrc \

@@ -33,6 +33,7 @@ public slots:
     quint16 getVersion(void);
     bool getSensors(QByteArray* data);
     bool getMonitoring(QByteArray* data);
+    bool getKnockSpectrum(QByteArray* data);
     bool sendWake();
 
     void startUpdate(QByteArray *data);
@@ -52,6 +53,7 @@ signals:
 
     void sendSensors(QByteArray *data);
     void sendMonitoring(QByteArray *data);
+    void sendKockSpectrum(QByteArray *data);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;

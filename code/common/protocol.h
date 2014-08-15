@@ -36,6 +36,7 @@
 
 #define DATA_BUF_SIZE 256
 #define FFT_SIZE 256
+#define FFT_FREQ 112500
 
 typedef struct {
   uint8_t magic1;

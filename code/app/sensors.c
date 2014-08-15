@@ -1,9 +1,11 @@
 #include "sensors.h"
+#include "limits.h"
 
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 q15_t data_knock[sizeof(samples_knock)/2];
-q15_t output_knock[sizeof(samples_knock)/2];
+q15_t mag_knock[sizeof(samples_knock)/2];
+uint8_t output_knock[FFT_SIZE];
 
 sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
@@ -164,11 +166,11 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
-/* Every 512 samples at 112.5Kz each, triggers at around 220Hz */
+/* Every 512 samples at 112.5KHz each, triggers at around 220Hz */
 void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
-  uint16_t i;
+  uint32_t i;
   const int32_t* samples = (int32_t*)buffer;
   int32_t* data = (int32_t*)data_knock;
 
@@ -178,12 +180,19 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 
   /* Copy to signed array 32bits at a time */
   /* ADC has offset setup and outputs Q15 values directly */
+  /*
   for (i=0; i<n/2; i+=4)
   {
 	data[i] = samples[i];
 	data[i+1] = samples[i+1];
 	data[i+2] = samples[i+2];
 	data[i+3] = samples[i+3];
+
+  }
+*/
+  for (i=0; i<n; i++)
+  {
+    data_knock[i] = buffer[i];
   }
 
   // Do FFT + Mag in a thread

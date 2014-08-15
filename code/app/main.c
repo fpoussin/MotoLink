@@ -229,6 +229,7 @@ msg_t ThreadKnock(void *arg)
 
   q15_t maxValue = 0;
   uint32_t maxIndex = 0;
+  uint16_t i;
 
   /* Initialize the CFFT/CIFFT module */
   arm_cfft_radix4_instance_q15 S;
@@ -244,9 +245,15 @@ msg_t ThreadKnock(void *arg)
 
     /* Process the data through the Complex Magnitude Module for
     calculating the magnitude at each bin */
-    memset(output_knock, 0, sizeof(output_knock)); // Clear buffer
-    arm_cmplx_mag_q15(data_knock, output_knock, FFT_SIZE); // Calculate magnitude
-    arm_max_q15(output_knock, FFT_SIZE, &maxValue, &maxIndex); // Find max magnitude
+    arm_cmplx_mag_q15(data_knock, mag_knock, FFT_SIZE); // Calculate magnitude
+    arm_max_q15(mag_knock, FFT_SIZE, &maxValue, &maxIndex); // Find max magnitude
+
+    // Convert to 8 Bits array
+    for (i=0; i < sizeof(output_knock); i+=2)
+    {
+      output_knock[i] = (mag_knock[i*2])>>8;
+      output_knock[i+1] = (mag_knock[(i+1)*2])>>8;
+    }
 
     sensors_data.knock_value = maxValue;
     sensors_data.knock_freq = (SAMPLING_RATE*maxIndex)/FFT_SIZE;

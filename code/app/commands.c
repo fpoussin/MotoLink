@@ -129,9 +129,7 @@ uint8_t sendMonitoring(BaseChannel * chn) {
 
 uint8_t sendFFT(BaseChannel * chn) {
 
-  uint8_t buf = MASK_REPLY_OK | CMD_GET_FFT;
-
-  chnWriteTimeout(chn, &buf, 1, MS2ST(10));
-  chnWriteTimeout(chn, (uint8_t*)output_knock, sizeof(output_knock), MS2ST(25));
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_FFT, MS2ST(10));
+  chnWriteTimeout(chn, output_knock, sizeof(output_knock), MS2ST(35));
   return 0;
 }
