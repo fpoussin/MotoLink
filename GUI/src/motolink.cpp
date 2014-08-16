@@ -210,9 +210,9 @@ bool Motolink::getKnockSpectrum(QByteArray *data)
     {
         return 0;
     }
-    mUsb->read(&recv, (FFT_SIZE)+1);
+    mUsb->read(&recv, SPECTRUM_SIZE+1);
 
-    if ((size_t)recv.size() > FFT_SIZE && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FFT))
+    if ((size_t)recv.size() > SPECTRUM_SIZE && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FFT))
     {
         *data = recv.remove(0, 1);
         emit sendKockSpectrum(data);

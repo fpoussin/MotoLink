@@ -6,7 +6,6 @@
 #include <ui_knock.h>
 #include <QFileInfo>
 #include <QModelIndex>
-#include <qcustomplot.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -351,12 +350,21 @@ void MainWindow::setupSettings()
 void MainWindow::setupKnockGraph()
 {
     QCustomPlot * plot = mKnockGraphUi->mainPlot;
+    mKnockFreqLabel = new QCPItemText(plot);
 
     plot->addGraph();
     plot->xAxis->setLabel("Frequency (Hertz)");
     plot->yAxis->setLabel("Intensity (Volts)");
-    plot->xAxis->setRange(0, FFT_FREQ);
-    plot->yAxis->setRange(0, 255.0);
+    plot->xAxis->setRange(0, FFT_FREQ/4);
+    plot->yAxis->setRange(0, KNOCK_MAX);
+
+    plot->addItem(mKnockFreqLabel);
+    mKnockFreqLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    mKnockFreqLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    mKnockFreqLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    mKnockFreqLabel->setText("Loading...");
+    mKnockFreqLabel->setFont(QFont(font().family(), 16)); // make font a bit larger
+    mKnockFreqLabel->setPen(QPen(Qt::black)); // show black border around text
 }
 
 void MainWindow::retranslate()
@@ -646,19 +654,25 @@ void MainWindow::receiveMonitoring(QByteArray *data)
 
 void MainWindow::receiveKnockSpectrum(QByteArray *data)
 {
-    QVector<double> x(FFT_SIZE), y(FFT_SIZE);
+    QVector<double> x(SPECTRUM_SIZE), y(SPECTRUM_SIZE);
     QCustomPlot * plot = mKnockGraphUi->mainPlot;
-    double max = 0;
+    double max_val = 0;
+    double max_freq = 0;
 
-    for (uint i=0; i<FFT_SIZE; i++)
+    for (uint i=0; i<SPECTRUM_SIZE; i++)
     {
-        x[i] = (FFT_FREQ*i)/FFT_SIZE;
-        y[i] = (5.0/256)*data->at(i);
-        if (y[i] > max)
-            max = y[i];
+        x[i] = (FFT_FREQ*i)/(SPECTRUM_SIZE*4);
+        y[i] = (KNOCK_MAX/256.0)*data->at(i);
+        if (y[i] > max_val) {
+            max_val = y[i];
+            max_freq = x[i];
+        }
     }
 
+    mKnockFreqLabel->setText(QString::number(max_val, 'f', 2)+"V at "+
+                             QString::number(max_freq, 'f', 2)+"Hz");
+
     plot->graph(0)->setData(x, y);
-    //plot->yAxis->setRange(0, max);
+    //plot->yAxis->setRange(0, max_val);
     plot->replot();
 }

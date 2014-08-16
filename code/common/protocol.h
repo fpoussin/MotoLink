@@ -35,8 +35,10 @@
 #define MODE_APP (uint8_t)0x02
 
 #define DATA_BUF_SIZE 256
-#define FFT_SIZE 256
+#define FFT_SIZE 1024
 #define FFT_FREQ 112500
+#define SPECTRUM_SIZE (FFT_SIZE/4)
+#define KNOCK_MAX (3.3*4.66)
 
 typedef struct {
   uint8_t magic1;

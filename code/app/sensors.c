@@ -5,7 +5,7 @@ adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 q15_t data_knock[sizeof(samples_knock)/2];
 q15_t mag_knock[sizeof(samples_knock)/2];
-uint8_t output_knock[FFT_SIZE];
+uint8_t output_knock[SPECTRUM_SIZE];
 
 sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
@@ -166,33 +166,26 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
-/* Every 512 samples at 112.5KHz each, triggers at around 220Hz */
+/* Every 2048 samples at 112.5KHz each, triggers at around 54Hz */
 void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
-  uint32_t i;
-  const int32_t* samples = (int32_t*)buffer;
-  int32_t* data = (int32_t*)data_knock;
+  uint16_t i;
+
+  /* Samples are Q15 (signed 16b) */
+  const q15_t* samples = (q15_t*)buffer;
 
   /* n is always depth/2 */
   if (n % 16)
 	  return;
 
-  /* Copy to signed array 32bits at a time */
   /* ADC has offset setup and outputs Q15 values directly */
-  /*
-  for (i=0; i<n/2; i+=4)
+  for (i=0; i<n; i+=4)
   {
-	data[i] = samples[i];
-	data[i+1] = samples[i+1];
-	data[i+2] = samples[i+2];
-	data[i+3] = samples[i+3];
-
-  }
-*/
-  for (i=0; i<n; i++)
-  {
-    data_knock[i] = buffer[i];
+    data_knock[i] = samples[i] << 4;
+    data_knock[i+1] = samples[i+1] << 4;
+    data_knock[i+2] = samples[i+2] << 4;
+    data_knock[i+3] = samples[i+3] << 4;
   }
 
   // Do FFT + Mag in a thread
@@ -205,7 +198,7 @@ const ADCConversionGroup adcgrpcfg_knock = {
   ADC_GRP2_NUM_CHANNELS,
   knockCallback,
   NULL,
-  ADC_CFGR_ALIGN,                   /* CFGR    */
+  ADC_CFGR_ALIGN,                   /* CFGR - Align result to left (convert 12 to 16 bits) */
   ADC_TR(0, 4095),                  /* TR1     */
   0,    /* CCR     */
   {                                 /* SMPR[2] */

@@ -25,6 +25,7 @@
 #include "bootloader.h"
 #include "commands.h"
 #include "tablemodel.h"
+#include <qcustomplot.h>
 
 #include "update.h"
 
@@ -112,6 +113,7 @@ private:
     Ui::KnockGraph *mKnockGraphUi;
     QWidget *mTasksWidget;
     QWidget *mKnockGraphWidget;
+    QCPItemText *mKnockFreqLabel;
     QTranslator mTranslator;
     QSettings mSettings;
     QString mCurrentFile;
