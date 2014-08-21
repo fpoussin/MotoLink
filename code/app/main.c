@@ -251,8 +251,8 @@ msg_t ThreadKnock(void *arg)
     // Convert to 8 Bits array
     for (i=0; i < sizeof(output_knock); i+=2)
     {
-      output_knock[i] = (mag_knock[i*2])>>8;
-      output_knock[i+1] = (mag_knock[(i+1)*2])>>8;
+      output_knock[i] = (mag_knock[i*2]) >> 8;
+      output_knock[i+1] = (mag_knock[(i+1)*2]) >> 8;
     }
 
     sensors_data.knock_value = maxValue;
@@ -364,8 +364,6 @@ int main(void)
   /*
    * Start peripherals
    */
-  RCC->CFGR2 &= ~RCC_CFGR2_ADCPRE12 | ~RCC_CFGR2_ADCPRE34; // Erase registers
-  RCC->CFGR2 |= RCC_CFGR2_ADCPRE12_DIV128 | RCC_CFGR2_ADCPRE34_DIV32; // Set prescalers
   sdStart(&SD1, &uartCfg);
   usbStart(serusbcfg.usbp, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
@@ -378,7 +376,6 @@ int main(void)
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-  //ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH);
 
   dacConvert(&DACD1, 0x800);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);

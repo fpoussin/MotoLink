@@ -182,10 +182,10 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   /* ADC has offset setup and outputs Q15 values directly */
   for (i=0; i<n; i+=4)
   {
-    data_knock[i] = samples[i] << 4;
-    data_knock[i+1] = samples[i+1] << 4;
-    data_knock[i+2] = samples[i+2] << 4;
-    data_knock[i+3] = samples[i+3] << 4;
+    data_knock[i] = samples[i];
+    data_knock[i+1] = samples[i+1];
+    data_knock[i+2] = samples[i+2];
+    data_knock[i+3] = samples[i+3];
   }
 
   // Do FFT + Mag in a thread
