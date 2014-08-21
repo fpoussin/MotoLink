@@ -30,12 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mUndoStack.setUndoLimit(100);
 
-    mFuelModel.setName("Fuel");
-    mStagingModel.setName("Staging");
-    mAFRModel.setName("AFR");
-    mAFRTgtModel.setName("AFR Target");
-    mIgnModel.setName("Ignition");
-    mKnockModel.setName("Knock");
+    mFuelModel.setName(tr("Fuel"));
+    mStagingModel.setName(tr("Staging"));
+    mAFRModel.setName(tr("AFR"));
+    mAFRTgtModel.setName(tr("AFR Target"));
+    mIgnModel.setName(tr("Ignition"));
+    mKnockModel.setName(tr("Knock"));
 
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
@@ -47,14 +47,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setupKnockGraph();
 
     mUndoView.setStack(&mUndoStack);
-    mUndoView.setWindowTitle("Actions History - "+this->windowTitle());
+    mUndoView.setWindowTitle(tr("Actions History - ")+this->windowTitle());
     mHasChanged = false;
 
-    mMainUi->sbIdle->setName("Idle");
-    mMainUi->sbPitLimiter->setName("Pit Limiter");
-    mMainUi->sbShiftLight->setName("Shift Light");
-    mMainUi->sbThresholdMin->setName("Minimum Threshold");
-    mMainUi->sbThresholdMax->setName("Maximum Threshold");
+    mMainUi->sbIdle->setName(tr("Idle"));
+    mMainUi->sbPitLimiter->setName(tr("Pit Limiter"));
+    mMainUi->sbShiftLight->setName(tr("Shift Light"));
+    mMainUi->sbThresholdMin->setName(tr("Minimum Threshold"));
+    mMainUi->sbThresholdMax->setName(tr("Maximum Threshold"));
 
     mMainUi->sbIdle->setUndoStack(&mUndoStack);
     mMainUi->sbPitLimiter->setUndoStack(&mUndoStack);
@@ -353,8 +353,8 @@ void MainWindow::setupKnockGraph()
     mKnockFreqLabel = new QCPItemText(plot);
 
     plot->addGraph();
-    plot->xAxis->setLabel("Knock Frequency (Hertz)");
-    plot->yAxis->setLabel("Knock Intensity (Volts, AC)");
+    plot->xAxis->setLabel(tr("Knock Frequency (Hertz)"));
+    plot->yAxis->setLabel(tr("Knock Intensity (Volts, AC)"));
     plot->xAxis->setRange(0, FFT_FREQ/4);
     plot->yAxis->setRange(0, KNOCK_MAX);
 
@@ -362,7 +362,7 @@ void MainWindow::setupKnockGraph()
     mKnockFreqLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     mKnockFreqLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     mKnockFreqLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-    mKnockFreqLabel->setText("Loading...");
+    mKnockFreqLabel->setText(tr("Loading..."));
     mKnockFreqLabel->setFont(QFont(font().family(), 16)); // make font a bit larger
     mKnockFreqLabel->setPen(QPen(Qt::black)); // show black border around text
 }
@@ -371,6 +371,8 @@ void MainWindow::retranslate()
 {
     mMainUi->retranslateUi(this);
     mUpdateWizard->retranslate();
+    mKnockGraphUi->retranslateUi(mKnockGraphWidget);
+    mTasksUi->retranslateUi(mTasksWidget);
 }
 
 void MainWindow::setLanguageEnglish()
