@@ -22,6 +22,12 @@
 #include "commands.h"
 #include "sensors.h"
 
+/*===========================================================================*/
+/* Macros                                                                    */
+/*===========================================================================*/
+
+/* Check if tp was the previous thread */
+#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
@@ -36,14 +42,14 @@ Thread* pThreadCAN = NULL;
 monitor_t monitoring = {0,0,0,0,0,0,0,100};
 
 /*===========================================================================*/
-/* Generic code.                                                             */
+/* Structs                                                                   */
 /*===========================================================================*/
 
-const CANConfig cancfg = {
-  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
-  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
-  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
-};
+static struct VirtualTimer vt_freqin;
+
+/*===========================================================================*/
+/* CallBacks                                                                 */
+/*===========================================================================*/
 
 void iwdgGptCb(GPTDriver *gptp)
 {
@@ -55,6 +61,28 @@ void iwdgGptCb(GPTDriver *gptp)
   chThdSelf()->runtime -= time;
 }
 
+void freqin_vthandler(void *arg)
+{
+  TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+
+  chSysLockFromIsr();
+  if(chVTIsArmedI(&vt_freqin)) {
+    chVTResetI(&vt_freqin);
+  }
+  chVTSetI(&vt_freqin, MS2ST(50), freqin_vthandler, 0);
+  chSysUnlockFromIsr();
+}
+
+/*===========================================================================*/
+/* Configs                                                                   */
+/*===========================================================================*/
+
+const CANConfig cancfg = {
+  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
+  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
+  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
+};
+
 GPTConfig gpt1Cfg =
 {
   100000,      /* timer clock.*/
@@ -62,9 +90,6 @@ GPTConfig gpt1Cfg =
   0
 };
 
-/*
- * DAC config
- */
 static const DACConfig daccfg1 = {
   DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
   0 /* DAC CR flags */
@@ -77,7 +102,6 @@ const SerialConfig uartCfg =
  USART_CR2_STOP1_BITS,
  0
 };
-
 
 PWMConfig pwmcfg = {
   10000,    /* 10kHz PWM clock frequency.   */
@@ -92,6 +116,10 @@ PWMConfig pwmcfg = {
   0,
   0
 };
+
+/*===========================================================================*/
+/* Threads                                                                   */
+/*===========================================================================*/
 
 WORKING_AREA(waThreadCAN, 256);
 msg_t ThreadCAN(void *p)
@@ -202,18 +230,43 @@ msg_t ThreadSDU(void *arg)
 /*
  * Sensors thread.
  */
-WORKING_AREA(waThreadSensors, 32);
+WORKING_AREA(waThreadSensors, 64);
 msg_t ThreadSensors(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
   while (TRUE)
   {
-    chThdSleepMilliseconds(50);
-    //if (TIM3->DIER & ~(TIM_DIER_CC1IE | TIM_DIER_CC2IE)) {
-      //TIM3->CNT = 0;
-      TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
-    //}
+    while (!sensorsDataReady) chThdSleepMilliseconds(5);
+    sensorsDataReady = false;
+
+    if (sensorsDataPtr == NULL) continue;
+
+    uint16_t i, n, pos;
+    uint32_t an[3] = {0, 0, 0};
+    n = sensorsDataSize;
+
+    /* Filtering */
+    for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
+    {
+      pos = i * ADC_GRP1_NUM_CHANNELS;
+      an[0] += median_filter1(sensorsDataPtr[pos]);
+      an[1] += median_filter2(sensorsDataPtr[pos+1]);
+      an[2] += median_filter3(sensorsDataPtr[pos+2]);
+    }
+
+    an[0] *= VBAT_RATIO;
+    an[1] *= AN_RATIO;
+    an[2] *= AN_RATIO;
+
+    /* Averaging */
+    an[0] /= (n/ADC_GRP1_NUM_CHANNELS);
+    an[1] /= (n/ADC_GRP1_NUM_CHANNELS);
+    an[2] /= (n/ADC_GRP1_NUM_CHANNELS);
+
+    sensors_data.an7 = an[0];
+    sensors_data.an8 = an[1];
+    sensors_data.an9 = an[2];
   }
   return 0;
 }
@@ -240,12 +293,14 @@ msg_t ThreadKnock(void *arg)
     while (!knockDataReady) chThdSleepMilliseconds(2);
     knockDataReady = false;
 
+    if (knockDataPtr == NULL) continue;
+
     /* Process the data through the CFFT/CIFFT module */
-    arm_cfft_radix4_q15(&S, data_knock);
+    arm_cfft_radix4_q15(&S, knockDataPtr);
 
     /* Process the data through the Complex Magnitude Module for
     calculating the magnitude at each bin */
-    arm_cmplx_mag_q15(data_knock, mag_knock, FFT_SIZE); // Calculate magnitude
+    arm_cmplx_mag_q15(knockDataPtr, mag_knock, FFT_SIZE); // Calculate magnitude
     arm_max_q15(mag_knock, FFT_SIZE, &maxValue, &maxIndex); // Find max magnitude
 
     // Convert to 8 Bits array
@@ -260,9 +315,6 @@ msg_t ThreadKnock(void *arg)
   }
   return 0;
 }
-
-/* Check if tp was the previous thread */
-#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
 
 /*
  * CPU Load Monitoring thread.
@@ -330,18 +382,14 @@ msg_t ThreadMonitor(void *arg)
   return 0;
 }
 
+/*===========================================================================*/
+/* Main Thread                                                               */
+/*===========================================================================*/
 
-/*
- * Application entry point.
- */
 int main(void)
 {
   /*
-   * System initializations.
-   * - HAL initialization, this also initializes the configured device drivers
-   *   and performs the board-specific initializations.
-   * - Kernel initialization, the main() function becomes a thread and the
-   *   RTOS is active.
+   * Start OS and HAL
    */
   halInit();
   driversInit();
@@ -381,6 +429,8 @@ int main(void)
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
+
+  chVTSet(&vt_freqin, MS2ST(50), freqin_vthandler, 0);
 
   /*
    * Creates the threads.

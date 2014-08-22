@@ -1,9 +1,12 @@
 #include "sensors.h"
 #include "limits.h"
 
+/*===========================================================================*/
+/* Variables                                                                 */
+/*===========================================================================*/
+
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
-q15_t data_knock[sizeof(samples_knock)/2];
 q15_t mag_knock[sizeof(samples_knock)/2];
 uint8_t output_knock[SPECTRUM_SIZE];
 
@@ -11,7 +14,18 @@ sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
+
 bool knockDataReady = false;
+uint16_t knockDataSize = 0;
+adcsample_t * knockDataPtr = samples_knock;
+
+bool sensorsDataReady = false;
+uint16_t sensorsDataSize = 0;
+adcsample_t * sensorsDataPtr = samples_sensors;
+
+/*===========================================================================*/
+/* CallBacks                                                                 */
+/*===========================================================================*/
 
 void captureOverflowCb(TIMCAPDriver *timcapp)
 {
@@ -104,45 +118,41 @@ void capture2Cb(TIMCAPDriver *timcapp)
   }
 }
 
+/* Every 64 samples at 965Hz each, triggers at around 15Hz */
+void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+{
+  (void)adcp;
+
+  sensorsDataPtr = buffer;
+  sensorsDataSize = n;
+  sensorsDataReady = true;
+
+}
+
+/* Every 2048 samples at 112.5KHz each, triggers at around 54Hz */
+void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+{
+  (void)adcp;
+
+  // Do FFT + Mag in a thread
+  knockDataPtr = buffer;
+  knockDataSize = n;
+  knockDataReady = true;
+}
+
+/*===========================================================================*/
+/* Configs                                                                   */
+/*===========================================================================*/
+
 TIMCAPConfig tc_conf = {
    {TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_DISABLED, TIMCAP_INPUT_DISABLED},
-   50000, /* TIM3 Runs at 36Mhz max. (1/50000)*65536 = 1.31s Max */
+   100000, /* TIM3 Runs at 36Mhz max. (1/10000)*65536 = 0.65s Max */
    {capture1Cb, capture2Cb, NULL, NULL},
    captureOverflowCb,
    0
 };
 
-/* Every 32 samples at 2.53Kz each, triggers at around 79Hz */
-void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
-{
-  (void)adcp;
-  uint16_t i, pos;
-  uint32_t an[3] = {0, 0, 0};
-
-  /* n is always depth/2 */
-  for (i=0; i<n; i++)
-  {
-    pos = i * ADC_GRP1_NUM_CHANNELS;
-    an[0] += buffer[pos];
-    an[1] += buffer[pos+1];
-    an[2] += buffer[pos+2];
-  }
-
-  /* n >> 4 */
-  an[0] /= n;
-  an[1] /= n;
-  an[2] /= n;
-
-  an[0] *= VBAT_RATIO;
-  an[1] *= AN_RATIO;
-  an[2] *= AN_RATIO;
-
-  sensors_data.an7 = an[0] & 0xFFF0;
-  sensors_data.an8 = an[1] & 0xFFF0;
-  sensors_data.an9 = an[2] & 0xFFF0;
-}
-
-/* ADC12 Clk is 72Mhz/128 562Khz  */
+/* ADC12 Clk is 72Mhz/128 562KHz  */
 const ADCConversionGroup adcgrpcfg_sensors = {
   TRUE,
   ADC_GRP1_NUM_CHANNELS,
@@ -152,9 +162,9 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   ADC_TR(0, 4095),          /* TR1     */
   ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
-    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_61P5) | /* Sampling rate = 562000/(61.5+12.5) = 7.56Khz  */
-    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_61P5) | /* 7.56Khz for 3 channels = 2.53Khz */
-    ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_61P5),
+    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_181P5) | /* Sampling rate = 562000/(61.5+12.5) = 2.9KHz  */
+    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_181P5) | /* 7.56Khz for 3 channels = 965Hz */
+    ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_181P5),
     0
   },
   {                         /* SQR[4]  */
@@ -166,31 +176,6 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
-/* Every 2048 samples at 112.5KHz each, triggers at around 54Hz */
-void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
-{
-  (void)adcp;
-  uint16_t i;
-
-  /* Samples are Q15 (signed 16b) */
-  const q15_t* samples = (q15_t*)buffer;
-
-  /* n is always depth/2 */
-  if (n % 16)
-	  return;
-
-  /* ADC has offset setup and outputs Q15 values directly */
-  for (i=0; i<n; i+=4)
-  {
-    data_knock[i] = samples[i];
-    data_knock[i+1] = samples[i+1];
-    data_knock[i+2] = samples[i+2];
-    data_knock[i+3] = samples[i+3];
-  }
-
-  // Do FFT + Mag in a thread
-  knockDataReady = true;
-}
 
 /* ADC34 Clk is 72Mhz/32 2.25Mhz  */
 const ADCConversionGroup adcgrpcfg_knock = {
