@@ -28,6 +28,7 @@
 
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
+#define FREQIN_INTERVAL MS2ST(50)
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
@@ -69,7 +70,7 @@ void freqin_vthandler(void *arg)
   if(chVTIsArmedI(&vt_freqin)) {
     chVTResetI(&vt_freqin);
   }
-  chVTSetI(&vt_freqin, MS2ST(50), freqin_vthandler, 0);
+  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, 0);
   chSysUnlockFromIsr();
 }
 
@@ -425,12 +426,12 @@ int main(void)
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
 
-  dacConvert(&DACD1, 0x800);
+  dacConvert(&DACD1, 0x800); // This sets the offset for the knock ADC.
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
 
-  chVTSet(&vt_freqin, MS2ST(50), freqin_vthandler, 0);
+  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, 0);
 
   /*
    * Creates the threads.

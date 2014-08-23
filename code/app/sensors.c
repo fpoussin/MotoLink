@@ -145,8 +145,11 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 /*===========================================================================*/
 
 TIMCAPConfig tc_conf = {
-   {TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_DISABLED, TIMCAP_INPUT_DISABLED},
-   100000, /* TIM3 Runs at 36Mhz max. (1/10000)*65536 = 0.65s Max */
+   {TIMCAP_INPUT_ACTIVE_HIGH,
+    TIMCAP_INPUT_ACTIVE_HIGH,
+    TIMCAP_INPUT_DISABLED,
+    TIMCAP_INPUT_DISABLED},
+   100000, /* TIM3 Runs at 36Mhz max. (1/100000)*65536 = 0.65s Max */
    {capture1Cb, capture2Cb, NULL, NULL},
    captureOverflowCb,
    0
