@@ -17,6 +17,8 @@
 #include <QUndoView>
 #include <QTimer>
 #include <QTableView>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -97,6 +99,9 @@ private slots:
     void receiveSensors(QByteArray *data);
     void receiveMonitoring(QByteArray *data);
     void receiveKnockSpectrum(QByteArray *data);
+
+    void onSetTps0Pct();
+    void onSetTps100Pct();
 
 private:
     void setupDefaults(void);

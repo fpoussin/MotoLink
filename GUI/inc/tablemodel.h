@@ -18,6 +18,7 @@ public:
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
 
+
 signals:
 
 public slots:

@@ -21,6 +21,7 @@ public:
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     bool isConnected(void) { return mConnected; }
+    const sensors_t * getSensors(void) { return &mSensors; }
 
 public slots:
     bool usbConnect(void);

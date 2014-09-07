@@ -6,6 +6,7 @@
 #include <ui_knock.h>
 #include <QFileInfo>
 #include <QModelIndex>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -150,6 +151,35 @@ void MainWindow::saveFile(void)
     {
         this->saveFileAs();
     }
+
+    QFile file(mCurrentFile);
+
+    if (!file.open(QFile::ReadWrite))
+    {
+        mMainUi->statusBar->showMessage(
+                    tr("Failed to open file for writing!"));
+        return;
+    }
+
+    QXmlStreamWriter stream(&file);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("Motolink");
+    stream.writeStartElement("Info");
+    stream.writeAttribute("date", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+    stream.writeAttribute("version", __MTL_VER__);
+    stream.writeEndElement(); // Info
+    stream.writeStartElement("Settings");
+    stream.writeEndElement(); // Settings
+    stream.writeStartElement("Tables");
+    stream.writeEndElement(); // Tables
+    stream.writeEndElement(); // Motolink
+    stream.writeEndDocument();
+
+    file.close();
+
+    mMainUi->statusBar->showMessage(
+                tr("File saved."));
 }
 
 void MainWindow::saveFileAs(void)
@@ -288,6 +318,9 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));
     QObject::connect(mMainUi->tableIgnMap, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showIgnContextMenu(QPoint)));
     QObject::connect(mMainUi->tableKnk, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showKnkContextMenu(QPoint)));
+
+    QObject::connect(mMainUi->bTpsSet0, SIGNAL(clicked()), this, SLOT(onSetTps0Pct()));
+    QObject::connect(mMainUi->bTpsSet100, SIGNAL(clicked()), this, SLOT(onSetTps100Pct()));
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
@@ -677,4 +710,16 @@ void MainWindow::receiveKnockSpectrum(QByteArray *data)
     plot->graph(0)->setData(x, y);
     //plot->yAxis->setRange(0, max_val*1.2);
     plot->replot();
+}
+
+void MainWindow::onSetTps0Pct()
+{
+    float tps = (float)mMtl->getSensors()->an8/1000.0;
+    mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
+}
+
+void MainWindow::onSetTps100Pct()
+{
+    float tps = (float)mMtl->getSensors()->an8/1000.0;
+    mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
