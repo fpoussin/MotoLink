@@ -19,23 +19,13 @@
 */
 
 /*
- * ST32F303xC memory setup.
+ * STM32F303xC memory setup.
  */
-__main_stack_size__     = 0x0400;
-__process_stack_size__  = 0x0400;
-
 MEMORY
 {
     boot : org = 0x08000000, len = 20k
-    flash : org = 0x08005000, len = 128k
+    user : org = 0x08005000, len = 128k
     eeprom : org = 0x8025000, len = 108k
     ram : org = 0x20000000, len = 40k
     ccmram : org = 0x10000000, len = 8k
 }
-
-__ram_start__           = ORIGIN(ram);
-__ram_size__            = LENGTH(ram);
-__ram_end__             = __ram_start__ + __ram_size__;
-
-ENTRY(ResetHandler)
-

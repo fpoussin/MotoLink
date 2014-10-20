@@ -34,11 +34,11 @@
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
-Thread* pThreadBDU = NULL;
-Thread* pThreadSDU = NULL;
-Thread* pThreadSensors = NULL;
-Thread* pThreadKnock = NULL;
-Thread* pThreadCAN = NULL;
+thread_t* pThreadBDU = NULL;
+thread_t* pThreadSDU = NULL;
+thread_t* pThreadSensors = NULL;
+thread_t* pThreadKnock = NULL;
+thread_t* pThreadCAN = NULL;
 
 monitor_t monitoring = {0,0,0,0,0,0,0,100};
 
@@ -46,7 +46,7 @@ monitor_t monitoring = {0,0,0,0,0,0,0,100};
 /* Structs                                                                   */
 /*===========================================================================*/
 
-static struct VirtualTimer vt_freqin;
+static virtual_timer_t vt_freqin;
 
 /*===========================================================================*/
 /* CallBacks                                                                 */
@@ -55,23 +55,17 @@ static struct VirtualTimer vt_freqin;
 void iwdgGptCb(GPTDriver *gptp)
 {
   (void) gptp;
-  systime_t time = chTimeNow();
-  IWDG->KR = ((uint16_t)0xAAAA);
-  time = time - chTimeNow();
-  monitoring.irq += time;
-  chThdSelf()->runtime -= time;
+  iwdgReset(&IWDGD);
 }
 
 void freqin_vthandler(void *arg)
 {
+  (void) arg;
   TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
 
-  chSysLockFromIsr();
-  if(chVTIsArmedI(&vt_freqin)) {
-    chVTResetI(&vt_freqin);
-  }
+  chSysLockFromISR();
   chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, 0);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*===========================================================================*/
@@ -88,6 +82,7 @@ GPTConfig gpt1Cfg =
 {
   100000,      /* timer clock.*/
   iwdgGptCb,  /* Timer callback.*/
+  0,
   0
 };
 
@@ -122,22 +117,22 @@ PWMConfig pwmcfg = {
 /* Threads                                                                   */
 /*===========================================================================*/
 
-WORKING_AREA(waThreadCAN, 256);
+THD_WORKING_AREA(waThreadCAN, 256);
 msg_t ThreadCAN(void *p)
 {
-  EventListener el;
+  event_listener_t el;
   CANRxFrame rxmsg;
 
   (void)p;
   chRegSetThreadName("CAN Bus");
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
-  while(!chThdShouldTerminate()) {
+  while(!chThdShouldTerminateX()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE) == 0) {
       chThdSleepMilliseconds(2);
       continue;
     }
-    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
     }
   }
@@ -148,11 +143,11 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread.
  */
-WORKING_AREA(waThreadBDU, 512);
+THD_WORKING_AREA(waThreadBDU, 512);
 msg_t ThreadBDU(void *arg)
 {
-  EventListener el1;
-  flagsmask_t flags;
+  event_listener_t el1;
+  eventmask_t flags;
   (void)arg;
   chRegSetThreadName("BDU");
   uint16_t idle_duty = 0;
@@ -185,7 +180,7 @@ msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread.
  */
-WORKING_AREA(waThreadSDU, 1024);
+THD_WORKING_AREA(waThreadSDU, 1024);
 msg_t ThreadSDU(void *arg)
 {
   (void)arg;
@@ -231,7 +226,7 @@ msg_t ThreadSDU(void *arg)
 /*
  * Sensors thread.
  */
-WORKING_AREA(waThreadSensors, 64);
+THD_WORKING_AREA(waThreadSensors, 64);
 msg_t ThreadSensors(void *arg)
 {
   (void)arg;
@@ -275,7 +270,7 @@ msg_t ThreadSensors(void *arg)
 /*
  * Knock processing thread.
  */
-WORKING_AREA(waThreadKnock, 128);
+THD_WORKING_AREA(waThreadKnock, 128);
 msg_t ThreadKnock(void *arg)
 {
   (void)arg;
@@ -317,16 +312,22 @@ msg_t ThreadKnock(void *arg)
   return 0;
 }
 
+/* Pointer to the idle thread */
+static inline thread_t *chThdGetIdleX(void) {
+
+  return ch.rlist.r_queue.p_prev;
+}
+
 /*
  * CPU Load Monitoring thread.
  */
-WORKING_AREA(waThreadMonitor, 256);
+THD_WORKING_AREA(waThreadMonitor, 256);
 msg_t ThreadMonitor(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
   uint32_t  run_offset, irq_ticks, total_ticks;
-  Thread* pThreadMonitor = chThdSelf();
+  thread_t* pThreadMonitor = chThdGetSelfX();
 
   DWT->CTRL |= DWT_CTRL_EXCEVTENA_Msk;
 
@@ -340,7 +341,7 @@ msg_t ThreadMonitor(void *arg)
 	pThreadKnock->runtime = 0;
 	pThreadSensors->runtime = 0;
 	pThreadMonitor->runtime = 0;
-	chSysGetIdleThread()->runtime = 0;
+	chThdGetIdleX()->runtime = 0;
 
     pThreadBDU->irqtime = 0;
     pThreadSDU->irqtime = 0;
@@ -348,7 +349,7 @@ msg_t ThreadMonitor(void *arg)
     pThreadKnock->irqtime = 0;
     pThreadSensors->irqtime = 0;
     pThreadMonitor->irqtime = 0;
-    chSysGetIdleThread()->irqtime = 0;
+    chThdGetIdleX()->irqtime = 0;
 
 	run_offset = DWT->CYCCNT;
 
@@ -360,14 +361,14 @@ msg_t ThreadMonitor(void *arg)
 	chSysLock();
 
 	/* Convert to systick time base */
-	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_FREQUENCY);
+	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
 	irq_ticks = pThreadBDU->irqtime
 	    +pThreadSDU->irqtime
 	    +pThreadCAN->irqtime
 	    +pThreadKnock->irqtime
 	    +pThreadSensors->irqtime
 	    +pThreadMonitor->irqtime
-	    +chSysGetIdleThread()->irqtime;
+	    +chThdGetIdleX()->irqtime;
 
 	chSysUnlock();
 
@@ -377,7 +378,7 @@ msg_t ThreadMonitor(void *arg)
 	monitoring.knock = ((pThreadKnock->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
 	monitoring.sensors = ((pThreadSensors->runtime*10000)/total_ticks) | RUNNING(pThreadSensors);
 	monitoring.monitor = ((pThreadMonitor->runtime*10000)/total_ticks) | RUNNING(pThreadMonitor);
-	monitoring.idle = (((chSysGetIdleThread()->runtime*10000)/total_ticks)) | RUNNING(chSysGetIdleThread());
+	monitoring.idle = (((chThdGetIdleX()->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
 	monitoring.irq = ((irq_ticks*10000)/total_ticks);
   }
   return 0;
@@ -426,7 +427,7 @@ int main(void)
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
 
-  dacConvert(&DACD1, 0x800); // This sets the offset for the knock ADC.
+  dacConvertOne(&DACD1, 0x800); // This sets the offset for the knock ADC.
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);

@@ -60,9 +60,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_USB || !CH_USE_QUEUES || !CH_USE_EVENTS
-#error "Bulk USB Driver requires HAL_USE_USB, CH_USE_QUEUES, "
-       "CH_USE_EVENTS"
+#if !HAL_USE_USB || !CH_CFG_USE_QUEUES || !CH_CFG_USE_EVENTS
+#error "Bulk USB Driver requires HAL_USE_USB, CH_CFG_USE_QUEUES, "
+       "CH_CFG_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
@@ -111,9 +111,9 @@ typedef struct {
   /* Driver state.*/                                                        \
   bdustate_t                state;                                          \
   /* Input queue.*/                                                         \
-  InputQueue                iqueue;                                         \
+  input_queue_t                iqueue;                                         \
   /* Output queue.*/                                                        \
-  OutputQueue               oqueue;                                         \
+  output_queue_t               oqueue;                                         \
   /* Input buffer.*/                                                        \
   uint8_t                   ib[BULK_USB_BUFFERS_SIZE];                    \
   /* Output buffer.*/                                                       \
@@ -166,7 +166,7 @@ extern "C" {
   void bduStart(BulkUSBDriver *bdup, const BulkUSBConfig *config);
   void bduStop(BulkUSBDriver *bdup);
   void bduConfigureHookI(BulkUSBDriver *bdup);
-  bool_t bduRequestsHook(USBDriver *usbp);
+  bool bduRequestsHook(USBDriver *usbp);
   void bduDataTransmitted(USBDriver *usbp, usbep_t ep);
   void bduDataReceived(USBDriver *usbp, usbep_t ep);
 #ifdef __cplusplus

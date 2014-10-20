@@ -53,7 +53,7 @@ static PWMConfig pwmcfg = {
 /*
  * Red LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBlinker, 384);
+static THD_WORKING_AREA(waThreadBlinker, 384);
 static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
@@ -91,11 +91,11 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadBDU, 1024);
+static THD_WORKING_AREA(waThreadBDU, 1024);
 static msg_t ThreadBDU(void *arg) {
 
-  EventListener el1;
-  flagsmask_t flags;
+  event_listener_t el1;
+  eventmask_t flags;
   (void)arg;
   chRegSetThreadName("BDU");
   uint16_t idle_duty = 0;
@@ -126,12 +126,12 @@ static msg_t ThreadBDU(void *arg) {
 /*
  * USB Serial thread, times are in milliseconds.
  */
-static WORKING_AREA(waThreadSDU, 1024);
+static THD_WORKING_AREA(waThreadSDU, 1024);
 static msg_t ThreadSDU(void *arg) {
 
   uint8_t buffer[16];
-  EventListener el1;
-  flagsmask_t flags_usb;
+  event_listener_t el1;
+  eventmask_t flags_usb;
   (void)arg;
   chRegSetThreadName("SDU");
   chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);

@@ -7,6 +7,6 @@
 inline uint32_t leToInt(uint8_t *ptr);
 inline uint32_t beToInt(uint8_t *ptr);
 uint8_t checksum(uint8_t *data, uint8_t length);
-bool_t getSwitch1(void);
+bool getSwitch1(void);
 
 #endif

@@ -30,7 +30,7 @@ extern const ADCConversionGroup adcgrpcfg_knock;
 
 extern bool knockDataReady;
 extern uint16_t knockDataSize;
-extern adcsample_t * knockDataPtr;
+extern q15_t * knockDataPtr;
 
 extern bool sensorsDataReady;
 extern uint16_t sensorsDataSize;

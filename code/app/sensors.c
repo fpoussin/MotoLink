@@ -17,7 +17,7 @@ uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 
 bool knockDataReady = false;
 uint16_t knockDataSize = 0;
-adcsample_t * knockDataPtr = samples_knock;
+q15_t * knockDataPtr = samples_knock;
 
 bool sensorsDataReady = false;
 uint16_t sensorsDataSize = 0;

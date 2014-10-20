@@ -1,6 +1,8 @@
 #include "bootloader.h"
 
 uint8_t bl_wake = 0;
+typedef volatile uint32_t vu32;
+typedef uint32_t u32;
 
 void startIWDG(void) {
 
@@ -45,7 +47,7 @@ void jumpToUser(uint32_t address) {
   Jump_To_Application = (pFunction) JumpAddress;
 
   /* Clear pending interrupts just to be on the safe side*/
-  SCB_ICSR = ICSR_PENDSVCLR;
+  SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
 
   /* Disable all interrupts */
   uint8_t i;

@@ -2,10 +2,12 @@
 [submodule "GUI/QtUsb"]
 	path = GUI/QtUsb
 	url = https://github.com/mobyfab/QtUsb.git
+	branch = master
 [submodule "code/ChibiOS-RT"]
 	path = code/ChibiOS-RT
 	url = https://github.com/ChibiOS/ChibiOS-RT.git
-	branch = stable_2.6.x
+	branch = master
 [submodule "code/ChibiOS-Drivers"]
 	path = code/ChibiOS-Drivers
 	url = https://github.com/ChibiOS/ChibiOS-Drivers.git
+	branch = master

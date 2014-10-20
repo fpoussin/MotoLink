@@ -335,7 +335,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   case USB_EVENT_ADDRESS:
     return;
   case USB_EVENT_CONFIGURED:
-    chSysLockFromIsr();
+    chSysLockFromISR();
 
     /* Enables the endpoints specified into the configuration.
        Note, this callback is invoked from an ISR so I-Class functions
@@ -352,7 +352,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     /* Resetting the state of the Bulk driver subsystem.*/
     bduConfigureHookI(&BDU1);
 
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
     return;
   case USB_EVENT_SUSPEND:
     return;
@@ -374,7 +374,7 @@ static cdc_linecoding_t linecoding = {
 };
 
 /* Our special request hook handles RS232 flow control commands */
-static bool_t sduSpecialRequestsHook(USBDriver *usbp) {
+static bool sduSpecialRequestsHook(USBDriver *usbp) {
 
   if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
     switch (usbp->setup[1]) {
@@ -441,7 +441,7 @@ const BulkUSBConfig bulkusbcfg = {
 /*
  * USB will pull input low when connected.
  */
-bool_t usbConnected(void) {
+bool usbConnected(void) {
 
   return palReadPad(USB_DETECT_PORT, USB_DETECT_PAD) == PAL_LOW;
 }

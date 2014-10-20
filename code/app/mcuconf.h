@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32F30x drivers configuration.
+ * STM32F3xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -28,7 +28,9 @@
  * 0...3        Lowest...Highest.
  */
 
-#define STM32F30x_MCUCONF
+#define STM32F3xx_MCUCONF
+#define STM32_DMA_REQUIRED
+#include "drivers_conf.h"
 
 /*
  * HAL driver system settings.
@@ -85,19 +87,6 @@
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
- * DAC driver system settings.
- */
-#define STM32_DAC_USE_CHN1                  TRUE
-#define STM32_DAC_USE_CHN2                  FALSE
-#define STM32_DAC_CHN1_IRQ_PRIORITY         10
-#define STM32_DAC_CHN2_IRQ_PRIORITY         10
-#define STM32_DAC_CHN1_DMA_PRIORITY         2
-#define STM32_DAC_CHN2_DMA_PRIORITY         2
-#define STM32_DAC_DMA_ERROR_HOOK(dacp)      chSysHalt()
-#define STM32_DAC_CHN1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
-#define STM32_DAC_CHN2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
-
-/*
  * EXT driver system settings.
  */
 #define STM32_EXT_EXTI0_IRQ_PRIORITY        6
@@ -139,11 +128,12 @@
  */
 #define STM32_I2C_USE_I2C1                  FALSE
 #define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_BUSY_TIMEOUT              50
 #define STM32_I2C_I2C1_IRQ_PRIORITY         10
 #define STM32_I2C_I2C2_IRQ_PRIORITY         10
 #define STM32_I2C_I2C1_DMA_PRIORITY         1
 #define STM32_I2C_I2C2_DMA_PRIORITY         1
-#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      chSysHalt()
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 
 /*
  * ICU driver system settings.
@@ -158,22 +148,6 @@
 #define STM32_ICU_TIM3_IRQ_PRIORITY         7
 #define STM32_ICU_TIM4_IRQ_PRIORITY         7
 #define STM32_ICU_TIM8_IRQ_PRIORITY         7
-
-/*
- * TIMCAP driver system settings.
- */
-#define STM32_TIMCAP_USE_TIM1                  FALSE
-#define STM32_TIMCAP_USE_TIM2                  FALSE
-#define STM32_TIMCAP_USE_TIM3                  TRUE
-#define STM32_TIMCAP_USE_TIM4                  FALSE
-#define STM32_TIMCAP_USE_TIM5                  FALSE
-#define STM32_TIMCAP_USE_TIM8                  FALSE
-#define STM32_TIMCAP_TIM1_IRQ_PRIORITY         7
-#define STM32_TIMCAP_TIM2_IRQ_PRIORITY         7
-#define STM32_TIMCAP_TIM3_IRQ_PRIORITY         7
-#define STM32_TIMCAP_TIM4_IRQ_PRIORITY         7
-#define STM32_TIMCAP_TIM5_IRQ_PRIORITY         7
-#define STM32_TIMCAP_TIM8_IRQ_PRIORITY         7
 
 /*
  * PWM driver system settings.
@@ -216,7 +190,13 @@
 #define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #define STM32_SPI_SPI2_IRQ_PRIORITY         10
 #define STM32_SPI_SPI3_IRQ_PRIORITY         10
-#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
+
+/*
+ * ST driver system settings.
+ */
+#define STM32_ST_IRQ_PRIORITY               8
+#define STM32_ST_USE_TIMER                  2
 
 /*
  * UART driver system settings.
@@ -230,7 +210,7 @@
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
-#define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
+#define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
  * USB driver system settings.

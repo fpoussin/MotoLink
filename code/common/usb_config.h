@@ -24,6 +24,6 @@ extern const USBConfig usbcfg;
 extern const SerialUSBConfig serusbcfg;
 extern const BulkUSBConfig bulkusbcfg;
 
-bool_t usbConnected(void);
-bool_t usb_lld_connect_bus(USBDriver *usbp);
-bool_t usb_lld_disconnect_bus(USBDriver *usbp);
+bool usbConnected(void);
+bool usb_lld_connect_bus(USBDriver *usbp);
+bool usb_lld_disconnect_bus(USBDriver *usbp);

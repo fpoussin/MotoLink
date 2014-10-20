@@ -31,13 +31,6 @@
 #include "mcuconf.h"
 
 /**
- * @brief   Enables the TM subsystem.
- */
-#if !defined(HAL_USE_TM) || defined(__DOXYGEN__)
-#define HAL_USE_TM                  FALSE
-#endif
-
-/**
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
@@ -59,13 +52,6 @@
 #endif
 
 /**
- * @brief   Enables the ADC subsystem.
- */
-#if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
-#define HAL_USE_DAC                 FALSE
-#endif
-
-/**
  * @brief   Enables the EXT subsystem.
  */
 #if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
@@ -84,6 +70,13 @@
  */
 #if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
 #define HAL_USE_I2C                 FALSE
+#endif
+
+/**
+ * @brief   Enables the I2S subsystem.
+ */
+#if !defined(HAL_USE_I2S) || defined(__DOXYGEN__)
+#define HAL_USE_I2S                 FALSE
 #endif
 
 /**
@@ -148,6 +141,7 @@
 #if !defined(HAL_USE_BULK_USB) || defined(__DOXYGEN__)
 #define HAL_USE_BULK_USB          TRUE
 #endif
+
 
 /**
  * @brief   Enables the SPI subsystem.
@@ -287,7 +281,7 @@
  *          default configuration.
  */
 #if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      10400
+#define SERIAL_DEFAULT_BITRATE      38400
 #endif
 
 /**
@@ -298,11 +292,8 @@
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_BUFFERS_SIZE         64
+#define SERIAL_BUFFERS_SIZE         16
 #endif
-
-#define BULK_USB_BUFFERS_SIZE     512
-#define SERIAL_USB_BUFFERS_SIZE   512
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */

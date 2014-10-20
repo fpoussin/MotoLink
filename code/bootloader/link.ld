@@ -20,7 +20,11 @@
 
 INCLUDE ../common/STM32F303xC_common.ld
 
-ENTRY(ResetHandler)
+__ram_start__           = ORIGIN(ram);
+__ram_size__            = LENGTH(ram);
+__ram_end__             = __ram_start__ + __ram_size__;
+
+ENTRY(Reset_Handler)
 
 SECTIONS
 {
@@ -103,7 +107,7 @@ SECTIONS
         . = ALIGN(8);
         __process_stack_end__ = .;
         __main_thread_stack_end__ = .;
-    } > ccmram
+    } > ram
 
     .data :
     {

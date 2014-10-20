@@ -988,7 +988,7 @@ FlagStatus FLASH_OB_GetRDP(void)
 {
   FlagStatus readstatus = RESET;
   
-  if ((uint8_t)(FLASH->OBR & (FLASH_OBR_RDPRT1 | FLASH_OBR_RDPRT2)) != RESET)
+  if ((uint8_t)(FLASH->OBR & (FLASH_OBR_RDPRT_1 | FLASH_OBR_RDPRT_2)) != RESET)
   {
     readstatus = SET;
   }
