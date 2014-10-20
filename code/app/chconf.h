@@ -28,7 +28,7 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
-define CORTEX_VTOR_INIT 0x08005000
+#define CORTEX_VTOR_INIT 0x08005000
 
 /*===========================================================================*/
 /**
