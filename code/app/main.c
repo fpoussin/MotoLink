@@ -451,6 +451,8 @@ int main(void)
    */
   while (TRUE)
   {
+    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+
     chThdSleepMilliseconds(100);
 
     if (usbConnected())

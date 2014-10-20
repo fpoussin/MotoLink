@@ -17,7 +17,7 @@ uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 
 bool knockDataReady = false;
 uint16_t knockDataSize = 0;
-q15_t * knockDataPtr = samples_knock;
+q15_t * knockDataPtr = (q15_t*)samples_knock;
 
 bool sensorsDataReady = false;
 uint16_t sensorsDataSize = 0;
@@ -135,7 +135,7 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   (void)adcp;
 
   // Do FFT + Mag in a thread
-  knockDataPtr = buffer;
+  knockDataPtr = (q15_t*)buffer;
   knockDataSize = n;
   knockDataReady = true;
 }

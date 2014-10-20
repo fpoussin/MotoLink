@@ -77,7 +77,7 @@ endif
 #
 
 # Define project name here
-PROJECT = bootloader
+PROJECT = motolink
 
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT

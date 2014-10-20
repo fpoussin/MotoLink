@@ -48,7 +48,7 @@ static PWMConfig pwmcfg = {
 /*===========================================================================*/
 
 // Duty
-#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD2, x)
+#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD2, x*100)
 
 /*
  * Red LED blinker thread, times are in milliseconds.
@@ -57,23 +57,22 @@ static THD_WORKING_AREA(waThreadBlinker, 384);
 static msg_t ThreadBlinker(void *arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+  chRegSetThreadName("Blinker");
 
-  const uint16_t dimmer[] = {D(0), D(200), D(400), D(600), D(800), D(1000), D(1200), D(1400), D(1600), D(1800), D(2000), D(2200),
-                             D(2400), D(2600), D(2800), D(3000),  D(3200), D(3400), D(3600), D(3800), D(4000), D(4200), D(4400),
-                             D(4600), D(4800), D(5000), D(5200), D(5400), D(5600), D(5800), D(6000), D(6200), D(6400), D(6600),
-                             D(6800), D(7000), D(7200), D(7400), D(7600), D(7800), D(8000), D(7800), D(7600), D(7400), D(7200),
-                             D(7000), D(6800), D(6600), D(6400), D(6200), D(6000), D(5800), D(5600), D(5400), D(5200), D(5000),
-                             D(4800), D(4600), D(4400), D(4200), D(4000), D(3800), D(3600), D(3400), D(3200), D(3000), D(2800),
-                             D(2600), D(2400), D(2200), D(2000), D(1800), D(1600), D(1400), D(1200), D(1000), D(800), D(600),
-                             D(400), D(200)};
-
+  const uint16_t dimmer[] = {D(0), D(2), D(4), D(6), D(8), D(10), D(12), D(14), D(16), D(18), D(20), D(22),
+                             D(24), D(26), D(28), D(30),  D(32), D(34), D(36), D(38), D(40), D(42), D(44),
+                             D(46), D(48), D(50), D(52), D(54), D(56), D(58), D(60), D(62), D(64), D(66),
+                             D(68), D(70), D(72), D(74), D(76), D(78), D(80), D(78), D(76), D(74), D(72),
+                             D(70), D(68), D(66), D(64), D(62), D(60), D(58), D(56), D(54), D(52), D(50),
+                             D(48), D(46), D(44), D(42), D(40), D(38), D(36), D(34), D(32), D(30), D(28),
+                             D(26), D(24), D(22), D(20), D(18), D(16), D(14), D(12), D(10), D(8), D(6),
+                             D(4), D(2)};
 
   TIM2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
-  if (dmaStreamAllocate(STM32_DMA1_STREAM2, 0, NULL, NULL)) while (1) chThdSleepMilliseconds(20);
+  if (dmaStreamAllocate(STM32_DMA1_STREAM2, 1, NULL, NULL)) chSysHalt("DMA error");
   dmaStreamSetPeripheral(STM32_DMA1_STREAM2, &TIM2->CCR3);
   dmaStreamSetMemory0(STM32_DMA1_STREAM2, dimmer);
-  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/2);
+  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/sizeof(uint16_t));
   dmaStreamSetMode(STM32_DMA1_STREAM2, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
                    | STM32_DMA_CR_EN | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
 
@@ -223,6 +222,8 @@ int main(void) {
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
   while (TRUE)    {
+      while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+
       chThdSleepMilliseconds(100);
 
       if (usbConnected())

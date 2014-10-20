@@ -90,7 +90,7 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f3xx.mk
 
 # Define linker script file here
-LDSCRIPT= link.ld
+LDSCRIPT = link.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
