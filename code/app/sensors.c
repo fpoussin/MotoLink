@@ -161,7 +161,7 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   ADC_GRP1_NUM_CHANNELS,
   sensorsCallback,
   NULL,
-  0,                        /* CFGR    */
+  ADC_CFGR_CONT,                        /* CFGR    */
   ADC_TR(0, 4095),          /* TR1     */
   ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
@@ -186,7 +186,7 @@ const ADCConversionGroup adcgrpcfg_knock = {
   ADC_GRP2_NUM_CHANNELS,
   knockCallback,
   NULL,
-  ADC_CFGR_ALIGN,                   /* CFGR - Align result to left (convert 12 to 16 bits) */
+  ADC_CFGR_CONT | ADC_CFGR_ALIGN,                   /* CFGR - Align result to left (convert 12 to 16 bits) */
   ADC_TR(0, 4095),                  /* TR1     */
   0,    /* CCR     */
   {                                 /* SMPR[2] */
