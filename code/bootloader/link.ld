@@ -103,7 +103,32 @@ SECTIONS
         . = ALIGN(8);
         __process_stack_end__ = .;
         __main_thread_stack_end__ = .;
-    } > ram
+    } > ccmram
+    
+    .ccm (NOLOAD) :
+    {
+        PROVIDE(_cmm_start = .);
+        . = ALIGN(4);
+        *(.ccm)
+        . = ALIGN(4);
+        *(.ccm.*)
+        . = ALIGN(4);
+        *(.bss.mainthread.*)
+        . = ALIGN(4);
+        *(.bss._idle_thread_wa)
+        . = ALIGN(4);
+        *(.bss.rlist)
+        . = ALIGN(4);
+        *(.bss.vtlist)
+        . = ALIGN(4);
+        *(.bss.endmem)
+        . = ALIGN(4);
+        *(.bss.nextmem)
+        . = ALIGN(4);
+        *(.bss.default_heap)
+        . = ALIGN(4);
+        PROVIDE(_cmm_end = .);
+    } > ccmram
 
     .data :
     {
