@@ -20,10 +20,6 @@
 
 INCLUDE ../common/STM32F303xC_common.ld
 
-__ram_start__           = ORIGIN(ram);
-__ram_size__            = LENGTH(ram);
-__ram_end__             = __ram_start__ + __ram_size__;
-
 ENTRY(Reset_Handler)
 
 SECTIONS
@@ -34,7 +30,7 @@ SECTIONS
     startup : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(vectors))
-    } > boot
+    } > boot_flash
 
     constructors : ALIGN(4) SUBALIGN(4)
     {
@@ -42,7 +38,7 @@ SECTIONS
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         PROVIDE(__init_array_end = .);
-    } > boot
+    } > boot_flash
 
     destructors : ALIGN(4) SUBALIGN(4)
     {
@@ -50,7 +46,7 @@ SECTIONS
         KEEP(*(.fini_array))
         KEEP(*(SORT(.fini_array.*)))
         PROVIDE(__fini_array_end = .);
-    } > boot
+    } > boot_flash
 
     .text : ALIGN(16) SUBALIGN(16)
     {
@@ -62,33 +58,33 @@ SECTIONS
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
-    } > boot
+    } > boot_flash
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > boot
+    } > boot_flash
 
     .ARM.exidx : {
         PROVIDE(__exidx_start = .);
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         PROVIDE(__exidx_end = .);
-     } > boot
+     } > boot_flash
 
     .eh_frame_hdr :
     {
         *(.eh_frame_hdr)
-    } > boot
+    } > boot_flash
 
     .eh_frame : ONLY_IF_RO
     {
         *(.eh_frame)
-    } > boot
+    } > boot_flash
     
     .textalign : ONLY_IF_RO
     {
         . = ALIGN(8);
-    } > boot
+    } > boot_flash
 
     . = ALIGN(4);
     _etext = .;
@@ -120,7 +116,7 @@ SECTIONS
         *(.ramtext)
         . = ALIGN(4);
         PROVIDE(_edata = .);
-    } > ram AT > boot
+    } > ram AT > boot_flash
 
     .bss :
     {

@@ -23,9 +23,21 @@
  */
 MEMORY
 {
-    boot : org = 0x08000000, len = 20k
-    user : org = 0x08005000, len = 128k
+    boot_flash : org = 0x08000000, len = 20k
+    user_flash : org = 0x08005000, len = 128k
     eeprom : org = 0x8025000, len = 108k
     ram : org = 0x20000000, len = 40k
     ccmram : org = 0x10000000, len = 8k
 }
+
+__ram_start__           = ORIGIN(ram);
+__ram_size__            = LENGTH(ram);
+__ram_end__             = __ram_start__ + __ram_size__;
+
+__flash_page_size__ = 0x800;
+
+__ee_address__ = ORIGIN(eeprom);
+__ee_length__   = LENGTH(eeprom);
+
+__user_flash_address__ = ORIGIN(user_flash);
+__user_flash_length__   = LENGTH(user_flash);

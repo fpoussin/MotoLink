@@ -5,9 +5,14 @@
 #include "ch.h"
 #include "stm32f30x_flash.h"
 
-#define EE_START ((uint32_t)0x8025000) /* Pointer to start of EE */
-#define EE_LENGTH (108*1024)
-#define EE_PAGE_SIZE (2*1024)
+/* From linker script */
+extern uint32_t __ee_address__;
+extern uint32_t __ee_length__;
+extern uint32_t __flash_page_size__;
+
+#define EE_START ((uint32_t)&__ee_address__) /* Pointer to start of EE */
+#define EE_LENGTH ((uint32_t)&__ee_length__)
+#define EE_PAGE_SIZE ((uint32_t)&__flash_page_size__)
 #define EE_MAGIC ((uint32_t)0xABEF1289) /* Used to identify pages in use */
 
 /* Support functions */

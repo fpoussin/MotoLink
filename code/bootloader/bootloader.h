@@ -8,9 +8,14 @@
 #include "stm32f30x_iwdg.h"
 #include "usb_config.h"
 
-#define USER_APP_ADDR (uint32_t)0x08005000
-#define USER_APP_RESET_ADDR (uint32_t)0x08005281
-#define FLASH_PAGE_SIZE 0x800
+/* From linker script */
+extern uint32_t __user_flash_address__;
+extern uint32_t __user_flash_length__;
+extern uint32_t __flash_page_size__;
+
+#define USER_APP_ADDR ((uint32_t)&__user_flash_address__)
+#define USER_APP_RESET_ADDR (USER_APP_ADDR+281)
+#define FLASH_PAGE_SIZE ((uint32_t)&__flash_page_size__)
 
 #define mmio64(x)   (*(volatile uint64_t *)(x))
 #define mmio32(x)   (*(volatile uint32_t *)(x))
