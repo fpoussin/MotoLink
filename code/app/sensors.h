@@ -7,6 +7,7 @@
 #include "drivers.h"
 #include "arm_math.h"
 #include "median.h"
+#include "ipc.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
 #define ADC_GRP1_BUF_DEPTH      128
@@ -27,14 +28,6 @@ extern uint8_t output_knock[SPECTRUM_SIZE];
 
 extern const ADCConversionGroup adcgrpcfg_sensors;
 extern const ADCConversionGroup adcgrpcfg_knock;
-
-extern bool knockDataReady;
-extern uint16_t knockDataSize;
-extern q15_t * knockDataPtr;
-
-extern bool sensorsDataReady;
-extern uint16_t sensorsDataSize;
-extern adcsample_t * sensorsDataPtr;
 
 extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;

@@ -15,14 +15,6 @@ uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
 
-bool knockDataReady = false;
-uint16_t knockDataSize = 0;
-q15_t * knockDataPtr = (q15_t*)samples_knock;
-
-bool sensorsDataReady = false;
-uint16_t sensorsDataSize = 0;
-adcsample_t * sensorsDataPtr = samples_sensors;
-
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
@@ -123,10 +115,9 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
-  sensorsDataPtr = buffer;
-  sensorsDataSize = n;
-  sensorsDataReady = true;
-
+  chSysLockFromISR();
+  allocSendSamplesI(&sensorsMb, (void*)buffer, n);
+  chSysUnlockFromISR();
 }
 
 /* Every 2048 samples at 112.5KHz each, triggers at around 54Hz */
@@ -134,10 +125,11 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
-  // Do FFT + Mag in a thread
-  knockDataPtr = (q15_t*)buffer;
-  knockDataSize = n;
-  knockDataReady = true;
+  // Do FFT + Mag in a dedicated thread
+
+  chSysLockFromISR();
+  allocSendSamplesI(&knockMb, (void*)buffer, n);
+  chSysUnlockFromISR();
 }
 
 /*===========================================================================*/

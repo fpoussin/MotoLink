@@ -231,16 +231,15 @@ msg_t ThreadSensors(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
+
+  adcsample_t * sensorsDataPtr;
+  size_t n;
+  uint16_t i, pos;
+  uint32_t an[3] = {0, 0, 0};
   while (TRUE)
   {
-    while (!sensorsDataReady) chThdSleepMilliseconds(5);
-    sensorsDataReady = false;
-
-    if (sensorsDataPtr == NULL) continue;
-
-    uint16_t i, n, pos;
-    uint32_t an[3] = {0, 0, 0};
-    n = sensorsDataSize;
+    while (!recvFreeSamples(&sensorsMb, (void*)&sensorsDataPtr, &n))
+      chThdSleepMilliseconds(5);
 
     /* Filtering */
     for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
@@ -276,6 +275,9 @@ msg_t ThreadKnock(void *arg)
   (void)arg;
   chRegSetThreadName("Knock");
 
+  q15_t * knockDataPtr;
+  size_t knockDataSize;
+
   q15_t maxValue = 0;
   uint32_t maxIndex = 0;
   uint16_t i;
@@ -286,10 +288,9 @@ msg_t ThreadKnock(void *arg)
 
   while (TRUE)
   {
-    while (!knockDataReady) chThdSleepMilliseconds(2);
-    knockDataReady = false;
+    while (!recvFreeSamples(&knockMb, (void*)&knockDataPtr, &knockDataSize))
+      chThdSleepMilliseconds(2);
 
-    if (knockDataPtr == NULL) continue;
 
     /* Process the data through the CFFT/CIFFT module */
     arm_cfft_radix4_q15(&S, knockDataPtr);
@@ -396,6 +397,7 @@ int main(void)
   halInit();
   driversInit();
   chSysInit();
+  setupIPC();
 
   usbDisconnectBus(serusbcfg.usbp);
 
