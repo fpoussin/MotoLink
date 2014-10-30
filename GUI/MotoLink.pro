@@ -33,7 +33,8 @@ SOURCES += src/main.cpp \
     src/tablemodel.cpp \
     src/spinbox.cpp \
     src/update.cpp \
-    src/qcustomplot.cpp
+    src/qcustomplot.cpp \
+    src/mtlfile.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -48,7 +49,8 @@ HEADERS  += \
     inc/tablemodel.h \
     inc/spinbox.h \
     inc/update.h \
-    inc/qcustomplot.h
+    inc/qcustomplot.h \
+    inc/mtlfile.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

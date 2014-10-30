@@ -20,7 +20,7 @@ Motolink::Motolink(QObject *parent) :
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(true);
+    //mUsb->setDebug(true);
 
     this->moveToThread(mThread);
     mThread->start();

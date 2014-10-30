@@ -13,7 +13,7 @@ void Update::getLatestVersion()
 {
     QNetworkRequest request;
     request.setUrl(mReleasesUrl);
-    mNetworkManager.get(request);  // GET
+    mNetworkManager.get(request);
 }
 
 
@@ -39,23 +39,23 @@ void Update::onResult(QNetworkReply* reply)
         it.next();
         QScriptValue release = it.value();
 
-        QString version = release.property("tag").toString();
+        QString version = release.property("name").toString();
+        version.remove(QRegExp("[a-zA-Z]"));
 
         if (version.isEmpty()) {
             qDebug() << tr("Unable to get latest version");
             return;
         }
 
-
         mNewVersion = version;
         if (mCurrentVersion.compare(mNewVersion) < 0)
         {
-            qDebug() << tr("New version available");
+            qDebug() << QString(tr("New version available: ")) + version;
             emit newVersionAvailable(version);
         }
         else
         {
-            qDebug() << tr("Using latest version");
+            qDebug() << QString(tr("Using latest version: ")) + version;
         }
 
         break; // Only latest release

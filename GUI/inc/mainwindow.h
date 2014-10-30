@@ -27,7 +27,8 @@
 #include "bootloader.h"
 #include "commands.h"
 #include "tablemodel.h"
-#include <qcustomplot.h>
+#include "qcustomplot.h"
+#include "mtlfile.h"
 
 #include "update.h"
 
@@ -103,6 +104,8 @@ private slots:
     void onSetTps0Pct();
     void onSetTps100Pct();
 
+    void showNewVersionPopup(QString version);
+
 private:
     void setupDefaults(void);
     void setupConnections(void);
@@ -112,6 +115,7 @@ private:
     void makeDefaultModel(void);
     void retranslate(void);
     void showDefaultContextMenu(const QPoint &pos, QTableView *view);
+    void exportProperties(void);
 
     Ui::MainWindow *mMainUi;
     Ui::Tasks *mTasksUi;
@@ -148,6 +152,8 @@ private:
     QByteArray mSensorsData;
     QByteArray mMonitoringData;
     QByteArray mKnockSpectrumData;
+
+    MTLFile mFile;
 };
 
 #endif // MAINWINDOW_H

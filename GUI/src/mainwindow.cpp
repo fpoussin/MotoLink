@@ -38,6 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
     mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
 
+    mFile.addTable(&mFuelModel);
+    mFile.addTable(&mStagingModel);
+    mFile.addTable(&mAFRModel);
+    mFile.addTable(&mAFRTgtModel);
+    mFile.addTable(&mIgnModel);
+    mFile.addTable(&mKnockModel);
+
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
     mKnockGraphUi->setupUi(mKnockGraphWidget);
@@ -143,6 +150,18 @@ void MainWindow::openFile(const QString &filename)
 
     mSettings.setValue(SETTINGS_RECENT_FILES, files);
     this->updateRecentFilesActions();
+
+    QFile file(mCurrentFile);
+
+    if (!file.open(QFile::ReadOnly))
+    {
+        mMainUi->statusBar->showMessage(
+                    tr("Failed to open file for reading!"));
+        return;
+    }
+
+    mFile.read(&file);
+    file.close();
 }
 
 void MainWindow::saveFile(void)
@@ -161,23 +180,9 @@ void MainWindow::saveFile(void)
         return;
     }
 
-    QXmlStreamWriter stream(&file);
-    stream.setAutoFormatting(true);
-    stream.writeStartDocument();
-    stream.writeStartElement("Motolink");
-    stream.writeStartElement("Info");
-    stream.writeAttribute("date", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
-    stream.writeAttribute("version", __MTL_VER__);
-    stream.writeEndElement(); // Info
-    stream.writeStartElement("Settings");
-    stream.writeEndElement(); // Settings
-    stream.writeStartElement("Tables");
-    stream.writeEndElement(); // Tables
-    stream.writeEndElement(); // Motolink
-    stream.writeEndDocument();
-
+    this->exportProperties();
+    mFile.write(&file);
     file.close();
-
     mMainUi->statusBar->showMessage(
                 tr("File saved."));
 }
@@ -304,7 +309,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
 
     QObject::connect(this, SIGNAL(signalStartupComplete()), &mUpdate, SLOT(getLatestVersion()));
-    QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), mMainUi->statusBar, SLOT(showMessage(QString)));
+    QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), this, SLOT(showNewVersionPopup(QString)));
     QObject::connect(mUpdateWizard, SIGNAL(sendDisconnect()), this, SLOT(disconnectMtl()));
 
 
@@ -607,6 +612,15 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
     }
 }
 
+void MainWindow::exportProperties()
+{
+    mFile.addProperty("Idle", mMainUi->sbIdle->value());
+    mFile.addProperty("PitLimiter", mMainUi->sbPitLimiter->value());
+    mFile.addProperty("ShiftLight", mMainUi->sbShiftLight->value());
+    mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
+    mFile.addProperty("SpeedDiv", mMainUi->dsbSpeedDiv->value());
+}
+
 void MainWindow::doFastPolling()
 {
     if (mMtl->isConnected())
@@ -722,4 +736,14 @@ void MainWindow::onSetTps100Pct()
 {
     float tps = (float)mMtl->getSensors()->an8/1000.0;
     mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
+}
+
+void MainWindow::showNewVersionPopup(QString version)
+{
+    QMessageBox::information(this,
+         tr("New version available"),
+         tr("There is a new version available for download: ")+version
+         +tr("<br/>You are currently using: ")+__MTL_VER__
+         +"<br/><br/><a href='https://github.com/fpoussin/MotoLink/releases/latest'>"
+         +tr("Download here")+"</a>");
 }
