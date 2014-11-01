@@ -631,6 +631,8 @@ void MainWindow::exportToMTLFile()
     mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
     mFile.addProperty("SpeedDiv", mMainUi->dsbSpeedDiv->value());
 
+    mFile.addProperty("AFRInput", mMainUi->cbAFRInput->currentIndex());
+
     mFile.addProperty("TPS0",
                       mMainUi->tableSensorTPS->item(0, 0)->data(Qt::EditRole));
     mFile.addProperty("TPS100",
@@ -661,6 +663,9 @@ void MainWindow::importFromMTLFile()
 
     mFile.getProperty("SpeedDiv", &prop);
     mMainUi->dsbSpeedDiv->setValue(prop.toDouble());
+
+    mFile.getProperty("AFRInput", &prop);
+    mMainUi->cbAFRInput->setCurrentIndex(prop.toInt());
 
     mFile.getProperty("TPS0", &prop);
     mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, prop);
