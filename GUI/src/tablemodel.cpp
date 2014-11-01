@@ -1,5 +1,6 @@
 #include "tablemodel.h"
 #include <QLineEdit>
+#include <QDebug>
 
 TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *parent) :
     QStandardItemModel(parent), mStack(stack)
@@ -32,6 +33,52 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
+}
+
+bool TableModel::setValue(uint tp, uint rpm, const QVariant &value)
+{
+    int col, row;
+    int maxcol, maxrow;
+
+    maxrow = this->rowCount();
+    maxcol = this->columnCount();
+
+    row = -1;
+    col = -1;
+
+    for (int i=0; i < maxrow; i++)
+    {
+        QVariant header = this->headerData(i, Qt::Vertical);
+        if (header.toString().remove("%").toUInt() == tp)
+        {
+            row = i;
+            break;
+        }
+    }
+
+    for (int i=0; i < maxcol; i++)
+    {
+        QVariant header = this->headerData(i, Qt::Horizontal);
+        if (header.toUInt() == rpm)
+        {
+            col = i;
+            break;
+        }
+    }
+
+    if (row < 0)
+        row = 0;
+    if (col < 0)
+        col = 0;
+
+    if (row > maxrow)
+        row = maxrow;
+    if (col > maxcol)
+        col = maxcol;
+
+    QModelIndex idx = this->index(row, col);
+
+    return this->setData(idx, value, Qt::UserRole);
 }
 
 void TableModel::setName(const QString name)

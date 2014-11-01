@@ -34,16 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     mFuelModel.setName(tr("Fuel"));
     mStagingModel.setName(tr("Staging"));
     mAFRModel.setName(tr("AFR"));
-    mAFRTgtModel.setName(tr("AFR Target"));
+    mAFRTgtModel.setName(tr("AFRTarget"));
     mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
-
-    mFile.addTable(&mFuelModel);
-    mFile.addTable(&mStagingModel);
-    mFile.addTable(&mAFRModel);
-    mFile.addTable(&mAFRTgtModel);
-    mFile.addTable(&mIgnModel);
-    mFile.addTable(&mKnockModel);
 
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
@@ -73,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mFastPollingTimer.setInterval(50);
     mSlowPollingTimer.setInterval(500);
 
+    this->exportToMTLFile();
     this->uiDisable();
 
     emit signalStartupComplete();
@@ -162,6 +156,8 @@ void MainWindow::openFile(const QString &filename)
 
     mFile.read(&file);
     file.close();
+
+    this->importFromMTLFile();
 }
 
 void MainWindow::saveFile(void)
@@ -169,22 +165,27 @@ void MainWindow::saveFile(void)
     if (mCurrentFile.length() == 0)
     {
         this->saveFileAs();
+        return;
     }
 
     QFile file(mCurrentFile);
 
+    qWarning() << "Saving" << mCurrentFile;
     if (!file.open(QFile::ReadWrite))
     {
         mMainUi->statusBar->showMessage(
                     tr("Failed to open file for writing!"));
+        qWarning() << tr("Failed to open file for writing!") << mCurrentFile;
         return;
     }
 
-    this->exportProperties();
+    this->exportToMTLFile();
     mFile.write(&file);
     file.close();
     mMainUi->statusBar->showMessage(
                 tr("File saved."));
+
+    mHasChanged = false;
 }
 
 void MainWindow::saveFileAs(void)
@@ -197,6 +198,8 @@ void MainWindow::saveFileAs(void)
         return;
     }
     mCurrentFile = fileName;
+
+    this->saveFile();
 }
 
 void MainWindow::connectMtl()
@@ -302,11 +305,24 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
     QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
 
+    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+    QObject::connect(&mStagingModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+    QObject::connect(&mAFRModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+    QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+    QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+    QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+
     QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+
+    QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    QObject::connect(mMainUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    QObject::connect(mMainUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    QObject::connect(mMainUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
 
     QObject::connect(this, SIGNAL(signalStartupComplete()), &mUpdate, SLOT(getLatestVersion()));
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), this, SLOT(showNewVersionPopup(QString)));
@@ -440,12 +456,7 @@ void MainWindow::showHelp()
 void MainWindow::uiEnable()
 {
     const bool toggle = true;
-    mMainUi->tabMain->setEnabled(toggle);
 
-    mMainUi->actionSave->setEnabled(toggle);
-    mMainUi->actionSave_As->setEnabled(toggle);
-    mMainUi->actionImport->setEnabled(toggle);
-    mMainUi->actionExport->setEnabled(toggle);
     mMainUi->actionConnect->setEnabled(!toggle);
     mMainUi->actionDisconnect->setEnabled(toggle);
     mMainUi->actionGet_Configuration->setEnabled(toggle);
@@ -458,12 +469,7 @@ void MainWindow::uiEnable()
 void MainWindow::uiDisable()
 {
     const bool toggle = false;
-    mMainUi->tabMain->setEnabled(toggle);
 
-    mMainUi->actionSave->setEnabled(toggle);
-    mMainUi->actionSave_As->setEnabled(toggle);
-    mMainUi->actionImport->setEnabled(toggle);
-    mMainUi->actionExport->setEnabled(toggle);
     mMainUi->actionConnect->setEnabled(!toggle);
     mMainUi->actionDisconnect->setEnabled(toggle);
     mMainUi->actionGet_Configuration->setEnabled(toggle);
@@ -612,13 +618,61 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
     }
 }
 
-void MainWindow::exportProperties()
+void MainWindow::exportToMTLFile()
 {
+    mFile.addTable(&mFuelModel);
+    mFile.addTable(&mStagingModel);
+    mFile.addTable(&mAFRModel);
+    mFile.addTable(&mAFRTgtModel);
+    mFile.addTable(&mIgnModel);
+    mFile.addTable(&mKnockModel);
+
     mFile.addProperty("Idle", mMainUi->sbIdle->value());
     mFile.addProperty("PitLimiter", mMainUi->sbPitLimiter->value());
     mFile.addProperty("ShiftLight", mMainUi->sbShiftLight->value());
     mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
     mFile.addProperty("SpeedDiv", mMainUi->dsbSpeedDiv->value());
+
+    mFile.addProperty("TPS0",
+                      mMainUi->tableSensorTPS->item(0, 0)->data(Qt::EditRole));
+    mFile.addProperty("TPS100",
+                      mMainUi->tableSensorTPS->item(1, 0)->data(Qt::EditRole));
+
+    mFile.addProperty("AFR8",
+                      mMainUi->tableSensorAFR->item(0, 0)->data(Qt::EditRole));
+    mFile.addProperty("AFR22",
+                      mMainUi->tableSensorAFR->item(1, 0)->data(Qt::EditRole));
+
+}
+
+void MainWindow::importFromMTLFile()
+{
+    QVariant prop;
+
+    mFile.getProperty("Idle", &prop);
+    mMainUi->sbIdle->setValue(prop.toInt());
+
+    mFile.getProperty("PitLimiter", &prop);
+    mMainUi->sbPitLimiter->setValue(prop.toInt());
+
+    mFile.getProperty("ShiftLight", &prop);
+    mMainUi->sbShiftLight->setValue(prop.toInt());
+
+    mFile.getProperty("RpmDiv", &prop);
+    mMainUi->dsbRpmDiv->setValue(prop.toDouble());
+
+    mFile.getProperty("SpeedDiv", &prop);
+    mMainUi->dsbSpeedDiv->setValue(prop.toDouble());
+
+    mFile.getProperty("TPS0", &prop);
+    mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, prop);
+    mFile.getProperty("TPS100", &prop);
+    mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, prop);
+
+    mFile.getProperty("AFR8", &prop);
+    mMainUi->tableSensorAFR->item(0, 0)->setData(Qt::EditRole, prop);
+    mFile.getProperty("AFR22", &prop);
+    mMainUi->tableSensorAFR->item(1, 0)->setData(Qt::EditRole, prop);
 }
 
 void MainWindow::doFastPolling()
@@ -726,16 +780,23 @@ void MainWindow::receiveKnockSpectrum(QByteArray *data)
     plot->replot();
 }
 
-void MainWindow::onSetTps0Pct()
+void MainWindow::onSetTps0Pct(void)
 {
     float tps = (float)mMtl->getSensors()->an8/1000.0;
     mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
 
-void MainWindow::onSetTps100Pct()
+void MainWindow::onSetTps100Pct(void)
 {
     float tps = (float)mMtl->getSensors()->an8/1000.0;
     mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
+}
+
+void MainWindow::onDataChanged()
+{    
+    mHasChanged = true;
+    if (mMainUi->actionAutosave->isChecked())
+        this->saveFile();
 }
 
 void MainWindow::showNewVersionPopup(QString version)

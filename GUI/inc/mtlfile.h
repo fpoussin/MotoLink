@@ -2,7 +2,7 @@
 #define MTLFILE_H
 
 #include <QObject>
-#include <QHash>
+#include <QMap>
 #include <QString>
 #include <QVariant>
 #include <QFile>
@@ -13,7 +13,7 @@ class MTLFile : public QObject
     Q_OBJECT
 public:
     explicit MTLFile(QObject *parent = 0);
-    bool addTable(TableModel* const table);
+    bool addTable(TableModel *table);
     bool getTable(const QString &name, TableModel* table);
     bool rmTable(const QString &name);
     bool rmTable(TableModel * const table);
@@ -27,10 +27,11 @@ public slots:
     bool read(QFile* file);
 
 signals:
+    void readFailed(void);
 
 private:
-    QHash<QString, TableModel*> mTableList;
-    QHash<QString, QVariant> mPropList;
+    QMap<QString, TableModel*> mTableList;
+    QMap<QString, QVariant> mPropList;
 
 };
 

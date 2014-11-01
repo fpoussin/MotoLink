@@ -101,8 +101,9 @@ private slots:
     void receiveMonitoring(QByteArray *data);
     void receiveKnockSpectrum(QByteArray *data);
 
-    void onSetTps0Pct();
-    void onSetTps100Pct();
+    void onSetTps0Pct(void);
+    void onSetTps100Pct(void);
+    void onDataChanged(void);
 
     void showNewVersionPopup(QString version);
 
@@ -115,7 +116,9 @@ private:
     void makeDefaultModel(void);
     void retranslate(void);
     void showDefaultContextMenu(const QPoint &pos, QTableView *view);
-    void exportProperties(void);
+
+    void exportToMTLFile(void);
+    void importFromMTLFile(void);
 
     Ui::MainWindow *mMainUi;
     Ui::Tasks *mTasksUi;

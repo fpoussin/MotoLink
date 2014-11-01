@@ -17,6 +17,7 @@ public:
     QString getName(void) { return mName; }
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
+    bool setValue(uint tp, uint rpm, const QVariant &value);
 
 
 signals:

@@ -1272,6 +1272,7 @@
     <addaction name="menuRecent_files"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionAutosave"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
@@ -1617,6 +1618,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+K</string>
+   </property>
+  </action>
+  <action name="actionAutosave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/document-save.png</normaloff>:/oxygen/32x32/actions/document-save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Autosave</string>
    </property>
   </action>
  </widget>
