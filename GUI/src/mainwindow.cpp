@@ -461,7 +461,6 @@ void MainWindow::uiEnable()
     mMainUi->actionDisconnect->setEnabled(toggle);
     mMainUi->actionGet_Configuration->setEnabled(toggle);
     mMainUi->actionSend_Configuration->setEnabled(toggle);
-    mMainUi->actionAuto_Send->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
 }
@@ -474,7 +473,6 @@ void MainWindow::uiDisable()
     mMainUi->actionDisconnect->setEnabled(toggle);
     mMainUi->actionGet_Configuration->setEnabled(toggle);
     mMainUi->actionSend_Configuration->setEnabled(toggle);
-    mMainUi->actionAuto_Send->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
 }

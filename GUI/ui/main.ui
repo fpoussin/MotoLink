@@ -1272,7 +1272,6 @@
     <addaction name="menuRecent_files"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
-    <addaction name="actionAutosave"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
@@ -1294,7 +1293,6 @@
     <addaction name="actionConnect"/>
     <addaction name="actionDisconnect"/>
     <addaction name="separator"/>
-    <addaction name="actionAuto_Send"/>
     <addaction name="actionSend_Configuration"/>
     <addaction name="actionGet_Configuration"/>
     <addaction name="separator"/>
@@ -1318,11 +1316,19 @@
     <addaction name="actionEnglish"/>
     <addaction name="actionFran_ais"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionAutosave"/>
+    <addaction name="actionAuto_Send"/>
+   </widget>
    <addaction name="menuTest"/>
    <addaction name="menuEdit"/>
    <addaction name="menuConnection"/>
-   <addaction name="menuHelp"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuLanguage"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -1539,18 +1545,6 @@
     <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
-  <action name="actionAuto_Send">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/oxygen.qrc">
-     <normaloff>:/oxygen/32x32/actions/quickopen.png</normaloff>:/oxygen/32x32/actions/quickopen.png</iconset>
-   </property>
-   <property name="text">
-    <string>Auto Send</string>
-   </property>
-  </action>
   <action name="actionSend_Configuration">
    <property name="icon">
     <iconset resource="../res/oxygen.qrc">
@@ -1629,7 +1623,19 @@
      <normaloff>:/oxygen/32x32/actions/document-save.png</normaloff>:/oxygen/32x32/actions/document-save.png</iconset>
    </property>
    <property name="text">
-    <string>Autosave</string>
+    <string>Auto save</string>
+   </property>
+  </action>
+  <action name="actionAuto_Send">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/quickopen.png</normaloff>:/oxygen/32x32/actions/quickopen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Auto Update</string>
    </property>
   </action>
  </widget>
