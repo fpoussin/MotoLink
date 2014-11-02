@@ -60,6 +60,7 @@ typedef struct {
 } sensors_t;
 
 typedef struct {
+  uint16_t ser2;
   uint16_t bdu;
   uint16_t sdu;
   uint16_t can;

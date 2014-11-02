@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>290</height>
+    <height>320</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>200</width>
-    <height>290</height>
+    <height>320</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>200</width>
-    <height>290</height>
+    <height>320</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,15 @@
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
      </attribute>
+     <row>
+      <property name="text">
+       <string>Serial 2</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../res/oxygen.qrc">
+        <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
+      </property>
+     </row>
      <row>
       <property name="text">
        <string>Main USB</string>
@@ -198,6 +207,17 @@
       </property>
      </item>
      <item row="7" column="0">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="8" column="0">
       <property name="text">
        <string>0</string>
       </property>

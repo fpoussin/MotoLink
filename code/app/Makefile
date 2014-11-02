@@ -101,7 +101,10 @@ CSRC = $(PORTSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(STM32DRIVERSRC) \
-       main.c commands.c sensors.c debug.c eeprom.c median.c ipc.c
+       main.c commands.c \
+       sensors.c debug.c \
+       eeprom.c median.c \
+       ipc.c innovate.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

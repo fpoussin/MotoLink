@@ -726,33 +726,37 @@ void MainWindow::receiveMonitoring(QByteArray *data)
     mTasksUi->tableWidget->selectRow(7);
 
     item = mTasksUi->tableWidget->item(0, 0);
+    item->setData(Qt::DisplayRole, float(monitor->ser2 & maskUsage)/100.0);
+    if (monitor->ser2 & maskState) mTasksUi->tableWidget->selectRow(0);
+
+    item = mTasksUi->tableWidget->item(1, 0);
     item->setData(Qt::DisplayRole, float(monitor->bdu & maskUsage)/100.0);
     if (monitor->bdu & maskState) mTasksUi->tableWidget->selectRow(0);
 
-    item = mTasksUi->tableWidget->item(1, 0);
+    item = mTasksUi->tableWidget->item(2, 0);
     item->setData(Qt::DisplayRole, float(monitor->sdu & maskUsage)/100.0);
     if (monitor->sdu & maskState) mTasksUi->tableWidget->selectRow(1);
 
-    item = mTasksUi->tableWidget->item(2, 0);
+    item = mTasksUi->tableWidget->item(3, 0);
     item->setData(Qt::DisplayRole, float(monitor->can & maskUsage)/100.0);
     if (monitor->can & maskState) mTasksUi->tableWidget->selectRow(2);
 
-    item = mTasksUi->tableWidget->item(3, 0);
+    item = mTasksUi->tableWidget->item(4, 0);
     item->setData(Qt::DisplayRole, float(monitor->knock & maskUsage)/100.0);
     if (monitor->knock & maskState) mTasksUi->tableWidget->selectRow(3);
 
-    item = mTasksUi->tableWidget->item(4, 0);
+    item = mTasksUi->tableWidget->item(5, 0);
     item->setData(Qt::DisplayRole, float(monitor->sensors & maskUsage)/100.0);
     if (monitor->sensors & maskState) mTasksUi->tableWidget->selectRow(4);
 
-    item = mTasksUi->tableWidget->item(5, 0);
+    item = mTasksUi->tableWidget->item(6, 0);
     item->setData(Qt::DisplayRole, float(monitor->monitor & maskUsage)/100.0);
     if (monitor->monitor & maskState) mTasksUi->tableWidget->selectRow(5);
 
-    item = mTasksUi->tableWidget->item(6, 0);
+    item = mTasksUi->tableWidget->item(7, 0);
     item->setData(Qt::DisplayRole, float(monitor->irq & maskUsage)/100.0);
 
-    item = mTasksUi->tableWidget->item(7, 0);
+    item = mTasksUi->tableWidget->item(8, 0);
     item->setData(Qt::DisplayRole, float(monitor->idle & maskUsage)/100.0);
     if (monitor->idle & maskState) mTasksUi->tableWidget->selectRow(7);
 
@@ -799,7 +803,14 @@ void MainWindow::onDataChanged()
 {    
     mHasChanged = true;
     if (mMainUi->actionAutosave->isChecked())
+    {
         this->saveFile();
+    }
+
+    if (mMainUi->actionAuto_Send->isChecked())
+    {
+
+    }
 }
 
 void MainWindow::showNewVersionPopup(QString version)

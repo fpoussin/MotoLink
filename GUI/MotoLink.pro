@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
-win32:CONFIG += console
+#win32:CONFIG += console
 
 VERSION = 0.1
 message(Version $$VERSION)

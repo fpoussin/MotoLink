@@ -21,6 +21,7 @@
 #include "usb_config.h"
 #include "commands.h"
 #include "sensors.h"
+#include "innovate.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -34,13 +35,15 @@
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
+thread_t* pThreadSER2 = NULL;
 thread_t* pThreadBDU = NULL;
 thread_t* pThreadSDU = NULL;
-thread_t* pThreadSensors = NULL;
+thread_t* pThreadADC = NULL;
 thread_t* pThreadKnock = NULL;
 thread_t* pThreadCAN = NULL;
+thread_t* pThreadMonitor = NULL;
 
-monitor_t monitoring = {0,0,0,0,0,0,0,100};
+monitor_t monitoring = {0,0,0,0,0,0,0,0,100};
 
 /*===========================================================================*/
 /* Structs                                                                   */
@@ -91,9 +94,17 @@ static const DACConfig daccfg1 = {
   0 /* DAC CR flags */
 };
 
-const SerialConfig uartCfg =
+const SerialConfig uart1Cfg =
 {
  10400, // bit rate
+ 0,
+ USART_CR2_STOP1_BITS,
+ 0
+};
+
+const SerialConfig uart2Cfg =
+{
+ 19200, // bit rate
  0,
  USART_CR2_STOP1_BITS,
  0
@@ -226,8 +237,8 @@ msg_t ThreadSDU(void *arg)
 /*
  * Sensors thread.
  */
-THD_WORKING_AREA(waThreadSensors, 64);
-msg_t ThreadSensors(void *arg)
+THD_WORKING_AREA(waThreadADC, 64);
+msg_t ThreadADC(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
@@ -328,7 +339,7 @@ msg_t ThreadMonitor(void *arg)
   (void)arg;
   chRegSetThreadName("Monitor");
   uint32_t  run_offset, irq_ticks, total_ticks;
-  thread_t* pThreadMonitor = chThdGetSelfX();
+  pThreadMonitor = chThdGetSelfX();
 
   DWT->CTRL |= DWT_CTRL_EXCEVTENA_Msk;
 
@@ -336,19 +347,21 @@ msg_t ThreadMonitor(void *arg)
   {
 	chSysLock();
 
+	pThreadSER2->runtime = 0;
 	pThreadBDU->runtime = 0;
 	pThreadSDU->runtime = 0;
 	pThreadCAN->runtime = 0;
 	pThreadKnock->runtime = 0;
-	pThreadSensors->runtime = 0;
+	pThreadADC->runtime = 0;
 	pThreadMonitor->runtime = 0;
 	chThdGetIdleX()->runtime = 0;
 
+	pThreadSER2->irqtime = 0;
     pThreadBDU->irqtime = 0;
     pThreadSDU->irqtime = 0;
     pThreadCAN->irqtime = 0;
     pThreadKnock->irqtime = 0;
-    pThreadSensors->irqtime = 0;
+    pThreadADC->irqtime = 0;
     pThreadMonitor->irqtime = 0;
     chThdGetIdleX()->irqtime = 0;
 
@@ -363,24 +376,52 @@ msg_t ThreadMonitor(void *arg)
 
 	/* Convert to systick time base */
 	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
-	irq_ticks = pThreadBDU->irqtime
+	irq_ticks = pThreadSER2->irqtime
+	    +pThreadBDU->irqtime
 	    +pThreadSDU->irqtime
 	    +pThreadCAN->irqtime
 	    +pThreadKnock->irqtime
-	    +pThreadSensors->irqtime
+	    +pThreadADC->irqtime
 	    +pThreadMonitor->irqtime
 	    +chThdGetIdleX()->irqtime;
 
 	chSysUnlock();
 
+	monitoring.ser2 = ((pThreadSER2->runtime*10000)/total_ticks) | RUNNING(pThreadSER2);
 	monitoring.bdu = ((pThreadBDU->runtime*10000)/total_ticks) | RUNNING(pThreadBDU);
 	monitoring.sdu = ((pThreadSDU->runtime*10000)/total_ticks) | RUNNING(pThreadSDU);
 	monitoring.can = ((pThreadCAN->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
 	monitoring.knock = ((pThreadKnock->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
-	monitoring.sensors = ((pThreadSensors->runtime*10000)/total_ticks) | RUNNING(pThreadSensors);
+	monitoring.sensors = ((pThreadADC->runtime*10000)/total_ticks) | RUNNING(pThreadADC);
 	monitoring.monitor = ((pThreadMonitor->runtime*10000)/total_ticks) | RUNNING(pThreadMonitor);
 	monitoring.idle = (((chThdGetIdleX()->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
 	monitoring.irq = ((irq_ticks*10000)/total_ticks);
+  }
+  return 0;
+}
+
+/*
+ * Uart2 thread.
+ */
+THD_WORKING_AREA(waThreadSER2, 128);
+msg_t ThreadSER2(void *arg)
+{
+  (void)arg;
+  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  size_t read;
+  chRegSetThreadName("SER2");
+
+  while(SD2.state != SD_READY) chThdSleepMilliseconds(10);
+
+  while (TRUE) {
+
+    read = sdReadTimeout(&SD2, buffer, 1, TIME_IMMEDIATE);
+    if (read > 0)
+    {
+      readMtsHeader((BaseChannel *)&SD2, buffer);
+    }
+
+    chThdSleepMilliseconds(1);
   }
   return 0;
 }
@@ -416,7 +457,8 @@ int main(void)
   /*
    * Start peripherals
    */
-  sdStart(&SD1, &uartCfg);
+  sdStart(&SD1, &uart1Cfg);
+  sdStart(&SD2, &uart2Cfg);
   usbStart(serusbcfg.usbp, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
   bduStart(&BDU1, &bulkusbcfg);
@@ -441,9 +483,10 @@ int main(void)
    */
   pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  pThreadSensors = chThdCreateStatic(waThreadSensors, sizeof(waThreadSensors), HIGHPRIO, ThreadSensors, NULL);
+  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), HIGHPRIO, ThreadADC, NULL);
   pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
   pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
+  pThreadSER2 = chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   /* Create last as it uses pointers from above */
   chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+1, ThreadMonitor, NULL);
 
