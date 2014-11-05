@@ -34,16 +34,16 @@
  * DAC driver system settings.
  */
 #define STM32_DAC_USE_CHN1                  TRUE
-#define STM32_DAC_CHN1_IRQ_PRIORITY         10
-#define STM32_DAC_CHN1_DMA_PRIORITY         2
-#define STM32_DAC_DMA_ERROR_HOOK(dacp)      chSysHalt()
-#define STM32_DAC_CHN1_DMA_STREAM        	STM32_DMA_STREAM_ID(1, 3)
-
 #define STM32_DAC_USE_CHN2                  TRUE
+#define STM32_DAC_CHN1_IRQ_PRIORITY         10
 #define STM32_DAC_CHN2_IRQ_PRIORITY         10
+#define STM32_DAC_CHN3_IRQ_PRIORITY         10
+#define STM32_DAC_CHN1_DMA_PRIORITY         2
 #define STM32_DAC_CHN2_DMA_PRIORITY         2
-#define STM32_DAC_DMA_ERROR_HOOK(dacp)      chSysHalt()
-#define STM32_DAC_CHN2_DMA_STREAM        	STM32_DMA_STREAM_ID(1, 4)
+#define STM32_DAC_CHN3_DMA_PRIORITY         2
+#define STM32_DAC_CHN1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
+#define STM32_DAC_CHN2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
+#define STM32_DAC_CHN3_DMA_STREAM           STM32_DMA_STREAM_ID(2, 5)
 
 /*
  * TIMCAP driver system settings.

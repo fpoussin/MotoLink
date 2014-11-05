@@ -474,16 +474,15 @@ int main(void)
   bduStart(&BDU1, &bulkusbcfg);
   canStart(&CAND1, &cancfg);
   dacStart(&DACD1, &daccfg1);
-  //dacStart(&DACD2, &daccfg1);
+  dacStart(&DACD2, &daccfg1);
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-
   dacConvertOne(&DACD1, 2048); // This sets the offset for the knock ADC opamp.
-  //dacConvertOne(&DACD2, 2048);
+  dacConvertOne(&DACD2, 2048);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
