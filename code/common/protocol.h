@@ -35,11 +35,11 @@
 #define MODE_APP (uint8_t)0x02
 
 #define DATA_BUF_SIZE 256
-#define FFT_SIZE 1024
-#define FFT_FREQ 112500
-#define SPECTRUM_SIZE (FFT_SIZE/4)
+#define FFT_SIZE 512
+#define FFT_FREQ 117263
+#define SPECTRUM_SIZE 256
 #define KNOCK_RATIO 4.66f
-#define KNOCK_MAX ((3.3*KNOCK_RATIO)/2)
+#define KNOCK_MAX (3.3*KNOCK_RATIO)
 
 typedef struct {
   uint8_t magic1;
@@ -56,7 +56,7 @@ typedef struct {
   uint16_t freq2;
   uint16_t knock_value;
   uint16_t knock_freq;
-  uint16_t reserved1;
+  uint16_t afr;
 } sensors_t;
 
 typedef struct {

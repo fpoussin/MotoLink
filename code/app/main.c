@@ -280,46 +280,56 @@ msg_t ThreadADC(void *arg)
 /*
  * Knock processing thread.
  */
-THD_WORKING_AREA(waThreadKnock, 128);
+static float32_t input[FFT_SIZE*2];
+static float32_t output[FFT_SIZE*2];
+static float32_t mag_knock[FFT_SIZE/2];
+THD_WORKING_AREA(waThreadKnock, 512);
 msg_t ThreadKnock(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Knock");
 
-  q15_t * knockDataPtr;
+  q15_t* knockDataPtr;
   size_t knockDataSize;
 
-  q15_t maxValue = 0;
+  float32_t maxValue = 0;
   uint32_t maxIndex = 0;
   uint16_t i;
 
   /* Initialize the CFFT/CIFFT module */
-  arm_cfft_radix4_instance_q15 S;
-  arm_cfft_radix4_init_q15(&S, FFT_SIZE, 0, 1);
+  arm_rfft_fast_instance_f32 S1;
+  arm_rfft_fast_init_f32(&S1, FFT_SIZE);
 
   while (TRUE)
   {
     while (!recvFreeSamples(&knockMb, (void*)&knockDataPtr, &knockDataSize))
       chThdSleepMilliseconds(2);
 
+    /* Copy and convert ADC samples */
+    for (i=0; i<FFT_SIZE*2; i+=4)
+    {
+      input[i] = (float32_t)knockDataPtr[i];
+      input[i+1] = (float32_t)knockDataPtr[i+1];
+      input[i+2] = (float32_t)knockDataPtr[i+2];
+      input[i+3] = (float32_t)knockDataPtr[i+3];
+    }
 
     /* Process the data through the CFFT/CIFFT module */
-    arm_cfft_radix4_q15(&S, knockDataPtr);
+    arm_rfft_fast_f32(&S1, input, output, 0);
 
     /* Process the data through the Complex Magnitude Module for
     calculating the magnitude at each bin */
-    arm_cmplx_mag_q15(knockDataPtr, mag_knock, FFT_SIZE); // Calculate magnitude
-    arm_max_q15(mag_knock, FFT_SIZE, &maxValue, &maxIndex); // Find max magnitude
+    arm_cmplx_mag_f32(output, mag_knock, FFT_SIZE/2); // Calculate magnitude, outputs q2.14
+    arm_max_f32(mag_knock, FFT_SIZE/2, &maxValue, &maxIndex); // Find max magnitude
 
-    // Convert to 8 Bits array
-    for (i=0; i < sizeof(output_knock); i+=2)
+    // Convert 2.14 to 8 Bits unsigned
+    for (i=0; i < sizeof(output_knock); i++)
     {
-      output_knock[i] = (mag_knock[i*2]) >> 8;
-      output_knock[i+1] = (mag_knock[(i+1)*2]) >> 8;
+      output_knock[i] = (mag_knock[i]/16384); // 8 bits minus the 2 fractional bits
     }
 
     sensors_data.knock_value = maxValue;
-    sensors_data.knock_freq = (SAMPLING_RATE*maxIndex)/FFT_SIZE;
+    sensors_data.knock_freq = (FFT_FREQ*maxIndex)/FFT_SIZE;
   }
   return 0;
 }
@@ -459,11 +469,12 @@ int main(void)
    */
   sdStart(&SD1, &uart1Cfg);
   sdStart(&SD2, &uart2Cfg);
-  usbStart(serusbcfg.usbp, &usbcfg);
+  usbStart(&USBD1, &usbcfg);
   sduStart(&SDU1, &serusbcfg);
   bduStart(&BDU1, &bulkusbcfg);
   canStart(&CAND1, &cancfg);
   dacStart(&DACD1, &daccfg1);
+  //dacStart(&DACD2, &daccfg1);
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
@@ -471,7 +482,8 @@ int main(void)
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
 
-  dacConvertOne(&DACD1, 0x800); // This sets the offset for the knock ADC.
+  dacConvertOne(&DACD1, 2048); // This sets the offset for the knock ADC opamp.
+  //dacConvertOne(&DACD2, 2048);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);

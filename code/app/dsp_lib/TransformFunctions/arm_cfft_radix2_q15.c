@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------   
-* Copyright (C) 2010-2013 ARM Limited. All rights reserved.   
+* Copyright (C) 2010-2014 ARM Limited. All rights reserved.   
 *   
-* $Date:        16. October 2013  
-* $Revision: 	V1.4.2  
+* $Date:        31. July 2014 
+* $Revision: 	V1.4.4  
 *   
 * Project: 	    CMSIS DSP Library   
 * Title:	    arm_cfft_radix2_q15.c   
@@ -71,6 +71,7 @@ void arm_bitreversal_q15(
 /**   
  * @details   
  * @brief Processing function for the fixed-point CFFT/CIFFT.  
+ * @deprecated Do not use this function.  It has been superseded by \ref arm_cfft_q15 and will be removed
  * @param[in]      *S    points to an instance of the fixed-point CFFT/CIFFT structure.  
  * @param[in, out] *pSrc points to the complex data buffer of size <code>2*fftLen</code>. Processing occurs in-place.  
  * @return none.  

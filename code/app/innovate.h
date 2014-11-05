@@ -26,8 +26,6 @@
 #define MTS_LAMBDA_MASK1 ((uint8_t)0x3F) /* Bits 0-5 */
 #define MTS_LAMBDA_MASK2 ((uint8_t)0x7F) /* Bits 0-6 */
 
-extern uint8_t mtsAfr;
-
 void readMtsHeader(BaseChannel *chn, uint8_t *buf);
 
 #endif /* INNOVATE_H_ */

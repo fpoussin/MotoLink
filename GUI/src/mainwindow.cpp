@@ -409,7 +409,7 @@ void MainWindow::setupKnockGraph()
     plot->addGraph();
     plot->xAxis->setLabel(tr("Knock Frequency (Hertz)"));
     plot->yAxis->setLabel(tr("Knock Intensity (Volts, AC)"));
-    plot->xAxis->setRange(0, FFT_FREQ/4);
+    plot->xAxis->setRange(0, FFT_FREQ/2);
     plot->yAxis->setRange(0, KNOCK_MAX);
 
     plot->addItem(mKnockFreqLabel);
@@ -769,10 +769,10 @@ void MainWindow::receiveKnockSpectrum(QByteArray *data)
     double max_val = 0;
     double max_freq = 0;
 
-    for (uint i=0; i<SPECTRUM_SIZE; i++)
+    for (uint i=4; i<SPECTRUM_SIZE; i++)
     {
-        x[i] = (FFT_FREQ*i)/(SPECTRUM_SIZE*4);
-        y[i] = (KNOCK_MAX/128.0)*data->at(i)*KNOCK_RATIO;
+        x[i] = ((FFT_FREQ*i)/FFT_SIZE);
+        y[i] = (KNOCK_MAX/256.0)*(uchar)data->at(i);
         if (y[i] > max_val) {
             max_val = y[i];
             max_freq = x[i];

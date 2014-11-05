@@ -6,8 +6,7 @@
  */
 
 #include "innovate.h"
-
-uint8_t mtsAfr;
+#include "sensors.h"
 
 void readMtsHeader(BaseChannel *chn, uint8_t *buf)
 {
@@ -50,7 +49,7 @@ void readMtsHeader(BaseChannel *chn, uint8_t *buf)
         lambda = ((buf[2] & MTS_LAMBDA_MASK1) << 7)
             & (buf[3] & MTS_LAMBDA_MASK2);
 
-        mtsAfr = ((lambda+500) * afr_multiplier) / 10000;
+        sensors_data.afr = ((lambda+500) * afr_multiplier) / 10000;
       }
     }
     else

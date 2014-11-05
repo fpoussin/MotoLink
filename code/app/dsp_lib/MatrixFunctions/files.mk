@@ -6,6 +6,7 @@ DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_init_f32.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_init_q15.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_init_q31.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_inverse_f32.c
+DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_inverse_f64.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_mult_f32.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_mult_fast_q15.c
 DSPSRC += $(DSPBASE)/MatrixFunctions/arm_mat_mult_fast_q31.c

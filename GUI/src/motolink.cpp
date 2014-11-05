@@ -196,6 +196,8 @@ bool Motolink::getMonitoring(QByteArray *data)
         return true;
     }
 
+    qWarning("getMonitoring Error!");
+
     return false;
 }
 
@@ -218,6 +220,8 @@ bool Motolink::getKnockSpectrum(QByteArray *data)
         emit sendKockSpectrum(data);
         return true;
     }
+
+    qWarning("getKnockSpectrum Error!");
 
     return false;
 }

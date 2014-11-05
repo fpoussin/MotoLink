@@ -7,7 +7,6 @@
 
 adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
-q15_t mag_knock[sizeof(samples_knock)/2];
 uint8_t output_knock[SPECTRUM_SIZE];
 
 sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
@@ -120,10 +119,15 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
   chSysUnlockFromISR();
 }
 
-/* Every 2048 samples at 112.5KHz each, triggers at around 54Hz */
+/* Every 1024 samples at 117.263KHz each, triggers at around 114Hz */
 void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
+
+  if (samples_knock != buffer) {
+    /* Ignore half buffer interrupt */
+    return;
+  }
 
   // Do FFT + Mag in a dedicated thread
 
@@ -172,17 +176,17 @@ const ADCConversionGroup adcgrpcfg_sensors = {
 };
 
 
-/* ADC34 Clk is 72Mhz/32 2.25Mhz  */
+/* ADC34 Clk is 72Mhz/1 72Mhz  */
 const ADCConversionGroup adcgrpcfg_knock = {
   TRUE,
   ADC_GRP2_NUM_CHANNELS,
   knockCallback,
   NULL,
-  ADC_CFGR_CONT | ADC_CFGR_ALIGN,                   /* CFGR - Align result to left (convert 12 to 16 bits) */
+  ADC_CFGR_CONT | ADC_CFGR_ALIGN,    /* CFGR - Align result to left (convert 12 to 16 bits) */
   ADC_TR(0, 4095),                  /* TR1     */
   0,    /* CCR     */
   {                                 /* SMPR[2] */
-    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_7P5),  /* Sampling rate = 2250000/(7.5+12.5) = 112.5Khz  */
+    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_601P5),  /* Sampling rate = 72000000/(601.5+12.5) = 117.263Khz  */
     0,
   },
   {                                 /* SQR[4]  */

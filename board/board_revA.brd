@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1118,6 +1118,9 @@ design rules under a new name.</description>
 <autorouter>
 <pass name="Default">
 <param name="RoutingGrid" value="50mil"/>
+<param name="AutoGrid" value="1"/>
+<param name="Efforts" value="0"/>
+<param name="TopRouterVariant" value="1"/>
 <param name="tpViaShape" value="round"/>
 <param name="PrefDir.1" value="|"/>
 <param name="PrefDir.2" value="0"/>
@@ -1273,7 +1276,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="32.2875" y="2.0175" size="1.778" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="23.0725" y="11.09" size="1.27" layer="28" rot="MR180"/>
 </element>
-<element name="IC_OPA" library="linear" package="TSSOP14" value="MCP6004" x="59.885" y="15.5075" smashed="yes" rot="MR270">
+<element name="IC_OPA" library="linear" package="TSSOP14" value="TL974IPW" x="59.885" y="15.5075" smashed="yes" rot="MR270">
 <attribute name="NAME" x="54.3375" y="12.6755" size="1.778" layer="26" font="vector" ratio="16" rot="MR180"/>
 <attribute name="VALUE" x="61.79" y="11.5705" size="1.27" layer="28" rot="MR0"/>
 </element>
