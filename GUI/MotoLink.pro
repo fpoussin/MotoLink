@@ -56,7 +56,8 @@ FORMS    += ui/main.ui \
     ui/updatewizard.ui \
     ui/helpviewer.ui \
     ui/tasks.ui \
-    ui/knock.ui
+    ui/knock.ui \
+    ui/headeredit.ui
 
 RESOURCES += \
     res/oxygen.qrc \

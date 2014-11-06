@@ -23,6 +23,8 @@
 #include "common.h"
 #include "communication.h"
 
+#define THD_CCM_WORKING_AREA(s, n) THD_WORKING_AREA(s, n) __attribute__ ((section (".ccm")))
+
 /*===========================================================================*/
 /* Config                                                                    */
 /*===========================================================================*/
@@ -90,7 +92,7 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThreadBDU, 1024);
+static THD_CCM_WORKING_AREA(waThreadBDU, 1024);
 static msg_t ThreadBDU(void *arg) {
 
   event_listener_t el1;
@@ -125,7 +127,7 @@ static msg_t ThreadBDU(void *arg) {
 /*
  * USB Serial thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThreadSDU, 1024);
+static THD_CCM_WORKING_AREA(waThreadSDU, 1024);
 static msg_t ThreadSDU(void *arg) {
 
   uint8_t buffer[16];

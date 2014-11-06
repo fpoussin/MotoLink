@@ -40,6 +40,7 @@ namespace Ui {
     class MainWindow;
     class Tasks;
     class KnockGraph;
+    class HeaderEdit;
 }
 
 class MainWindow : public QMainWindow

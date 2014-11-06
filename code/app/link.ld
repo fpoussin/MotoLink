@@ -103,12 +103,16 @@ SECTIONS
         . = ALIGN(8);
         __process_stack_end__ = .;
         __main_thread_stack_end__ = .;
-    } > ccmram
+    } > ccmram AT > ram
     
     .ccm (NOLOAD) :
     {
         PROVIDE(_cmm_start = .);
         . = ALIGN(4);
+        *(.stacks)
+        . = ALIGN(8);
+        *(.stacks.*)
+        . = ALIGN(8);
         *(.ccm)
         . = ALIGN(4);
         *(.ccm.*)
@@ -128,7 +132,7 @@ SECTIONS
         *(.bss.default_heap)
         . = ALIGN(4);
         PROVIDE(_cmm_end = .);
-    } > ccmram
+    } > ccmram AT > ram
 
     .data :
     {

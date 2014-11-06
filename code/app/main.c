@@ -30,6 +30,7 @@
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
 #define FREQIN_INTERVAL MS2ST(50)
+#define THD_CCM_WORKING_AREA(s, n) THD_WORKING_AREA(s, n) __attribute__ ((section (".ccm")))
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
@@ -128,7 +129,7 @@ PWMConfig pwmcfg = {
 /* Threads                                                                   */
 /*===========================================================================*/
 
-THD_WORKING_AREA(waThreadCAN, 256);
+THD_CCM_WORKING_AREA(waThreadCAN, 256);
 msg_t ThreadCAN(void *p)
 {
   event_listener_t el;
@@ -154,7 +155,7 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread.
  */
-THD_WORKING_AREA(waThreadBDU, 512);
+THD_CCM_WORKING_AREA(waThreadBDU, 512);
 msg_t ThreadBDU(void *arg)
 {
   event_listener_t el1;
@@ -191,7 +192,7 @@ msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread.
  */
-THD_WORKING_AREA(waThreadSDU, 1024);
+THD_CCM_WORKING_AREA(waThreadSDU, 1024);
 msg_t ThreadSDU(void *arg)
 {
   (void)arg;
@@ -237,7 +238,7 @@ msg_t ThreadSDU(void *arg)
 /*
  * Sensors thread.
  */
-THD_WORKING_AREA(waThreadADC, 64);
+THD_CCM_WORKING_AREA(waThreadADC, 64);
 msg_t ThreadADC(void *arg)
 {
   (void)arg;
@@ -283,7 +284,7 @@ msg_t ThreadADC(void *arg)
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
-THD_WORKING_AREA(waThreadKnock, 512);
+THD_CCM_WORKING_AREA(waThreadKnock, 512);
 msg_t ThreadKnock(void *arg)
 {
   (void)arg;
@@ -343,7 +344,7 @@ static inline thread_t *chThdGetIdleX(void) {
 /*
  * CPU Load Monitoring thread.
  */
-THD_WORKING_AREA(waThreadMonitor, 256);
+THD_CCM_WORKING_AREA(waThreadMonitor, 256);
 msg_t ThreadMonitor(void *arg)
 {
   (void)arg;
@@ -413,7 +414,7 @@ msg_t ThreadMonitor(void *arg)
 /*
  * Uart2 thread.
  */
-THD_WORKING_AREA(waThreadSER2, 128);
+THD_CCM_WORKING_AREA(waThreadSER2, 128);
 msg_t ThreadSER2(void *arg)
 {
   (void)arg;

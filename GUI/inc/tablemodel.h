@@ -6,18 +6,27 @@
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QValidator>
+#include <QTableView>
 #include "commands.h"
+#include "ui_headeredit.h"
+
+namespace Ui {
+    class HeaderEdit;
+}
 
 class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
     explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, QObject *parent = 0);
+    ~TableModel(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
     QString getName(void) { return mName; }
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
     bool setValue(uint tp, uint rpm, const QVariant &value);
+    void setView(QTableView *view);
 
 
 signals:
@@ -27,10 +36,18 @@ public slots:
     void setMin(int min);
     void setMax(int max);
 
+private slots:
+    void clickedVerticalHeader(int section);
+    void clickedHorizontalHeader(int section);
+
 private:
     QColor NumberToColor(float value, bool greenIsNegative);
     void fill(bool random = false);
+    void setupConnections(void);
 
+    QTableView *mView;
+    QWidget *mHeaderEditWidget;
+    Ui::HeaderEdit *mHeaderEditUi;
     QUndoStack* mStack;
     QString mName;
     QString mSuffix;

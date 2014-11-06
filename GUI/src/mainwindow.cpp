@@ -41,6 +41,14 @@ MainWindow::MainWindow(QWidget *parent) :
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
     mKnockGraphUi->setupUi(mKnockGraphWidget);
+
+    mFuelModel.setView(mMainUi->tableFuel);
+    //mStagingModel.setView(mMainUi->table);
+    mAFRModel.setView(mMainUi->tableAfrMap);
+    mAFRTgtModel.setView(mMainUi->tableAfrTgt);
+    mIgnModel.setView(mMainUi->tableIgnMap);
+    mKnockModel.setView(mMainUi->tableKnk);
+
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();

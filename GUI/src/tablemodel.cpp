@@ -3,12 +3,25 @@
 #include <QDebug>
 
 TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *parent) :
-    QStandardItemModel(parent), mStack(stack)
+    QStandardItemModel(parent),
+    mStack(stack),
+    mHeaderEditUi(new Ui::HeaderEdit),
+    mHeaderEditWidget(new QWidget((QWidget*)parent))
 {
     mMin = min;
     mMax = max;
     mDefault = def;
     this->fill(false);
+    mHeaderEditUi->setupUi(mHeaderEditWidget);
+    mHeaderEditWidget->setWindowFlags(Qt::WindowStaysOnTopHint
+                                      | Qt::CustomizeWindowHint);
+}
+
+TableModel::~TableModel()
+{
+    mHeaderEditWidget->close();
+    delete mHeaderEditUi;
+    delete mHeaderEditWidget;
 }
 
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -33,6 +46,18 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
+}
+
+bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
+{
+    /*
+    if (role == Qt::UserRole)
+    {
+        mHeaderEditWidget->show();
+        return true;
+    }
+    */
+    return QStandardItemModel::setHeaderData(section, orientation, value, role);
 }
 
 bool TableModel::setValue(uint tp, uint rpm, const QVariant &value)
@@ -81,6 +106,12 @@ bool TableModel::setValue(uint tp, uint rpm, const QVariant &value)
     return this->setData(idx, value, Qt::UserRole);
 }
 
+void TableModel::setView(QTableView *view)
+{
+    mView = view;
+    this->setupConnections();
+}
+
 void TableModel::setName(const QString name)
 {
     mName = name;
@@ -94,6 +125,16 @@ void TableModel::setMin(int min)
 void TableModel::setMax(int max)
 {
     mMax = max;
+}
+
+void TableModel::clickedVerticalHeader(int section)
+{
+    mHeaderEditWidget->show();
+}
+
+void TableModel::clickedHorizontalHeader(int section)
+{
+    mHeaderEditWidget->show();
 }
 
 QColor TableModel::NumberToColor(float value, bool greenIsNegative)
@@ -141,6 +182,12 @@ void TableModel::fill(bool random)
             this->setData(this->indexFromItem(item), value, Qt::UserRole);
         }
     }
+}
+
+void TableModel::setupConnections()
+{
+    QObject::connect(mView->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedHorizontalHeader(int)));
+    QObject::connect(mView->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedVerticalHeader(int)));
 }
 
 NumberFormatDelegate::NumberFormatDelegate(QObject *parent) :

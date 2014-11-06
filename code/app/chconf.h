@@ -28,7 +28,13 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
-#define CORTEX_VTOR_INIT 0x08005000
+#if defined(_FROM_ASM_)
+  .extern uint32_t __user_flash_address__
+#else
+  extern uint32_t __user_flash_address__;
+#endif
+
+#define CORTEX_VTOR_INIT ((uint32_t)&__user_flash_address__)
 
 /*===========================================================================*/
 /**

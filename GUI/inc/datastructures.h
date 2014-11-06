@@ -26,13 +26,13 @@ struct cbr600rr07_map_t {
     char fuel1[7*16];    /* Fuel table */
     char dummy2[16];    /* Unknown - zeros */
     char fuel2[4*16];    /* Fuel table */
-    char rpm_row[16];   /* RPM row values */
-    char tps_row[11];   /* TPS row values */
+    uchar rpm_row[16];   /* RPM row values */
+    uchar tps_row[11];   /* TPS row values */
     char dummy3;        /* Unknown */
     char staging[16];   /* Staging table */
-    char pit_limiter;   /* Pit limiter value */
+    uchar pit_limiter;   /* Pit limiter value */
     char dummy4;        /* Unknown - zeros */
-    char shift_light;   /* Shift light value */
+    uchar shift_light;   /* Shift light value */
     char dummy5;        /* Unknown - zeros */
     char idle;          /* Idle value */
     char dummy6;        /* Unknown - zeros */
