@@ -451,7 +451,7 @@ int main(void)
   chSysInit();
   setupIPC();
 
-  usbDisconnectBus(serusbcfg.usbp);
+  usbDisconnectBus(&USBD1);
 
   gptStart(&GPTD1, &gpt1Cfg);
   gptStartContinuous(&GPTD1, 20000);
@@ -514,11 +514,11 @@ int main(void)
 
     if (usbConnected())
     {
-      usbConnectBus(serusbcfg.usbp);
+      usbConnectBus(&USBD1);
     }
     else
     {
-      usbDisconnectBus(serusbcfg.usbp);
+      usbDisconnectBus(&USBD1);
     }
   }
 }

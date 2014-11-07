@@ -4,24 +4,16 @@
 
 TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *parent) :
     QStandardItemModel(parent),
-    mStack(stack),
-    mHeaderEditUi(new Ui::HeaderEdit),
-    mHeaderEditWidget(new QWidget((QWidget*)parent))
+    mStack(stack)
 {
     mMin = min;
     mMax = max;
-    mDefault = def;
+    mDefaultValue = def;
     this->fill(false);
-    mHeaderEditUi->setupUi(mHeaderEditWidget);
-    mHeaderEditWidget->setWindowFlags(Qt::WindowStaysOnTopHint
-                                      | Qt::CustomizeWindowHint);
 }
 
 TableModel::~TableModel()
 {
-    mHeaderEditWidget->close();
-    delete mHeaderEditUi;
-    delete mHeaderEditWidget;
 }
 
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -48,68 +40,47 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return QStandardItemModel::setData(index, newvalue, role);
 }
 
-bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
+QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    /*
-    if (role == Qt::UserRole)
+    QVariant data(QStandardItemModel::headerData(section, orientation, role));
+    if (role == Qt::DisplayRole && orientation == Qt::Vertical)
     {
-        mHeaderEditWidget->show();
-        return true;
+        QString str(data.toString());
+        str.append("%");
+        data = str;
     }
-    */
-    return QStandardItemModel::setHeaderData(section, orientation, value, role);
+
+    return data;
 }
 
-bool TableModel::setValue(uint tp, uint rpm, const QVariant &value)
+bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
-    int col, row;
-    int maxcol, maxrow;
-
-    maxrow = this->rowCount();
-    maxcol = this->columnCount();
-
-    row = -1;
-    col = -1;
-
-    for (int i=0; i < maxrow; i++)
+    QVariant tmp(value);
+    if (orientation == Qt::Horizontal)
     {
-        QVariant header = this->headerData(i, Qt::Vertical);
-        if (header.toString().remove("%").toUInt() == tp)
-        {
-            row = i;
-            break;
-        }
+        int tmpval = tmp.toInt();
+        tmpval /= 100;
+        tmpval *= 100;
+        tmp.setValue(tmpval);
     }
 
-    for (int i=0; i < maxcol; i++)
-    {
-        QVariant header = this->headerData(i, Qt::Horizontal);
-        if (header.toUInt() == rpm)
-        {
-            col = i;
-            break;
-        }
+    if (role != Qt::UserRole) {
+        emit headerDataNeedSync(section, orientation, value);
     }
+    else {
+        role = Qt::EditRole;
+    }
+    return QStandardItemModel::setHeaderData(section, orientation, tmp, role);
+}
 
-    if (row < 0)
-        row = 0;
-    if (col < 0)
-        col = 0;
-
-    if (row > maxrow)
-        row = maxrow;
-    if (col > maxcol)
-        col = maxcol;
+bool TableModel::setValue(uint row, uint col, uint tp, uint rpm, const QVariant &value)
+{
+    this->setHeaderData(row, Qt::Vertical, tp);
+    this->setHeaderData(col, Qt::Horizontal, rpm);
 
     QModelIndex idx = this->index(row, col);
 
     return this->setData(idx, value, Qt::UserRole);
-}
-
-void TableModel::setView(QTableView *view)
-{
-    mView = view;
-    this->setupConnections();
 }
 
 void TableModel::setName(const QString name)
@@ -125,16 +96,6 @@ void TableModel::setMin(int min)
 void TableModel::setMax(int max)
 {
     mMax = max;
-}
-
-void TableModel::clickedVerticalHeader(int section)
-{
-    mHeaderEditWidget->show();
-}
-
-void TableModel::clickedHorizontalHeader(int section)
-{
-    mHeaderEditWidget->show();
 }
 
 QColor TableModel::NumberToColor(float value, bool greenIsNegative)
@@ -165,7 +126,7 @@ void TableModel::fill(bool random)
 {
     mNumRow = 11;
     mNumCol = 16;
-    int value = mDefault;
+    int value = mDefaultValue;
 
     for (int row = 0; row < mNumRow; ++row)
     {
@@ -173,8 +134,8 @@ void TableModel::fill(bool random)
         {
             QStandardItem *item = new QStandardItem(0);
             this->setItem(row, column, item);
-            this->setHeaderData(column, Qt::Horizontal, (1000*column)+1000);
-            this->setHeaderData(row, Qt::Vertical, QString::number(100-(row*10)) + "%");
+            this->setHeaderData(column, Qt::Horizontal, mHrc.getDefaultRpmAt(column));
+            this->setHeaderData(row, Qt::Vertical, mHrc.getDefaultTpsAt(row));
 
             if (random)
                 value = mMin + (rand() % (int)(mMax - mMin + 1));
@@ -182,12 +143,6 @@ void TableModel::fill(bool random)
             this->setData(this->indexFromItem(item), value, Qt::UserRole);
         }
     }
-}
-
-void TableModel::setupConnections()
-{
-    QObject::connect(mView->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedHorizontalHeader(int)));
-    QObject::connect(mView->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedVerticalHeader(int)));
 }
 
 NumberFormatDelegate::NumberFormatDelegate(QObject *parent) :

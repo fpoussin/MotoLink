@@ -89,7 +89,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -116,7 +116,28 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QTableView" name="tableFuel">
+         <widget class="QEnhancedTableView" name="tableFuel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="autoScroll">
+           <bool>true</bool>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -149,7 +170,26 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_10">
         <item row="0" column="0">
-         <widget class="QListView" name="listStaging"/>
+         <widget class="QListView" name="listStaging">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -163,7 +203,19 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QTableView" name="tableAfrMap">
+         <widget class="QEnhancedTableView" name="tableAfrMap">
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -193,7 +245,19 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QTableView" name="tableAfrTgt">
+         <widget class="QEnhancedTableView" name="tableAfrTgt">
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -223,7 +287,19 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QTableView" name="tableIgnMap">
+         <widget class="QEnhancedTableView" name="tableIgnMap">
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -253,7 +329,19 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QTableView" name="tableKnk">
+         <widget class="QEnhancedTableView" name="tableKnk">
+          <property name="maximumSize">
+           <size>
+            <width>830</width>
+            <height>355</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -1723,6 +1811,11 @@
    <class>SpinBox</class>
    <extends>QSpinBox</extends>
    <header>spinbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QEnhancedTableView</class>
+   <extends>QTableView</extends>
+   <header>qenhancedtableview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

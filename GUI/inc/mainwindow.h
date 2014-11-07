@@ -104,7 +104,9 @@ private slots:
 
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
+
     void onDataChanged(void);
+    void onHeaderDataNeedSync(int section, Qt::Orientation orientation, const QVariant value);
 
     void showNewVersionPopup(QString version);
 

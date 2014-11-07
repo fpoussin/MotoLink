@@ -13,6 +13,8 @@ class Hrc : public QObject
     Q_OBJECT
 public:
     explicit Hrc(QObject *parent = 0);
+    int getDefaultRpmAt(int index);
+    int getDefaultTpsAt(int index);
 
 signals:
 
@@ -31,6 +33,8 @@ private:
     cbr600rr07_map_t mCbr600rr07_map;
     QString mFileContent;
     QByteArray mMapArray;
+    QVector<int> mDefaultRpm;
+    QVector<int> mDefaultTps;
 
 };
 

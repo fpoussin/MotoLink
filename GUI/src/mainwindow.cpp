@@ -42,13 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mTasksUi->setupUi(mTasksWidget);
     mKnockGraphUi->setupUi(mKnockGraphWidget);
 
-    mFuelModel.setView(mMainUi->tableFuel);
-    //mStagingModel.setView(mMainUi->table);
-    mAFRModel.setView(mMainUi->tableAfrMap);
-    mAFRTgtModel.setView(mMainUi->tableAfrTgt);
-    mIgnModel.setView(mMainUi->tableIgnMap);
-    mKnockModel.setView(mMainUi->tableKnk);
-
     this->setupDefaults();
     this->setupConnections();
     this->setupTabShortcuts();
@@ -279,6 +272,7 @@ void MainWindow::setupDefaults(void)
     mMainUi->tableAfrMap->setModel(&mAFRModel);
     mMainUi->tableAfrTgt->setModel(&mAFRTgtModel);
     mMainUi->tableKnk->setModel(&mKnockModel);
+
 }
 
 void MainWindow::setupConnections(void)
@@ -319,6 +313,19 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
     QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
     QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+
+    QObject::connect(&mFuelModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mStagingModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mAFRModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mAFRTgtModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mIgnModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mKnockModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
 
     QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
@@ -819,6 +826,17 @@ void MainWindow::onDataChanged()
     {
 
     }
+}
+
+void MainWindow::onHeaderDataNeedSync(int section, Qt::Orientation orientation, const QVariant value)
+{
+    const int role = Qt::UserRole;
+    mFuelModel.setHeaderData(section, orientation, value, role);
+    mStagingModel.setHeaderData(section, orientation, value, role);
+    mAFRModel.setHeaderData(section, orientation, value, role);
+    mAFRTgtModel.setHeaderData(section, orientation, value, role);
+    mIgnModel.setHeaderData(section, orientation, value, role);
+    mKnockModel.setHeaderData(section, orientation, value, role);
 }
 
 void MainWindow::showNewVersionPopup(QString version)

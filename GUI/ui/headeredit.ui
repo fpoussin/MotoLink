@@ -1,52 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>HeaderEdit</class>
- <widget class="QWidget" name="HeaderEdit">
+ <widget class="QDialog" name="HeaderEdit">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>300</width>
     <height>80</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
+    <width>300</width>
     <height>80</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>400</width>
+    <width>300</width>
     <height>80</height>
    </size>
-  </property>
-  <property name="focusPolicy">
-   <enum>Qt::ClickFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Edit Header</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QPushButton" name="bOk">
-     <property name="text">
-      <string>Ok</string>
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="bCancel">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="2">
     <widget class="QSlider" name="slValue">
      <property name="maximum">
       <number>10</number>
@@ -55,20 +51,17 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="tickPosition">
-      <enum>QSlider::TicksBothSides</enum>
+      <enum>QSlider::TicksAbove</enum>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QSpinBox" name="sbValue">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="maximum">
       <number>10</number>
@@ -80,17 +73,49 @@
  <resources/>
  <connections>
   <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>HeaderEdit</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>HeaderEdit</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>sbValue</sender>
    <signal>valueChanged(int)</signal>
    <receiver>slValue</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>70</x>
+     <x>58</x>
      <y>56</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
+     <x>149</x>
      <y>24</y>
     </hint>
    </hints>
@@ -102,28 +127,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
+     <x>149</x>
      <y>24</y>
     </hint>
     <hint type="destinationlabel">
-     <x>70</x>
+     <x>58</x>
      <y>56</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bCancel</sender>
-   <signal>clicked()</signal>
-   <receiver>HeaderEdit</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>329</x>
-     <y>57</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>39</y>
     </hint>
    </hints>
   </connection>

@@ -102,12 +102,14 @@ bool MTLFile::write(QFile *file)
         for (uint r = 0; r < rows; r++)
         {
             writer.writeStartElement("TPS");
-            writer.writeAttribute("v", ti.value()->headerData(r, Qt::Vertical).toString());
+            writer.writeAttribute("v", ti.value()->headerData(r, Qt::Vertical, Qt::EditRole).toString());
+            writer.writeAttribute("r", QString::number(r));
             for (uint c = 0; c < columns; c++)
             {
                 writer.writeStartElement("RPM");
                 writer.writeAttribute("v",
-                                      ti.value()->headerData(c, Qt::Horizontal).toString());
+                                      ti.value()->headerData(c, Qt::Horizontal, Qt::EditRole).toString());
+                writer.writeAttribute("c", QString::number(c));
                 writer.writeCharacters(ti.value()->index(r, c).data().toString());
                 writer.writeEndElement();
             }
@@ -151,7 +153,6 @@ bool MTLFile::read(QFile *file)
     QDomElement prop(properties.firstChildElement());
     while (!prop.isNull())
     {
-        qDebug() << prop.nodeName() <<  prop.text();
         mPropList.insert(prop.nodeName(),
                          prop.text());
         prop = prop.nextSiblingElement();
@@ -159,14 +160,9 @@ bool MTLFile::read(QFile *file)
 
     QDomElement table(tables.firstChildElement("Table"));
 
-    //QDomNodeList tablesList = tables.childNodes();
-    //for (uint n=0; n<tablesList.length(); n++)
     while (!table.isNull())
     {
-        //table = tablesList.at(n).toElement();
         QString tableName = table.attribute("name");
-
-        qDebug() << tr("Table: ") << tableName;
 
         // Convert XML data to Model
         if (!mTableList.contains(tableName))
@@ -186,23 +182,28 @@ bool MTLFile::read(QFile *file)
         }
 
         QDomElement tps(table.firstChildElement("TPS"));
+        int r = 0;
         while (!tps.isNull())
         {
-            QString tpStr(tps.attribute("v").remove("%"));
+            QString tpStr(tps.attribute("v"));
             QDomElement rpm(tps.firstChildElement("RPM"));
 
+            int c = 0;
             while (!rpm.isNull())
             {
                 QString rpmStr(rpm.attribute("v"));
                 QString value(rpm.text());
 
-                tableModel->setValue(tpStr.toInt(),
+                tableModel->setValue(r, c,
+                                     tpStr.toInt(),
                                      rpmStr.toInt(),
                                      value);
                 rpm = rpm.nextSiblingElement("RPM");
+                c++;
             }
 
             tps = tps.nextSiblingElement("TPS");
+            r++;
         }
         table = table.nextSiblingElement("Table");
     }

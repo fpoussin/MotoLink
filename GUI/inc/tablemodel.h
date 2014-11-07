@@ -8,11 +8,8 @@
 #include <QValidator>
 #include <QTableView>
 #include "commands.h"
-#include "ui_headeredit.h"
+#include "hrc.h"
 
-namespace Ui {
-    class HeaderEdit;
-}
 
 class TableModel : public QStandardItemModel
 {
@@ -21,15 +18,15 @@ public:
     explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, QObject *parent = 0);
     ~TableModel(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
     QString getName(void) { return mName; }
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
-    bool setValue(uint tp, uint rpm, const QVariant &value);
-    void setView(QTableView *view);
-
+    bool setValue(uint row, uint col, uint tp, uint rpm, const QVariant &value);
 
 signals:
+    void headerDataNeedSync(int, Qt::Orientation, const QVariant);
 
 public slots:
     void setName(const QString name);
@@ -37,25 +34,21 @@ public slots:
     void setMax(int max);
 
 private slots:
-    void clickedVerticalHeader(int section);
-    void clickedHorizontalHeader(int section);
 
 private:
     QColor NumberToColor(float value, bool greenIsNegative);
     void fill(bool random = false);
-    void setupConnections(void);
 
     QTableView *mView;
-    QWidget *mHeaderEditWidget;
-    Ui::HeaderEdit *mHeaderEditUi;
     QUndoStack* mStack;
     QString mName;
     QString mSuffix;
     int mMin;
     int mMax;
-    int mDefault;
+    int mDefaultValue;
     quint8 mNumCol;
     quint8 mNumRow;
+    Hrc mHrc;
 
 };
 

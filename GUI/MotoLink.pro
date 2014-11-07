@@ -34,7 +34,8 @@ SOURCES += src/main.cpp \
     src/spinbox.cpp \
     src/update.cpp \
     src/qcustomplot.cpp \
-    src/mtlfile.cpp
+    src/mtlfile.cpp \
+    src/qenhancedtableview.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -50,7 +51,8 @@ HEADERS  += \
     inc/spinbox.h \
     inc/update.h \
     inc/qcustomplot.h \
-    inc/mtlfile.h
+    inc/mtlfile.h \
+    inc/qenhancedtableview.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

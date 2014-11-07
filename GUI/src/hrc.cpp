@@ -5,6 +5,32 @@ Hrc::Hrc(QObject *parent) :
 {
     mHasMap = false;
     msError = tr("Error: ");
+
+    const int defaultRpm[] = {0, 1000, 2000, 3000, 4000, 5000, 6000, 7000,
+                  8000, 9000, 10000, 11000, 12000, 13000,
+                  14000, 18000};
+
+    const int defaultTps[] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+
+    for (int i=0; i< sizeof(defaultRpm)/sizeof(int); i++)
+    {
+        mDefaultRpm.append(defaultRpm[i]);
+    }
+
+    for (int i=0; i< sizeof(defaultTps)/sizeof(int); i++)
+    {
+        mDefaultTps.append(defaultTps[i]);
+    }
+}
+
+int Hrc::getDefaultRpmAt(int index)
+{
+    return mDefaultRpm.at(index);
+}
+
+int Hrc::getDefaultTpsAt(int index)
+{
+    return mDefaultTps.at(index);
 }
 
 bool Hrc::openFile(const QString &filename)
