@@ -9,7 +9,7 @@ adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 uint8_t output_knock[SPECTRUM_SIZE];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
+sensors_t sensors_data = {0x0F,0x0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
 uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
@@ -196,3 +196,17 @@ const ADCConversionGroup adcgrpcfg_knock = {
     0
   }
 };
+
+uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal)
+{
+  const uint16_t tpsMin = 0;
+  const uint16_t tpsMax = 10000;
+  //const uint8_t range = AnMax - AnMin;
+
+  if (AnVal <= AnMin)
+    return tpsMin;
+  else if (AnVal >= AnMax)
+    return tpsMax;
+
+  return map(AnVal, 0, AnMax, tpsMin, tpsMax);
+}

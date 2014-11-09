@@ -8,5 +8,6 @@ inline uint32_t leToInt(uint8_t *ptr);
 inline uint32_t beToInt(uint8_t *ptr);
 uint8_t checksum(uint8_t *data, uint8_t length);
 bool getSwitch1(void);
+int map(int x, int in_min, int in_max, int out_min, int out_max);
 
 #endif

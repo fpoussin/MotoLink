@@ -15,7 +15,16 @@ QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
                                       | Qt::FramelessWindowHint);
     mHeaderEditDialog->setWindowModality(Qt::WindowModal);
 
+    this->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
     this->setupConnections();
+}
+
+void QEnhancedTableView::retranslate()
+{
+    mHeaderEditUi->retranslateUi(mHeaderEditDialog);
+    //QTableView::retranslate();
 }
 
 void QEnhancedTableView::clickedVerticalHeader(int section)

@@ -31,13 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mUndoStack.setUndoLimit(100);
 
-    mFuelModel.setName(tr("Fuel"));
-    mStagingModel.setName(tr("Staging"));
-    mAFRModel.setName(tr("AFR"));
-    mAFRTgtModel.setName(tr("AFRTarget"));
-    mIgnModel.setName(tr("Ignition"));
-    mKnockModel.setName(tr("Knock"));
-
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
     mKnockGraphUi->setupUi(mKnockGraphWidget);
@@ -259,6 +252,26 @@ void MainWindow::setupDefaults(void)
 {
     mMainUi->statusBar->showMessage(tr("Disconnected"));
 
+    mTablesModelList.append(&mFuelModel);
+    mTablesModelList.append(&mStagingModel);
+    mTablesModelList.append(&mAFRModel);
+    mTablesModelList.append(&mAFRTgtModel);
+    mTablesModelList.append(&mIgnModel);
+    mTablesModelList.append(&mKnockModel);
+
+    mTablesViewList.append(mMainUi->tableAfrMap);
+    mTablesViewList.append(mMainUi->tableAfrTgt);
+    mTablesViewList.append(mMainUi->tableFuel);
+    mTablesViewList.append(mMainUi->tableIgnMap);
+    mTablesViewList.append(mMainUi->tableKnk);
+
+    mFuelModel.setName(tr("Fuel"));
+    mStagingModel.setName(tr("Staging"));
+    mAFRModel.setName(tr("AFR"));
+    mAFRTgtModel.setName(tr("AFRTarget"));
+    mIgnModel.setName(tr("Ignition"));
+    mKnockModel.setName(tr("Knock"));
+
     mDegreeSuffix.setSuffix(QString::fromUtf8("°"));
     mPercentSuffix.setSuffix("%");
 
@@ -300,32 +313,21 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canRedoChanged(bool)), mMainUi->actionRedo, SLOT(setEnabled(bool)));
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mMainUi->actionUndo, SLOT(setEnabled(bool)));
 
-    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showFuelTab()));
+/*    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showFuelTab()));
     QObject::connect(&mStagingModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showStagingTab()));
     QObject::connect(&mAFRModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTab()));
     QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTgtTab()));
     QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
     QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
+*/
+    for (int i=0; i<mTablesModelList.size(); i++)
+    {
+        TableModel* tbl = mTablesModelList.at(i);
+        QObject::connect(tbl, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+        QObject::connect(tbl, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
+                         this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
 
-    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-    QObject::connect(&mStagingModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-    QObject::connect(&mAFRModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-    QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-    QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-    QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
-
-    QObject::connect(&mFuelModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
-    QObject::connect(&mStagingModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
-    QObject::connect(&mAFRModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
-    QObject::connect(&mAFRTgtModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
-    QObject::connect(&mIgnModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
-    QObject::connect(&mKnockModel, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                     this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+    }
 
     QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
     QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
@@ -343,17 +345,12 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), this, SLOT(showNewVersionPopup(QString)));
     QObject::connect(mUpdateWizard, SIGNAL(sendDisconnect()), this, SLOT(disconnectMtl()));
 
-
-    mMainUi->tableAfrMap->setContextMenuPolicy(Qt::CustomContextMenu);
-    mMainUi->tableAfrTgt->setContextMenuPolicy(Qt::CustomContextMenu);
-    mMainUi->tableFuel->setContextMenuPolicy(Qt::CustomContextMenu);
-    mMainUi->tableIgnMap->setContextMenuPolicy(Qt::CustomContextMenu);
-    mMainUi->tableKnk->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(mMainUi->tableAfrMap, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showAfrMapContextMenu(QPoint)));
-    QObject::connect(mMainUi->tableAfrTgt, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showAfrTgtContextMenu(QPoint)));
-    QObject::connect(mMainUi->tableFuel, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showFuelContextMenu(QPoint)));
-    QObject::connect(mMainUi->tableIgnMap, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showIgnContextMenu(QPoint)));
-    QObject::connect(mMainUi->tableKnk, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showKnkContextMenu(QPoint)));
+    for (int i=0; i<mTablesViewList.size(); i++)
+    {
+        QEnhancedTableView* tbl = mTablesViewList.at(i);
+        tbl->setContextMenuPolicy(Qt::CustomContextMenu);
+        QObject::connect(tbl, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showDefaultContextMenu(QPoint)));
+    }
 
     QObject::connect(mMainUi->bTpsSet0, SIGNAL(clicked()), this, SLOT(onSetTps0Pct()));
     QObject::connect(mMainUi->bTpsSet100, SIGNAL(clicked()), this, SLOT(onSetTps100Pct()));
@@ -371,14 +368,16 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
 
-    QObject::connect(this, SIGNAL(signalUpdateSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(receiveSensors(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(onSensorsDataReceived(QByteArray*)));
 
-    QObject::connect(this, SIGNAL(signalUpdateMonitoring(QByteArray*)), mMtl, SLOT(getMonitoring(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendMonitoring(QByteArray*)), this, SLOT(receiveMonitoring(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestMonitoring(QByteArray*)), mMtl, SLOT(getMonitoring(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(sendMonitoring(QByteArray*)), this, SLOT(onMonitoringDataReceived(QByteArray*)));
 
-    QObject::connect(this, SIGNAL(signalUpdateKnock(QByteArray*)), mMtl, SLOT(getKnockSpectrum(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendKockSpectrum(QByteArray*)), this, SLOT(receiveKnockSpectrum(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestKnock(QByteArray*)), mMtl, SLOT(getKnockSpectrum(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(sendKockSpectrum(QByteArray*)), this, SLOT(OnKnockSpectrumDataReceived(QByteArray*)));
+
+    QObject::connect(&mFile, SIGNAL(readFailed(QString)), this, SLOT(onSimpleError(QString)));
 }
 
 void MainWindow::setupTabShortcuts()
@@ -442,6 +441,12 @@ void MainWindow::retranslate()
     mUpdateWizard->retranslate();
     mKnockGraphUi->retranslateUi(mKnockGraphWidget);
     mTasksUi->retranslateUi(mTasksWidget);
+
+    mMainUi->tableFuel->retranslate();
+    mMainUi->tableAfrMap->retranslate();
+    mMainUi->tableAfrTgt->retranslate();
+    mMainUi->tableIgnMap->retranslate();
+    mMainUi->tableKnk->retranslate();
 }
 
 void MainWindow::setLanguageEnglish()
@@ -583,54 +588,6 @@ void MainWindow::showKnockGraph()
     mKnockGraphWidget->raise();
 }
 
-void MainWindow::showAfrMapContextMenu(const QPoint &pos)
-{
-    this->showDefaultContextMenu(pos, mMainUi->tableAfrMap);
-}
-
-void MainWindow::showAfrTgtContextMenu(const QPoint &pos)
-{
-    this->showDefaultContextMenu(pos, mMainUi->tableAfrTgt);
-}
-
-void MainWindow::showFuelContextMenu(const QPoint &pos)
-{
-    this->showDefaultContextMenu(pos, mMainUi->tableFuel);
-}
-
-void MainWindow::showIgnContextMenu(const QPoint &pos)
-{
-    this->showDefaultContextMenu(pos, mMainUi->tableIgnMap);
-}
-
-void MainWindow::showKnkContextMenu(const QPoint &pos)
-{
-    this->showDefaultContextMenu(pos, mMainUi->tableKnk);
-}
-
-void MainWindow::showDefaultContextMenu(const QPoint &pos, QTableView *view)
-{
-    QPoint globalPos = view->viewport()->mapToGlobal(pos);
-    /* TODO */
-
-    QMenu myMenu;
-    myMenu.addAction(tr("Increase selection"));
-    myMenu.addAction(tr("Decrease selection"));
-    myMenu.addSeparator();
-    myMenu.addAction(tr("Change all cells..."));
-
-    QAction* selectedItem = myMenu.exec(globalPos);
-
-    if (selectedItem)
-    {
-        // something was chosen, do stuff
-    }
-    else
-    {
-        // nothing was chosen
-    }
-}
-
 void MainWindow::exportToMTLFile()
 {
     mFile.addTable(&mFuelModel);
@@ -697,9 +654,9 @@ void MainWindow::doFastPolling()
 {
     if (mMtl->isConnected())
     {
-        emit signalUpdateSensors(&mSensorsData);
+        emit signalRequestSensors(&mSensorsData);
         if (mKnockGraphWidget->isVisible())
-            emit signalUpdateKnock(&mKnockSpectrumData);
+            emit signalRequestKnock(&mKnockSpectrumData);
     }
     else {
         mFastPollingTimer.stop();
@@ -711,28 +668,36 @@ void MainWindow::doSlowPolling()
     if (mMtl->isConnected())
     {
         if (mTasksWidget->isVisible())
-            emit signalUpdateMonitoring(&mMonitoringData);
+            emit signalRequestMonitoring(&mMonitoringData);
     }
     else {
         mSlowPollingTimer.stop();
     }
 }
 
-void MainWindow::receiveSensors(QByteArray *data)
+void MainWindow::onSensorsDataReceived(QByteArray *data)
 {
     const sensors_t * sensors =  (sensors_t *)data->constData();
 
     float vAn7 = sensors->an7/1000.0; /* VBAT */
     float vAn8 = sensors->an8/1000.0; /* TPS */
     float vAn9 = sensors->an9/1000.0; /* AFR */
+    float tps = sensors->tps/100.0;
+    quint16 rpm = sensors->rpm;
+
+    this->setTablesCursor(tps, rpm);
     mMainUi->lVbat->setText(QString::number(vAn7)+tr(" Volts"));
+
     mMainUi->lTpsVolts->setText(QString::number(vAn8)+tr(" Volts"));
+    mMainUi->lTpsPct->setText(QString::number(tps)+tr("%"));
+
     mMainUi->lAfrVolts->setText(QString::number(vAn9)+tr(" Volts"));
+    mMainUi->lRpm->setText(QString::number(rpm)+tr(" Rpm"));
     mMainUi->lRpmHertz->setText(QString::number(sensors->freq1)+tr(" Hertz"));
     mMainUi->lSpeedHertz->setText(QString::number(sensors->freq2)+tr(" Hertz"));
 }
 
-void MainWindow::receiveMonitoring(QByteArray *data)
+void MainWindow::onMonitoringDataReceived(QByteArray *data)
 {
     const monitor_t * monitor =  (monitor_t *)data->constData();
     const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
@@ -777,7 +742,7 @@ void MainWindow::receiveMonitoring(QByteArray *data)
 
 }
 
-void MainWindow::receiveKnockSpectrum(QByteArray *data)
+void MainWindow::OnKnockSpectrumDataReceived(QByteArray *data)
 {
     QVector<double> x(SPECTRUM_SIZE), y(SPECTRUM_SIZE);
     QCustomPlot * plot = mKnockGraphUi->mainPlot;
@@ -839,6 +804,11 @@ void MainWindow::onHeaderDataNeedSync(int section, Qt::Orientation orientation, 
     mKnockModel.setHeaderData(section, orientation, value, role);
 }
 
+void MainWindow::onSimpleError(QString error)
+{
+    QMessageBox::critical(this, "Error", error);
+}
+
 void MainWindow::showNewVersionPopup(QString version)
 {
     QMessageBox::information(this,
@@ -846,5 +816,48 @@ void MainWindow::showNewVersionPopup(QString version)
          tr("There is a new version available for download: ")+version
          +tr("<br/>You are currently using: ")+__MTL_VER__
          +"<br/><br/><a href='https://github.com/fpoussin/MotoLink/releases/latest'>"
-         +tr("Download here")+"</a>");
+                             +tr("Download here")+"</a>");
+}
+
+void MainWindow::showDefaultContextMenu(const QPoint &pos)
+{
+    QEnhancedTableView* view = (QEnhancedTableView*)this->sender();
+    QAction* actions[5];
+
+    QPoint globalPos = view->viewport()->mapToGlobal(pos);
+    /* TODO */
+
+    QMenu myMenu;
+    actions[0] = myMenu.addAction(tr("Increase selection"));
+    actions[1] = myMenu.addAction(tr("Decrease selection"));
+    actions[2] = myMenu.addAction(tr("Change all cells..."));
+
+    actions[0]->setIcon(QIcon("://oxygen/32x32/actions/list-add.png"));
+    actions[1]->setIcon(QIcon("://oxygen/32x32/actions/list-remove.png"));
+    actions[2]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-function.png"));
+
+    QAction* selectedItem = myMenu.exec(globalPos);
+
+    if (selectedItem == actions[0])
+    {
+        // something was chosen, do stuff
+    }
+    else if (selectedItem == actions[1])
+    {
+
+    }
+}
+
+void MainWindow::setTablesCursor(uint tps, uint rpm)
+{
+    int row, col;
+    for (int i=0; i<mTablesModelList.size(); i++)
+    {
+        TableModel* tbl = mTablesModelList.at(i);
+        if (tbl->getCell(tps, rpm, &row, &col))
+        {
+            qDebug() << tbl->getName();
+            tbl->highlightCell(row, col);
+        }
+    }
 }

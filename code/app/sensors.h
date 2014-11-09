@@ -8,6 +8,7 @@
 #include "arm_math.h"
 #include "median.h"
 #include "ipc.h"
+#include "common.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
 #define ADC_GRP1_BUF_DEPTH      128
@@ -31,5 +32,7 @@ extern const ADCConversionGroup adcgrpcfg_knock;
 extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;
 extern monitor_t monitoring;
+
+uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
 
 #endif

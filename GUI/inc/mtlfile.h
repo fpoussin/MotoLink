@@ -27,7 +27,7 @@ public slots:
     bool read(QFile* file);
 
 signals:
-    void readFailed(void);
+    void readFailed(QString);
 
 private:
     QMap<QString, TableModel*> mTableList;

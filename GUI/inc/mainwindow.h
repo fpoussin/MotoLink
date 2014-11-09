@@ -19,6 +19,7 @@
 #include <QTableView>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QVector>
 
 #include "hrc.h"
 #include "updatewizard.h"
@@ -29,8 +30,8 @@
 #include "tablemodel.h"
 #include "qcustomplot.h"
 #include "mtlfile.h"
-
 #include "update.h"
+#include "qenhancedtableview.h"
 
 #define MAX_RECENT_FILES 5
 #define SETTINGS_RECENT_FILES "main/recent_files"
@@ -67,9 +68,9 @@ public slots:
 
 signals:
     void signalStartupComplete(void);
-    void signalUpdateSensors(QByteArray *data);
-    void signalUpdateMonitoring(QByteArray *data);
-    void signalUpdateKnock(QByteArray *data);
+    void signalRequestSensors(QByteArray *data);
+    void signalRequestMonitoring(QByteArray *data);
+    void signalRequestKnock(QByteArray *data);
 
 private slots:
     void setLanguageEnglish(void);
@@ -90,17 +91,11 @@ private slots:
     void showTasks(void);
     void showKnockGraph(void);
 
-    void showAfrMapContextMenu(const QPoint &pos);
-    void showAfrTgtContextMenu(const QPoint &pos);
-    void showFuelContextMenu(const QPoint &pos);
-    void showIgnContextMenu(const QPoint &pos);
-    void showKnkContextMenu(const QPoint &pos);
-
     void doFastPolling(void);
     void doSlowPolling(void);
-    void receiveSensors(QByteArray *data);
-    void receiveMonitoring(QByteArray *data);
-    void receiveKnockSpectrum(QByteArray *data);
+    void onSensorsDataReceived(QByteArray *data);
+    void onMonitoringDataReceived(QByteArray *data);
+    void OnKnockSpectrumDataReceived(QByteArray *data);
 
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
@@ -108,7 +103,13 @@ private slots:
     void onDataChanged(void);
     void onHeaderDataNeedSync(int section, Qt::Orientation orientation, const QVariant value);
 
+    void onSimpleError(QString error);
+
     void showNewVersionPopup(QString version);
+
+    void showDefaultContextMenu(const QPoint &pos);
+
+    void setTablesCursor(uint tps, uint rpm);
 
 private:
     void setupDefaults(void);
@@ -118,7 +119,6 @@ private:
     void setupKnockGraph(void);
     void makeDefaultModel(void);
     void retranslate(void);
-    void showDefaultContextMenu(const QPoint &pos, QTableView *view);
 
     void exportToMTLFile(void);
     void importFromMTLFile(void);
@@ -147,6 +147,8 @@ private:
     TableModel mAFRTgtModel;
     TableModel mIgnModel;
     TableModel mKnockModel;
+    QVector<TableModel*> mTablesModelList;
+    QVector<QEnhancedTableView*> mTablesViewList;
     Update mUpdate;
     NumberFormatDelegate mDegreeSuffix;
     NumberFormatDelegate mPercentSuffix;

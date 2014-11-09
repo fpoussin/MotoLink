@@ -238,6 +238,9 @@ msg_t ThreadSDU(void *arg)
 /*
  * Sensors thread.
  */
+pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
+pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
+pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
 THD_CCM_WORKING_AREA(waThreadADC, 64);
 msg_t ThreadADC(void *arg)
 {
@@ -248,6 +251,20 @@ msg_t ThreadADC(void *arg)
   size_t n;
   uint16_t i, pos;
   uint32_t an[3] = {0, 0, 0};
+  median_t an1, an2, an3;
+
+  an1.stopper = 0;
+  an1.buffer = an1_buffer;
+  an1.size = ADC_GRP1_BUF_DEPTH/2;
+
+  an2.stopper = 0;
+  an2.buffer = an2_buffer;
+  an2.size = ADC_GRP1_BUF_DEPTH/2;
+
+  an3.stopper = 0;
+  an3.buffer = an3_buffer;
+  an3.size = ADC_GRP1_BUF_DEPTH/2;
+
   while (TRUE)
   {
     while (!recvFreeSamples(&sensorsMb, (void*)&sensorsDataPtr, &n))
@@ -257,9 +274,9 @@ msg_t ThreadADC(void *arg)
     for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
     {
       pos = i * ADC_GRP1_NUM_CHANNELS;
-      an[0] += median_filter1(sensorsDataPtr[pos]);
-      an[1] += median_filter2(sensorsDataPtr[pos+1]);
-      an[2] += median_filter3(sensorsDataPtr[pos+2]);
+      an[0] += median_filter(&an1, sensorsDataPtr[pos]);
+      an[1] += median_filter(&an2, sensorsDataPtr[pos+1]);
+      an[2] += median_filter(&an3, sensorsDataPtr[pos+2]);
     }
 
     an[0] *= VBAT_RATIO;
@@ -274,6 +291,8 @@ msg_t ThreadADC(void *arg)
     sensors_data.an7 = an[0];
     sensors_data.an8 = an[1];
     sensors_data.an9 = an[2];
+
+    sensors_data.tps = calculateTpFromMillivolt(500, 4500, sensors_data.an8);
   }
   return 0;
 }

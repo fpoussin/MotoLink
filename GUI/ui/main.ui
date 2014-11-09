@@ -89,7 +89,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="iconSize">
        <size>
@@ -125,7 +125,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -179,7 +179,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -206,7 +206,7 @@
          <widget class="QEnhancedTableView" name="tableAfrMap">
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -248,7 +248,7 @@
          <widget class="QEnhancedTableView" name="tableAfrTgt">
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -290,7 +290,7 @@
          <widget class="QEnhancedTableView" name="tableIgnMap">
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -332,7 +332,7 @@
          <widget class="QEnhancedTableView" name="tableKnk">
           <property name="maximumSize">
            <size>
-            <width>830</width>
+            <width>842</width>
             <height>355</height>
            </size>
           </property>
@@ -860,7 +860,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="lRpmPct">
+               <widget class="QLabel" name="lRpm">
                 <property name="text">
                  <string notr="true">0 RPM</string>
                 </property>

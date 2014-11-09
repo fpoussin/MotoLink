@@ -49,6 +49,9 @@ typedef struct {
 } cmd_header_t;
 
 typedef struct {
+  uint16_t afr;
+  uint16_t tps;
+  uint16_t rpm;
   uint16_t an7;
   uint16_t an8;
   uint16_t an9;
@@ -56,7 +59,6 @@ typedef struct {
   uint16_t freq2;
   uint16_t knock_value;
   uint16_t knock_freq;
-  uint16_t afr;
 } sensors_t;
 
 typedef struct {

@@ -20,6 +20,7 @@ public:
 signals:
 
 public slots:
+    void retranslate(void);
 
 private slots:
     void clickedVerticalHeader(int section);

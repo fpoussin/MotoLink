@@ -24,6 +24,8 @@ public:
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
     bool setValue(uint row, uint col, uint tp, uint rpm, const QVariant &value);
+    void highlightCell(int row, int col);
+    bool getCell(uint tp, uint rpm, int* row, int* col);
 
 signals:
     void headerDataNeedSync(int, Qt::Orientation, const QVariant);
@@ -49,6 +51,7 @@ private:
     quint8 mNumCol;
     quint8 mNumRow;
     Hrc mHrc;
+    QStandardItem* mLastItem;
 
 };
 

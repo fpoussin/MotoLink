@@ -9,6 +9,7 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *pa
     mMin = min;
     mMax = max;
     mDefaultValue = def;
+    mLastItem = NULL;
     this->fill(false);
 }
 
@@ -33,8 +34,8 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     }
     if (role == Qt::UserRole)
         role = Qt::EditRole;
-    item->setData(QVariant(QBrush(this->NumberToColor(newvalue, true))), Qt::BackgroundRole);
-    item->setData(QVariant(QBrush(Qt::white)), Qt::ForegroundRole );
+    item->setData(QVariant(this->NumberToColor(newvalue, true)), Qt::BackgroundRole);
+    item->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
@@ -81,6 +82,63 @@ bool TableModel::setValue(uint row, uint col, uint tp, uint rpm, const QVariant 
     QModelIndex idx = this->index(row, col);
 
     return this->setData(idx, value, Qt::UserRole);
+}
+
+void TableModel::highlightCell(int row, int col)
+{
+    QFont font;
+    QStandardItem* item = this->item(row, col);
+    if (item == NULL)
+        return;
+
+    if (mLastItem != NULL && mLastItem != item)
+    {
+        float value = item->data(Qt::EditRole).toFloat();
+        mLastItem->setData(QVariant(this->NumberToColor(value, true)), Qt::BackgroundRole);
+        mLastItem->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
+        mLastItem->setData(QVariant(font), Qt::FontRole);
+    }
+
+    font.setBold(true);
+    item->setData(QVariant(QColor(Qt::lightGray)), Qt::BackgroundRole);
+    item->setData(QVariant(QColor(Qt::black)), Qt::ForegroundRole);
+    item->setData(QVariant(font), Qt::FontRole);
+    mLastItem = item;
+}
+
+bool TableModel::getCell(uint tp, uint rpm, int* row, int* col)
+{
+    int maxcol, maxrow;
+
+    *row = -1;
+    *col = -1;
+
+    maxrow = this->rowCount();
+    maxcol = this->columnCount();
+
+    for (int i=0; i < maxrow; i++)
+    {
+        uint h = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt();
+        uint h2 = this->headerData(i+1, Qt::Vertical, Qt::EditRole).toUInt();
+        if (tp >= h && tp <= h2)
+        {
+            *row = i;
+            break;
+        }
+    }
+
+    for (int i=0; i < maxcol; i++)
+    {
+        uint h = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt();
+        uint h2 = this->headerData(i+1, Qt::Horizontal, Qt::EditRole).toUInt();
+        if (rpm >= h && rpm <= h2)
+        {
+            *col = i;
+            break;
+        }
+    }
+
+    return (*row >= 0 && *col >= 0);
 }
 
 void TableModel::setName(const QString name)

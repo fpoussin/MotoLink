@@ -133,8 +133,8 @@ bool MTLFile::read(QFile *file)
 
     if (root.tagName() != "Motolink") {
 
-        qWarning() << tr("Could not parse XML data");
-        emit readFailed();
+        qWarning() << tr("Not a Motolink file");
+        emit readFailed(tr("Not a Motolink file"));
 
         return false;
     }
@@ -144,8 +144,8 @@ bool MTLFile::read(QFile *file)
 
     if (properties.isNull() || tables.isNull()) {
 
-        qWarning() << tr("Could not parse XML data");
-        emit readFailed();
+        qWarning() << tr("No data found");
+        emit readFailed(tr("No data found"));
 
         return false;
     }
@@ -191,14 +191,21 @@ bool MTLFile::read(QFile *file)
             int c = 0;
             while (!rpm.isNull())
             {
+                bool ok;
                 QString rpmStr(rpm.attribute("v"));
                 QString value(rpm.text());
 
                 tableModel->setValue(r, c,
-                                     tpStr.toInt(),
-                                     rpmStr.toInt(),
+                                     tpStr.toInt(&ok),
+                                     rpmStr.toInt(&ok),
                                      value);
                 rpm = rpm.nextSiblingElement("RPM");
+                if (!ok)
+                {
+                    emit readFailed(tr("Failed to parse numbers"));
+                    return false;
+                }
+
                 c++;
             }
 
