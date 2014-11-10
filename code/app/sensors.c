@@ -209,3 +209,9 @@ uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal
 
   return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }
+
+uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t smplFreq, uint16_t qFactor, uint16_t* buffer, uint16_t size)
+{
+
+  return 0;
+}

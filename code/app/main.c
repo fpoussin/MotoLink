@@ -300,6 +300,7 @@ msg_t ThreadADC(void *arg)
 /*
  * Knock processing thread.
  */
+int main(void);
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
@@ -328,10 +329,12 @@ msg_t ThreadKnock(void *arg)
     /* Copy and convert ADC samples */
     for (i=0; i<FFT_SIZE*2; i+=4)
     {
-      input[i] = (float32_t)knockDataPtr[i];
-      input[i+1] = (float32_t)knockDataPtr[i+1];
-      input[i+2] = (float32_t)knockDataPtr[i+2];
-      input[i+3] = (float32_t)knockDataPtr[i+3];
+      /* Hann Window */
+      float32_t multiplier = (1.0 - arm_cos_f32((2.0*PI*(float32_t)i)/(((float32_t)FFT_SIZE*2.0)-1.0)));
+      input[i] = multiplier*(float32_t)knockDataPtr[i];
+      input[i+1] = multiplier*(float32_t)knockDataPtr[i+1];
+      input[i+2] = multiplier*(float32_t)knockDataPtr[i+2];
+      input[i+3] = multiplier*(float32_t)knockDataPtr[i+3];
     }
 
     /* Process the data through the CFFT/CIFFT module */
@@ -345,7 +348,10 @@ msg_t ThreadKnock(void *arg)
     // Convert 2.14 to 8 Bits unsigned
     for (i=0; i < sizeof(output_knock); i++)
     {
-      output_knock[i] = (mag_knock[i]/16384); // 8 bits minus the 2 fractional bits
+      uint16_t tmp = (mag_knock[i]/16384);
+      if (tmp > 0xFF)
+        tmp = 0xFF;
+      output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
 
     sensors_data.knock_value = maxValue;
