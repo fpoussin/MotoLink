@@ -198,7 +198,6 @@ bool Hrc::arrayToHex(QByteArray *array, QString *hex)
         tmp_hex.append(cur_line+"\n");
     }
     tmp_hex.append(HEX_EOF);
-    qWarning() << tmp_hex;
 
     *hex = tmp_hex;
     return true;

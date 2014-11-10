@@ -34,5 +34,6 @@ extern TIMCAPConfig tc_conf;
 extern monitor_t monitoring;
 
 uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
+uint16_t calculateRpmFromHertz(uint16_t freq);
 
 #endif

@@ -17,7 +17,7 @@ void Update::getLatestVersion()
 }
 
 
-void Update::onResult(QNetworkReply* reply)
+void Update::onResult(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError
             || reply->size() < 1)

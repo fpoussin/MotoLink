@@ -27,7 +27,7 @@ signals:
 
 public slots:
     void getLatestVersion(void);
-    void onResult(QNetworkReply* reply);
+    void onResult(QNetworkReply *reply);
 
 private:
     QUrl mReleasesUrl;

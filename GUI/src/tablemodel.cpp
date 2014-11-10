@@ -10,6 +10,7 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *pa
     mMax = max;
     mDefaultValue = def;
     mLastItem = NULL;
+    mView = NULL;
     this->fill(false);
 }
 
@@ -31,9 +32,13 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     if (role == Qt::EditRole)
     {
         mStack->push(new ModelEditCommand(item, QVariant(newvalue), mName, this));
+        emit cellValueChanged();
     }
     if (role == Qt::UserRole)
+    {
         role = Qt::EditRole;
+        emit cellValueChanged();
+    }
     item->setData(QVariant(this->NumberToColor(newvalue, true)), Qt::BackgroundRole);
     item->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
@@ -74,11 +79,8 @@ bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const Q
     return QStandardItemModel::setHeaderData(section, orientation, tmp, role);
 }
 
-bool TableModel::setValue(uint row, uint col, uint tp, uint rpm, const QVariant &value)
+bool TableModel::setValue(uint row, uint col, const QVariant &value)
 {
-    this->setHeaderData(row, Qt::Vertical, tp);
-    this->setHeaderData(col, Qt::Horizontal, rpm);
-
     QModelIndex idx = this->index(row, col);
 
     return this->setData(idx, value, Qt::UserRole);
@@ -88,39 +90,45 @@ void TableModel::highlightCell(int row, int col)
 {
     QFont font;
     QStandardItem* item = this->item(row, col);
+    float color = item->data(Qt::EditRole).toFloat();
     if (item == NULL)
         return;
 
     if (mLastItem != NULL && mLastItem != item)
     {
-        float value = item->data(Qt::EditRole).toFloat();
-        mLastItem->setData(QVariant(this->NumberToColor(value, true)), Qt::BackgroundRole);
+        mLastItem->setData(QVariant(this->NumberToColor(color)), Qt::BackgroundRole);
         mLastItem->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
         mLastItem->setData(QVariant(font), Qt::FontRole);
     }
 
     font.setBold(true);
-    item->setData(QVariant(QColor(Qt::lightGray)), Qt::BackgroundRole);
+    item->setData(QVariant(this->NumberToColor(color, true, false)), Qt::BackgroundRole);
     item->setData(QVariant(QColor(Qt::black)), Qt::ForegroundRole);
     item->setData(QVariant(font), Qt::FontRole);
     mLastItem = item;
 }
 
-bool TableModel::getCell(uint tp, uint rpm, int* row, int* col)
+bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
 {
     int maxcol, maxrow;
 
     *row = -1;
     *col = -1;
 
-    maxrow = this->rowCount();
-    maxcol = this->columnCount();
+    maxrow = this->rowCount()-1;
+    maxcol = this->columnCount()-1;
 
     for (int i=0; i < maxrow; i++)
     {
         uint h = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt();
         uint h2 = this->headerData(i+1, Qt::Vertical, Qt::EditRole).toUInt();
-        if (tp >= h && tp <= h2)
+
+        if (tp >= this->headerData(maxrow, Qt::Vertical, Qt::EditRole).toUInt())
+        {
+            *row = maxrow;
+            break;
+        }
+        else if (tp >= h && tp <= h2)
         {
             *row = i;
             break;
@@ -131,6 +139,12 @@ bool TableModel::getCell(uint tp, uint rpm, int* row, int* col)
     {
         uint h = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt();
         uint h2 = this->headerData(i+1, Qt::Horizontal, Qt::EditRole).toUInt();
+
+        if (rpm >= this->headerData(maxcol, Qt::Horizontal, Qt::EditRole).toUInt())
+        {
+            *col = maxcol;
+            break;
+        }
         if (rpm >= h && rpm <= h2)
         {
             *col = i;
@@ -139,6 +153,16 @@ bool TableModel::getCell(uint tp, uint rpm, int* row, int* col)
     }
 
     return (*row >= 0 && *col >= 0);
+}
+
+void TableModel::setView(QEnhancedTableView *view)
+{
+    mView = view;
+}
+
+QEnhancedTableView *TableModel::view()
+{
+    return mView;
 }
 
 void TableModel::setName(const QString name)
@@ -156,7 +180,7 @@ void TableModel::setMax(int max)
     mMax = max;
 }
 
-QColor TableModel::NumberToColor(float value, bool greenIsNegative)
+QColor TableModel::NumberToColor(float value, bool greenIsNegative, bool darkColor)
 {
     QColor color;
     const float range = mMax - mMin;
@@ -175,7 +199,10 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative)
     if (value < 0.0)
         value = 0.0;
     const float hue = value * 0.75 / 360.0;
-    color.setHslF(hue, 0.70, 0.30, 1.0);
+    if (darkColor)
+        color.setHslF(hue, 0.70, 0.30, 1.0);
+    else
+        color.setHslF(hue, 1.0, 0.8, 1.0);
 
     return color;
 }

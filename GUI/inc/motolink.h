@@ -32,9 +32,9 @@ public slots:
 
     quint8 getMode(void);
     quint16 getVersion(void);
-    bool getSensors(QByteArray* data);
-    bool getMonitoring(QByteArray* data);
-    bool getKnockSpectrum(QByteArray* data);
+    bool getSensors(QByteArray *data);
+    bool getMonitoring(QByteArray *data);
+    bool getKnockSpectrum(QByteArray *data);
     bool sendWake();
 
     void startUpdate(QByteArray *data);

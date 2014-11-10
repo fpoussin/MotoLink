@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QStaticText>
+#include "tablemodel.h"
 
 QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
     QTableView(parent),
@@ -21,10 +22,17 @@ QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
     this->setupConnections();
 }
 
+void QEnhancedTableView::setModel(QAbstractItemModel *model)
+{
+     QTableView::setModel(model);
+     TableModel *tbl = (TableModel *)this->model();
+     tbl->setView(this);
+     QObject::connect(tbl, SIGNAL(cellValueChanged()), this, SLOT(setTabFocus()));
+}
+
 void QEnhancedTableView::retranslate()
 {
     mHeaderEditUi->retranslateUi(mHeaderEditDialog);
-    //QTableView::retranslate();
 }
 
 void QEnhancedTableView::clickedVerticalHeader(int section)
@@ -82,6 +90,11 @@ void QEnhancedTableView::applyChanges()
     QVariant value = mHeaderEditUi->sbValue->value();
 
     this->model()->setHeaderData(mLastSection, mLastOrientation, value);
+}
+
+void QEnhancedTableView::setTabFocus()
+{
+    emit modelUpdated(this->parentWidget());
 }
 
 void QEnhancedTableView::setupConnections()

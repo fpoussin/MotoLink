@@ -149,6 +149,7 @@ private:
     TableModel mKnockModel;
     QVector<TableModel*> mTablesModelList;
     QVector<QEnhancedTableView*> mTablesViewList;
+    QVector<QSpinBox*> mSpinBoxList;
     Update mUpdate;
     NumberFormatDelegate mDegreeSuffix;
     NumberFormatDelegate mPercentSuffix;

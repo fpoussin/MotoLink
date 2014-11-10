@@ -165,7 +165,7 @@ void MainWindow::saveFile(void)
     QFile file(mCurrentFile);
 
     qWarning() << "Saving" << mCurrentFile;
-    if (!file.open(QFile::ReadWrite))
+    if (!file.open(QFile::WriteOnly))
     {
         mMainUi->statusBar->showMessage(
                     tr("Failed to open file for writing!"));
@@ -173,6 +173,7 @@ void MainWindow::saveFile(void)
         return;
     }
 
+    file.seek(0);
     this->exportToMTLFile();
     mFile.write(&file);
     file.close();
@@ -265,10 +266,16 @@ void MainWindow::setupDefaults(void)
     mTablesViewList.append(mMainUi->tableIgnMap);
     mTablesViewList.append(mMainUi->tableKnk);
 
+    mSpinBoxList.append(mMainUi->sbIdle);
+    mSpinBoxList.append(mMainUi->sbPitLimiter);
+    mSpinBoxList.append(mMainUi->sbShiftLight);
+    mSpinBoxList.append(mMainUi->sbThresholdMax);
+    mSpinBoxList.append(mMainUi->sbThresholdMin);
+
     mFuelModel.setName(tr("Fuel"));
     mStagingModel.setName(tr("Staging"));
     mAFRModel.setName(tr("AFR"));
-    mAFRTgtModel.setName(tr("AFRTarget"));
+    mAFRTgtModel.setName(tr("AFR Target"));
     mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
 
@@ -313,33 +320,22 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canRedoChanged(bool)), mMainUi->actionRedo, SLOT(setEnabled(bool)));
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mMainUi->actionUndo, SLOT(setEnabled(bool)));
 
-/*    QObject::connect(&mFuelModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showFuelTab()));
-    QObject::connect(&mStagingModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showStagingTab()));
-    QObject::connect(&mAFRModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTab()));
-    QObject::connect(&mAFRTgtModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showAFRTgtTab()));
-    QObject::connect(&mIgnModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showIgnTab()));
-    QObject::connect(&mKnockModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(showKnockTab()));
-*/
     for (int i=0; i<mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
-        QObject::connect(tbl, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onDataChanged()));
+        QObject::connect(tbl, SIGNAL(cellValueChanged()), this, SLOT(onDataChanged()));
         QObject::connect(tbl, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
                          this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+        QObject::connect(tbl->view(), SIGNAL(modelUpdated(QWidget*)), mMainUi->tabMain, SLOT(setCurrentWidget(QWidget*)));
 
     }
 
-    QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
-    QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
-    QObject::connect(mMainUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
-    QObject::connect(mMainUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
-    QObject::connect(mMainUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
-
-    QObject::connect(mMainUi->sbIdle, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
-    QObject::connect(mMainUi->sbPitLimiter, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
-    QObject::connect(mMainUi->sbShiftLight, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
-    QObject::connect(mMainUi->sbThresholdMax, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
-    QObject::connect(mMainUi->sbThresholdMin, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    for (int i=0; i<mSpinBoxList.size(); i++)
+    {
+        QSpinBox * sb = mSpinBoxList.at(i);
+        QObject::connect(sb, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
+        QObject::connect(sb, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
+    }
 
     QObject::connect(this, SIGNAL(signalStartupComplete()), &mUpdate, SLOT(getLatestVersion()));
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), this, SLOT(showNewVersionPopup(QString)));
@@ -781,6 +777,9 @@ void MainWindow::onSetTps100Pct(void)
 
 void MainWindow::onDataChanged()
 {    
+    if (mFile.isLoading())
+        return;
+
     mHasChanged = true;
     if (mMainUi->actionAutosave->isChecked())
     {
@@ -822,7 +821,7 @@ void MainWindow::showNewVersionPopup(QString version)
 void MainWindow::showDefaultContextMenu(const QPoint &pos)
 {
     QEnhancedTableView* view = (QEnhancedTableView*)this->sender();
-    QAction* actions[5];
+    QAction* actions[3];
 
     QPoint globalPos = view->viewport()->mapToGlobal(pos);
     /* TODO */
@@ -830,7 +829,7 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos)
     QMenu myMenu;
     actions[0] = myMenu.addAction(tr("Increase selection"));
     actions[1] = myMenu.addAction(tr("Decrease selection"));
-    actions[2] = myMenu.addAction(tr("Change all cells..."));
+    actions[2] = myMenu.addAction(tr("Change selection..."));
 
     actions[0]->setIcon(QIcon("://oxygen/32x32/actions/list-add.png"));
     actions[1]->setIcon(QIcon("://oxygen/32x32/actions/list-remove.png"));
@@ -840,11 +839,15 @@ void MainWindow::showDefaultContextMenu(const QPoint &pos)
 
     if (selectedItem == actions[0])
     {
-        // something was chosen, do stuff
+        // Increase
     }
     else if (selectedItem == actions[1])
     {
-
+        // Decrease
+    }
+    else if (selectedItem == actions[2])
+    {
+        // Change
     }
 }
 
@@ -856,7 +859,6 @@ void MainWindow::setTablesCursor(uint tps, uint rpm)
         TableModel* tbl = mTablesModelList.at(i);
         if (tbl->getCell(tps, rpm, &row, &col))
         {
-            qDebug() << tbl->getName();
             tbl->highlightCell(row, col);
         }
     }

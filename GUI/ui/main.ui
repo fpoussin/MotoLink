@@ -170,24 +170,12 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_10">
         <item row="0" column="0">
-         <widget class="QListView" name="listStaging">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
+         <widget class="QTableView" name="tableStaging">
           <property name="maximumSize">
            <size>
             <width>842</width>
             <height>355</height>
            </size>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
         </item>
@@ -215,6 +203,9 @@
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
@@ -342,6 +333,9 @@
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
@@ -402,6 +396,12 @@
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
                <widget class="QLabel" name="ltThresholdMax">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <weight>75</weight>
@@ -409,15 +409,21 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Maximum Fuel</string>
+                 <string>Maximum Fuel Change</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="SpinBox" name="sbThresholdMax">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum amount of fuel added/removed by self mapping.&lt;/p&gt;&lt;p&gt;Keep a low value to be safe, but takes mores passes to get the correct amount.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -428,7 +434,7 @@
                  <number>20</number>
                 </property>
                 <property name="value">
-                 <number>10</number>
+                 <number>5</number>
                 </property>
                </widget>
               </item>
@@ -446,22 +452,37 @@
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QLabel" name="ltThresholdMin">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="font">
                  <font>
                   <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
-                 <string>Minimum Fuel</string>
+                 <string>Minimum Fuel Change</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="SpinBox" name="sbThresholdMin">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum amount of fuel added/removed required for self mapping to do any changes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
@@ -481,7 +502,7 @@
                  <number>20</number>
                 </property>
                 <property name="value">
-                 <number>3</number>
+                 <number>2</number>
                 </property>
                </widget>
               </item>

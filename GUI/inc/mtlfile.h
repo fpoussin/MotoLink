@@ -22,9 +22,11 @@ public:
     bool getProperty(const QString &name, QVariant* value);
     bool rmProperty(const QString &name);
 
+    bool isLoading(void);
+
 public slots:
-    bool write(QFile* file);
-    bool read(QFile* file);
+    bool write(QFile *file);
+    bool read(QFile *file);
 
 signals:
     void readFailed(QString);
@@ -32,6 +34,7 @@ signals:
 private:
     QMap<QString, TableModel*> mTableList;
     QMap<QString, QVariant> mPropList;
+    bool mLoading;
 
 };
 

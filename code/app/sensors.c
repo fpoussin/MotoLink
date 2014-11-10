@@ -201,12 +201,11 @@ uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal
 {
   const uint16_t tpsMin = 0;
   const uint16_t tpsMax = 10000;
-  //const uint8_t range = AnMax - AnMin;
 
   if (AnVal <= AnMin)
     return tpsMin;
   else if (AnVal >= AnMax)
     return tpsMax;
 
-  return map(AnVal, 0, AnMax, tpsMin, tpsMax);
+  return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }

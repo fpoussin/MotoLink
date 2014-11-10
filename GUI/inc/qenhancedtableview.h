@@ -16,8 +16,10 @@ class QEnhancedTableView : public QTableView
     Q_OBJECT
 public:
     explicit QEnhancedTableView(QWidget *parent = 0);
+    void setModel(QAbstractItemModel * model);
 
 signals:
+    void modelUpdated(QWidget* widget);
 
 public slots:
     void retranslate(void);
@@ -26,6 +28,7 @@ private slots:
     void clickedVerticalHeader(int section);
     void clickedHorizontalHeader(int section);
     void applyChanges(void);
+    void setTabFocus(void);
 
 private:
     void setupConnections(void);
