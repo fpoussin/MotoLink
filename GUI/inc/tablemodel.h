@@ -27,7 +27,7 @@ public:
     void highlightCell(int row, int col);
     bool getCell(uint tp, uint rpm, int *row, int *col);
     void setView(QEnhancedTableView *view);
-    QEnhancedTableView *view();
+    QEnhancedTableView * view();
 
 signals:
     void headerDataNeedSync(int, Qt::Orientation, const QVariant);

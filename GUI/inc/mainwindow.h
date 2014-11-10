@@ -107,8 +107,6 @@ private slots:
 
     void showNewVersionPopup(QString version);
 
-    void showDefaultContextMenu(const QPoint &pos);
-
     void setTablesCursor(uint tps, uint rpm);
 
 private:

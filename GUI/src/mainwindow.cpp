@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QModelIndex>
 #include <QDateTime>
+#include <QItemSelection>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -293,6 +294,8 @@ void MainWindow::setupDefaults(void)
     mMainUi->tableAfrTgt->setModel(&mAFRTgtModel);
     mMainUi->tableKnk->setModel(&mKnockModel);
 
+    mMainUi->tableAfrMap->setMenuReadOnly(true);
+    mMainUi->tableKnk->setMenuReadOnly(true);
 }
 
 void MainWindow::setupConnections(void)
@@ -340,13 +343,6 @@ void MainWindow::setupConnections(void)
     QObject::connect(this, SIGNAL(signalStartupComplete()), &mUpdate, SLOT(getLatestVersion()));
     QObject::connect(&mUpdate, SIGNAL(newVersionAvailable(QString)), this, SLOT(showNewVersionPopup(QString)));
     QObject::connect(mUpdateWizard, SIGNAL(sendDisconnect()), this, SLOT(disconnectMtl()));
-
-    for (int i=0; i<mTablesViewList.size(); i++)
-    {
-        QEnhancedTableView* tbl = mTablesViewList.at(i);
-        tbl->setContextMenuPolicy(Qt::CustomContextMenu);
-        QObject::connect(tbl, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showDefaultContextMenu(QPoint)));
-    }
 
     QObject::connect(mMainUi->bTpsSet0, SIGNAL(clicked()), this, SLOT(onSetTps0Pct()));
     QObject::connect(mMainUi->bTpsSet100, SIGNAL(clicked()), this, SLOT(onSetTps100Pct()));
@@ -816,39 +812,6 @@ void MainWindow::showNewVersionPopup(QString version)
          +tr("<br/>You are currently using: ")+__MTL_VER__
          +"<br/><br/><a href='https://github.com/fpoussin/MotoLink/releases/latest'>"
                              +tr("Download here")+"</a>");
-}
-
-void MainWindow::showDefaultContextMenu(const QPoint &pos)
-{
-    QEnhancedTableView* view = (QEnhancedTableView*)this->sender();
-    QAction* actions[3];
-
-    QPoint globalPos = view->viewport()->mapToGlobal(pos);
-    /* TODO */
-
-    QMenu myMenu;
-    actions[0] = myMenu.addAction(tr("Increase selection"));
-    actions[1] = myMenu.addAction(tr("Decrease selection"));
-    actions[2] = myMenu.addAction(tr("Change selection..."));
-
-    actions[0]->setIcon(QIcon("://oxygen/32x32/actions/list-add.png"));
-    actions[1]->setIcon(QIcon("://oxygen/32x32/actions/list-remove.png"));
-    actions[2]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-function.png"));
-
-    QAction* selectedItem = myMenu.exec(globalPos);
-
-    if (selectedItem == actions[0])
-    {
-        // Increase
-    }
-    else if (selectedItem == actions[1])
-    {
-        // Decrease
-    }
-    else if (selectedItem == actions[2])
-    {
-        // Change
-    }
 }
 
 void MainWindow::setTablesCursor(uint tps, uint rpm)

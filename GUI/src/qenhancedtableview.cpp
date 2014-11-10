@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QStaticText>
+#include <QMenu>
 #include "tablemodel.h"
 
 QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
@@ -18,6 +19,8 @@ QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
 
     this->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    mMenuReadOnly = false;
 
     this->setupConnections();
 }
@@ -27,12 +30,94 @@ void QEnhancedTableView::setModel(QAbstractItemModel *model)
      QTableView::setModel(model);
      TableModel *tbl = (TableModel *)this->model();
      tbl->setView(this);
+
      QObject::connect(tbl, SIGNAL(cellValueChanged()), this, SLOT(setTabFocus()));
+}
+
+void QEnhancedTableView::setMenuReadOnly(bool enabled)
+{
+    mMenuReadOnly = enabled;
 }
 
 void QEnhancedTableView::retranslate()
 {
     mHeaderEditUi->retranslateUi(mHeaderEditDialog);
+}
+
+void QEnhancedTableView::showContextMenu(const QPoint &pos)
+{
+    QAction* actions[3];
+    int increment = 1;
+    QMenu myMenu;
+
+    QPoint globalPos = this->viewport()->mapToGlobal(pos);
+    TableModel *model = (TableModel*)this->model();
+
+    // Dirty hack
+    if (model->getName().contains("AFR"))
+    {
+        increment = 10;
+    }
+
+    if (mMenuReadOnly)
+    {
+        actions[0] = myMenu.addAction(tr("Clear selection"));
+        actions[0]->setIcon(QIcon("://oxygen/32x32/actions/draw-eraser.png"));
+
+        QAction* selectedItem = myMenu.exec(globalPos);
+        QModelIndexList selection = this->selectionModel()->selection().indexes();
+
+        // Increase
+        if (selectedItem == actions[0])
+        {
+            for (int i=0; i<selection.size(); i++)
+            {
+                const QModelIndex current = selection.at(i);
+                QVariant newdata(0);
+                model->setData(current, newdata);
+            }
+        }
+    }
+    else
+    {
+        actions[0] = myMenu.addAction(tr("Increase by ")+QString::number(increment));
+        actions[1] = myMenu.addAction(tr("Decrease by ")+QString::number(increment));
+        actions[2] = myMenu.addAction(tr("Change selection..."));
+
+        actions[0]->setIcon(QIcon("://oxygen/32x32/actions/list-add.png"));
+        actions[1]->setIcon(QIcon("://oxygen/32x32/actions/list-remove.png"));
+        actions[2]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-function.png"));
+
+        QAction* selectedItem = myMenu.exec(globalPos);
+        QModelIndexList selection = this->selectionModel()->selection().indexes();
+
+        if (selectedItem == actions[0])
+        {
+            // Increase
+            for (int i=0; i<selection.size(); i++)
+            {
+                const QModelIndex current = selection.at(i);
+                QVariant data(current.data(Qt::EditRole));
+                QVariant newdata(data.toInt() + increment);
+                model->setData(current, newdata);
+            }
+        }
+        else if (selectedItem == actions[1])
+        {
+            // Decrease
+            for (int i=0; i<selection.size(); i++)
+            {
+                const QModelIndex current = selection.at(i);
+                QVariant data(current.data(Qt::EditRole));
+                QVariant newdata(data.toInt() - increment);
+                model->setData(current, newdata);
+            }
+        }
+        else if (selectedItem == actions[2])
+        {
+            // Change using a form
+        }
+    }
 }
 
 void QEnhancedTableView::clickedVerticalHeader(int section)
@@ -99,6 +184,7 @@ void QEnhancedTableView::setTabFocus()
 
 void QEnhancedTableView::setupConnections()
 {
+    QObject::connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     QObject::connect(this->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedHorizontalHeader(int)));
     QObject::connect(this->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedVerticalHeader(int)));
     QObject::connect(mHeaderEditUi->buttonBox, SIGNAL(accepted()), this, SLOT(applyChanges()));
@@ -157,4 +243,3 @@ void QEnhancedTableView::setEditBoundaries(int section, Qt::Orientation orientat
 
     mHeaderEditUi->slValue->setValue(cur);
 }
-

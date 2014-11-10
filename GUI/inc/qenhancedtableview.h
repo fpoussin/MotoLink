@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QTableView>
 #include <QHeaderView>
-#include <QPaintEvent>
+#include <QItemSelectionModel>
 #include "ui_headeredit.h"
 
 namespace Ui {
@@ -17,12 +17,14 @@ class QEnhancedTableView : public QTableView
 public:
     explicit QEnhancedTableView(QWidget *parent = 0);
     void setModel(QAbstractItemModel * model);
+    void setMenuReadOnly(bool enabled);
 
 signals:
     void modelUpdated(QWidget* widget);
 
 public slots:
     void retranslate(void);
+    void showContextMenu(const QPoint &pos);
 
 private slots:
     void clickedVerticalHeader(int section);
@@ -38,6 +40,8 @@ private:
     Ui::HeaderEdit *mHeaderEditUi;
     int mLastSection;
     Qt::Orientation mLastOrientation;
+    bool mMenuReadOnly;
+
 };
 
 #endif // QENHANCEDTABLEVIEW_H
