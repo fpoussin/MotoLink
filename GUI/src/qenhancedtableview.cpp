@@ -73,7 +73,7 @@ void QEnhancedTableView::showContextMenu(const QPoint &pos)
             for (int i=0; i<selection.size(); i++)
             {
                 const QModelIndex current = selection.at(i);
-                QVariant newdata(0);
+                QVariant newdata("");
                 model->setData(current, newdata);
             }
         }

@@ -304,7 +304,7 @@ int main(void);
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
-THD_CCM_WORKING_AREA(waThreadKnock, 512);
+THD_CCM_WORKING_AREA(waThreadKnock, 548);
 msg_t ThreadKnock(void *arg)
 {
   (void)arg;
@@ -337,7 +337,7 @@ msg_t ThreadKnock(void *arg)
       input[i+3] = multiplier*(float32_t)knockDataPtr[i+3];
     }
 
-    /* Process the data through the CFFT/CIFFT module */
+    /* Process the data through the RFFT module */
     arm_rfft_fast_f32(&S1, input, output, 0);
 
     /* Process the data through the Complex Magnitude Module for
@@ -354,8 +354,11 @@ msg_t ThreadKnock(void *arg)
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
 
-    sensors_data.knock_value = maxValue;
-    sensors_data.knock_freq = (FFT_FREQ*maxIndex)/FFT_SIZE;
+    // TODO: Get freq and ratio from settings
+    uint16_t freq = 8500;
+    uint16_t ratio = 3000;
+    sensors_data.knock_value = calculateKnockIntensity(freq, ratio, FFT_FREQ, output_knock, sizeof(output_knock));
+    sensors_data.knock_freq = freq;
   }
   return 0;
 }

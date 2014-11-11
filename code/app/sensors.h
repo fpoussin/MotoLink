@@ -35,6 +35,6 @@ extern monitor_t monitoring;
 
 uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
 uint16_t calculateRpmFromHertz(uint16_t freq);
-uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t smplFreq, uint16_t qFactor, uint16_t* buffer, uint16_t size);
+uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size);
 
 #endif

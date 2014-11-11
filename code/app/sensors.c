@@ -210,8 +210,36 @@ uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal
   return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }
 
-uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t smplFreq, uint16_t qFactor, uint16_t* buffer, uint16_t size)
+uint16_t calculateRpmFromHertz(uint16_t freq)
 {
 
   return 0;
+}
+
+uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size)
+{
+  uint16_t i;
+  uint16_t res;
+  float32_t multiplier;
+
+  const float32_t hzPerBin = (float32_t)smplFreq/(float32_t)size;
+  //const float32_t binsPerKhz = 1000.0/hzPerBin;
+  const float32_t flRatio = ((float32_t)ratio/1000.0);
+  uint16_t index = tgtFreq/hzPerBin;
+  uint16_t range = 11;
+
+  if (index < range)
+    index = range;
+  else if (index > size-range)
+    index = size-range;
+
+  res = buffer[index];
+  for (i=1; i<range; i++)
+  {
+    multiplier = 1.0/((float32_t)i/flRatio);
+    res += multiplier*(float32_t)buffer[index+i];
+    res += multiplier*(float32_t)buffer[index-i];
+  }
+
+  return res;
 }
