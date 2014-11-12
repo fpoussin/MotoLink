@@ -64,11 +64,12 @@ void iwdgGptCb(GPTDriver *gptp)
 
 void freqin_vthandler(void *arg)
 {
-  (void) arg;
-  TIM3->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+  (void)arg;
+
+  reEnableInputCapture(&TIMCAPD3);
 
   chSysLockFromISR();
-  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, 0);
+  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, NULL);
   chSysUnlockFromISR();
 }
 
@@ -253,17 +254,9 @@ msg_t ThreadADC(void *arg)
   uint32_t an[3] = {0, 0, 0};
   median_t an1, an2, an3;
 
-  an1.stopper = 0;
-  an1.buffer = an1_buffer;
-  an1.size = ADC_GRP1_BUF_DEPTH/2;
-
-  an2.stopper = 0;
-  an2.buffer = an2_buffer;
-  an2.size = ADC_GRP1_BUF_DEPTH/2;
-
-  an3.stopper = 0;
-  an3.buffer = an3_buffer;
-  an3.size = ADC_GRP1_BUF_DEPTH/2;
+  median_init(&an1, 0 , an1_buffer, ADC_GRP1_BUF_DEPTH/2);
+  median_init(&an2, 0 , an2_buffer, ADC_GRP1_BUF_DEPTH/2);
+  median_init(&an3, 0 , an3_buffer, ADC_GRP1_BUF_DEPTH/2);
 
   while (TRUE)
   {
@@ -292,7 +285,9 @@ msg_t ThreadADC(void *arg)
     sensors_data.an8 = an[1];
     sensors_data.an9 = an[2];
 
+    /* Todo: get params from memory */
     sensors_data.tps = calculateTpFromMillivolt(500, 4500, sensors_data.an8);
+    sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
   }
   return 0;
 }
@@ -516,7 +511,7 @@ int main(void)
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
 
-  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, 0);
+  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, NULL);
 
   /*
    * Creates the threads.

@@ -10,9 +10,9 @@
 
 #include "ch.h"
 
- typedef struct pair_t
+typedef struct pair_
  {
-   struct pair_t* point; /* Pointers forming list linked in sorted order */
+   struct pair_* point; /* Pointers forming list linked in sorted order */
    uint16_t value;       /* Values to sort */
  } pair_t;
 
@@ -26,7 +26,7 @@
    pair_t big;          /* Pointer to head (largest) of linked list.*/
  } median_t;
 
-void median_init(median_t* conf);
+void median_init(median_t* conf, uint16_t stopper, pair_t* buffer, uint16_t size);
 uint16_t median_filter(median_t* conf, uint16_t datum);
 uint16_t middle_of_3(uint16_t a, uint16_t b, uint16_t c);
 

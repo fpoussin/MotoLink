@@ -10,47 +10,67 @@ adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 uint8_t output_knock[SPECTRUM_SIZE];
 
 sensors_t sensors_data = {0x0F,0x0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
-uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
-uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
-uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
+static uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
+static uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
+static uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
+static bool TIM3CC1UD, TIM3CC2UD;
 
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-void captureOverflowCb(TIMCAPDriver *timcapp)
+void reEnableInputCapture(TIMCAPDriver *timcapp)
 {
-  (void)timcapp;
 
-  if ((TIM3->DIER & TIM_DIER_CC1IE)
-      && TIM3CC1CaptureNumber == 0) {
-    TIM3->DIER &= ~TIM_DIER_CC1IE;
-    sensors_data.freq1 = 0;
+  if ((timcapp->tim->DIER & TIM_DIER_CC1IE) == 0)
+  {
+    TIM3CC1CaptureNumber = 0;
+    TIM3CC1UD = false;
+    timcapp->tim->DIER |= TIM_DIER_CC1IE;
   }
 
-  if ((TIM3->DIER & TIM_DIER_CC2IE)
-      && TIM3CC2CaptureNumber == 0) {
-    TIM3->DIER &= ~TIM_DIER_CC2IE;
-    sensors_data.freq2 = 0;
+  if ((timcapp->tim->DIER & TIM_DIER_CC2IE) == 0)
+  {
+    TIM3CC2CaptureNumber = 0;
+    TIM3CC2UD = false;
+    timcapp->tim->DIER |= TIM_DIER_CC2IE;
   }
 
 }
 
+void captureOverflowCb(TIMCAPDriver *timcapp)
+{
+  if (TIM3CC1UD && (timcapp->tim->DIER & TIM_DIER_CC1IE))
+  {
+    timcapp->tim->DIER &= ~TIM_DIER_CC1IE;
+    sensors_data.freq1 = 0;
+  }
+
+  if (TIM3CC2UD && (timcapp->tim->DIER & TIM_DIER_CC2IE))
+  {
+    timcapp->tim->DIER &= ~TIM_DIER_CC2IE;
+    sensors_data.freq2 = 0;
+  }
+
+  TIM3CC1UD = true;
+  TIM3CC2UD = true;
+}
+
 void capture1Cb(TIMCAPDriver *timcapp)
 {
-  (void)timcapp;
-
   if(TIM3CC1CaptureNumber == 0)
   {
     /* Get the Input Capture value */
-    TIM3CC1ReadValue1 = TIM3->CCR1;
+    TIM3CC1ReadValue1 = timcapp->tim->CCR[0];
     TIM3CC1CaptureNumber = 1;
+    TIM3CC1UD = false;
   }
   else if(TIM3CC1CaptureNumber == 1)
   {
       uint32_t Capture;
       /* Get the Input Capture value */
-      TIM3CC1ReadValue2 = TIM3->CCR1;
+      TIM3CC1ReadValue2 = timcapp->tim->CCR[0];
+      TIM3CC1UD = false;
 
       /* Capture computation */
       if (TIM3CC1ReadValue2 > TIM3CC1ReadValue1)
@@ -69,24 +89,25 @@ void capture1Cb(TIMCAPDriver *timcapp)
       TIM3CC1CaptureNumber = 0;
 
       /* Disable CC1 interrupt */
-      TIM3->DIER &= ~TIM_DIER_CC1IE;
+      timcapp->tim->DIER &= ~TIM_DIER_CC1IE;
   }
 }
 
 void capture2Cb(TIMCAPDriver *timcapp)
 {
-  (void)timcapp;
   if(TIM3CC2CaptureNumber == 0)
   {
     /* Get the Input Capture value */
-    TIM3CC2ReadValue1 = TIM3->CCR2;
+    TIM3CC2ReadValue1 = timcapp->tim->CCR[1];
     TIM3CC2CaptureNumber = 1;
+    TIM3CC2UD = false;
   }
   else if(TIM3CC2CaptureNumber == 1)
   {
       uint32_t Capture;
       /* Get the Input Capture value */
-      TIM3CC2ReadValue2 = TIM3->CCR2;
+      TIM3CC2ReadValue2 = timcapp->tim->CCR[1];
+      TIM3CC2UD = false;
 
       /* Capture computation */
       if (TIM3CC2ReadValue2 > TIM3CC2ReadValue1)
@@ -105,7 +126,7 @@ void capture2Cb(TIMCAPDriver *timcapp)
       TIM3CC2CaptureNumber = 0;
 
       /* Disable CC2 interrupt */
-      TIM3->DIER &= ~TIM_DIER_CC2IE;
+      timcapp->tim->DIER &= ~TIM_DIER_CC2IE;
   }
 }
 
@@ -145,9 +166,10 @@ TIMCAPConfig tc_conf = {
     TIMCAP_INPUT_ACTIVE_HIGH,
     TIMCAP_INPUT_DISABLED,
     TIMCAP_INPUT_DISABLED},
-   100000, /* TIM3 Runs at 36Mhz max. (1/100000)*65536 = 0.65s Max */
+   200000, /* TIM3 Runs at 36Mhz max. (1/200000)*65536 = 0.32s Max, 3.12Hz Min */
    {capture1Cb, capture2Cb, NULL, NULL},
    captureOverflowCb,
+   0,
    0
 };
 
@@ -210,10 +232,11 @@ uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal
   return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }
 
-uint16_t calculateRpmFromHertz(uint16_t freq)
+uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
 {
+  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/100.0))*60.0;
 
-  return 0;
+  return flRatio;
 }
 
 uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size)

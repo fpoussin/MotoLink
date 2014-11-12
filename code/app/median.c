@@ -7,14 +7,20 @@
 
 #include "median.h"
 
+void median_init(median_t* conf, uint16_t stopper, pair_t* buffer, uint16_t size)
+{
+  conf->stopper = stopper;
+  conf->buffer = buffer;
+  conf->size = size;
+  pair_t small_tmp = {NULL, conf->stopper};
+  pair_t big_tmp = {&conf->small, 0};
+  conf->datpoint = conf->buffer;                  /* Pointer into circular buffer of data */
+  conf->small = small_tmp;                        /* Chain stopper */
+  conf->big = big_tmp;                            /* Pointer to head (largest) of linked list.*/
+}
+
 uint16_t median_filter(median_t* conf, uint16_t datum)
 {
- pair_t small_tmp = {NULL, conf->stopper};
- pair_t big_tmp = {&conf->small, NULL};
- conf->datpoint = conf->buffer;               /* Pointer into circular buffer of data */
- conf->small = small_tmp;          /* Chain stopper */
- conf->big = big_tmp;                /* Pointer to head (largest) of linked list.*/
-
  pair_t *successor;                              /* Pointer to successor of replaced data item */
  pair_t *scan;                                   /* Pointer used to scan down the sorted list */
  pair_t *scanold;                                /* Previous value of scan */
@@ -23,19 +29,19 @@ uint16_t median_filter(median_t* conf, uint16_t datum)
 
  if (datum == conf->stopper)
  {
-   datum = conf->stopper + 1;                             /* No stoppers allowed. */
+   datum = conf->stopper + 1;                    /* No stoppers allowed. */
  }
 
  if ( (++conf->datpoint - conf->buffer) >= conf->size)
  {
-   conf->datpoint = conf->buffer;                               /* Increment and wrap data in pointer.*/
+   conf->datpoint = conf->buffer;               /* Increment and wrap data in pointer.*/
  }
 
- conf->datpoint->value = datum;                           /* Copy in new datum */
- successor = conf->datpoint->point;                       /* Save pointer to old value's successor */
- median = &conf->big;                                     /* Median initially to first in chain */
- scanold = NULL;                                    /* Scanold initially null. */
- scan = &conf->big;                                       /* Points to pointer to first (largest) datum in chain */
+ conf->datpoint->value = datum;                 /* Copy in new datum */
+ successor = conf->datpoint->point;             /* Save pointer to old value's successor */
+ median = &conf->big;                           /* Median initially to first in chain */
+ scanold = NULL;                                /* Scanold initially null. */
+ scan = &conf->big;                             /* Points to pointer to first (largest) datum in chain */
 
  /* Handle chain-out of first item in chain as special case */
  if (scan->point == conf->datpoint)
