@@ -35,7 +35,9 @@ SOURCES += src/main.cpp \
     src/update.cpp \
     src/qcustomplot.cpp \
     src/mtlfile.cpp \
-    src/qenhancedtableview.cpp
+    src/qenhancedtableview.cpp \
+    src/mhtabbar.cpp \
+    src/mhtabwidget.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -52,7 +54,9 @@ HEADERS  += \
     inc/update.h \
     inc/qcustomplot.h \
     inc/mtlfile.h \
-    inc/qenhancedtableview.h
+    inc/qenhancedtableview.h \
+    inc/mhtabbar.h \
+    inc/mhtabwidget.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

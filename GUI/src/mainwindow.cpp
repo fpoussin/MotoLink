@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mMainUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mMainUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
-    mFastPollingTimer.setInterval(50);
+    mFastPollingTimer.setInterval(20);
     mSlowPollingTimer.setInterval(500);
 
     this->exportToMTLFile();
@@ -695,42 +695,45 @@ void MainWindow::onMonitoringDataReceived(QByteArray *data)
     const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
     const quint16 maskState = 0x8000; /* Thread state */
     QTableWidgetItem *item;
-    mTasksUi->tableWidget->selectRow(7);
 
     item = mTasksUi->tableWidget->item(0, 0);
     item->setData(Qt::DisplayRole, float(monitor->ser2 & maskUsage)/100.0);
-    if (monitor->ser2 & maskState) mTasksUi->tableWidget->selectRow(0);
+    if (monitor->ser2 & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(1, 0);
     item->setData(Qt::DisplayRole, float(monitor->bdu & maskUsage)/100.0);
-    if (monitor->bdu & maskState) mTasksUi->tableWidget->selectRow(0);
+    if (monitor->bdu & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(2, 0);
     item->setData(Qt::DisplayRole, float(monitor->sdu & maskUsage)/100.0);
-    if (monitor->sdu & maskState) mTasksUi->tableWidget->selectRow(1);
+    if (monitor->sdu & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(3, 0);
     item->setData(Qt::DisplayRole, float(monitor->can & maskUsage)/100.0);
-    if (monitor->can & maskState) mTasksUi->tableWidget->selectRow(2);
+    if (monitor->can & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(4, 0);
     item->setData(Qt::DisplayRole, float(monitor->knock & maskUsage)/100.0);
-    if (monitor->knock & maskState) mTasksUi->tableWidget->selectRow(3);
+    if (monitor->knock & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(5, 0);
     item->setData(Qt::DisplayRole, float(monitor->sensors & maskUsage)/100.0);
-    if (monitor->sensors & maskState) mTasksUi->tableWidget->selectRow(4);
+    if (monitor->sensors & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(6, 0);
-    item->setData(Qt::DisplayRole, float(monitor->monitor & maskUsage)/100.0);
-    if (monitor->monitor & maskState) mTasksUi->tableWidget->selectRow(5);
+    item->setData(Qt::DisplayRole, float(monitor->irq & maskUsage)/100.0);
+    item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(7, 0);
-    item->setData(Qt::DisplayRole, float(monitor->irq & maskUsage)/100.0);
-
-    item = mTasksUi->tableWidget->item(8, 0);
     item->setData(Qt::DisplayRole, float(monitor->idle & maskUsage)/100.0);
-    if (monitor->idle & maskState) mTasksUi->tableWidget->selectRow(7);
+    if (monitor->idle & maskState) item->setBackgroundColor(Qt::white);
+    else item->setBackgroundColor(Qt::lightGray);
 
 }
 

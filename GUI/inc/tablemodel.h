@@ -18,6 +18,7 @@ public:
     explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, QObject *parent = 0);
     ~TableModel(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    void emptyData(const QModelIndex &index);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
     QString getName(void) { return mName; }

@@ -55,7 +55,7 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabMain">
+     <widget class="MHTabWidget" name="tabMain">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -97,10 +97,31 @@
         <height>24</height>
        </size>
       </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
       <property name="movable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tabFuel">
+      <widget class="MHWorkflowWidget" name="tabFuel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>50</weight>
@@ -112,7 +133,7 @@
          <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;Fuel Map</string>
+        <string>Fuel Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -160,7 +181,25 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabStaging">
+      <widget class="MHWorkflowWidget" name="tabStaging">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>880</width>
+         <height>385</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>880</width>
+         <height>385</height>
+        </size>
+       </property>
        <attribute name="icon">
         <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-injector.png</normaloff>:/images/icon-injector.png</iconset>
@@ -181,13 +220,31 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabAfrMap">
+      <widget class="MHWorkflowWidget" name="tabAfrMap">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <attribute name="icon">
         <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;AFR Map</string>
+        <string>AFR Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
@@ -226,7 +283,25 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabAfrTarget">
+      <widget class="MHWorkflowWidget" name="tabAfrTarget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <attribute name="icon">
         <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-afr-target.png</normaloff>:/images/icon-afr-target.png</iconset>
@@ -268,7 +343,19 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabIgnMap">
+      <widget class="MHWorkflowWidget" name="tabIgnMap">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
        <attribute name="icon">
         <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/icon-denso-sparkplug.png</normaloff>:/images/icon-denso-sparkplug.png</iconset>
@@ -310,7 +397,19 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabKnock">
+      <widget class="MHWorkflowWidget" name="tabKnock">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
        <attribute name="icon">
         <iconset resource="../res/images/images.qrc">
          <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
@@ -355,7 +454,19 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabSettings">
+      <widget class="MHWorkflowWidget" name="tabSettings">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>870</width>
+         <height>370</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>50</weight>
@@ -367,7 +478,7 @@
          <normaloff>:/oxygen/32x32/actions/configure.png</normaloff>:/oxygen/32x32/actions/configure.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>&amp;Settings</string>
+        <string>Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="4">
@@ -1226,10 +1337,13 @@
                  <number>3</number>
                 </property>
                 <property name="minimum">
-                 <double>0.001000000000000</double>
+                 <double>0.010000000000000</double>
                 </property>
                 <property name="maximum">
-                 <double>10000.000000000000000</double>
+                 <double>65.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
                 </property>
                 <property name="value">
                  <double>1.000000000000000</double>
@@ -1245,10 +1359,13 @@
                  <number>3</number>
                 </property>
                 <property name="minimum">
-                 <double>0.001000000000000</double>
+                 <double>0.010000000000000</double>
                 </property>
                 <property name="maximum">
-                 <double>10000.000000000000000</double>
+                 <double>65.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
                 </property>
                 <property name="value">
                  <double>1.000000000000000</double>
@@ -1837,6 +1954,18 @@
    <class>QEnhancedTableView</class>
    <extends>QTableView</extends>
    <header>qenhancedtableview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MHTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>mhtabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MHWorkflowWidget</class>
+   <extends>QWidget</extends>
+   <header>mhtabwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

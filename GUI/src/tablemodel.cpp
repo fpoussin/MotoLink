@@ -39,11 +39,18 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         role = Qt::EditRole;
         emit cellValueChanged();
     }
-    item->setData(QVariant(this->NumberToColor(newvalue, true)), Qt::BackgroundRole);
-    item->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
+    item->setData(this->NumberToColor(newvalue, true), Qt::BackgroundRole);
+    item->setData(QColor(Qt::white), Qt::ForegroundRole);
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
+}
+
+void TableModel::emptyData(const QModelIndex &index)
+{
+    QStandardItem * item = this->itemFromIndex(index);
+    item->setData(QColor(Qt::white), Qt::BackgroundRole);
+    QStandardItemModel::setData(index, QVariant(""), Qt::EditRole);
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -260,9 +267,12 @@ AfrFormatDelegate::AfrFormatDelegate(QObject *parent) :
 
 QString AfrFormatDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
-    const float display = value.toFloat()/10;
+    bool ok;
+    const float display = value.toFloat(&ok)/10;
 
-    return locale.toString(display, 'f', 1);
+    if (ok)
+        return locale.toString(display, 'f', 1);
+    return QString();
 }
 
 QWidget * AfrFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
