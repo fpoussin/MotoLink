@@ -21,10 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mUndoStack(NULL),
     mFuelModel(&mUndoStack, -30, 30, 0),
     mStagingModel(&mUndoStack, -30, 30, 0),
-    mAFRModel(&mUndoStack, 80, 200, 130),
+    mAFRModel(&mUndoStack, 80, 200, 130, false),
     mAFRTgtModel(&mUndoStack, 80, 200, 130),
     mIgnModel(&mUndoStack, -20, 3, 0),
-    mKnockModel(&mUndoStack, 0, 255, 0)
+    mKnockModel(&mUndoStack, 0, 800, 0, false)
 {
     mMtl = new Motolink();
     mHrc = new Hrc();
@@ -678,6 +678,9 @@ void MainWindow::onSensorsDataReceived(QByteArray *data)
     quint16 rpm = sensors->rpm;
 
     this->setTablesCursor(tps, rpm);
+    mKnockModel.writeCellPeak(tps, rpm, QVariant(sensors->knock_value));
+    mAFRModel.writeCellAverage(tps, rpm, QVariant(sensors->afr));
+
     mMainUi->lVbat->setText(QString::number(vAn7)+tr(" Volts"));
 
     mMainUi->lTpsVolts->setText(QString::number(vAn8)+tr(" Volts"));
@@ -823,7 +826,7 @@ void MainWindow::setTablesCursor(uint tps, uint rpm)
     for (int i=0; i<mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
-        if (tbl->getCell(tps, rpm, &row, &col))
+        if (tbl && tbl->getCell(tps, rpm, &row, &col))
         {
             tbl->highlightCell(row, col);
         }

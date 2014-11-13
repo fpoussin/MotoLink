@@ -2,7 +2,7 @@
 #include <QLineEdit>
 #include <QDebug>
 
-TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *parent) :
+TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool permanent, QObject *parent) :
     QStandardItemModel(parent),
     mStack(stack)
 {
@@ -11,11 +11,17 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, QObject *pa
     mDefaultValue = def;
     mLastItem = NULL;
     mView = NULL;
+    mPermanent = permanent;
     this->fill(false);
 }
 
 TableModel::~TableModel()
 {
+}
+
+bool TableModel::isPermanent()
+{
+    return mPermanent;
 }
 
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -93,24 +99,70 @@ bool TableModel::setValue(uint row, uint col, const QVariant &value)
     return this->setData(idx, value, Qt::UserRole);
 }
 
+bool TableModel::writeCellPeak(uint tp, uint rpm, QVariant &value)
+{
+    int row = -1;
+    int col = -1;
+    if (!this->getCell(tp, rpm, &row, &col))
+        return false;
+
+    QStandardItem* item = this->item(row, col);
+    QVariant old(item->data(Qt::EditRole));
+
+    if (old > value)
+        item->setData(old, Qt::EditRole);
+    else
+        item->setData(value, Qt::EditRole);
+
+    return true;
+}
+
+bool TableModel::writeCellAverage(uint tp, uint rpm, QVariant &value)
+{
+    int row = -1;
+    int col = -1;
+    if (!this->getCell(tp, rpm, &row, &col))
+        return false;
+
+    QStandardItem* item = this->item(row, col);
+    QVariant average(item->data(Qt::EditRole));
+    float flAvg = average.value<float>();
+
+    flAvg += value.toFloat();
+    flAvg /= 2;
+
+    item->setData(QVariant(flAvg), Qt::EditRole);
+
+    return true;
+}
+
 void TableModel::highlightCell(int row, int col)
 {
     QFont font;
     QStandardItem* item = this->item(row, col);
-    float color = item->data(Qt::EditRole).toFloat();
+    QString valueStr = item->data(Qt::EditRole).value<QString>();
+    float value = item->data(Qt::EditRole).toFloat();
     if (item == NULL)
         return;
 
     if (mLastItem != NULL && mLastItem != item)
     {
-        mLastItem->setData(QVariant(this->NumberToColor(color)), Qt::BackgroundRole);
-        mLastItem->setData(QVariant(QColor(Qt::white)), Qt::ForegroundRole);
+        if (valueStr.isEmpty())
+            mLastItem->setData(QColor(Qt::white), Qt::BackgroundRole);
+        else
+            mLastItem->setData(this->NumberToColor(value), Qt::BackgroundRole);
+
+        mLastItem->setData(QColor(Qt::white), Qt::ForegroundRole);
         mLastItem->setData(QVariant(font), Qt::FontRole);
     }
 
     font.setBold(true);
-    item->setData(QVariant(this->NumberToColor(color, true, false)), Qt::BackgroundRole);
-    item->setData(QVariant(QColor(Qt::black)), Qt::ForegroundRole);
+
+    if (valueStr.isEmpty())
+        item->setData(QColor(Qt::gray), Qt::BackgroundRole);
+    else
+        item->setData(this->NumberToColor(value, true, false), Qt::BackgroundRole);
+    item->setData(QColor(Qt::black), Qt::ForegroundRole);
     item->setData(QVariant(font), Qt::FontRole);
     mLastItem = item;
 }
@@ -231,8 +283,8 @@ void TableModel::fill(bool random)
 
             if (random)
                 value = mMin + (rand() % (int)(mMax - mMin + 1));
-
-            this->setData(this->indexFromItem(item), value, Qt::UserRole);
+            if (mPermanent)
+                this->setData(this->indexFromItem(item), value, Qt::UserRole);
         }
     }
 }
@@ -272,6 +324,7 @@ QString AfrFormatDelegate::displayText(const QVariant &value, const QLocale &loc
 
     if (ok)
         return locale.toString(display, 'f', 1);
+
     return QString();
 }
 

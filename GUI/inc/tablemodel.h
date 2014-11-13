@@ -15,8 +15,9 @@ class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, QObject *parent = 0);
+    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, bool permanent = true, QObject *parent = 0);
     ~TableModel(void);
+    bool isPermanent(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     void emptyData(const QModelIndex &index);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -25,6 +26,8 @@ public:
     int getMin(void) { return mMin; }
     int getMax(void) { return mMax; }
     bool setValue(uint row, uint col, const QVariant &value);
+    bool writeCellPeak(uint tp, uint rpm, QVariant &value);
+    bool writeCellAverage(uint tp, uint rpm, QVariant &value);
     void highlightCell(int row, int col);
     bool getCell(uint tp, uint rpm, int *row, int *col);
     void setView(QEnhancedTableView *view);
@@ -56,6 +59,7 @@ private:
     quint8 mNumRow;
     Hrc mHrc;
     QStandardItem* mLastItem;
+    bool mPermanent;
 
 };
 

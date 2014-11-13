@@ -124,6 +124,8 @@ bool MTLFile::write(QFile *file)
     QMapIterator<QString, TableModel*> ti(mTableList);
     while (ti.hasNext()) {
         ti.next();
+        if (!ti.value()->isPermanent())
+            continue;
         writer.writeStartElement("Table");
         writer.writeAttribute("Name", ti.value()->getName());
         uint rows = ti.value()->rowCount();
