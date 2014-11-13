@@ -135,6 +135,7 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
+  // Filtering is done in a dedicated thread
   chSysLockFromISR();
   allocSendSamplesI(&sensorsMb, (void*)buffer, n);
   chSysUnlockFromISR();
@@ -145,13 +146,7 @@ void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
-  if (samples_knock != buffer) {
-    /* Ignore half buffer interrupt */
-    return;
-  }
-
   // Do FFT + Mag in a dedicated thread
-
   chSysLockFromISR();
   allocSendSamplesI(&knockMb, (void*)buffer, n);
   chSysUnlockFromISR();

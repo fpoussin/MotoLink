@@ -14,10 +14,11 @@
 #define ADC_GRP1_BUF_DEPTH      128
 
 #define ADC_GRP2_NUM_CHANNELS   1
-#define ADC_GRP2_BUF_DEPTH      1024
+#define ADC_GRP2_BUF_DEPTH      2048
 
-#define AN_RATIO 1.61 /* 6600mV/4096 voltage divider ratio is 1.5 */
-#define VBAT_RATIO 9.0f /* 36300mV/4096 voltage divider ratio is 9 */
+#define VREF 3300
+#define AN_RATIO 1.5f /* 6600mV/4096 voltage divider ratio is 1.5 (100K/(100K+100k)) */
+#define VBAT_RATIO 9.0f /* 29700mV/4096 voltage divider ratio is 9 (1M/(100K+1M)) */
 
 //#define FFT_SIZE 512 // 4096-2048-1024-512-256-64-16 lengths supported by DSP library
 //#define FFT_FREQ 117263

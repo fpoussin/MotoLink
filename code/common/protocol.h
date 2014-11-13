@@ -68,7 +68,6 @@ typedef struct {
   uint16_t can;
   uint16_t knock;
   uint16_t sensors;
-  uint16_t monitor;
   uint16_t irq;
   uint16_t idle;
 } monitor_t;

@@ -44,7 +44,7 @@ thread_t* pThreadKnock = NULL;
 thread_t* pThreadCAN = NULL;
 thread_t* pThreadMonitor = NULL;
 
-monitor_t monitoring = {0,0,0,0,0,0,0,0,100};
+monitor_t monitoring = {0,0,0,0,0,0,0,100};
 
 /*===========================================================================*/
 /* Structs                                                                   */
@@ -141,11 +141,11 @@ msg_t ThreadCAN(void *p)
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
   while(!chThdShouldTerminateX()) {
-    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE) == 0) {
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(50)) == 0) {
       chThdSleepMilliseconds(2);
       continue;
     }
-    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
+    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, MS2ST(50)) == MSG_OK) {
       /* Process message.*/
     }
   }
@@ -202,6 +202,7 @@ msg_t ThreadSDU(void *arg)
   size_t read, i;
   chRegSetThreadName("SDU");
 
+  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
@@ -263,7 +264,11 @@ msg_t ThreadADC(void *arg)
     while (!recvFreeSamples(&sensorsMb, (void*)&sensorsDataPtr, &n))
       chThdSleepMilliseconds(5);
 
-    /* Filtering */
+    an[0]= 0;
+    an[1]= 0;
+    an[2]= 0;
+
+    /* Filtering and adding */
     for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
     {
       pos = i * ADC_GRP1_NUM_CHANNELS;
@@ -272,14 +277,15 @@ msg_t ThreadADC(void *arg)
       an[2] += median_filter(&an3, sensorsDataPtr[pos+2]);
     }
 
-    an[0] *= VBAT_RATIO;
-    an[1] *= AN_RATIO;
-    an[2] *= AN_RATIO;
-
     /* Averaging */
     an[0] /= (n/ADC_GRP1_NUM_CHANNELS);
     an[1] /= (n/ADC_GRP1_NUM_CHANNELS);
     an[2] /= (n/ADC_GRP1_NUM_CHANNELS);
+
+    /* Convert to milliVolts */
+    an[0] *= VBAT_RATIO;
+    an[1] *= AN_RATIO;
+    an[2] *= AN_RATIO;
 
     sensors_data.an7 = an[0];
     sensors_data.an8 = an[1];
@@ -387,7 +393,6 @@ msg_t ThreadMonitor(void *arg)
 	pThreadCAN->runtime = 0;
 	pThreadKnock->runtime = 0;
 	pThreadADC->runtime = 0;
-	pThreadMonitor->runtime = 0;
 	chThdGetIdleX()->runtime = 0;
 
 	pThreadSER2->irqtime = 0;
@@ -396,15 +401,14 @@ msg_t ThreadMonitor(void *arg)
     pThreadCAN->irqtime = 0;
     pThreadKnock->irqtime = 0;
     pThreadADC->irqtime = 0;
-    pThreadMonitor->irqtime = 0;
     chThdGetIdleX()->irqtime = 0;
 
-	run_offset = DWT->CYCCNT;
+    run_offset = DWT->CYCCNT;
 
 	chSysUnlock();
 
 	/* Populate load data */
-	chThdSleepMilliseconds(500);
+	chThdSleepMilliseconds(250);
 
 	chSysLock();
 
@@ -416,7 +420,6 @@ msg_t ThreadMonitor(void *arg)
 	    +pThreadCAN->irqtime
 	    +pThreadKnock->irqtime
 	    +pThreadADC->irqtime
-	    +pThreadMonitor->irqtime
 	    +chThdGetIdleX()->irqtime;
 
 	chSysUnlock();
@@ -427,7 +430,6 @@ msg_t ThreadMonitor(void *arg)
 	monitoring.can = ((pThreadCAN->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
 	monitoring.knock = ((pThreadKnock->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
 	monitoring.sensors = ((pThreadADC->runtime*10000)/total_ticks) | RUNNING(pThreadADC);
-	monitoring.monitor = ((pThreadMonitor->runtime*10000)/total_ticks) | RUNNING(pThreadMonitor);
 	monitoring.idle = (((chThdGetIdleX()->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
 	monitoring.irq = ((irq_ticks*10000)/total_ticks);
   }
