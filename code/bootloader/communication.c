@@ -1,7 +1,7 @@
 #include "communication.h"
 #include "common.h"
 
-uint8_t readCommand(BaseChannel *chn, uint8_t flags)
+uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
 {
   cmd_header_t header;
   uint8_t data_buf[DATA_BUF_SIZE];

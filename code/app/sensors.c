@@ -19,7 +19,7 @@ static bool TIM3CC1UD, TIM3CC2UD;
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-void reEnableInputCapture(TIMCAPDriver *timcapp)
+void reEnableInputCapture_CCM(TIMCAPDriver *timcapp)
 {
 
   if ((timcapp->tim->DIER & TIM_DIER_CC1IE) == 0)
@@ -38,7 +38,7 @@ void reEnableInputCapture(TIMCAPDriver *timcapp)
 
 }
 
-void captureOverflowCb(TIMCAPDriver *timcapp)
+void captureOverflowCb_CCM(TIMCAPDriver *timcapp)
 {
   if (TIM3CC1UD && (timcapp->tim->DIER & TIM_DIER_CC1IE))
   {
@@ -56,7 +56,7 @@ void captureOverflowCb(TIMCAPDriver *timcapp)
   TIM3CC2UD = true;
 }
 
-void capture1Cb(TIMCAPDriver *timcapp)
+void capture1Cb_CCM(TIMCAPDriver *timcapp)
 {
   if(TIM3CC1CaptureNumber == 0)
   {
@@ -93,7 +93,7 @@ void capture1Cb(TIMCAPDriver *timcapp)
   }
 }
 
-void capture2Cb(TIMCAPDriver *timcapp)
+void capture2Cb_CCM(TIMCAPDriver *timcapp)
 {
   if(TIM3CC2CaptureNumber == 0)
   {
@@ -162,8 +162,8 @@ TIMCAPConfig tc_conf = {
     TIMCAP_INPUT_DISABLED,
     TIMCAP_INPUT_DISABLED},
    200000, /* TIM3 Runs at 36Mhz max. (1/200000)*65536 = 0.32s Max, 3.12Hz Min */
-   {capture1Cb, capture2Cb, NULL, NULL},
-   captureOverflowCb,
+   {capture1Cb_CCM, capture2Cb_CCM, NULL, NULL},
+   captureOverflowCb_CCM,
    0,
    0
 };

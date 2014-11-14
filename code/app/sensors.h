@@ -34,7 +34,7 @@ extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;
 extern monitor_t monitoring;
 
-void reEnableInputCapture(TIMCAPDriver *timcapp);
+void reEnableInputCapture_CCM(TIMCAPDriver *timcapp);
 
 uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
 uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio);

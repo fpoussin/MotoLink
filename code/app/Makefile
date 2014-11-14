@@ -82,12 +82,12 @@ PROJECT = motolink
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT
 include ../common/common.mk
+include ../common/port_stm32f3xx.mk
 include $(CHIBIOS)/../ChibiOS-Drivers/drivers.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f3xx.mk
 
 # Define linker script file here
 LDSCRIPT = link.ld
@@ -132,7 +132,7 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM)
+ASMSRC = $(PORTASM) $(ASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(STM32DRIVERINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \

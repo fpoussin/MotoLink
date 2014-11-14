@@ -19,7 +19,7 @@ void median_init(median_t* conf, uint16_t stopper, pair_t* buffer, uint16_t size
   conf->big = big_tmp;                            /* Pointer to head (largest) of linked list.*/
 }
 
-uint16_t median_filter(median_t* conf, uint16_t datum)
+uint16_t median_filter_CCM(median_t* conf, uint16_t datum)
 {
  pair_t *successor;                              /* Pointer to successor of replaced data item */
  pair_t *scan;                                   /* Pointer used to scan down the sorted list */

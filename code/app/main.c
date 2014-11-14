@@ -30,7 +30,6 @@
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
 #define FREQIN_INTERVAL MS2ST(50)
-#define THD_CCM_WORKING_AREA(s, n) THD_WORKING_AREA(s, n) __attribute__ ((section (".ccm")))
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
@@ -56,20 +55,20 @@ static virtual_timer_t vt_freqin;
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-void iwdgGptCb(GPTDriver *gptp)
+void iwdgGptCb_CCM(GPTDriver *gptp)
 {
   (void) gptp;
   iwdgReset(&IWDGD);
 }
 
-void freqin_vthandler(void *arg)
+void freqinVTHandler_CCM(void *arg)
 {
   (void)arg;
 
-  reEnableInputCapture(&TIMCAPD3);
+  reEnableInputCapture_CCM(&TIMCAPD3);
 
   chSysLockFromISR();
-  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, NULL);
+  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler_CCM, NULL);
   chSysUnlockFromISR();
 }
 
@@ -86,7 +85,7 @@ const CANConfig cancfg = {
 GPTConfig gpt1Cfg =
 {
   100000,      /* timer clock.*/
-  iwdgGptCb,  /* Timer callback.*/
+  iwdgGptCb_CCM,  /* Timer callback.*/
   0,
   0
 };
@@ -130,7 +129,7 @@ PWMConfig pwmcfg = {
 /* Threads                                                                   */
 /*===========================================================================*/
 
-THD_CCM_WORKING_AREA(waThreadCAN, 256);
+THD_WORKING_AREA(waThreadCAN, 256);
 msg_t ThreadCAN(void *p)
 {
   event_listener_t el;
@@ -156,7 +155,7 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread.
  */
-THD_CCM_WORKING_AREA(waThreadBDU, 512);
+THD_WORKING_AREA(waThreadBDU_CCM, 512);
 msg_t ThreadBDU(void *arg)
 {
   event_listener_t el1;
@@ -182,7 +181,7 @@ msg_t ThreadBDU(void *arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
-      readCommand((BaseChannel *)&BDU1);
+      readCommand_CCM((BaseChannel *)&BDU1);
     }
     else
      chThdSleepMilliseconds(2);
@@ -193,7 +192,7 @@ msg_t ThreadBDU(void *arg)
 /*
  * USB Serial thread.
  */
-THD_CCM_WORKING_AREA(waThreadSDU, 1024);
+THD_WORKING_AREA(waThreadSDU, 1024);
 msg_t ThreadSDU(void *arg)
 {
   (void)arg;
@@ -243,8 +242,8 @@ msg_t ThreadSDU(void *arg)
 pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
-THD_CCM_WORKING_AREA(waThreadADC, 64);
-msg_t ThreadADC(void *arg)
+THD_WORKING_AREA(waThreadADC, 64);
+msg_t ThreadADC_CCM(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
@@ -272,9 +271,9 @@ msg_t ThreadADC(void *arg)
     for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
     {
       pos = i * ADC_GRP1_NUM_CHANNELS;
-      an[0] += median_filter(&an1, sensorsDataPtr[pos]);
-      an[1] += median_filter(&an2, sensorsDataPtr[pos+1]);
-      an[2] += median_filter(&an3, sensorsDataPtr[pos+2]);
+      an[0] += median_filter_CCM(&an1, sensorsDataPtr[pos]);
+      an[1] += median_filter_CCM(&an2, sensorsDataPtr[pos+1]);
+      an[2] += median_filter_CCM(&an3, sensorsDataPtr[pos+2]);
     }
 
     /* Averaging */
@@ -305,8 +304,8 @@ int main(void);
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
-THD_CCM_WORKING_AREA(waThreadKnock, 548);
-msg_t ThreadKnock(void *arg)
+THD_WORKING_AREA(waThreadKnock, 548);
+msg_t ThreadKnock_CCM(void *arg)
 {
   (void)arg;
   chRegSetThreadName("Knock");
@@ -373,7 +372,7 @@ static inline thread_t *chThdGetIdleX(void) {
 /*
  * CPU Load Monitoring thread.
  */
-THD_CCM_WORKING_AREA(waThreadMonitor, 256);
+THD_WORKING_AREA(waThreadMonitor, 256);
 msg_t ThreadMonitor(void *arg)
 {
   (void)arg;
@@ -439,7 +438,7 @@ msg_t ThreadMonitor(void *arg)
 /*
  * Uart2 thread.
  */
-THD_CCM_WORKING_AREA(waThreadSER2, 128);
+THD_WORKING_AREA(waThreadSER2, 128);
 msg_t ThreadSER2(void *arg)
 {
   (void)arg;
@@ -513,15 +512,15 @@ int main(void)
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
 
-  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqin_vthandler, NULL);
+  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler_CCM, NULL);
 
   /*
    * Creates the threads.
    */
-  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  pThreadBDU = chThdCreateStatic(waThreadBDU_CCM, sizeof(waThreadBDU_CCM), NORMALPRIO, ThreadBDU, NULL);
   pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), HIGHPRIO, ThreadADC, NULL);
-  pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
+  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), HIGHPRIO, ThreadADC_CCM, NULL);
+  pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock_CCM, NULL);
   pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
   pThreadSER2 = chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   /* Create last as it uses pointers from above */

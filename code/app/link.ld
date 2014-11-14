@@ -47,7 +47,60 @@ SECTIONS
         KEEP(*(SORT(.fini_array.*)))
         PROVIDE(__fini_array_end = .);
     } > user_flash
+    
+    .stacks :
+    {
+        . = ALIGN(8);
+        __main_stack_base__ = .;
+        . += __main_stack_size__;
+        . = ALIGN(8);
+        __main_stack_end__ = .;
+        __process_stack_base__ = .;
+        __main_thread_stack_base__ = .;
+        . += __process_stack_size__;
+        . = ALIGN(8);
+        __process_stack_end__ = .;
+        __main_thread_stack_end__ = .;
+    } > ccmram
 
+    .ccmbss (NOLOAD) :
+    {
+        PROVIDE(_cmm_start = .);
+        . = ALIGN(4);
+        *(.stacks)
+        . = ALIGN(8);
+        *(.bss.*_CCM*)
+        . = ALIGN(4);
+        *(.bss.mainthread.*)
+        . = ALIGN(4);
+        *(.bss._idle_thread_wa)
+        . = ALIGN(4);
+        *(.bss.rlist)
+        . = ALIGN(4);
+        *(.bss.vtlist)
+        . = ALIGN(4);
+        *(.bss.endmem)
+        . = ALIGN(4);
+        *(.bss.nextmem)
+        . = ALIGN(4);
+        *(.bss.default_heap)
+        . = ALIGN(4);
+        PROVIDE(_cmm_end = .);
+    } > ccmram
+    
+    _siccm = LOADADDR(.ccm);
+    .ccm :
+    {
+        . = ALIGN(4);
+        PROVIDE(_sccm = .);
+        *(.ccm)
+        *(.ccm*)
+        *(.text.*_CCM*)
+        *(.data.*_CCM*)
+        . = ALIGN(4);
+        PROVIDE(_eccm = .);
+    } > ccmram AT > user_flash
+     
     .text : ALIGN(16) SUBALIGN(16)
     {
         *(.text.startup.*)
@@ -59,7 +112,7 @@ SECTIONS
         *(.glue_7)
         *(.gcc*)
     } > user_flash
-
+    
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -90,50 +143,6 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
-    .stacks :
-    {
-        . = ALIGN(8);
-        __main_stack_base__ = .;
-        . += __main_stack_size__;
-        . = ALIGN(8);
-        __main_stack_end__ = .;
-        __process_stack_base__ = .;
-        __main_thread_stack_base__ = .;
-        . += __process_stack_size__;
-        . = ALIGN(8);
-        __process_stack_end__ = .;
-        __main_thread_stack_end__ = .;
-    } > ccmram AT > ram
-    
-    .ccm (NOLOAD) :
-    {
-        PROVIDE(_cmm_start = .);
-        . = ALIGN(4);
-        *(.stacks)
-        . = ALIGN(8);
-        *(.stacks.*)
-        . = ALIGN(8);
-        *(.ccm)
-        . = ALIGN(4);
-        *(.ccm.*)
-        . = ALIGN(4);
-        *(.bss.mainthread.*)
-        . = ALIGN(4);
-        *(.bss._idle_thread_wa)
-        . = ALIGN(4);
-        *(.bss.rlist)
-        . = ALIGN(4);
-        *(.bss.vtlist)
-        . = ALIGN(4);
-        *(.bss.endmem)
-        . = ALIGN(4);
-        *(.bss.nextmem)
-        . = ALIGN(4);
-        *(.bss.default_heap)
-        . = ALIGN(4);
-        PROVIDE(_cmm_end = .);
-    } > ccmram AT > ram
-
     .data :
     {
         . = ALIGN(4);
@@ -146,7 +155,7 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(_edata = .);
     } > ram AT > user_flash
-
+    
     .bss :
     {
         . = ALIGN(4);

@@ -9,7 +9,7 @@
 
 extern uint8_t bl_wake;
 
-uint8_t readCommand(BaseChannel *chn);
+uint8_t readCommand_CCM(BaseChannel *chn);
 uint8_t resetHandler(BaseChannel * chn);
 uint8_t sendMode(BaseChannel * chn);
 uint8_t wakeHandler(BaseChannel * chn);

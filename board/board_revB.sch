@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.005" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -6538,6 +6538,8 @@ package type ST</description>
 <part name="P+10" library="supply1" deviceset="+5V" device=""/>
 <part name="P+11" library="supply1" deviceset="+5V" device=""/>
 <part name="IC1" library="linear" deviceset="MCP1703" device="CB"/>
+<part name="R25" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
+<part name="R26" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 </parts>
 <sheets>
 <sheet>
@@ -6636,7 +6638,7 @@ package type ST</description>
 <instance part="+3V8" gate="G$1" x="78.74" y="80.01" rot="MR0"/>
 <instance part="GND16" gate="1" x="63.5" y="74.93"/>
 <instance part="D2" gate="G$1" x="73.66" y="151.13" rot="R90"/>
-<instance part="CON_RPM-VSS" gate="G$1" x="176.53" y="158.75"/>
+<instance part="CON_RPM-VSS" gate="G$1" x="166.37" y="158.75"/>
 <instance part="GND17" gate="1" x="184.15" y="153.67"/>
 <instance part="C6" gate="G$1" x="114.3" y="113.03"/>
 <instance part="C8" gate="G$1" x="276.86" y="82.55" rot="R180"/>
@@ -6708,6 +6710,8 @@ package type ST</description>
 <instance part="P+10" gate="1" x="44.45" y="130.81"/>
 <instance part="P+11" gate="1" x="54.61" y="118.11"/>
 <instance part="IC1" gate="G$1" x="53.34" y="193.04"/>
+<instance part="R25" gate="G$1" x="177.8" y="166.37" rot="R90"/>
+<instance part="R26" gate="G$1" x="186.69" y="163.83" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -6844,6 +6848,7 @@ package type ST</description>
 <segment>
 <pinref part="CON_RPM-VSS" gate="G$1" pin="1"/>
 <pinref part="GND17" gate="1" pin="GND"/>
+<wire x1="173.99" y1="156.21" x2="184.15" y2="156.21" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND6" gate="1" pin="GND"/>
@@ -7445,43 +7450,42 @@ package type ST</description>
 </net>
 <net name="FREQ2_IN" class="0">
 <segment>
-<pinref part="Q2" gate="A" pin="O7"/>
-<wire x1="219.71" y1="168.91" x2="236.22" y2="168.91" width="0.1524" layer="91"/>
-<label x="219.71" y="168.91" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="STM32" gate="PORTC_L" pin="PC7"/>
 <wire x1="142.24" y1="69.85" x2="132.08" y2="69.85" width="0.1524" layer="91"/>
 <label x="142.24" y="69.85" size="1.778" layer="95" rot="R180"/>
 </segment>
+<segment>
+<wire x1="229.87" y1="168.91" x2="243.84" y2="168.91" width="0.1524" layer="91"/>
+<label x="231.14" y="168.91" size="1.778" layer="95"/>
+<pinref part="Q2" gate="A" pin="O7"/>
+<wire x1="229.87" y1="168.91" x2="219.71" y2="168.91" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="FREQ1_IN" class="0">
-<segment>
-<pinref part="Q2" gate="A" pin="O6"/>
-<wire x1="219.71" y1="171.45" x2="236.22" y2="171.45" width="0.1524" layer="91"/>
-<label x="219.71" y="171.45" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="STM32" gate="PORTC_L" pin="PC6"/>
 <wire x1="142.24" y1="72.39" x2="132.08" y2="72.39" width="0.1524" layer="91"/>
 <label x="142.24" y="72.39" size="1.778" layer="95" rot="R180"/>
 </segment>
+<segment>
+<wire x1="229.87" y1="171.45" x2="243.84" y2="171.45" width="0.1524" layer="91"/>
+<label x="231.14" y="171.45" size="1.778" layer="95"/>
+<pinref part="Q2" gate="A" pin="O6"/>
+<wire x1="229.87" y1="171.45" x2="219.71" y2="171.45" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$16" class="0">
 <segment>
-<pinref part="CON_RPM-VSS" gate="G$1" pin="3"/>
-<wire x1="184.15" y1="161.29" x2="184.15" y2="171.45" width="0.1524" layer="91"/>
 <pinref part="Q2" gate="A" pin="I6"/>
-<wire x1="184.15" y1="171.45" x2="194.31" y2="171.45" width="0.1524" layer="91"/>
+<wire x1="177.8" y1="171.45" x2="194.31" y2="171.45" width="0.1524" layer="91"/>
+<pinref part="R25" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$21" class="0">
 <segment>
-<pinref part="Q2" gate="A" pin="I7"/>
-<wire x1="194.31" y1="168.91" x2="186.69" y2="168.91" width="0.1524" layer="91"/>
-<wire x1="186.69" y1="168.91" x2="186.69" y2="158.75" width="0.1524" layer="91"/>
 <pinref part="CON_RPM-VSS" gate="G$1" pin="2"/>
-<wire x1="186.69" y1="158.75" x2="184.15" y2="158.75" width="0.1524" layer="91"/>
+<wire x1="186.69" y1="158.75" x2="173.99" y2="158.75" width="0.1524" layer="91"/>
+<pinref part="R26" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SCS" class="0">
@@ -7935,6 +7939,20 @@ package type ST</description>
 <pinref part="IC_OPA" gate="A" pin="OUT"/>
 <pinref part="R23" gate="G$1" pin="1"/>
 <junction x="95.25" y="148.59"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<pinref part="Q2" gate="A" pin="I7"/>
+<wire x1="194.31" y1="168.91" x2="186.69" y2="168.91" width="0.1524" layer="91"/>
+<pinref part="R26" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="CON_RPM-VSS" gate="G$1" pin="3"/>
+<pinref part="R25" gate="G$1" pin="1"/>
+<wire x1="173.99" y1="161.29" x2="177.8" y2="161.29" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
