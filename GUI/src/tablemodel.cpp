@@ -113,6 +113,7 @@ bool TableModel::writeCellPeak(uint tp, uint rpm, QVariant &value)
         item->setData(old, Qt::EditRole);
     else
         item->setData(value, Qt::EditRole);
+    item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return true;
 }
@@ -132,6 +133,7 @@ bool TableModel::writeCellAverage(uint tp, uint rpm, QVariant &value)
     flAvg /= 2;
 
     item->setData(QVariant(flAvg), Qt::EditRole);
+    item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return true;
 }

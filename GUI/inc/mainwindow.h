@@ -44,6 +44,19 @@ namespace Ui {
     class HeaderEdit;
 }
 
+typedef struct {
+    float vAn7; /* VBAT */
+    float vAn8; /* TPS */
+    float vAn9; /* AFR */
+    float tps;
+    quint16 afr;
+    quint16 knock_value;
+    quint16 knock_freq;
+    quint16 rpm;
+    quint16 freq1;
+    quint16 freq2;
+} sensors_data_t ;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -93,6 +106,7 @@ private slots:
 
     void doFastPolling(void);
     void doSlowPolling(void);
+    void doSensorsRedraw(void);
     void onSensorsDataReceived(QByteArray *data);
     void onMonitoringDataReceived(QByteArray *data);
     void OnKnockSpectrumDataReceived(QByteArray *data);
@@ -156,9 +170,11 @@ private:
 
     QTimer mFastPollingTimer;
     QTimer mSlowPollingTimer;
+    QTimer mRedrawTimer;
     QByteArray mSensorsData;
     QByteArray mMonitoringData;
     QByteArray mKnockSpectrumData;
+    sensors_data_t mSensorsStruct;
 
     MTLFile mFile;
 };

@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mFastPollingTimer.setInterval(20);
     mSlowPollingTimer.setInterval(500);
+    mRedrawTimer.setInterval(200);
 
     this->exportToMTLFile();
     this->uiDisable();
@@ -206,6 +207,7 @@ void MainWindow::connectMtl()
         this->uiEnable();
         mFastPollingTimer.start();
         mSlowPollingTimer.start();
+        mRedrawTimer.start();
         mMainUi->statusBar->showMessage("Connected");
     }
     else {
@@ -217,6 +219,7 @@ void MainWindow::disconnectMtl()
 {
     mFastPollingTimer.stop();
     mSlowPollingTimer.stop();
+    mRedrawTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
     mMainUi->statusBar->showMessage("Disconnected");
@@ -359,6 +362,7 @@ void MainWindow::setupConnections(void)
     /* Sensors UI update */
     QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
+    QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
     QObject::connect(this, SIGNAL(signalRequestSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
     QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(onSensorsDataReceived(QByteArray*)));
@@ -667,29 +671,37 @@ void MainWindow::doSlowPolling()
     }
 }
 
+void MainWindow::doSensorsRedraw()
+{
+    mMainUi->lVbat->setText(QString::number(mSensorsStruct.vAn7)+tr(" Volts"));
+
+    mMainUi->lTpsVolts->setText(QString::number(mSensorsStruct.vAn7)+tr(" Volts"));
+    mMainUi->lTpsPct->setText(QString::number(mSensorsStruct.tps)+tr("%"));
+
+    mMainUi->lAfrVolts->setText(QString::number(mSensorsStruct.vAn9)+tr(" Volts"));
+    mMainUi->lRpm->setText(QString::number(mSensorsStruct.rpm)+tr(" Rpm"));
+    mMainUi->lRpmHertz->setText(QString::number(mSensorsStruct.freq1)+tr(" Hertz"));
+    mMainUi->lSpeedHertz->setText(QString::number(mSensorsStruct.freq2)+tr(" Hertz"));
+}
+
 void MainWindow::onSensorsDataReceived(QByteArray *data)
 {
     const sensors_t * sensors =  (sensors_t *)data->constData();
 
-    float vAn7 = sensors->an7/1000.0; /* VBAT */
-    float vAn8 = sensors->an8/1000.0; /* TPS */
-    float vAn9 = sensors->an9/1000.0; /* AFR */
-    float tps = sensors->tps/100.0;
-    quint16 rpm = sensors->rpm;
+    mSensorsStruct.vAn7 = sensors->an7/1000.0; /* VBAT */
+    mSensorsStruct.vAn8 = sensors->an8/1000.0; /* TPS */
+    mSensorsStruct.vAn9 = sensors->an9/1000.0; /* AFR */
+    mSensorsStruct.tps = sensors->tps/100.0;
+    mSensorsStruct.rpm = sensors->rpm;
+    mSensorsStruct.freq1  = sensors->freq1;
+    mSensorsStruct.freq2  = sensors->freq2;
+    mSensorsStruct.knock_value = sensors->knock_value;
+    mSensorsStruct.knock_freq = sensors->knock_freq;
+    mSensorsStruct.afr = sensors->afr;
 
-    this->setTablesCursor(tps, rpm);
-    mKnockModel.writeCellPeak(tps, rpm, QVariant(sensors->knock_value));
-    mAFRModel.writeCellAverage(tps, rpm, QVariant(sensors->afr));
-
-    mMainUi->lVbat->setText(QString::number(vAn7)+tr(" Volts"));
-
-    mMainUi->lTpsVolts->setText(QString::number(vAn8)+tr(" Volts"));
-    mMainUi->lTpsPct->setText(QString::number(tps)+tr("%"));
-
-    mMainUi->lAfrVolts->setText(QString::number(vAn9)+tr(" Volts"));
-    mMainUi->lRpm->setText(QString::number(rpm)+tr(" Rpm"));
-    mMainUi->lRpmHertz->setText(QString::number(sensors->freq1)+tr(" Hertz"));
-    mMainUi->lSpeedHertz->setText(QString::number(sensors->freq2)+tr(" Hertz"));
+    this->setTablesCursor(mSensorsStruct.tps, mSensorsStruct.rpm);
+    mKnockModel.writeCellPeak(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.knock_value));
+    mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr));
 }
 
 void MainWindow::onMonitoringDataReceived(QByteArray *data)
