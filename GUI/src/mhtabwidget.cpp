@@ -68,15 +68,16 @@ void MHTabWidget::DetachTab (int index, QPoint& dropPoint)
 
   // Find Widget and connect
   MHWorkflowWidget* tearOffWidget = dynamic_cast <MHWorkflowWidget*> (widget (index));
-  connect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
+  QObject::connect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
   detachedWidget->setWindowTitle(tabText(index));
+  detachedWidget->setTabIcon(this->tabIcon(index));
   // Remove from tab bar
   tearOffWidget->setParent(detachedWidget);
 
   // Make first active
   if (0 < count ())
   {
-    setCurrentIndex (0);
+    this->setCurrentIndex (0);
   }
 
   // Create and show
@@ -100,16 +101,17 @@ void MHTabWidget::AttachTab (QWidget *parent)
   tearOffWidget->setParent (this);
 
   // Attach
-  int newIndex(addTab(tearOffWidget, detachedWidget->windowTitle()));
+  int newIndex = addTab(tearOffWidget, detachedWidget->windowTitle());
 
   // Make Active
   if (-1 != newIndex)
   {
-    setCurrentIndex(newIndex);
+    this->setCurrentIndex(newIndex);
   }
 
+  this->setTabIcon(this->currentIndex(), detachedWidget->tabIcon());
   // Cleanup Window
-  disconnect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
+  QObject::disconnect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
   delete detachedWidget;
 }
 
@@ -145,6 +147,17 @@ MHDetachedWindow::MHDetachedWindow(QWidget *parent)
 MHDetachedWindow::~MHDetachedWindow(void)
 {
 
+}
+
+void MHDetachedWindow::setTabIcon(QIcon &icon)
+{
+    m_tabIcon = icon;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+QIcon MHDetachedWindow::tabIcon()
+{
+    return m_tabIcon;
 }
 
 //////////////////////////////////////////////////////////////////////////////

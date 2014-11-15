@@ -84,9 +84,12 @@ public:
   MHDetachedWindow(QWidget *parent = 0);
   // Default destructor
   ~MHDetachedWindow(void);
+  void setTabIcon(QIcon &icon);
+  QIcon tabIcon(void);
 
 protected:
   void closeEvent(QCloseEvent *event);
+  QIcon m_tabIcon;
 signals:
   void OnClose (QWidget* widget);
 

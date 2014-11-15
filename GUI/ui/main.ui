@@ -89,7 +89,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="iconSize">
        <size>
@@ -489,6 +489,12 @@
             <height>0</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="title">
            <string>Self Mapping</string>
           </property>
@@ -498,6 +504,12 @@
           <layout class="QGridLayout" name="gridLayout_8">
            <item row="5" column="0">
             <widget class="QFrame" name="frame_8">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -554,6 +566,12 @@
            </item>
            <item row="0" column="0">
             <widget class="QFrame" name="frame_9">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -651,12 +669,24 @@
             <height>0</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="title">
            <string>ECU Settings</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
            <item row="4" column="0">
             <widget class="QFrame" name="frame_3">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -710,6 +740,12 @@
            </item>
            <item row="0" column="0">
             <widget class="QFrame" name="frame">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -760,6 +796,12 @@
            </item>
            <item row="2" column="0">
             <widget class="QFrame" name="frame_2">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -848,8 +890,8 @@
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
-            <bold>false</bold>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="title">
@@ -858,6 +900,12 @@
           <layout class="QGridLayout" name="gridLayout_11">
            <item row="5" column="0">
             <widget class="QFrame" name="frame_10">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -867,6 +915,12 @@
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QLabel" name="ltVbat">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Battery:</string>
                 </property>
@@ -884,6 +938,12 @@
            </item>
            <item row="0" column="0">
             <widget class="QFrame" name="frame_4">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -926,6 +986,12 @@
            </item>
            <item row="1" column="0">
             <widget class="QFrame" name="frame_6">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -968,6 +1034,12 @@
            </item>
            <item row="2" column="0">
             <widget class="QFrame" name="frame_5">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1010,6 +1082,12 @@
            </item>
            <item row="3" column="0">
             <widget class="QFrame" name="frame_7">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1113,6 +1191,12 @@
         </item>
         <item row="0" column="6">
          <widget class="QGroupBox" name="groupBox">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="title">
            <string>AFR settings</string>
           </property>
@@ -1132,6 +1216,12 @@
            </item>
            <item row="2" column="0">
             <widget class="QFrame" name="frame_12">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1237,6 +1327,12 @@
            </item>
            <item row="1" column="0">
             <widget class="QFrame" name="frame_11">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1246,6 +1342,12 @@
              <layout class="QGridLayout" name="gridLayout_13">
               <item row="1" column="0">
                <widget class="QComboBox" name="cbAFRInput">
+                <property name="font">
+                 <font>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <item>
                  <property name="text">
                   <string>Analog 5V</string>
@@ -1315,12 +1417,24 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="title">
            <string>Frequency Sensor Mappings</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="4" column="0">
             <widget class="QFrame" name="frame_14">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1416,6 +1530,12 @@
            </item>
            <item row="0" column="0">
             <widget class="QFrame" name="frame_13">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1512,6 +1632,12 @@
                   <height>30</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Set 0%</string>
                 </property>
@@ -1519,6 +1645,12 @@
               </item>
               <item row="3" column="0">
                <widget class="QPushButton" name="bTpsSet100">
+                <property name="font">
+                 <font>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Set 100%</string>
                 </property>
