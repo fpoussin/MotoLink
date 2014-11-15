@@ -18,147 +18,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-INCLUDE ../common/STM32F303xC_common.ld
-
-ENTRY(Reset_Handler)
-
-SECTIONS
+/*
+ * STM32F303xC memory setup.
+ */
+MEMORY
 {
-    . = 0;
-    _text = .;
-
-    startup : ALIGN(16) SUBALIGN(16)
-    {
-        KEEP(*(vectors))
-    } > boot_flash
-
-    constructors : ALIGN(4) SUBALIGN(4)
-    {
-        PROVIDE(__init_array_start = .);
-        KEEP(*(SORT(.init_array.*)))
-        KEEP(*(.init_array))
-        PROVIDE(__init_array_end = .);
-    } > boot_flash
-
-    destructors : ALIGN(4) SUBALIGN(4)
-    {
-        PROVIDE(__fini_array_start = .);
-        KEEP(*(.fini_array))
-        KEEP(*(SORT(.fini_array.*)))
-        PROVIDE(__fini_array_end = .);
-    } > boot_flash
-
-    .text : ALIGN(16) SUBALIGN(16)
-    {
-        *(.text.startup.*)
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
-        *(.glue_7t)
-        *(.glue_7)
-        *(.gcc*)
-    } > boot_flash
-
-    .ARM.extab :
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > boot_flash
-
-    .ARM.exidx : {
-        PROVIDE(__exidx_start = .);
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        PROVIDE(__exidx_end = .);
-     } > boot_flash
-
-    .eh_frame_hdr :
-    {
-        *(.eh_frame_hdr)
-    } > boot_flash
-
-    .eh_frame : ONLY_IF_RO
-    {
-        *(.eh_frame)
-    } > boot_flash
-    
-    .textalign : ONLY_IF_RO
-    {
-        . = ALIGN(8);
-    } > boot_flash
-
-    . = ALIGN(4);
-    _etext = .;
-    _textdata = _etext;
-
-    .stacks :
-    {
-        . = ALIGN(8);
-        __main_stack_base__ = .;
-        . += __main_stack_size__;
-        . = ALIGN(8);
-        __main_stack_end__ = .;
-        __process_stack_base__ = .;
-        __main_thread_stack_base__ = .;
-        . += __process_stack_size__;
-        . = ALIGN(8);
-        __process_stack_end__ = .;
-        __main_thread_stack_end__ = .;
-    } > ccmram
-    
-    .ccm (NOLOAD) :
-    {
-        PROVIDE(_cmm_start = .);
-        . = ALIGN(4);
-        *(.ccm)
-        . = ALIGN(4);
-        *(.ccm.*)
-        . = ALIGN(4);
-        *(.bss.mainthread.*)
-        . = ALIGN(4);
-        *(.bss._idle_thread_wa)
-        . = ALIGN(4);
-        *(.bss.rlist)
-        . = ALIGN(4);
-        *(.bss.vtlist)
-        . = ALIGN(4);
-        *(.bss.endmem)
-        . = ALIGN(4);
-        *(.bss.nextmem)
-        . = ALIGN(4);
-        *(.bss.default_heap)
-        . = ALIGN(4);
-        PROVIDE(_cmm_end = .);
-    } > ccmram
-
-    .data :
-    {
-        . = ALIGN(4);
-        PROVIDE(_data = .);
-        *(.data)
-        . = ALIGN(4);
-        *(.data.*)
-        . = ALIGN(4);
-        *(.ramtext)
-        . = ALIGN(4);
-        PROVIDE(_edata = .);
-    } > ram AT > boot_flash
-
-    .bss :
-    {
-        . = ALIGN(4);
-        PROVIDE(_bss_start = .);
-        *(.bss)
-        . = ALIGN(4);
-        *(.bss.*)
-        . = ALIGN(4);
-        *(COMMON)
-        . = ALIGN(4);
-        PROVIDE(_bss_end = .);
-    } > ram    
+    flash (rx) : org = 0x08000000, len = 20k
+    user_flash (rx) : org = 0x08005000, len = 128k
+    eeprom (rwx) : org = 0x8025000, len = 108k
+    ram (rwx) : org = 0x20000000, len = 40k
+    ccmram (rwx) : org = 0x10000000, len = 8k
 }
 
-PROVIDE(end = .);
-_end            = .;
+__user_flash_address__ = ORIGIN(user_flash);
+__user_flash_length__   = LENGTH(user_flash);
 
-__heap_base__   = _end;
-__heap_end__    = __ram_end__;
+INCLUDE ../common/link.ld

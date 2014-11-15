@@ -23,8 +23,6 @@
 #include "common.h"
 #include "communication.h"
 
-#define THD_CCM_WORKING_AREA(s, n) THD_WORKING_AREA(s, n) __attribute__ ((section (".ccm")))
-
 /*===========================================================================*/
 /* Config                                                                    */
 /*===========================================================================*/
@@ -92,8 +90,8 @@ static msg_t ThreadBlinker(void *arg) {
 /*
  * USB Bulk thread, times are in milliseconds.
  */
-static THD_CCM_WORKING_AREA(waThreadBDU, 1024);
-static msg_t ThreadBDU(void *arg) {
+static THD_WORKING_AREA(waThreadBDU, 1024);
+static msg_t ThreadBDU_CCM(void *arg) {
 
   event_listener_t el1;
   eventmask_t flags;
@@ -127,7 +125,7 @@ static msg_t ThreadBDU(void *arg) {
 /*
  * USB Serial thread, times are in milliseconds.
  */
-static THD_CCM_WORKING_AREA(waThreadSDU, 1024);
+static THD_WORKING_AREA(waThreadSDU, 1024);
 static msg_t ThreadSDU(void *arg) {
 
   uint8_t buffer[16];
@@ -220,7 +218,7 @@ int main(void) {
   sduStart(&SDU1, &serusbcfg);;
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU_CCM, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
   while (TRUE)    {

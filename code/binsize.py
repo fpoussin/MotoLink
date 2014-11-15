@@ -38,7 +38,7 @@ for app in APPS:
         for line in lines:
             columns = filter(None, line.split(" "))
             if ".stacks" in columns[0]:
-                ccm += int(columns[1])
+                ram += int(columns[1])
             elif ".ccm" in columns[0]:
                 ccm += int(columns[1])
                 rom += int(columns[1])
