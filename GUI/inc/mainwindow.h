@@ -49,7 +49,7 @@ typedef struct {
     float vAn8; /* TPS */
     float vAn9; /* AFR */
     float tps;
-    quint16 afr;
+    float afr;
     quint16 knock_value;
     quint16 knock_freq;
     quint16 rpm;
@@ -122,6 +122,9 @@ private slots:
     void showNewVersionPopup(QString version);
 
     void setTablesCursor(uint tps, uint rpm);
+
+    void onReadMtlSettings(void);
+    void onWriteMtlSettings(void);
 
 private:
     void setupDefaults(void);

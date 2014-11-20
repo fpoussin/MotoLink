@@ -15,7 +15,7 @@ class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, bool permanent = true, QObject *parent = 0);
+    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, bool singlerow = false, bool permanent = true, QObject *parent = 0);
     ~TableModel(void);
     bool isPermanent(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
@@ -31,6 +31,7 @@ public:
     void highlightCell(int row, int col);
     bool getCell(uint tp, uint rpm, int *row, int *col);
     void setView(QEnhancedTableView *view);
+    void setSingleRow(bool val);
     QEnhancedTableView * view();
 
 signals:
@@ -60,6 +61,7 @@ private:
     Hrc mHrc;
     QStandardItem* mLastItem;
     bool mPermanent;
+    bool mSinglerow;
 
 };
 

@@ -2,7 +2,7 @@
 #include <QLineEdit>
 #include <QDebug>
 
-TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool permanent, QObject *parent) :
+TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool singlerow, bool permanent, QObject *parent) :
     QStandardItemModel(parent),
     mStack(stack)
 {
@@ -12,6 +12,7 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool perman
     mLastItem = NULL;
     mView = NULL;
     mPermanent = permanent;
+    mSinglerow = singlerow;
     this->fill(false);
 }
 
@@ -29,6 +30,9 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     int val = value.toInt();
     int newvalue = val;
     QStandardItem * item = this->itemFromIndex(index);
+
+    if (item == NULL)
+        return false;
 
     if (val > mMax)
         newvalue = mMax;
@@ -55,8 +59,10 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 void TableModel::emptyData(const QModelIndex &index)
 {
     QStandardItem * item = this->itemFromIndex(index);
+    if (item == NULL)
+        return;
     item->setData(QColor(Qt::white), Qt::BackgroundRole);
-    QStandardItemModel::setData(index, QVariant(""), Qt::EditRole);
+    QStandardItemModel::setData(index, QVariant(), Qt::EditRole);
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -64,9 +70,14 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
     QVariant data(QStandardItemModel::headerData(section, orientation, role));
     if (role == Qt::DisplayRole && orientation == Qt::Vertical)
     {
-        QString str(data.toString());
-        str.append("%");
-        data = str;
+        if (mSinglerow)
+            data = "Value";
+        else
+        {
+            QString str(data.toString());
+            str.append("%");
+            data = str;
+        }
     }
 
     return data;
@@ -77,11 +88,15 @@ bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const Q
     QVariant tmp(value);
     if (orientation == Qt::Horizontal)
     {
+        /* Average to +- 100 */
         int tmpval = tmp.toInt();
         tmpval /= 100;
         tmpval *= 100;
         tmp.setValue(tmpval);
     }
+
+    if (mSinglerow && orientation == Qt::Vertical)
+        return true;
 
     if (role != Qt::UserRole) {
         emit headerDataNeedSync(section, orientation, value);
@@ -95,6 +110,8 @@ bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const Q
 bool TableModel::setValue(uint row, uint col, const QVariant &value)
 {
     QModelIndex idx = this->index(row, col);
+    if (!idx.isValid())
+        return false;
 
     return this->setData(idx, value, Qt::UserRole);
 }
@@ -142,10 +159,11 @@ void TableModel::highlightCell(int row, int col)
 {
     QFont font;
     QStandardItem* item = this->item(row, col);
-    QString valueStr = item->data(Qt::EditRole).value<QString>();
-    float value = item->data(Qt::EditRole).toFloat();
     if (item == NULL)
         return;
+
+    QString valueStr = item->data(Qt::EditRole).value<QString>();
+    float value = item->data(Qt::EditRole).toFloat();
 
     if (mLastItem != NULL && mLastItem != item)
     {
@@ -179,20 +197,27 @@ bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
     maxrow = this->rowCount()-1;
     maxcol = this->columnCount()-1;
 
-    for (int i=0; i < maxrow; i++)
+    if (mSinglerow)
     {
-        uint h = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt();
-        uint h2 = this->headerData(i+1, Qt::Vertical, Qt::EditRole).toUInt();
+        *row = 0;
+    }
+    else
+    {
+        for (int i=0; i < maxrow; i++)
+        {
+            uint h = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt();
+            uint h2 = this->headerData(i+1, Qt::Vertical, Qt::EditRole).toUInt();
 
-        if (tp >= this->headerData(maxrow, Qt::Vertical, Qt::EditRole).toUInt())
-        {
-            *row = maxrow;
-            break;
-        }
-        else if (tp >= h && tp <= h2)
-        {
-            *row = i;
-            break;
+            if (tp >= this->headerData(maxrow, Qt::Vertical, Qt::EditRole).toUInt())
+            {
+                *row = maxrow;
+                break;
+            }
+            else if (tp >= h && tp <= h2)
+            {
+                *row = i;
+                break;
+            }
         }
     }
 
@@ -219,6 +244,11 @@ bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
 void TableModel::setView(QEnhancedTableView *view)
 {
     mView = view;
+}
+
+void TableModel::setSingleRow(bool val)
+{
+    mSinglerow = val;
 }
 
 QEnhancedTableView *TableModel::view()
@@ -274,9 +304,12 @@ void TableModel::fill(bool random)
     mNumCol = 16;
     int value = mDefaultValue;
 
-    for (int row = 0; row < mNumRow; ++row)
+    if (mSinglerow)
+        mNumRow = 1;
+
+    for (int row = 0; row < mNumRow; row++)
     {
-        for (int column = 0; column < mNumCol; ++column)
+        for (int column = 0; column < mNumCol; column++)
         {
             QStandardItem *item = new QStandardItem(0);
             this->setItem(row, column, item);
@@ -285,7 +318,7 @@ void TableModel::fill(bool random)
 
             if (random)
                 value = mMin + (rand() % (int)(mMax - mMin + 1));
-            if (mPermanent)
+            if (mPermanent) /* Only fill cells if data is not volatile */
                 this->setData(this->indexFromItem(item), value, Qt::UserRole);
         }
     }

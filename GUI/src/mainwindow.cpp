@@ -20,11 +20,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mHelpViewer(NULL),
     mUndoStack(NULL),
     mFuelModel(&mUndoStack, -30, 30, 0),
-    mStagingModel(&mUndoStack, -30, 30, 0),
-    mAFRModel(&mUndoStack, 80, 200, 130, false),
+    mStagingModel(&mUndoStack, -15, 15, 0, true),
+    mAFRModel(&mUndoStack, 70, 240, 130, false, false),
     mAFRTgtModel(&mUndoStack, 80, 200, 130),
     mIgnModel(&mUndoStack, -20, 3, 0),
-    mKnockModel(&mUndoStack, 0, 800, 0, false)
+    mKnockModel(&mUndoStack, 0, 800, 0, false, false)
 {
     mMtl = new Motolink();
     mHrc = new Hrc();
@@ -267,6 +267,7 @@ void MainWindow::setupDefaults(void)
     mTablesViewList.append(mMainUi->tableAfrMap);
     mTablesViewList.append(mMainUi->tableAfrTgt);
     mTablesViewList.append(mMainUi->tableFuel);
+    mTablesViewList.append(mMainUi->tableStaging);
     mTablesViewList.append(mMainUi->tableIgnMap);
     mTablesViewList.append(mMainUi->tableKnk);
 
@@ -283,15 +284,19 @@ void MainWindow::setupDefaults(void)
     mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
 
+    mStagingModel.setSingleRow(true);
+
     mDegreeSuffix.setSuffix(QString::fromUtf8("°"));
     mPercentSuffix.setSuffix("%");
 
     mMainUi->tableFuel->setItemDelegate(&mPercentSuffix);
+    mMainUi->tableStaging->setItemDelegate(&mPercentSuffix);
     mMainUi->tableIgnMap->setItemDelegate(&mDegreeSuffix);
     mMainUi->tableAfrMap->setItemDelegate(&mAfrDisplay);
     mMainUi->tableAfrTgt->setItemDelegate(&mAfrDisplay);
 
     mMainUi->tableFuel->setModel(&mFuelModel);
+    mMainUi->tableStaging->setModel(&mStagingModel);
     mMainUi->tableIgnMap->setModel(&mIgnModel);
     mMainUi->tableAfrMap->setModel(&mAFRModel);
     mMainUi->tableAfrTgt->setModel(&mAFRTgtModel);
@@ -350,6 +355,9 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->bTpsSet0, SIGNAL(clicked()), this, SLOT(onSetTps0Pct()));
     QObject::connect(mMainUi->bTpsSet100, SIGNAL(clicked()), this, SLOT(onSetTps100Pct()));
 
+    QObject::connect(mMainUi->bReadMtl, SIGNAL(clicked()), this, SLOT(onReadMtlSettings()));
+    QObject::connect(mMainUi->bWriteMtl, SIGNAL(clicked()), this, SLOT(onWriteMtlSettings()));
+
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
              mRecentFilesActions[i]->setVisible(false);
@@ -364,13 +372,13 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
     QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
-    QObject::connect(this, SIGNAL(signalRequestSensors(QByteArray*)), mMtl, SLOT(getSensors(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestSensors(QByteArray*)), mMtl, SLOT(readSensors(QByteArray*)));
     QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(onSensorsDataReceived(QByteArray*)));
 
-    QObject::connect(this, SIGNAL(signalRequestMonitoring(QByteArray*)), mMtl, SLOT(getMonitoring(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestMonitoring(QByteArray*)), mMtl, SLOT(readMonitoring(QByteArray*)));
     QObject::connect(mMtl, SIGNAL(sendMonitoring(QByteArray*)), this, SLOT(onMonitoringDataReceived(QByteArray*)));
 
-    QObject::connect(this, SIGNAL(signalRequestKnock(QByteArray*)), mMtl, SLOT(getKnockSpectrum(QByteArray*)));
+    QObject::connect(this, SIGNAL(signalRequestKnock(QByteArray*)), mMtl, SLOT(readKnockSpectrum(QByteArray*)));
     QObject::connect(mMtl, SIGNAL(sendKockSpectrum(QByteArray*)), this, SLOT(OnKnockSpectrumDataReceived(QByteArray*)));
 
     QObject::connect(&mFile, SIGNAL(readFailed(QString)), this, SLOT(onSimpleError(QString)));
@@ -439,6 +447,7 @@ void MainWindow::retranslate()
     mTasksUi->retranslateUi(mTasksWidget);
 
     mMainUi->tableFuel->retranslate();
+    mMainUi->tableStaging->retranslate();
     mMainUi->tableAfrMap->retranslate();
     mMainUi->tableAfrTgt->retranslate();
     mMainUi->tableIgnMap->retranslate();
@@ -479,6 +488,8 @@ void MainWindow::uiEnable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
+    mMainUi->bReadMtl->setEnabled(toggle);
+    mMainUi->bWriteMtl->setEnabled(toggle);
 }
 
 void MainWindow::uiDisable()
@@ -491,6 +502,8 @@ void MainWindow::uiDisable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
+    mMainUi->bReadMtl->setEnabled(toggle);
+    mMainUi->bWriteMtl->setEnabled(toggle);
 }
 
 void MainWindow::updateRecentFilesActions()
@@ -606,9 +619,9 @@ void MainWindow::exportToMTLFile()
     mFile.addProperty("TPS100",
                       mMainUi->tableSensorTPS->item(1, 0)->data(Qt::EditRole));
 
-    mFile.addProperty("AFR8",
+    mFile.addProperty("AFR0V",
                       mMainUi->tableSensorAFR->item(0, 0)->data(Qt::EditRole));
-    mFile.addProperty("AFR22",
+    mFile.addProperty("AFR5V",
                       mMainUi->tableSensorAFR->item(1, 0)->data(Qt::EditRole));
 
 }
@@ -640,9 +653,9 @@ void MainWindow::importFromMTLFile()
     mFile.getProperty("TPS100", &prop);
     mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, prop);
 
-    mFile.getProperty("AFR8", &prop);
+    mFile.getProperty("AFR0V", &prop);
     mMainUi->tableSensorAFR->item(0, 0)->setData(Qt::EditRole, prop);
-    mFile.getProperty("AFR22", &prop);
+    mFile.getProperty("AFR5V", &prop);
     mMainUi->tableSensorAFR->item(1, 0)->setData(Qt::EditRole, prop);
 }
 
@@ -675,9 +688,10 @@ void MainWindow::doSensorsRedraw()
 {
     mMainUi->lVbat->setText(QString::number(mSensorsStruct.vAn7)+tr(" Volts"));
 
-    mMainUi->lTpsVolts->setText(QString::number(mSensorsStruct.vAn7)+tr(" Volts"));
+    mMainUi->lTpsVolts->setText(QString::number(mSensorsStruct.vAn8)+tr(" Volts"));
     mMainUi->lTpsPct->setText(QString::number(mSensorsStruct.tps)+tr("%"));
 
+    mMainUi->lAfrVal->setText(QString::number(mSensorsStruct.afr));
     mMainUi->lAfrVolts->setText(QString::number(mSensorsStruct.vAn9)+tr(" Volts"));
     mMainUi->lRpm->setText(QString::number(mSensorsStruct.rpm)+tr(" Rpm"));
     mMainUi->lRpmHertz->setText(QString::number(mSensorsStruct.freq1)+tr(" Hertz"));
@@ -697,11 +711,11 @@ void MainWindow::onSensorsDataReceived(QByteArray *data)
     mSensorsStruct.freq2  = sensors->freq2;
     mSensorsStruct.knock_value = sensors->knock_value;
     mSensorsStruct.knock_freq = sensors->knock_freq;
-    mSensorsStruct.afr = sensors->afr;
+    mSensorsStruct.afr = sensors->afr/100.0;
 
     this->setTablesCursor(mSensorsStruct.tps, mSensorsStruct.rpm);
     mKnockModel.writeCellPeak(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.knock_value));
-    mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr));
+    mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr*10.0));
 }
 
 void MainWindow::onMonitoringDataReceived(QByteArray *data)
@@ -779,13 +793,13 @@ void MainWindow::OnKnockSpectrumDataReceived(QByteArray *data)
 
 void MainWindow::onSetTps0Pct(void)
 {
-    float tps = (float)mMtl->getSensors()->an8/1000.0;
+    float tps = (float)mMtl->readSensors()->an8/1000.0;
     mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
 
 void MainWindow::onSetTps100Pct(void)
 {
-    float tps = (float)mMtl->getSensors()->an8/1000.0;
+    float tps = (float)mMtl->readSensors()->an8/1000.0;
     mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
 
@@ -843,4 +857,14 @@ void MainWindow::setTablesCursor(uint tps, uint rpm)
             tbl->highlightCell(row, col);
         }
     }
+}
+
+void MainWindow::onReadMtlSettings()
+{
+
+}
+
+void MainWindow::onWriteMtlSettings()
+{
+
 }

@@ -6,9 +6,11 @@
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include "ui_headeredit.h"
+#include "ui_celledit.h"
 
 namespace Ui {
     class HeaderEdit;
+    class CellEdit;
 }
 
 class QEnhancedTableView : public QTableView
@@ -37,7 +39,9 @@ private:
     void setEditBoundaries(int section, Qt::Orientation orientation);
 
     QDialog *mHeaderEditDialog;
+    QDialog *mCellEditDialog;
     Ui::HeaderEdit *mHeaderEditUi;
+    Ui::CellEdit *mCellEditUi;
     int mLastSection;
     Qt::Orientation mLastOrientation;
     bool mMenuReadOnly;

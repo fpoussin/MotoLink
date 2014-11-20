@@ -21,7 +21,7 @@ public:
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     bool isConnected(void) { return mConnected; }
-    const sensors_t * getSensors(void) { return &mSensors; }
+    const sensors_t * readSensors(void) { return &mSensors; }
 
 public slots:
     bool usbConnect(void);
@@ -32,15 +32,18 @@ public slots:
 
     quint8 getMode(void);
     quint16 getVersion(void);
-    bool getSensors(QByteArray *data);
-    bool getMonitoring(QByteArray *data);
-    bool getKnockSpectrum(QByteArray *data);
+    bool readSensors(QByteArray *data);
+    bool readMonitoring(QByteArray *data);
+    bool readKnockSpectrum(QByteArray *data);
     bool sendWake();
 
     void startUpdate(QByteArray *data);
     void haltTransfer(void);
     void sendFirmware(QByteArray *data);
     void verifyFirmware(QByteArray *data);
+
+    bool writeSettings(settings_t *settings);
+    bool readSettings(settings_t *settings);
 
 signals:
     void sendProgress(int p);
@@ -55,6 +58,7 @@ signals:
     void sendSensors(QByteArray *data);
     void sendMonitoring(QByteArray *data);
     void sendKockSpectrum(QByteArray *data);
+    void sendSettings(QByteArray *data);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;

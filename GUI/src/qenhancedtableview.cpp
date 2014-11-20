@@ -9,13 +9,18 @@
 QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
     QTableView(parent),
     mHeaderEditUi(new Ui::HeaderEdit),
-    mHeaderEditDialog(new QDialog)
+    mHeaderEditDialog(new QDialog),
+    mCellEditUi(new Ui::CellEdit),
+    mCellEditDialog(new QDialog)
 {
     mHeaderEditUi->setupUi(mHeaderEditDialog);
     mHeaderEditDialog->setParent(this);
     mHeaderEditDialog->setWindowFlags(Qt::Dialog
                                       | Qt::FramelessWindowHint);
-    mHeaderEditDialog->setWindowModality(Qt::WindowModal);
+
+    mCellEditUi->setupUi(mCellEditDialog);
+    mCellEditDialog->setParent(this);
+    mCellEditDialog->setWindowFlags(Qt::Dialog);
 
     this->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -42,6 +47,7 @@ void QEnhancedTableView::setMenuReadOnly(bool enabled)
 void QEnhancedTableView::retranslate()
 {
     mHeaderEditUi->retranslateUi(mHeaderEditDialog);
+    mCellEditUi->retranslateUi(mCellEditDialog);
 }
 
 void QEnhancedTableView::showContextMenu(const QPoint &pos)
@@ -113,7 +119,10 @@ void QEnhancedTableView::showContextMenu(const QPoint &pos)
         }
         else if (selectedItem == actions[2])
         {
-            // Change using a form
+            // Change using a dialog
+            const QPoint globalPos = this->mapToGlobal(pos);
+            mCellEditDialog->move(globalPos);
+            mCellEditDialog->showNormal();
         }
     }
 }

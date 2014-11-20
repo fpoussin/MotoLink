@@ -151,7 +151,7 @@ quint16 Motolink::getVersion()
     return 0;
 }
 
-bool Motolink::getSensors(QByteArray* data)
+bool Motolink::readSensors(QByteArray* data)
 {
     _WAIT_USB_
     _LOCK_
@@ -175,7 +175,7 @@ bool Motolink::getSensors(QByteArray* data)
     return false;
 }
 
-bool Motolink::getMonitoring(QByteArray *data)
+bool Motolink::readMonitoring(QByteArray *data)
 {
     _WAIT_USB_
     _LOCK_
@@ -201,7 +201,7 @@ bool Motolink::getMonitoring(QByteArray *data)
     return false;
 }
 
-bool Motolink::getKnockSpectrum(QByteArray *data)
+bool Motolink::readKnockSpectrum(QByteArray *data)
 {
     _WAIT_USB_
     _LOCK_
@@ -461,4 +461,16 @@ void Motolink::verifyFirmware(QByteArray *data)
     emit sendStatus(tr("Verification OK"));
     qDebug() << tr("Verification OK");
     emit sendLock(false);
+}
+
+bool Motolink::readSettings(settings_t *settings)
+{
+
+    return true;
+}
+
+bool Motolink::writeSettings(settings_t *settings)
+{
+
+    return true;
 }

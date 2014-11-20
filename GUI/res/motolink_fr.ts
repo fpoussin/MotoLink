@@ -2,6 +2,32 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>CellEdit</name>
+    <message>
+        <location filename="../ui/celledit.ui" line="29"/>
+        <source>Edit Cell</source>
+        <translation>Editer une Cellule</translation>
+    </message>
+    <message>
+        <location filename="../ui/celledit.ui" line="62"/>
+        <source>(+/-)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/celledit.ui" line="72"/>
+        <source>=</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Change (+/-)</source>
+        <translation type="vanished">Changer (+/-)</translation>
+    </message>
+    <message>
+        <source>Set</source>
+        <translation type="vanished">Etablir</translation>
+    </message>
+</context>
+<context>
     <name>HeaderEdit</name>
     <message>
         <location filename="../ui/headeredit.ui" line="29"/>
@@ -147,7 +173,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/main.ui" line="1595"/>
+        <location filename="../ui/main.ui" line="2434"/>
         <source>MotoLink</source>
         <translation></translation>
     </message>
@@ -156,7 +182,7 @@
         <translation type="vanished">Map Injection</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="208"/>
+        <location filename="../ui/main.ui" line="223"/>
         <source>Staging Map</source>
         <translation>Map Staging</translation>
     </message>
@@ -165,13 +191,13 @@
         <translation type="vanished">Map AFR</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="247"/>
-        <location filename="../src/mainwindow.cpp" line="282"/>
+        <location filename="../ui/main.ui" line="305"/>
+        <location filename="../src/mainwindow.cpp" line="283"/>
         <source>AFR Target</source>
         <translation>Cible AFR</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="301"/>
+        <location filename="../ui/main.ui" line="374"/>
         <source>Ignition Map</source>
         <translation>Map Allumage</translation>
     </message>
@@ -180,7 +206,7 @@
         <translation type="obsolete">Cible Allumage</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="418"/>
+        <location filename="../ui/main.ui" line="521"/>
         <source>Knock Map</source>
         <translation>Map Détonations</translation>
     </message>
@@ -189,7 +215,7 @@
         <translation type="vanished">Parametres</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="493"/>
+        <location filename="../ui/main.ui" line="2087"/>
         <source>Self Mapping</source>
         <translation>Map Auto</translation>
     </message>
@@ -198,8 +224,8 @@
         <translation type="vanished">Maximum Injection</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="542"/>
-        <location filename="../ui/main.ui" line="607"/>
+        <location filename="../ui/main.ui" line="2172"/>
+        <location filename="../ui/main.ui" line="2258"/>
         <source> %</source>
         <translation></translation>
     </message>
@@ -208,16 +234,17 @@
         <translation type="vanished">Minimum injection</translation>
     </message>
     <message>
+        <location filename="../ui/main.ui" line="1641"/>
         <source>Sensor Mappings</source>
-        <translation type="vanished">Réglages capteurs</translation>
+        <translation>Réglages capteurs</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1400"/>
+        <location filename="../ui/main.ui" line="1756"/>
         <source>Speed Divider</source>
         <translation>Diviseur Vitesse</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1435"/>
+        <location filename="../ui/main.ui" line="1924"/>
         <source>TPS</source>
         <translation></translation>
     </message>
@@ -226,33 +253,32 @@
         <translation type="obsolete">Calibrer TPS</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1214"/>
-        <location filename="../ui/main.ui" line="1486"/>
+        <location filename="../ui/main.ui" line="1981"/>
         <source>Voltage</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1384"/>
+        <location filename="../ui/main.ui" line="1740"/>
         <source>RPM Divider</source>
         <translation>Diviseur RPM</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="281"/>
+        <location filename="../src/mainwindow.cpp" line="282"/>
         <source>AFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1516"/>
+        <location filename="../ui/main.ui" line="2023"/>
         <source>Set 0%</source>
         <translation>Calibrer 0%</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1523"/>
+        <location filename="../ui/main.ui" line="2036"/>
         <source>Set 100%</source>
         <translation>Calibrer 100%</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="655"/>
+        <location filename="../ui/main.ui" line="632"/>
         <source>ECU Settings</source>
         <translation>Réglages ECU</translation>
     </message>
@@ -262,275 +288,328 @@
         <translation>Map Injection</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="361"/>
+        <location filename="../ui/main.ui" line="269"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increase to shift fuel to the upper shower injectors.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Decrease to shift fuel to the lower port injectors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Augmenter pour déplacer le carburant vers les injecteurs supérieurs.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Réduire pour déplacer le carburant vers les injecteur inférieurs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="449"/>
         <source>AFR Map</source>
         <translation>Map AFR</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="481"/>
+        <location filename="../ui/main.ui" line="599"/>
         <source>Settings</source>
         <translation>Parametres</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="523"/>
+        <location filename="../ui/main.ui" line="968"/>
+        <source>Bat:</source>
+        <translation>Bat:</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1291"/>
+        <source>Motolink Settings</source>
+        <translation>Réglages Motolink</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1463"/>
+        <source>Value</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1518"/>
+        <source>Offset</source>
+        <translation>Compensation</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1571"/>
+        <source>Disabled</source>
+        <translation>Désactivé</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1786"/>
+        <source>Knock freq</source>
+        <translation>Freq détonations</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1825"/>
+        <source>Hz</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="1850"/>
+        <source>Freq factor</source>
+        <translation>Facteur de freq</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="2153"/>
         <source>Maximum Fuel Change</source>
         <translation>Ajout Maximum Injection</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="536"/>
+        <location filename="../ui/main.ui" line="2166"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum amount of fuel added/removed by self mapping.&lt;/p&gt;&lt;p&gt;Keep a low value to be safe, but takes mores passes to get the correct amount.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quantité maximale d&apos;essence augmentée ou réduite par le self mapping.&lt;/p&gt;&lt;p&gt;Vous pouvez garder des valeurs basses pour diminuer les risques, mais la cartographie prendra plus de temps.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="579"/>
+        <location filename="../ui/main.ui" line="2230"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="582"/>
+        <location filename="../ui/main.ui" line="2233"/>
         <source>Minimum Fuel Change</source>
         <translation>Ajout Minimum Injection</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="595"/>
+        <location filename="../ui/main.ui" line="2246"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum amount of fuel added/removed required for self mapping to do any changes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quantitée requise pour que le self mapping fasse des modifications&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="676"/>
+        <location filename="../ui/main.ui" line="689"/>
         <location filename="../src/mainwindow.cpp" line="51"/>
         <source>Shift Light</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="729"/>
+        <location filename="../ui/main.ui" line="763"/>
         <location filename="../src/mainwindow.cpp" line="49"/>
         <source>Idle</source>
         <translation>Ralenti</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="742"/>
-        <location filename="../ui/main.ui" line="795"/>
+        <location filename="../ui/main.ui" line="776"/>
+        <location filename="../ui/main.ui" line="850"/>
         <source> rpm</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="782"/>
+        <location filename="../ui/main.ui" line="837"/>
         <source>Pit limiter</source>
         <translation>Limiteur de Stands</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="856"/>
+        <location filename="../ui/main.ui" line="911"/>
         <source>Sensors Readings</source>
         <translation>Info Capteurs</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="871"/>
         <source>Battery:</source>
-        <translation>Batterie:</translation>
+        <translation type="vanished">Batterie:</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1035"/>
+        <location filename="../ui/main.ui" line="1216"/>
         <source>Speed</source>
         <translation>Vitesse</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1117"/>
+        <location filename="../ui/main.ui" line="1324"/>
         <source>AFR settings</source>
         <translation>Réglages AFR</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1151"/>
+        <location filename="../ui/main.ui" line="1394"/>
         <source>Analog Mapping</source>
         <translation>Réglages Analogiques</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1251"/>
+        <location filename="../ui/main.ui" line="1580"/>
         <source>Analog 5V</source>
         <translation>Analogique 5V</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1260"/>
+        <location filename="../ui/main.ui" line="1589"/>
         <source>Serial (Innovate)</source>
         <translation>Série (Innovate)</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1278"/>
+        <location filename="../ui/main.ui" line="1607"/>
         <source>Input Type</source>
         <translation>Type d&apos;entrée</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1319"/>
         <source>Frequency Sensor Mappings</source>
-        <translation>Réglages Capteur de Fréquence</translation>
+        <translation type="vanished">Réglages Capteur de Fréquence</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1563"/>
+        <location filename="../ui/main.ui" line="2342"/>
+        <source>Read Settings</source>
+        <translation>Lire les réglages</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="2371"/>
+        <source>Write Settings</source>
+        <translation>Ecrire les réglages</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="2402"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1567"/>
+        <location filename="../ui/main.ui" line="2406"/>
         <source>Recent files</source>
         <translation>Fichiers récents</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1587"/>
+        <location filename="../ui/main.ui" line="2426"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1610"/>
+        <location filename="../ui/main.ui" line="2449"/>
         <source>Edit</source>
         <translation>Editer</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1618"/>
+        <location filename="../ui/main.ui" line="2457"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1625"/>
+        <location filename="../ui/main.ui" line="2464"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1648"/>
+        <location filename="../ui/main.ui" line="2487"/>
         <source>Open...</source>
         <translation>Ouvrir...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1651"/>
+        <location filename="../ui/main.ui" line="2490"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1663"/>
+        <location filename="../ui/main.ui" line="2502"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1666"/>
+        <location filename="../ui/main.ui" line="2505"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1678"/>
+        <location filename="../ui/main.ui" line="2517"/>
         <source>Save As...</source>
         <translation>Enregistrer sous...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1681"/>
+        <location filename="../ui/main.ui" line="2520"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1693"/>
+        <location filename="../ui/main.ui" line="2532"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1696"/>
+        <location filename="../ui/main.ui" line="2535"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1708"/>
+        <location filename="../ui/main.ui" line="2547"/>
         <source>About</source>
         <translation>à propos</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1720"/>
+        <location filename="../ui/main.ui" line="2559"/>
         <source>About QT</source>
         <translation>à propos de QT</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1732"/>
+        <location filename="../ui/main.ui" line="2571"/>
         <source>Connect</source>
         <translation>Connecter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1735"/>
+        <location filename="../ui/main.ui" line="2574"/>
         <source>F3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1747"/>
+        <location filename="../ui/main.ui" line="2586"/>
         <source>Disconnect</source>
         <translation>Déconnecter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1750"/>
+        <location filename="../ui/main.ui" line="2589"/>
         <source>F4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1762"/>
+        <location filename="../ui/main.ui" line="2601"/>
         <source>Import from HRC...</source>
         <translation>Importer depuis HRC...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1771"/>
+        <location filename="../ui/main.ui" line="2610"/>
         <source>Export to HRC...</source>
         <translation>Exporter vers HRC...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1780"/>
+        <location filename="../ui/main.ui" line="2619"/>
         <source>New...</source>
         <translation>Nouveau...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1783"/>
+        <location filename="../ui/main.ui" line="2622"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1795"/>
+        <location filename="../ui/main.ui" line="2634"/>
         <source>Index</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1798"/>
+        <location filename="../ui/main.ui" line="2637"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1810"/>
+        <location filename="../ui/main.ui" line="2649"/>
         <source>Update Firmware...</source>
         <translation>Mise à jour du Firmware...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1813"/>
+        <location filename="../ui/main.ui" line="2652"/>
         <source>Ctrl+U</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1825"/>
+        <location filename="../ui/main.ui" line="2664"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1828"/>
+        <location filename="../ui/main.ui" line="2667"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1843"/>
+        <location filename="../ui/main.ui" line="2682"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1846"/>
+        <location filename="../ui/main.ui" line="2685"/>
         <source>Ctrl+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1930"/>
+        <location filename="../ui/main.ui" line="2769"/>
         <source>Auto save</source>
         <translation>Sauvegarde auto</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1942"/>
+        <location filename="../ui/main.ui" line="2781"/>
         <source>Auto Update</source>
         <translation>Envoi Auto</translation>
     </message>
@@ -539,32 +618,32 @@
         <translation type="vanished">Envoi automatique</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1858"/>
+        <location filename="../ui/main.ui" line="2697"/>
         <source>Send Configuration</source>
         <translation>Envoyer la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1867"/>
+        <location filename="../ui/main.ui" line="2706"/>
         <source>Get Configuration</source>
         <translation>Recevoir la configuration</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1894"/>
+        <location filename="../ui/main.ui" line="2733"/>
         <source>Show actions</source>
         <translation>Monter les actions</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1903"/>
+        <location filename="../ui/main.ui" line="2742"/>
         <source>Show Tasks...</source>
         <translation>Montrer les tâches...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1915"/>
+        <location filename="../ui/main.ui" line="2754"/>
         <source>Show Knock Spectrum...</source>
         <translation>Montrer le spectre du signal des détonations...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1918"/>
+        <location filename="../ui/main.ui" line="2757"/>
         <source>Ctrl+K</source>
         <translation></translation>
     </message>
@@ -573,27 +652,27 @@
         <translation type="vanished">Montrer les taches...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="1906"/>
+        <location filename="../ui/main.ui" line="2745"/>
         <source>Ctrl+T</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="279"/>
+        <location filename="../src/mainwindow.cpp" line="280"/>
         <source>Fuel</source>
         <translation>Injection</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="280"/>
+        <location filename="../src/mainwindow.cpp" line="281"/>
         <source>Staging</source>
         <translation>Répartition</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="283"/>
+        <location filename="../src/mainwindow.cpp" line="284"/>
         <source>Ignition</source>
         <translation>Allumage</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="284"/>
+        <location filename="../src/mainwindow.cpp" line="285"/>
         <source>Knock</source>
         <translation>Détonations</translation>
     </message>
@@ -682,17 +761,17 @@ Sauvegarder avant la fermeture ?</translation>
         <translation>MotoLink est une interface intelligente conçue pour les calculateurs HRC.&lt;br/&gt;&lt;br/&gt;Vous pouvez trouver plus d&apos;informations &lt;a href=&quot;https://github.com/fpoussin/MotoLink&quot;&gt;ici.&lt;/a&gt; (En Anglais)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="420"/>
+        <location filename="../src/mainwindow.cpp" line="428"/>
         <source>Knock Frequency (Hertz)</source>
         <translation>Fréquence des détonations (Hertz)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="421"/>
+        <location filename="../src/mainwindow.cpp" line="429"/>
         <source>Knock Intensity (Volts, AC)</source>
         <translation>Amplitude du signal de détonation (Volts, Courant Alternatif)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="429"/>
+        <location filename="../src/mainwindow.cpp" line="437"/>
         <source>Loading...</source>
         <translation>Chargement...</translation>
     </message>
@@ -709,45 +788,46 @@ Sauvegarder avant la fermeture ?</translation>
         <translation type="vanished">Changer toutes les cellules</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="676"/>
-        <location filename="../src/mainwindow.cpp" line="678"/>
-        <location filename="../src/mainwindow.cpp" line="681"/>
+        <location filename="../ui/main.ui" line="1499"/>
+        <location filename="../src/mainwindow.cpp" line="689"/>
+        <location filename="../src/mainwindow.cpp" line="691"/>
+        <location filename="../src/mainwindow.cpp" line="695"/>
         <source> Volts</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="679"/>
+        <location filename="../src/mainwindow.cpp" line="692"/>
         <source>%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="682"/>
+        <location filename="../src/mainwindow.cpp" line="696"/>
         <source> Rpm</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="683"/>
-        <location filename="../src/mainwindow.cpp" line="684"/>
+        <location filename="../src/mainwindow.cpp" line="697"/>
+        <location filename="../src/mainwindow.cpp" line="698"/>
         <source> Hertz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="828"/>
+        <location filename="../src/mainwindow.cpp" line="842"/>
         <source>New version available</source>
         <translation>Nouvelle version disponible</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="829"/>
+        <location filename="../src/mainwindow.cpp" line="843"/>
         <source>There is a new version available for download: </source>
         <translation>Il y a une nouvelle version disponible pour téléchargement:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="830"/>
+        <location filename="../src/mainwindow.cpp" line="844"/>
         <source>&lt;br/&gt;You are currently using: </source>
         <translation>&lt;br/&gt;Vous utilisez actuellement: </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="832"/>
+        <location filename="../src/mainwindow.cpp" line="846"/>
         <source>Download here</source>
         <translation>Télécharger ici</translation>
     </message>
@@ -908,34 +988,34 @@ Sauvegarder avant la fermeture ?</translation>
 <context>
     <name>QEnhancedTableView</name>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="64"/>
+        <location filename="../src/qenhancedtableview.cpp" line="70"/>
         <source>Clear selection</source>
         <translation>Effacer la sélection</translation>
     </message>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="81"/>
+        <location filename="../src/qenhancedtableview.cpp" line="87"/>
         <source>Increase by </source>
         <translation>Augmenter de </translation>
     </message>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="82"/>
+        <location filename="../src/qenhancedtableview.cpp" line="88"/>
         <source>Decrease by </source>
         <translation>Réduire de </translation>
     </message>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="83"/>
+        <location filename="../src/qenhancedtableview.cpp" line="89"/>
         <source>Change selection...</source>
         <translation>Changer la sélection...</translation>
     </message>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="125"/>
-        <location filename="../src/qenhancedtableview.cpp" line="149"/>
+        <location filename="../src/qenhancedtableview.cpp" line="134"/>
+        <location filename="../src/qenhancedtableview.cpp" line="158"/>
         <source>Unable to change</source>
         <translation>Impossible de modifier</translation>
     </message>
     <message>
-        <location filename="../src/qenhancedtableview.cpp" line="126"/>
-        <location filename="../src/qenhancedtableview.cpp" line="150"/>
+        <location filename="../src/qenhancedtableview.cpp" line="135"/>
+        <location filename="../src/qenhancedtableview.cpp" line="159"/>
         <source>This cell cannot be changed</source>
         <translation>Cette céllule ne peut être modifiée</translation>
     </message>
