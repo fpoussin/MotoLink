@@ -23,6 +23,8 @@
 #define CMD_GET_SENSORS (uint8_t)0x0B
 #define CMD_GET_MONITOR (uint8_t)0x0C
 #define CMD_GET_FFT (uint8_t)0x0D
+#define CMD_GET_SETTINGS (uint8_t)0x0F
+#define CMD_SET_SETTINGS (uint8_t)0x10
 
 #define FLAG_OK (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02
@@ -71,5 +73,18 @@ typedef struct {
   uint16_t irq;
   uint16_t idle;
 } monitor_t;
+
+typedef struct {
+  uint16_t knockFreq;
+  uint16_t knockRatio;
+  uint16_t tpsMinV;
+  uint16_t tpsMaxV;
+  uint16_t fuelMinTh;
+  uint16_t fuelMaxChange;
+  uint16_t AfrInput;
+  uint16_t AfrMinV;
+  uint16_t AfrMaxV;
+  uint16_t dummy;
+} settings_t;
 
 #endif

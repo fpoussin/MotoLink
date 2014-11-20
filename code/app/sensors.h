@@ -37,6 +37,7 @@ extern monitor_t monitoring;
 void reEnableInputCapture_CCM(TIMCAPDriver *timcapp);
 
 uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
+uint16_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal);
 uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio);
 uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size);
 

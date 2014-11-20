@@ -293,6 +293,7 @@ msg_t ThreadADC_CCM(void *arg)
     /* Todo: get params from memory */
     sensors_data.tps = calculateTpFromMillivolt(500, 4500, sensors_data.an8);
     sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
+    sensors_data.afr = calculateAFRFromMillivolt(735, 2239, sensors_data.an9);
   }
   return 0;
 }
