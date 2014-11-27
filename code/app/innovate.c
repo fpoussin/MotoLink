@@ -42,14 +42,15 @@ void readMtsHeader(BaseChannel *chn, uint8_t *buf)
       // Status is good
       if (status == 0)
       {
-
+        /* Should be 147 */
         afr_multiplier = ((buf[0] & MTS_AFR_MUL_MASK1) << 7)
             & (buf[1] & MTS_AFR_MUL_MASK2);
 
         lambda = ((buf[2] & MTS_LAMBDA_MASK1) << 7)
             & (buf[3] & MTS_LAMBDA_MASK2);
 
-        sensors_data.afr = ((lambda+500) * afr_multiplier) / 10000;
+        /* Multiplied by 10 */
+        sensors_data.afr = ((lambda+500) * afr_multiplier) / 1000;
       }
     }
     else

@@ -5,37 +5,40 @@ uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
 {
   cmd_header_t header;
   uint8_t data_buf[DATA_BUF_SIZE];
-  uint8_t err_buf = MASK_REPLY_ERR;
+  uint16_t data_read;
 
   if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(cmd_header_t), MS2ST(50)) < sizeof(cmd_header_t))
   {
-    chnPutTimeout(chn, err_buf+1, MS2ST(25));
+    chnPutTimeout(chn, MASK_DECODE_ERR+1, MS2ST(25));
     return 1;
   }
 
   // Decode header
-  if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 || !(header.type & MASK_CMD) || header.len < 5 )
+  if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 || !(header.type & MASK_CMD) || header.len < sizeof(header)+1 )
   {
-    chnPutTimeout(chn, err_buf+2, MS2ST(25));
+    chnPutTimeout(chn, MASK_DECODE_ERR+2, MS2ST(25));
     return 2;
   }
 
   // Fetch data
-  if ((uint8_t)chnReadTimeout(chn, data_buf, header.len-4, MS2ST(25)) < (header.len-4))
+  data_read = (uint8_t)chnReadTimeout(chn, data_buf, header.len-sizeof(header), MS2ST(25));
+  if (data_read < (header.len-sizeof(header)))
   {
-    chnPutTimeout(chn, err_buf+3, MS2ST(25));
+    chnPutTimeout(chn, MASK_DECODE_ERR+3, MS2ST(25));
     return 3;
   }
+  data_read--; // Ignore CS byte
 
   // Fetch, compute and compare checksums
-  const uint8_t cs1 = checksum((uint8_t *)&header, sizeof(header)) + checksum(data_buf, header.len-5);
-  const uint8_t cs2 = data_buf[header.len-5];
+  const uint8_t cs1 = checksum((uint8_t *)&header, sizeof(header)) + checksum(data_buf, data_read);
+  const uint8_t cs2 = data_buf[data_read];
 
   if (cs1 != cs2)
   {
-    chnPutTimeout(chn, err_buf+4, MS2ST(50));
+    chnPutTimeout(chn, MASK_DECODE_ERR+4, MS2ST(25));
     return 4;
   }
+
 
   // Process command
   uint8_t status = 0;
@@ -50,7 +53,7 @@ uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
       break;
 
     case MASK_CMD | CMD_WRITE:
-      status = writeHandler(chn, data_buf, header.len-5);
+      status = writeHandler(chn, data_buf, data_read);
       break;
 
     case MASK_CMD | CMD_RESET:
@@ -74,13 +77,8 @@ uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
       break;
 
     default:
-      chnPutTimeout(chn, err_buf+5, MS2ST(50));
+      chnPutTimeout(chn, MASK_DECODE_ERR+5, MS2ST(25));
       break;
-  }
-
-  if (status) {
-    //chnPutTimeout(chn, err_buf, MS2ST(25));
-    status += 5;
   }
 
   return status;
@@ -90,7 +88,7 @@ uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
 uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
 
   if ((len-4) % 4) {
-    chnPutTimeout(chn, MASK_REPLY_ERR | CMD_WRITE, MS2ST(50));
+    chnPutTimeout(chn, MASK_CMD_ERR | CMD_WRITE, MS2ST(25));
     return 1;
   }
 
@@ -101,7 +99,7 @@ uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
   /* Deduct buffer space used by address */
   uint8_t res = writeFlash(offset, data_buf, (len-4)/4);
 
-  if (res != 0) replbuf = MASK_REPLY_ERR | CMD_WRITE;
+  if (res != 0) replbuf = MASK_CMD_ERR | CMD_WRITE;
   chnPutTimeout(chn, replbuf, MS2ST(25));
 
   return res;
@@ -142,7 +140,7 @@ uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
   uint32_t len = leToInt(buf);
 
   if (eraseFlash(len)) {
-    chnPutTimeout(chn, MASK_REPLY_ERR | CMD_ERASE, MS2ST(50));
+    chnPutTimeout(chn, MASK_CMD_ERR | CMD_ERASE, MS2ST(50));
     return 1;
   }
 

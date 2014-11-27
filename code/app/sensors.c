@@ -9,7 +9,7 @@ adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 uint8_t output_knock[SPECTRUM_SIZE];
 
-sensors_t sensors_data = {0x0F,0x0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,{0x0F,0x0F}};
 static uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 static uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 static uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
@@ -214,10 +214,10 @@ const ADCConversionGroup adcgrpcfg_knock = {
   }
 };
 
-uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal)
+uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal)
 {
-  const uint16_t tpsMin = 0;
-  const uint16_t tpsMax = 10000;
+  const uint8_t tpsMin = 0;
+  const uint8_t tpsMax = 200;
 
   if (AnVal <= AnMin)
     return tpsMin;
@@ -227,7 +227,7 @@ uint16_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal
   return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }
 
-uint16_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal)
+uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal)
 {
   if (AnVal == 0)
     return afrMin;
@@ -237,23 +237,24 @@ uint16_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t An
   return map(AnVal, 0, 5000, afrMin, afrMax);
 }
 
-uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
+/* Hundreds of RPM */
+uint8_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
 {
-  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/100.0))*60.0;
+  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/10000.0))*60.0;
 
   return flRatio;
 }
 
-uint16_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size)
+uint8_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size)
 {
   uint16_t i;
   uint16_t res;
   float32_t multiplier;
 
   const float32_t hzPerBin = (float32_t)smplFreq/(float32_t)size;
-  const float32_t flRatio = ((float32_t)ratio/1000.0);
+  const float32_t flRatio = ((float32_t)ratio/100000.0);
+  const uint16_t range = 11;
   uint16_t index = tgtFreq/hzPerBin;
-  uint16_t range = 11;
 
   if (index < range)
     index = range;

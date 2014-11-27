@@ -6,8 +6,10 @@
 
 /* First 3 bits */
 #define MASK_CMD (uint8_t)0x80
-#define MASK_REPLY_OK (uint8_t)0x40
-#define MASK_REPLY_ERR (uint8_t)0x20
+#define MASK_REPLY_OK (uint8_t)0x60
+#define MASK_DECODE_ERR (uint8_t)0x40
+#define MASK_CMD_ERR (uint8_t)0x20
+#define MASK_CMD_PART (uint8_t)0x1F
 
 /* Last 5 bits, up to 0x1F */
 #define CMD_ERASE (uint8_t)0x01
@@ -25,6 +27,11 @@
 #define CMD_GET_FFT (uint8_t)0x0D
 #define CMD_GET_SETTINGS (uint8_t)0x0F
 #define CMD_SET_SETTINGS (uint8_t)0x10
+#define CMD_GET_TABLES (uint8_t)0x11
+#define CMD_GET_TABLES_HEADERS (uint8_t)0x12
+#define CMD_SET_TABLES_HEADERS (uint8_t)0x13
+#define CMD_CLEAR_CELL (uint8_t)0x14
+#define CMD_CLEAR_TABLES (uint8_t)0x15
 
 #define FLAG_OK (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02
@@ -51,16 +58,23 @@ typedef struct {
 } cmd_header_t;
 
 typedef struct {
-  uint16_t afr;
-  uint16_t tps;
-  uint16_t rpm;
+  uint8_t row;
+  uint8_t col;
+} cell_t;
+
+typedef struct {
   uint16_t an7;
   uint16_t an8;
   uint16_t an9;
   uint16_t freq1;
   uint16_t freq2;
-  uint16_t knock_value;
-  uint16_t knock_freq;
+  uint8_t knock_value;
+  uint8_t knock_freq;
+  uint8_t rpm;
+  uint8_t afr;
+  uint8_t afr_status;
+  uint8_t tps;
+  cell_t cell;
 } sensors_t;
 
 typedef struct {

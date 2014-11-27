@@ -155,7 +155,7 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread.
  */
-THD_WORKING_AREA(waThreadBDU_CCM, 512);
+THD_WORKING_AREA(waThreadBDU, 640);
 msg_t ThreadBDU(void *arg)
 {
   event_listener_t el1;
@@ -253,6 +253,7 @@ msg_t ThreadADC_CCM(void *arg)
   uint16_t i, pos;
   uint32_t an[3] = {0, 0, 0};
   median_t an1, an2, an3;
+  uint8_t row, col;
 
   median_init(&an1, 0 , an1_buffer, ADC_GRP1_BUF_DEPTH/2);
   median_init(&an2, 0 , an2_buffer, ADC_GRP1_BUF_DEPTH/2);
@@ -293,7 +294,18 @@ msg_t ThreadADC_CCM(void *arg)
     /* Todo: get params from memory */
     sensors_data.tps = calculateTpFromMillivolt(500, 4500, sensors_data.an8);
     sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
-    sensors_data.afr = calculateAFRFromMillivolt(735, 2239, sensors_data.an9);
+    sensors_data.afr = calculateAFRFromMillivolt(73, 224, sensors_data.an9);
+
+    if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
+    {
+      sensors_data.cell.row = row;
+      sensors_data.cell.col = col;
+
+      /* Average */
+      tableAFR[row][col] = tableAFR[row][col] == 0 ? sensors_data.afr : ((uint16_t)sensors_data.afr+(uint16_t)tableAFR[row][col])/2;
+      /* Peaks */
+      tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col] ? sensors_data.knock_value : tableKnock[row][col];
+    }
   }
   return 0;
 }
@@ -471,6 +483,11 @@ int main(void)
   /*
    * Start OS and HAL
    */
+  uint32_t acr = FLASH->ACR;
+  acr &= ~FLASH_ACR_LATENCY;
+  acr |= FLASH_ACR_LATENCY_0;
+  FLASH->ACR = acr;
+
   halInit();
   driversInit();
   chSysInit();
@@ -518,7 +535,7 @@ int main(void)
   /*
    * Creates the threads.
    */
-  pThreadBDU = chThdCreateStatic(waThreadBDU_CCM, sizeof(waThreadBDU_CCM), NORMALPRIO, ThreadBDU, NULL);
+  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
   pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), HIGHPRIO, ThreadADC_CCM, NULL);
   pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock_CCM, NULL);

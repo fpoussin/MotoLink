@@ -16,7 +16,7 @@ uint32_t beToInt(uint8_t *ptr) {
       (uint32_t)ptr[3];
 }
 
-uint8_t checksum(uint8_t *data, uint8_t length)
+uint8_t checksum(const uint8_t *data, uint8_t length)
 {
     uint8_t i;
     uint8_t sum = 0;

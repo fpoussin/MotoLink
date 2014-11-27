@@ -186,7 +186,7 @@ int main(void) {
    * Given the 25<->55k pullup, 100nf cap, 0.8v threshold voltage
    * it takes 0.7ms<->1.5ms to reach the High level voltage */
   uint32_t i = 0;
-  while (i++ < 10000) // 1.4ms * 3
+  while (i++ < 20000) // 1.4ms * 3
   {
     asm ("nop");
   }

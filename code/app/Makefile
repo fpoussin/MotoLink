@@ -105,7 +105,7 @@ CSRC = $(PORTSRC) \
        sensors.c debug.c \
        eeprom.c median.c \
        ipc.c innovate.c \
-       opamp.c
+       opamp.c tables.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

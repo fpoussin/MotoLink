@@ -90,6 +90,7 @@ SECTIONS
 	*(.text.Vector*)
 	*(.text.*_port_*)
 	*chcore*.o(.text*)
+	*(.text.*FLASH_*)
         *(.text.SysTick_Handler*)
         *(.data.*_CCM*)
         . = ALIGN(4);
