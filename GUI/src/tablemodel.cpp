@@ -13,6 +13,7 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool single
     mView = NULL;
     mPermanent = permanent;
     mSinglerow = singlerow;
+    this->mId = 0;
     this->fill(false);
 }
 
@@ -42,18 +43,49 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     if (role == Qt::EditRole)
     {
         mStack->push(new ModelEditCommand(item, QVariant(newvalue), mName, this));
-        emit cellValueChanged();
+        emit cellValueChanged(index.row(), index.column());
     }
-    if (role == Qt::UserRole)
+    else if (role == Qt::UserRole)
     {
         role = Qt::EditRole;
-        emit cellValueChanged();
+        emit cellValueChanged(index.row(), index.column());
+    }
+    else if (role == Qt::UserRole+1)
+    {
+        role = Qt::EditRole;
     }
     item->setData(this->NumberToColor(newvalue, true), Qt::BackgroundRole);
     item->setData(QColor(Qt::white), Qt::ForegroundRole);
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return QStandardItemModel::setData(index, newvalue, role);
+}
+
+void TableModel::setDataFromArray(const quint8 *array)
+{
+    QModelIndex idx;
+    quint8 data;
+
+    for (int i=0; i<this->rowCount(); i++)
+    {
+        for (int j=0; j<this->columnCount(); j++)
+        {
+            idx = this->index(i, j);
+            data = array[(i*this->columnCount())+j];
+            if (idx.isValid() && data > 0)
+            {
+                this->setData(idx, QVariant(data), Qt::UserRole+1);
+            }
+            else
+            {
+                QStandardItem * item = this->itemFromIndex(idx);
+                if (item == NULL)
+                    continue;
+                item->setData(QColor(Qt::white), Qt::BackgroundRole);
+                QStandardItemModel::setData(idx, QVariant(), Qt::EditRole);
+            }
+        }
+    }
 }
 
 void TableModel::emptyData(const QModelIndex &index)
@@ -63,6 +95,7 @@ void TableModel::emptyData(const QModelIndex &index)
         return;
     item->setData(QColor(Qt::white), Qt::BackgroundRole);
     QStandardItemModel::setData(index, QVariant(), Qt::EditRole);
+    emit cellCleared(mId, index.row(), index.column());
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -139,17 +172,25 @@ bool TableModel::writeCellAverage(uint tp, uint rpm, QVariant &value)
 {
     int row = -1;
     int col = -1;
+
     if (!this->getCell(tp, rpm, &row, &col))
         return false;
 
     QStandardItem* item = this->item(row, col);
     QVariant average(item->data(Qt::EditRole));
-    float flAvg = average.value<float>();
 
-    flAvg += value.toFloat();
-    flAvg /= 2;
+    if (!average.isNull())
+    {
+        float flAvg = average.value<float>();
 
-    item->setData(QVariant(flAvg), Qt::EditRole);
+        flAvg += value.toFloat();
+        flAvg /= 2;
+        item->setData(QVariant(flAvg), Qt::EditRole);
+    }
+    else
+    {
+        item->setData(value, Qt::EditRole);
+    }
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
     return true;
@@ -158,6 +199,8 @@ bool TableModel::writeCellAverage(uint tp, uint rpm, QVariant &value)
 void TableModel::highlightCell(int row, int col)
 {
     QFont font;
+    if (mSinglerow)
+        row = 0;
     QStandardItem* item = this->item(row, col);
     if (item == NULL)
         return;
@@ -231,7 +274,7 @@ bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
             *col = maxcol;
             break;
         }
-        if (rpm >= h && rpm <= h2)
+        else if (rpm >= h && rpm <= h2)
         {
             *col = i;
             break;
@@ -244,6 +287,11 @@ bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
 void TableModel::setView(QEnhancedTableView *view)
 {
     mView = view;
+}
+
+void TableModel::setId(uint id)
+{
+    mId = id;
 }
 
 void TableModel::setSingleRow(bool val)

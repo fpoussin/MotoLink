@@ -13,14 +13,14 @@ Motolink::Motolink(QObject *parent) :
     mUsb->setGuid(mGuid);
     mUsb->setDeviceIds(mPid, mVid);
     mUsb->setEndPoints(0x83, 0x03);
-    mUsb->setTimeout(300);
+    mUsb->setTimeout(200);
 
     mBtl = new Bootloader(mUsb);
 
     mConnected = false;
     mAbortConnect = false;
 
-    //mUsb->setDebug(true);
+    mUsb->setDebug(true);
 
     this->moveToThread(mThread);
     mThread->start();
@@ -41,16 +41,22 @@ Motolink::~Motolink()
 
 bool Motolink::usbConnect()
 {
+    QByteArray tmp;
     if (mConnected)
         return true;
     _LOCK_
     mConnected = (mUsb->open() == 0);
+    mUsb->read(&tmp, 512);
     _UNLOCK_
 
-    if (mConnected)
-        this->sendWake();
+    if (!mConnected || !this->sendWake())
+    {
+        mConnected = false;
+        mUsb->close();
+        return false;
+    }
 
-    return mConnected;
+    return true;
 }
 
 bool Motolink::usbProbeConnect()
@@ -65,8 +71,6 @@ bool Motolink::usbProbeConnect()
     timer.start();
     while (timer.elapsed() < 10000)
     {
-        qDebug("Probing...");
-
         emit timeElapsed(timer.elapsed());
         ret = mUsb->open();
         if (ret >= 0 || mAbortConnect) {
@@ -77,7 +81,7 @@ bool Motolink::usbProbeConnect()
     }
 
     if (ret < 0) {
-        qDebug("Probing Failed");
+        qWarning("Probing Failed");
         emit connectionResult(false);
         mConnected = false;
         emit connectionProgress(0);
@@ -86,12 +90,15 @@ bool Motolink::usbProbeConnect()
 
     /* Clean buffer */
     mUsb->read(&tmp, 256);
+
+    _UNLOCK_
+    if (!this->sendWake())
+    {
+        qWarning("Connection Failed");
+        return false;
+    }
+
     mConnected = true;
-
-    qDebug("Probing success");
-
-    //_usleep(200000);
-    //this->sendWake();
 
     emit connectionProgress(100);
     emit connectionResult(true);
@@ -114,19 +121,11 @@ bool Motolink::usbDisconnect(void)
 
 quint8 Motolink::getMode(void)
 {
-    _WAIT_USB_
-    _LOCK_
     QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_GET_MODE);
+    this->prepareCmd(&send, CMD_GET_MODE);
 
-    if (mUsb->write(&send, send.size()) < send.size())
-    {
-        return 0;
-    }
-    mUsb->read(&recv, 2);
-
-    if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MODE))
-        return recv.at(1) & ~MASK_REPLY_OK;
+    if (this->sendCmd(&send, &recv, 1, CMD_GET_MODE))
+        return recv.at(0);
 
     return 0;
 }
@@ -134,90 +133,70 @@ quint8 Motolink::getMode(void)
 
 quint16 Motolink::getVersion()
 {
-    _WAIT_USB_
-    _LOCK_
     QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_GET_VERSION);
+    this->prepareCmd(&send, CMD_GET_VERSION);
 
-    if (mUsb->write(&send, send.size()) < send.size())
-    {
-        return 0;
-    }
-    mUsb->read(&recv, 3);
-
-    if (recv.size() > 2 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_VERSION))
-        return recv.at(1) + (recv.at(2)*256);
+    if (this->sendCmd(&send, &recv, 2, CMD_GET_VERSION))
+        return recv.at(0) + (recv.at(1)*256);
 
     return 0;
 }
 
-bool Motolink::readSensors(QByteArray* data)
+bool Motolink::readSensors(void)
 {
-    _WAIT_USB_
-    _LOCK_
     QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_GET_SENSORS);
+    this->prepareCmd(&send, CMD_GET_SENSORS);
 
-    if (mUsb->write(&send, send.size()) < send.size())
-    {
-        return 0;
-    }
-    mUsb->read(&recv, sizeof(sensors_t)+1);
 
-    if ((size_t)recv.size() > sizeof(sensors_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_SENSORS))
+    if (this->sendCmd(&send, &recv, sizeof(sensors_t), CMD_GET_SENSORS))
     {
-        *data = recv.remove(0, 1);
-        memcpy((void*)&mSensors, (void*)data->constData(), sizeof(sensors_t));
-        emit sendSensors(data);
+        //memcpy((void*)&mSensors, (void*)data->constData(), sizeof(sensors_t));
+
+        const sensors_t * sensors =  (sensors_t *)recv.constData();
+
+        mSensors.vAn7 = sensors->an7/1000.0; /* VBAT */
+        mSensors.vAn8 = sensors->an8/1000.0; /* TPS */
+        mSensors.vAn9 = sensors->an9/1000.0; /* AFR */
+        mSensors.tps = sensors->tps/2.0;
+        mSensors.rpm = sensors->rpm*100;
+        mSensors.freq1  = sensors->freq1;
+        mSensors.freq2  = sensors->freq2;
+        mSensors.knock_value = sensors->knock_value;
+        mSensors.knock_freq = sensors->knock_freq*100;
+        mSensors.afr = sensors->afr/10.0;
+        mSensors.row = sensors->cell.row;
+        mSensors.col = sensors->cell.col;
+        emit receivedSensors(&mSensors);
         return true;
     }
 
     return false;
 }
 
-bool Motolink::readMonitoring(QByteArray *data)
+bool Motolink::readMonitoring(void)
 {
-    _WAIT_USB_
-    _LOCK_
     QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_GET_MONITOR);
+    this->prepareCmd(&send, CMD_GET_MONITOR);
 
-    if (mUsb->write(&send, send.size()) < send.size())
+    if (this->sendCmd(&send, &recv, sizeof(monitor_t), CMD_GET_MONITOR))
     {
-        return 0;
-    }
-    mUsb->read(&recv, sizeof(monitor_t)+1);
-
-    if ((size_t)recv.size() > sizeof(monitor_t) && recv.at(0) == (MASK_REPLY_OK | CMD_GET_MONITOR))
-    {
-        *data = recv.remove(0, 1);
-        memcpy((void*)&mMonitoring, (void*)data->constData(), sizeof(monitor_t));
-        emit sendMonitoring(data);
+        memcpy((void*)&mMonitoring, (void*)recv.constData(), sizeof(monitor_t));
+        emit receivedMonitoring(&mMonitoring);
         return true;
     }
-
-    qWarning("getMonitoring Error!");
 
     return false;
 }
 
-bool Motolink::readKnockSpectrum(QByteArray *data)
+bool Motolink::readKnockSpectrum(void)
 {
-    _WAIT_USB_
-    _LOCK_
     QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_GET_FFT);
+    this->prepareCmd(&send, CMD_GET_FFT);
 
-    if (mUsb->write(&send, send.size()) < send.size())
+    if (this->sendCmd(&send, &recv, SPECTRUM_SIZE, CMD_GET_FFT))
     {
-        return 0;
-    }
-    mUsb->read(&recv, SPECTRUM_SIZE+1);
-
-    if ((size_t)recv.size() > SPECTRUM_SIZE && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FFT))
-    {
-        *data = recv.remove(0, 1);
-        emit sendKockSpectrum(data);
+        mKnockData = recv;
+        emit receivedKockSpectrum(&mKnockData);
         return true;
     }
 
@@ -226,20 +205,80 @@ bool Motolink::readKnockSpectrum(QByteArray *data)
     return false;
 }
 
+bool Motolink::readTables(void)
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    int size = sizeof(mAFRTable)+sizeof(mKnockTable);
+    this->prepareCmd(&send, CMD_GET_TABLES);
+
+    if (this->sendCmd(&send, &recv, size, CMD_GET_TABLES))
+    {
+        memcpy((void*)mAFRTable, (void*)recv.constData(), sizeof(mAFRTable));
+        memcpy((void*)mKnockTable, (void*)(recv.constData()+sizeof(mAFRTable)), sizeof(mKnockTable));
+        emit receivedTables((quint8*)mAFRTable, (quint8*)mKnockTable);
+        return true;
+    }
+
+    return false;
+}
+
+bool Motolink::writeTablesHeaders()
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    send.append((char*)mTablesRows, sizeof(mTablesRows));
+    send.append((char*)mTablesColumns, sizeof(mTablesColumns));
+    this->prepareCmd(&send, CMD_SET_TABLES_HEADERS);
+
+    return this->sendCmd(&send, &recv, 0, CMD_SET_TABLES_HEADERS);
+}
+
+bool Motolink::readSettings(settings_t *settings)
+{
+
+    return true;
+}
+
+bool Motolink::writeTablesHeaders(const quint8 *rows, const quint8 *cols)
+{
+
+    return false;
+}
+
+bool Motolink::clearCell(uint tableId, int row, int col)
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    cell_t cell = {row&0xFF, col&0xFF};
+    send.append(tableId&0xFF);
+    send.append((char*)&cell, sizeof(cell));
+    this->prepareCmd(&send, CMD_CLEAR_CELL);
+
+    return this->sendCmd(&send, &recv, 0, CMD_CLEAR_CELL);
+}
+
+bool Motolink::clearTables()
+{
+    return this->sendSimpleCmd(CMD_CLEAR_TABLES);
+}
+
+bool Motolink::writeSettings(const settings_t *settings)
+{
+
+    return true;
+}
+
+
 bool Motolink::sendWake()
 {
-    _WAIT_USB_
-    _LOCK_
-    QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_WAKE);
-
-    if (mUsb->write(&send, send.size()) < send.size())
-    {
-        return 0;
-    }
-    mUsb->read(&recv, 1);
-
-    return recv.at(0) == (MASK_REPLY_OK | CMD_WAKE);
+    return this->sendSimpleCmd(CMD_WAKE);
 }
 
 void Motolink::startUpdate(QByteArray *data)
@@ -252,18 +291,7 @@ void Motolink::startUpdate(QByteArray *data)
 
 bool Motolink::resetDevice()
 {
-    _WAIT_USB_
-    _LOCK_
-    QByteArray send, recv;
-    prepareSimpleCmd(&send, CMD_RESET);
-
-    if (mUsb->write(&send, send.size()) < send.size())
-    {
-        return 0;
-    }
-    mUsb->read(&recv, 1);
-
-    return recv.at(0) == (MASK_REPLY_OK | CMD_RESET);
+    return this->sendSimpleCmd(CMD_RESET);
 }
 
 bool Motolink::bootAppIfNeeded()
@@ -299,55 +327,135 @@ void Motolink::setupConnections()
     //QObject::connect(mTft, SIGNAL(updateDone()), mBtl, SLOT(disconnect()));
 }
 
-void Motolink::prepareSimpleCmd(QByteArray *cmdBuf, quint8 cmd) const
+void Motolink::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const
 {
-    cmdBuf->clear();
-    cmdBuf->append(MAGIC1);
-    cmdBuf->append(MAGIC2);
-    cmdBuf->append(MASK_CMD | cmd);
-    cmdBuf->insert(3, cmdBuf->size()+2);
+    cmdBuf->insert(0, MAGIC1);
+    cmdBuf->insert(1, MAGIC2);
+    cmdBuf->insert(2, MASK_CMD | cmd);
+    cmdBuf->insert(3, cmdBuf->size()+2); // +2 = The byte we are adding now, and the checksum.
     cmdBuf->append(checkSum((quint8*)cmdBuf->constData(), cmdBuf->size()));
+}
+
+bool Motolink::sendSimpleCmd(quint8 cmd)
+{
+    _WAIT_USB_
+    _LOCK_
+    bool result;
+    QByteArray send, recv;
+    this->prepareCmd(&send, cmd);
+
+    if (mUsb->write(&send, send.size()) < send.size())
+    {
+        return 0;
+    }
+    mUsb->read(&recv, 1);
+    result = recv.at(0) == (MASK_REPLY_OK | cmd);
+    if (!result)
+        this->printError(recv.at(0));
+
+    return result;
+}
+
+bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
+{
+    _WAIT_USB_
+    _LOCK_
+    bool result;
+    recv->clear();
+
+    if (mUsb->write(send, send->size()) < send->size())
+    {
+        return 0;
+    }
+    mUsb->read(recv, len+1); // Add result byte
+
+    result = recv->at(0) == (MASK_REPLY_OK | cmd);
+    if (!result)
+        this->printError(recv->at(0));
+
+    recv->remove(0, 1);
+
+    return result && recv->size() == len;
+}
+
+void Motolink::printError(quint8 reply)
+{
+    QString error;
+    if (reply & MASK_DECODE_ERR)
+    {
+        if (reply & 1)
+            error.append("Header read error");
+        else if (reply & 2)
+            error.append("Header decode error");
+        else if (reply & 3)
+            error.append("Data read error");
+        else if (reply & 4)
+            error.append("Checksum error");
+        else if (reply & 5)
+            error.append("Unknown command");
+
+        emit communicationError(error);
+    }
+    else if (reply & MASK_CMD_ERR)
+    {
+        error.append("Command error: ");
+
+        if ((reply & MASK_CMD_PART) == CMD_GET_MONITOR)
+            error.append("Read monitor");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_SENSORS)
+            error.append("Read sensors");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_SETTINGS)
+            error.append("Read settings");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_TABLES)
+            error.append("Read tables");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_TABLES_HEADERS)
+            error.append("Read tables headers");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_FFT)
+            error.append("Read fft");
+        else if ((reply & MASK_CMD_PART) == CMD_GET_VERSION)
+            error.append("Read version");
+        else if ((reply & MASK_CMD_PART) == CMD_CLEAR_CELL)
+            error.append("Clear cell");
+        else if ((reply & MASK_CMD_PART) == CMD_CLEAR_TABLES)
+            error.append("Clear tables");
+        else
+            error.append(QString::number(reply));
+
+        emit communicationError(error);
+    }
 }
 
 void Motolink::haltTransfer(void)
 {
     mStopTranfer = true;
-    emit sendStatus(tr("Aborted"));
+    emit signalStatus(tr("Aborted"));
 }
 
 void Motolink::sendFirmware(QByteArray *data)
 {
     QDataStream file(data, QIODevice::ReadOnly);
-    emit sendLock(true);
+    emit signalLock(true);
     mStopTranfer = false;
     quint32 step_size = 240;
-    const quint32 from = 0;
-    const quint32 to = data->size();
 
     quint32 progress, oldprogress;
     qint32 read;
     char *buf2 = new char[step_size];
 
-    qDebug() << tr("File size") << data->size();
-
-    emit sendStatus(tr("Erasing..."));
+    emit signalStatus(tr("Erasing..."));
     _LOCK_
     if (!mBtl->eraseFlash(data->size())) {
 
-        emit sendStatus(tr("Erase failed"));
-        qDebug() << tr("Erase failed");
-        emit sendLock(false);
+        emit signalStatus(tr("Erase failed"));
+        emit signalLock(false);
         return;
     }
     else {
-        emit sendStatus(tr("Erase OK"));
-        qDebug() <<tr( "Erase OK");
+        emit signalStatus(tr("Erase OK"));
         _UNLOCK_
     }
 
-    qDebug() << tr("Writing from") << "0x"+QString::number(from, 16) << "to" << "0x"+QString::number(to, 16);
-
-    emit sendStatus(tr("Writing Flash"));
+    emit signalStatus(tr("Writing Flash"));
 
     progress = 0;
     for (int i=0; i<=data->size(); i+=step_size) {
@@ -356,14 +464,12 @@ void Motolink::sendFirmware(QByteArray *data)
             break;
 
         if (file.atEnd()) {
-            qDebug() << tr("End Of File");
             break;
         }
 
         memset(buf2, 0, step_size);
         if ((read = file.readRawData(buf2, step_size)) <= 0)
             break;
-        qDebug() << tr("Read") << read << tr("Bytes from disk");
         QByteArray buf(buf2, read);
 
         _LOCK_
@@ -371,42 +477,37 @@ void Motolink::sendFirmware(QByteArray *data)
         _UNLOCK_
 
         if (wrote < read){
-            emit sendStatus(tr("Transfer failed"));
-            qDebug() << tr("Transfer failed") << wrote << read;
+            emit signalStatus(tr("Transfer failed"));
+            qWarning() << tr("Transfer failed") << wrote << read;
             break;
         }
 
         oldprogress = progress;
         progress = (i*100)/data->size();
         if (progress > oldprogress) { // Push only if number has increased
-            emit sendProgress(progress);
-            qDebug() << tr("Progress:") << QString::number(progress)+"%";
+            emit transferProgress(progress);
         }
 
     }
     delete buf2;
 
-    emit sendProgress(100);
-    emit sendStatus(tr("Transfer done"));
-    qDebug() << tr("Transfer done");
+    emit transferProgress(100);
+    emit signalStatus(tr("Transfer done"));
 
-    emit sendLock(false);
+    emit signalLock(false);
 }
 
 void Motolink::verifyFirmware(QByteArray *data)
 {
     QDataStream file(data, QIODevice::ReadOnly);
-    emit sendLock(true);
+    emit signalLock(true);
     mStopTranfer = false;
     const quint32 buf_size = 508;
-    const quint32 from = 0;
-    const quint32 to = data->size();
     char buf[buf_size];
-    qDebug() << tr("Reading from") << QString::number(from, 16) << tr("to") << QString::number(to, 16);
     quint32 addr, progress, oldprogress;
     QByteArray data_local, data_remote;
 
-    emit sendStatus(tr("Verifying flash"));
+    emit signalStatus(tr("Verifying flash"));
 
     progress = 0;
     for (int i=0; i<data->size(); i+=buf_size)
@@ -416,7 +517,6 @@ void Motolink::verifyFirmware(QByteArray *data)
 
         int read = file.readRawData(buf, buf_size);
         data_local.setRawData(buf, read);
-        qDebug() << tr("Read") << data_local.size() << tr("Bytes from disk");
         addr = i;
 
         if (!data_local.size()) break;
@@ -425,52 +525,38 @@ void Motolink::verifyFirmware(QByteArray *data)
         _UNLOCK_
         if (read_size < data_local.size()) { // Read same amount of data as from file.
 
-            emit sendProgress(0);
-            emit sendStatus(tr("Verification Failed"));
+            emit transferProgress(0);
+            emit signalStatus(tr("Verification Failed"));
             qWarning() << tr("Verification Failed");
-            qDebug() << tr("read") << read_size << tr("valid") << data_local.size();
-            emit sendLock(false);
+            emit signalLock(false);
             return;
         }
 
         if (data_remote != data_local) {
 
-            emit sendProgress(100);
-            emit sendStatus(tr("Verification failed at 0x")+QString::number(addr, 16));
+            emit transferProgress(100);
+            emit signalStatus(tr("Verification failed at 0x")+QString::number(addr, 16));
 
             QString stmp, sbuf;
             for (int b=0;b<data_local.size();b++) {
                 stmp.append(QString().sprintf("%02X ", (uchar)data_local.at(b)));
                 sbuf.append(QString().sprintf("%02X ", (uchar)data_remote.at(b)));
             }
-            qCritical() << tr("Verification failed at 0x")+QString::number(addr, 16) <<
+            qWarning() << tr("Verification failed at 0x")+QString::number(addr, 16) <<
                            "\r\n" << tr("Expecting:") << stmp << "\r\n       " << tr("Got:") << sbuf;
-            emit sendLock(false);
+            emit signalLock(false);
             return;
         }
         oldprogress = progress;
         progress = (i*100)/data->size();
         if (progress > oldprogress) { // Push only if number has increased
-            emit sendProgress(progress);
-            qDebug() << tr("Progress:") << QString::number(progress)+"%";
+            emit transferProgress(progress);
         }
         //emit sendStatus(tr("Verified ")+QString::number(i/1024)+tr(" kilobytes out of ")+QString::number(data->size()/1024));
     }
 
-    emit sendProgress(100);
-    emit sendStatus(tr("Verification OK"));
+    emit transferProgress(100);
+    emit signalStatus(tr("Verification OK"));
     qDebug() << tr("Verification OK");
-    emit sendLock(false);
-}
-
-bool Motolink::readSettings(settings_t *settings)
-{
-
-    return true;
-}
-
-bool Motolink::writeSettings(settings_t *settings)
-{
-
-    return true;
+    emit signalLock(false);
 }

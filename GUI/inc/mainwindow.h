@@ -42,20 +42,8 @@ namespace Ui {
     class Tasks;
     class KnockGraph;
     class HeaderEdit;
+    class Logs;
 }
-
-typedef struct {
-    float vAn7; /* VBAT */
-    float vAn8; /* TPS */
-    float vAn9; /* AFR */
-    float tps;
-    float afr;
-    quint16 knock_value;
-    quint16 knock_freq;
-    quint16 rpm;
-    quint16 freq1;
-    quint16 freq2;
-} sensors_data_t ;
 
 class MainWindow : public QMainWindow
 {
@@ -81,9 +69,6 @@ public slots:
 
 signals:
     void signalStartupComplete(void);
-    void signalRequestSensors(QByteArray *data);
-    void signalRequestMonitoring(QByteArray *data);
-    void signalRequestKnock(QByteArray *data);
 
 private slots:
     void setLanguageEnglish(void);
@@ -104,24 +89,30 @@ private slots:
     void showTasks(void);
     void showKnockGraph(void);
 
+    void showLogs(void);
+    void writeLogs(const QString & msg);
+
     void doFastPolling(void);
     void doSlowPolling(void);
+    void doTablesPolling(void);
     void doSensorsRedraw(void);
-    void onSensorsDataReceived(QByteArray *data);
-    void onMonitoringDataReceived(QByteArray *data);
-    void OnKnockSpectrumDataReceived(QByteArray *data);
+    void onSensorsReceived(const sensors_data_t *data);
+    void onMonitoringReceived(const monitor_t * monitoring);
+    void onKnockSpectrumReceived(const QByteArray * data);
+    void onTablesReceived(const quint8 * afr, const quint8 * knock);
 
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
 
     void onDataChanged(void);
-    void onHeaderDataNeedSync(int section, Qt::Orientation orientation, const QVariant value);
+    void onHeadersNeedSync(int section, Qt::Orientation orientation, const QVariant value);
 
     void onSimpleError(QString error);
 
     void showNewVersionPopup(QString version);
 
-    void setTablesCursor(uint tps, uint rpm);
+    void setTablesCursorFromSensors(uint tps, uint rpm);
+    void setTablesCursor(uint row, uint col);
 
     void onReadMtlSettings(void);
     void onWriteMtlSettings(void);
@@ -141,8 +132,10 @@ private:
     Ui::MainWindow *mMainUi;
     Ui::Tasks *mTasksUi;
     Ui::KnockGraph *mKnockGraphUi;
+    Ui::Logs *mLogsUi;
     QWidget *mTasksWidget;
     QWidget *mKnockGraphWidget;
+    QWidget *mLogsWidget;
     QCPItemText *mKnockFreqLabel;
     QTranslator mTranslator;
     QSettings mSettings;
@@ -173,6 +166,7 @@ private:
 
     QTimer mFastPollingTimer;
     QTimer mSlowPollingTimer;
+    QTimer mTablesTimer;
     QTimer mRedrawTimer;
     QByteArray mSensorsData;
     QByteArray mMonitoringData;

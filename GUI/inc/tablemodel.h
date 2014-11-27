@@ -19,7 +19,10 @@ public:
     ~TableModel(void);
     bool isPermanent(void);
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    void setDataFromArray(const quint8 * array);
     void emptyData(const QModelIndex &index);
+    QEnhancedTableView * view();
+    void setSingleRow(bool val);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
     QString getName(void) { return mName; }
@@ -31,12 +34,13 @@ public:
     void highlightCell(int row, int col);
     bool getCell(uint tp, uint rpm, int *row, int *col);
     void setView(QEnhancedTableView *view);
-    void setSingleRow(bool val);
-    QEnhancedTableView * view();
+    void setId(uint id);
+    uint id(void) { return mId; }
 
 signals:
     void headerDataNeedSync(int, Qt::Orientation, const QVariant);
-    void cellValueChanged(void);
+    void cellValueChanged(int row, int col);
+    void cellCleared(uint id, int row, int col);
 
 public slots:
     void setName(const QString name);
@@ -62,7 +66,7 @@ private:
     QStandardItem* mLastItem;
     bool mPermanent;
     bool mSinglerow;
-
+    uint mId;
 };
 
 class NumberFormatDelegate : public QStyledItemDelegate

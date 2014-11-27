@@ -36,7 +36,7 @@ void QEnhancedTableView::setModel(QAbstractItemModel *model)
      TableModel *tbl = (TableModel *)this->model();
      tbl->setView(this);
 
-     QObject::connect(tbl, SIGNAL(cellValueChanged()), this, SLOT(setTabFocus()));
+     QObject::connect(tbl, SIGNAL(cellValueChanged(int,int)), this, SLOT(setTabFocus()));
 }
 
 void QEnhancedTableView::setMenuReadOnly(bool enabled)
@@ -73,12 +73,13 @@ void QEnhancedTableView::showContextMenu(const QPoint &pos)
         QAction* selectedItem = myMenu.exec(globalPos);
         QModelIndexList selection = this->selectionModel()->selection().indexes();
 
-        // Increase
+        // Clear
         if (selectedItem == actions[0])
         {
             for (int i=0; i<selection.size(); i++)
             {
-                model->emptyData(selection.at(i));
+                emit cellCleared(model->id(), selection.at(i).row(), selection.at(i).column());
+                //model->emptyData(selection.at(i));
             }
         }
     }

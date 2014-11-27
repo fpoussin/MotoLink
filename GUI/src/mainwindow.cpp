@@ -4,6 +4,7 @@
 #include <ui_main.h>
 #include <ui_tasks.h>
 #include <ui_knock.h>
+#include <ui_logs.h>
 #include <QFileInfo>
 #include <QModelIndex>
 #include <QDateTime>
@@ -11,11 +12,6 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    mMainUi(new Ui::MainWindow),
-    mTasksUi(new Ui::Tasks),
-    mKnockGraphUi(new Ui::KnockGraph),
-    mTasksWidget(new QWidget),
-    mKnockGraphWidget(new QWidget),
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
@@ -26,15 +22,25 @@ MainWindow::MainWindow(QWidget *parent) :
     mIgnModel(&mUndoStack, -20, 3, 0),
     mKnockModel(&mUndoStack, 0, 800, 0, false, false)
 {
+    mMainUi = new Ui::MainWindow();
+    mTasksUi = new Ui::Tasks();
+    mLogsUi = new Ui::Logs();
+    mKnockGraphUi = new Ui::KnockGraph();
+
+    mTasksWidget = new QWidget();
+    mKnockGraphWidget = new QWidget;
+    mLogsWidget = new QWidget();
+
+    mMainUi->setupUi(this);
+    mTasksUi->setupUi(mTasksWidget);
+    mKnockGraphUi->setupUi(mKnockGraphWidget);
+    mLogsUi->setupUi(mLogsWidget);
+
     mMtl = new Motolink();
     mHrc = new Hrc();
     mUpdateWizard = new UpdateWizard(mMtl);
 
     mUndoStack.setUndoLimit(100);
-
-    mMainUi->setupUi(this);
-    mTasksUi->setupUi(mTasksWidget);
-    mKnockGraphUi->setupUi(mKnockGraphWidget);
 
     this->setupDefaults();
     this->setupConnections();
@@ -58,9 +64,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mMainUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mMainUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
-    mFastPollingTimer.setInterval(20);
+    mFastPollingTimer.setInterval(50);
     mSlowPollingTimer.setInterval(500);
-    mRedrawTimer.setInterval(200);
+    mTablesTimer.setInterval(250);
+    mRedrawTimer.setInterval(250);
 
     this->exportToMTLFile();
     this->uiDisable();
@@ -76,6 +83,8 @@ MainWindow::~MainWindow()
     delete mTasksWidget;
     delete mKnockGraphUi;
     delete mKnockGraphWidget;
+    delete mLogsUi;
+    delete mLogsWidget;
     delete mMtl;
     delete mHrc;
 
@@ -207,6 +216,7 @@ void MainWindow::connectMtl()
         this->uiEnable();
         mFastPollingTimer.start();
         mSlowPollingTimer.start();
+        mTablesTimer.start();
         mRedrawTimer.start();
         mMainUi->statusBar->showMessage("Connected");
     }
@@ -219,6 +229,7 @@ void MainWindow::disconnectMtl()
 {
     mFastPollingTimer.stop();
     mSlowPollingTimer.stop();
+    mTablesTimer.stop();
     mRedrawTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
@@ -284,6 +295,9 @@ void MainWindow::setupDefaults(void)
     mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
 
+    mAFRModel.setId(1);
+    mKnockModel.setId(2);
+
     mStagingModel.setSingleRow(true);
 
     mDegreeSuffix.setSuffix(QString::fromUtf8("°"));
@@ -324,6 +338,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
     QObject::connect(mMainUi->actionShow_tasks, SIGNAL(triggered()),this, SLOT(showTasks()));
     QObject::connect(mMainUi->actionShow_Knock_Spectrum, SIGNAL(triggered()),this, SLOT(showKnockGraph()));
+    QObject::connect(mMainUi->actionShow_Logs, SIGNAL(triggered()), this, SLOT(showLogs()));
 
     QObject::connect(mMainUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
     QObject::connect(mMainUi->actionUndo, SIGNAL(triggered()), &mUndoStack, SLOT(undo()));
@@ -334,11 +349,12 @@ void MainWindow::setupConnections(void)
     for (int i=0; i<mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
-        QObject::connect(tbl, SIGNAL(cellValueChanged()), this, SLOT(onDataChanged()));
+        QObject::connect(tbl, SIGNAL(cellValueChanged(int,int)), this, SLOT(onDataChanged()));
         QObject::connect(tbl, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                         this, SLOT(onHeaderDataNeedSync(int,Qt::Orientation,QVariant)));
+                         this, SLOT(onHeadersNeedSync(int,Qt::Orientation,QVariant)));
         QObject::connect(tbl->view(), SIGNAL(modelUpdated(QWidget*)), mMainUi->tabMain, SLOT(setCurrentWidget(QWidget*)));
-
+        if (tbl->id() > 0)
+            QObject::connect(tbl->view(), SIGNAL(cellCleared(uint,int,int)), mMtl, SLOT(clearCell(uint,int,int)));
     }
 
     for (int i=0; i<mSpinBoxList.size(); i++)
@@ -370,16 +386,14 @@ void MainWindow::setupConnections(void)
     /* Sensors UI update */
     QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
+    QObject::connect(&mTablesTimer, SIGNAL(timeout()), this, SLOT(doTablesPolling()));
     QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
-    QObject::connect(this, SIGNAL(signalRequestSensors(QByteArray*)), mMtl, SLOT(readSensors(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendSensors(QByteArray*)), this, SLOT(onSensorsDataReceived(QByteArray*)));
-
-    QObject::connect(this, SIGNAL(signalRequestMonitoring(QByteArray*)), mMtl, SLOT(readMonitoring(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendMonitoring(QByteArray*)), this, SLOT(onMonitoringDataReceived(QByteArray*)));
-
-    QObject::connect(this, SIGNAL(signalRequestKnock(QByteArray*)), mMtl, SLOT(readKnockSpectrum(QByteArray*)));
-    QObject::connect(mMtl, SIGNAL(sendKockSpectrum(QByteArray*)), this, SLOT(OnKnockSpectrumDataReceived(QByteArray*)));
+    QObject::connect(mMtl, SIGNAL(receivedSensors(sensors_data_t const*)), this, SLOT(onSensorsReceived(sensors_data_t const*)));
+    QObject::connect(mMtl, SIGNAL(receivedMonitoring(monitor_t const*)), this, SLOT(onMonitoringReceived(monitor_t const*)));
+    QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
+    QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
+    QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(writeLogs(QString)));
 
     QObject::connect(&mFile, SIGNAL(readFailed(QString)), this, SLOT(onSimpleError(QString)));
 }
@@ -488,6 +502,7 @@ void MainWindow::uiEnable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
+    mMainUi->actionShow_Logs->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);
 }
@@ -502,6 +517,7 @@ void MainWindow::uiDisable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
+    mMainUi->actionShow_Logs->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);
 }
@@ -597,6 +613,19 @@ void MainWindow::showKnockGraph()
     mKnockGraphWidget->raise();
 }
 
+void MainWindow::showLogs()
+{
+    mLogsWidget->show();
+    mLogsWidget->raise();
+}
+
+void MainWindow::writeLogs(const QString &msg)
+{
+    QString time("[%1] ");
+    mLogsUi->list->addItem(time.arg(QTime::currentTime().toString())+msg);
+    mLogsUi->list->scrollToBottom();
+}
+
 void MainWindow::exportToMTLFile()
 {
     mFile.addTable(&mFuelModel);
@@ -663,9 +692,9 @@ void MainWindow::doFastPolling()
 {
     if (mMtl->isConnected())
     {
-        emit signalRequestSensors(&mSensorsData);
+        mMtl->readSensors();
         if (mKnockGraphWidget->isVisible())
-            emit signalRequestKnock(&mKnockSpectrumData);
+            mMtl->readKnockSpectrum();
     }
     else {
         mFastPollingTimer.stop();
@@ -677,10 +706,21 @@ void MainWindow::doSlowPolling()
     if (mMtl->isConnected())
     {
         if (mTasksWidget->isVisible())
-            emit signalRequestMonitoring(&mMonitoringData);
+            mMtl->readMonitoring();
     }
     else {
         mSlowPollingTimer.stop();
+    }
+}
+
+void MainWindow::doTablesPolling()
+{
+    if (mMtl->isConnected())
+    {
+        mMtl->readTables();
+    }
+    else {
+        mTablesTimer.stop();
     }
 }
 
@@ -698,75 +738,64 @@ void MainWindow::doSensorsRedraw()
     mMainUi->lSpeedHertz->setText(QString::number(mSensorsStruct.freq2)+tr(" Hertz"));
 }
 
-void MainWindow::onSensorsDataReceived(QByteArray *data)
+void MainWindow::onSensorsReceived(sensors_data_t const * data)
 {
-    const sensors_t * sensors =  (sensors_t *)data->constData();
+    mSensorsStruct = *data;
 
-    mSensorsStruct.vAn7 = sensors->an7/1000.0; /* VBAT */
-    mSensorsStruct.vAn8 = sensors->an8/1000.0; /* TPS */
-    mSensorsStruct.vAn9 = sensors->an9/1000.0; /* AFR */
-    mSensorsStruct.tps = sensors->tps/100.0;
-    mSensorsStruct.rpm = sensors->rpm;
-    mSensorsStruct.freq1  = sensors->freq1;
-    mSensorsStruct.freq2  = sensors->freq2;
-    mSensorsStruct.knock_value = sensors->knock_value;
-    mSensorsStruct.knock_freq = sensors->knock_freq;
-    mSensorsStruct.afr = sensors->afr/100.0;
-
-    this->setTablesCursor(mSensorsStruct.tps, mSensorsStruct.rpm);
-    mKnockModel.writeCellPeak(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.knock_value));
-    mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr*10.0));
+    //this->setTablesCursorFromSensors(mSensorsStruct.tps, mSensorsStruct.rpm);
+    //this->setTablesCursor(mSensorsStruct.row, mSensorsStruct.col);
+    //mKnockModel.writeCellPeak(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.knock_value));
+    //mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr*10.0));
 }
 
-void MainWindow::onMonitoringDataReceived(QByteArray *data)
+void MainWindow::onMonitoringReceived(const monitor_t *monitoring)
 {
-    const monitor_t * monitor =  (monitor_t *)data->constData();
     const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
     const quint16 maskState = 0x8000; /* Thread state */
     QTableWidgetItem *item;
 
     item = mTasksUi->tableWidget->item(0, 0);
-    item->setData(Qt::DisplayRole, float(monitor->ser2 & maskUsage)/100.0);
-    if (monitor->ser2 & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->ser2 & maskUsage)/100.0);
+    if (monitoring->ser2 & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(1, 0);
-    item->setData(Qt::DisplayRole, float(monitor->bdu & maskUsage)/100.0);
-    if (monitor->bdu & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->bdu & maskUsage)/100.0);
+    if (monitoring->bdu & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(2, 0);
-    item->setData(Qt::DisplayRole, float(monitor->sdu & maskUsage)/100.0);
-    if (monitor->sdu & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->sdu & maskUsage)/100.0);
+    if (monitoring->sdu & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(3, 0);
-    item->setData(Qt::DisplayRole, float(monitor->can & maskUsage)/100.0);
-    if (monitor->can & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->can & maskUsage)/100.0);
+    if (monitoring->can & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(4, 0);
-    item->setData(Qt::DisplayRole, float(monitor->knock & maskUsage)/100.0);
-    if (monitor->knock & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->knock & maskUsage)/100.0);
+    if (monitoring->knock & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(5, 0);
-    item->setData(Qt::DisplayRole, float(monitor->sensors & maskUsage)/100.0);
-    if (monitor->sensors & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->sensors & maskUsage)/100.0);
+    if (monitoring->sensors & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(6, 0);
-    item->setData(Qt::DisplayRole, float(monitor->irq & maskUsage)/100.0);
+    item->setData(Qt::DisplayRole, float(monitoring->irq & maskUsage)/100.0);
     item->setBackgroundColor(Qt::lightGray);
 
     item = mTasksUi->tableWidget->item(7, 0);
-    item->setData(Qt::DisplayRole, float(monitor->idle & maskUsage)/100.0);
-    if (monitor->idle & maskState) item->setBackgroundColor(Qt::white);
+    item->setData(Qt::DisplayRole, float(monitoring->idle & maskUsage)/100.0);
+    if (monitoring->idle & maskState) item->setBackgroundColor(Qt::white);
     else item->setBackgroundColor(Qt::lightGray);
 
 }
 
-void MainWindow::OnKnockSpectrumDataReceived(QByteArray *data)
+void MainWindow::onKnockSpectrumReceived(const QByteArray *data)
 {
     QVector<double> x(SPECTRUM_SIZE), y(SPECTRUM_SIZE);
     QCustomPlot * plot = mKnockGraphUi->mainPlot;
@@ -791,15 +820,22 @@ void MainWindow::OnKnockSpectrumDataReceived(QByteArray *data)
     plot->replot();
 }
 
+void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
+{
+    mAFRModel.setDataFromArray(afr);
+    mKnockModel.setDataFromArray(knock);
+    this->setTablesCursor(mSensorsStruct.row, mSensorsStruct.col);
+}
+
 void MainWindow::onSetTps0Pct(void)
 {
-    float tps = (float)mMtl->readSensors()->an8/1000.0;
+    float tps = mMtl->getSensors()->vAn8;
     mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
 
 void MainWindow::onSetTps100Pct(void)
 {
-    float tps = (float)mMtl->readSensors()->an8/1000.0;
+    float tps = mMtl->getSensors()->vAn8;
     mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
 }
 
@@ -820,7 +856,7 @@ void MainWindow::onDataChanged()
     }
 }
 
-void MainWindow::onHeaderDataNeedSync(int section, Qt::Orientation orientation, const QVariant value)
+void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, const QVariant value)
 {
     const int role = Qt::UserRole;
     mFuelModel.setHeaderData(section, orientation, value, role);
@@ -829,6 +865,8 @@ void MainWindow::onHeaderDataNeedSync(int section, Qt::Orientation orientation, 
     mAFRTgtModel.setHeaderData(section, orientation, value, role);
     mIgnModel.setHeaderData(section, orientation, value, role);
     mKnockModel.setHeaderData(section, orientation, value, role);
+
+    //mMtl->writeTablesHeaders(row, cols);
 }
 
 void MainWindow::onSimpleError(QString error)
@@ -846,13 +884,25 @@ void MainWindow::showNewVersionPopup(QString version)
                              +tr("Download here")+"</a>");
 }
 
-void MainWindow::setTablesCursor(uint tps, uint rpm)
+void MainWindow::setTablesCursorFromSensors(uint tps, uint rpm)
 {
     int row, col;
     for (int i=0; i<mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
         if (tbl && tbl->getCell(tps, rpm, &row, &col))
+        {
+            tbl->highlightCell(row, col);
+        }
+    }
+}
+
+void MainWindow::setTablesCursor(uint row, uint col)
+{
+    for (int i=0; i<mTablesModelList.size(); i++)
+    {
+        TableModel* tbl = mTablesModelList.at(i);
+        if (tbl)
         {
             tbl->highlightCell(row, col);
         }

@@ -12,6 +12,21 @@
 #define _LOCK_ QMutexLocker locker(&mMutex);
 #define _UNLOCK_ locker.unlock();
 
+typedef struct {
+    float vAn7; /* VBAT */
+    float vAn8; /* TPS */
+    float vAn9; /* AFR */
+    float tps;
+    float afr;
+    quint16 knock_value;
+    quint16 knock_freq;
+    quint16 rpm;
+    quint16 freq1;
+    quint16 freq2;
+    quint8 row;
+    quint8 col;
+} sensors_data_t ;
+
 class Motolink : public QObject
 {
     Q_OBJECT
@@ -21,7 +36,11 @@ public:
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     bool isConnected(void) { return mConnected; }
-    const sensors_t * readSensors(void) { return &mSensors; }
+    const sensors_data_t * getSensors(void) { return &mSensors; }
+    const monitor_t * getMonitoring(void) { return &mMonitoring; }
+    const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
+    const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
+    const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
 
 public slots:
     bool usbConnect(void);
@@ -32,9 +51,12 @@ public slots:
 
     quint8 getMode(void);
     quint16 getVersion(void);
-    bool readSensors(QByteArray *data);
-    bool readMonitoring(QByteArray *data);
-    bool readKnockSpectrum(QByteArray *data);
+    bool readSensors(void);
+    bool readMonitoring(void);
+    bool readKnockSpectrum(void);
+    bool readTables(void);
+    bool writeTablesHeaders(void);
+
     bool sendWake();
 
     void startUpdate(QByteArray *data);
@@ -42,30 +64,40 @@ public slots:
     void sendFirmware(QByteArray *data);
     void verifyFirmware(QByteArray *data);
 
-    bool writeSettings(settings_t *settings);
+    bool writeSettings(const settings_t *settings);
     bool readSettings(settings_t *settings);
 
+    bool writeTablesHeaders(const quint8 *rows, const quint8 *cols);
+
+    bool clearCell(uint tableId, int row, int col);
+    bool clearTables(void);
+
 signals:
-    void sendProgress(int p);
-    void sendStatus(const QString &s);
-    void sendLock(bool enabled);
+    void transferProgress(int p);
+    void signalStatus(const QString &s);
+    void signalLock(bool enabled);
     void updateDone(void);
+    void communicationError(const QString & msg);
 
     void connectionProgress(int progress);
     void connectionResult(bool result);
     void timeElapsed(int time);
 
-    void sendSensors(QByteArray *data);
-    void sendMonitoring(QByteArray *data);
-    void sendKockSpectrum(QByteArray *data);
-    void sendSettings(QByteArray *data);
+    void receivedSensors(const sensors_data_t * sensors);
+    void receivedMonitoring(const monitor_t * monitoring);
+    void receivedKockSpectrum(const QByteArray * data);
+    void receivedSettings(const settings_t * settings);
+    void receivedTables(const quint8 * AFR, const quint8 * Knock);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;
     void setupConnections(void);
 
 private:
-    void prepareSimpleCmd(QByteArray* cmdBuf, quint8 cmd) const;
+    void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
+    bool sendSimpleCmd(quint8 cmd);
+    bool sendCmd(QByteArray* send, QByteArray *recv, uint len, quint8 cmd);
+    void printError(quint8 reply);
     QMutex mMutex;
     QThread *mThread;
     QUsb *mUsb;
@@ -76,8 +108,13 @@ private:
     quint16 mPid;
     quint16 mVid;
     bool mStopTranfer;
-    sensors_t mSensors;
+    sensors_data_t mSensors;
     monitor_t mMonitoring;
+    QByteArray mKnockData;
+    quint8 mAFRTable[11][16];
+    quint8 mKnockTable[11][16];
+    quint8 mTablesRows[11];
+    quint8 mTablesColumns[16];
 };
 
 #endif // MOTOLINK_H

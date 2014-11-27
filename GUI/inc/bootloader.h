@@ -35,6 +35,7 @@ private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;
 
 private:
+    void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     QUsb *mUsb;
 
 signals:

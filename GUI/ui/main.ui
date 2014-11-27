@@ -2441,6 +2441,7 @@
     <addaction name="separator"/>
     <addaction name="actionShow_tasks"/>
     <addaction name="actionShow_Knock_Spectrum"/>
+    <addaction name="actionShow_Logs"/>
     <addaction name="separator"/>
     <addaction name="actionUpdate"/>
    </widget>
@@ -2779,6 +2780,18 @@
    </property>
    <property name="text">
     <string>Auto Update</string>
+   </property>
+  </action>
+  <action name="actionShow_Logs">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/actions/view-list-text.png</normaloff>:/oxygen/32x32/actions/view-list-text.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Logs...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

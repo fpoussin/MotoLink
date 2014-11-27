@@ -23,6 +23,7 @@ public:
 
 signals:
     void modelUpdated(QWidget* widget);
+    void cellCleared(uint id, int row, int col);
 
 public slots:
     void retranslate(void);

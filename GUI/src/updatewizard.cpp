@@ -120,8 +120,8 @@ void UpdateWizard::setupConnections()
     QObject::connect(this->button(QWizard::CancelButton), SIGNAL(clicked()), mMtl, SLOT(haltTransfer()));
 
     /* Tranfer status update */
-    QObject::connect(mMtl, SIGNAL(sendStatus(QString)), this, SLOT(updateStatus(QString)));
-    QObject::connect(mMtl, SIGNAL(sendProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
+    QObject::connect(mMtl, SIGNAL(signalStatus(QString)), this, SLOT(updateStatus(QString)));
+    QObject::connect(mMtl, SIGNAL(transferProgress(int)), mUi->pbProgress, SLOT(setValue(int)));
     QObject::connect(mMtl, SIGNAL(updateDone()), this, SLOT(updateDone()));
 
     QObject::connect(mMtl, SIGNAL(connectionProgress(int)), mUi->pbProgress, SLOT(setValue(int)));

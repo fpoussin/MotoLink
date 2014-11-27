@@ -16,11 +16,7 @@ quint8 Bootloader::getFlags()
     _WAIT_USB_
     QByteArray send, recv;
 
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_GET_FLAGS);
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
+    this->prepareCmd(&send, CMD_GET_FLAGS);
 
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 2);
@@ -35,12 +31,7 @@ bool Bootloader::boot()
 {
     _WAIT_USB_
     QByteArray send, recv;
-
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_BOOT);
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
+    this->prepareCmd(&send, CMD_BOOT);
 
     mUsb->write(&send, send.size());
     mUsb->read(&recv, 1);
@@ -60,14 +51,9 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     quint8 buf_addr[4];
     qToLittleEndian(addr, buf_addr);
 
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_WRITE);
-
     send.append((char*)buf_addr, 4);
     send.append(data->constData(), data->size());
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
+    this->prepareCmd(&send, CMD_WRITE);
 
     qint32 wr = mUsb->write(&send, send.size());
 
@@ -91,13 +77,9 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     quint8 buf_addr[4];
     qToLittleEndian(addr, buf_addr);
 
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_READ);
     send.append((char*)buf_addr, 4);
     send.append((char*)buf_len, 4);
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
+    this->prepareCmd(&send, CMD_READ);
 
     mUsb->write(&send, send.size());
     qint32 cnt = mUsb->read(&recv, len+1);
@@ -119,12 +101,8 @@ bool Bootloader::eraseFlash(quint32 len)
 
     qToLittleEndian(len, buf_len);
 
-    send.append(MAGIC1);
-    send.append(MAGIC2);
-    send.append(MASK_CMD | CMD_ERASE);
     send.append((char*)buf_len, 4);
-    send.insert(3, send.size()+2);
-    send.append(checkSum((quint8*)send.constData(), send.size()));
+    this->prepareCmd(&send, CMD_ERASE);
 
     mUsb->write(&send, send.size());
 
@@ -147,4 +125,13 @@ quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
       sum += data[i];
 
     return sum;
+}
+
+void Bootloader::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const
+{
+    cmdBuf->insert(0, MAGIC1);
+    cmdBuf->insert(1, MAGIC2);
+    cmdBuf->insert(2, MASK_CMD | cmd);
+    cmdBuf->insert(3, cmdBuf->size()+2); // +2 = The byte we are adding now, and the checksum.
+    cmdBuf->append(checkSum((quint8*)cmdBuf->constData(), cmdBuf->size()));
 }
