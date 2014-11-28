@@ -294,6 +294,32 @@ void TableModel::setId(uint id)
     mId = id;
 }
 
+void TableModel::rowsToArray(quint8 *data, int maxLen)
+{
+    bool ok;
+    uint value;
+    for (int i=0; i < this->rowCount() && i < maxLen; i++)
+    {
+        ok = false;
+        value = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt(&ok);
+        if (ok)
+            data[i] = value & 0xFF;
+    }
+}
+
+void TableModel::columnsToArray(quint8 *data, int maxLen)
+{
+    bool ok;
+    uint value;
+    for (int i=0; i < this->columnCount() && i < maxLen; i++)
+    {
+        ok = false;
+        value = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt(&ok)/100;
+        if (ok)
+            data[i] = value & 0xFF;
+    }
+}
+
 void TableModel::setSingleRow(bool val)
 {
     mSinglerow = val;

@@ -66,8 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mFastPollingTimer.setInterval(50);
     mSlowPollingTimer.setInterval(500);
-    mTablesTimer.setInterval(250);
-    mRedrawTimer.setInterval(250);
+    mTablesTimer.setInterval(200);
+    mRedrawTimer.setInterval(200);
 
     this->exportToMTLFile();
     this->uiDisable();
@@ -866,7 +866,12 @@ void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, con
     mIgnModel.setHeaderData(section, orientation, value, role);
     mKnockModel.setHeaderData(section, orientation, value, role);
 
-    //mMtl->writeTablesHeaders(row, cols);
+    quint8 rows[11];
+    quint8 cols[16];
+    mFuelModel.rowsToArray(rows, sizeof(rows));
+    mFuelModel.columnsToArray(cols, sizeof(cols));
+
+    mMtl->writeTablesHeaders(rows, cols);
 }
 
 void MainWindow::onSimpleError(QString error)

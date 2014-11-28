@@ -246,8 +246,10 @@ bool Motolink::readSettings(settings_t *settings)
 
 bool Motolink::writeTablesHeaders(const quint8 *rows, const quint8 *cols)
 {
+    memcpy(mTablesRows, rows, sizeof(mTablesRows));
+    memcpy(mTablesColumns, cols, sizeof(mTablesColumns));
 
-    return false;
+    return this->writeTablesHeaders();
 }
 
 bool Motolink::clearCell(uint tableId, int row, int col)
@@ -410,6 +412,8 @@ void Motolink::printError(quint8 reply)
             error.append("Read tables");
         else if ((reply & MASK_CMD_PART) == CMD_GET_TABLES_HEADERS)
             error.append("Read tables headers");
+        else if ((reply & MASK_CMD_PART) == CMD_SET_TABLES_HEADERS)
+            error.append("Write tables headers");
         else if ((reply & MASK_CMD_PART) == CMD_GET_FFT)
             error.append("Read fft");
         else if ((reply & MASK_CMD_PART) == CMD_GET_VERSION)
