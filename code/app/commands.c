@@ -81,6 +81,14 @@ uint8_t readCommand_CCM(BaseChannel *chn)
       status = readTables(chn);
       break;
 
+    case MASK_CMD | CMD_GET_TABLES_HEADERS:
+      status = readHeaders(chn);
+      break;
+
+    case MASK_CMD | CMD_SET_TABLES_HEADERS:
+      status = writeHeaders(chn, input_buf, data_read);
+      break;
+
     case MASK_CMD | CMD_CLEAR_CELL:
       status = clearCell(chn, input_buf, data_read);
       break;
@@ -190,7 +198,7 @@ uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
 
 uint8_t readHeaders(BaseChannel * chn)
 {
-  chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_TABLES_HEADERS, PUT_TIMEOUT);
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_TABLES_HEADERS, PUT_TIMEOUT);
   chnWriteTimeout(chn, tableColumns, sizeof(tableColumns), PUT_TIMEOUT);
   chnWriteTimeout(chn, tableRows, sizeof(tableRows), PUT_TIMEOUT);
   return 0;
