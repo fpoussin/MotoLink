@@ -153,8 +153,10 @@
 <wire x1="85.725" y1="40.005" x2="85.725" y2="44.45" width="0" layer="20"/>
 <wire x1="89.535" y1="36.195" x2="93.98" y2="36.195" width="0" layer="20"/>
 <wire x1="93.98" y1="36.195" x2="93.98" y2="8.255" width="0" layer="20"/>
-<text x="16.3125" y="21.33" size="3.81" layer="21" font="vector" ratio="16">MotoLink</text>
-<text x="16.2075" y="18.025" size="2.54" layer="21" font="vector" ratio="16" distance="0">Github.com/fpoussin/MotoLink</text>
+<text x="18.8125" y="21.33" size="3.81" layer="21" font="vector" ratio="16">MotoLink</text>
+<text x="73.2075" y="19.525" size="2.54" layer="21" font="vector" ratio="14" distance="30">Github.com
+/fpoussin
+/MotoLink</text>
 <wire x1="30.955" y1="14.94" x2="40.6625" y2="14.94" width="0.254" layer="21"/>
 <wire x1="40.6625" y1="14.94" x2="40.6625" y2="4.4625" width="0.254" layer="21"/>
 <wire x1="40.6625" y1="4.4625" x2="30.955" y2="4.4625" width="0.254" layer="21"/>
@@ -167,7 +169,7 @@
 <text x="31.84" y="6.685" size="1.27" layer="21" font="vector" ratio="16">5-NC</text>
 <text x="23.3825" y="8.495" size="1.27" layer="21" font="vector" ratio="16" rot="R180">1</text>
 <text x="29.99" y="4.245" size="1.27" layer="21" font="vector" ratio="16" rot="R180">6</text>
-<text x="53.5" y="28" size="2.54" layer="21" font="vector" ratio="14" distance="40">REV B</text>
+<text x="25" y="18" size="2.54" layer="21" font="vector" ratio="14" distance="30">REV B</text>
 <text x="5.25" y="24.25" size="1.27" layer="25" font="vector" ratio="16" rot="R90">K-LINE</text>
 <text x="5.25" y="18" size="1.27" layer="25" font="vector" ratio="16" rot="R90">CAN</text>
 <text x="4.5" y="9.75" size="1.27" layer="25" font="vector" ratio="16" rot="R90">UART3</text>
@@ -331,6 +333,28 @@ Metric Code Size 4532</description>
 <text x="-2.25" y="-2.975" size="1.016" layer="27">&gt;VALUE</text>
 <rectangle x1="-2.25" y1="-1.6" x2="-1.65" y2="1.6" layer="51"/>
 <rectangle x1="1.65" y1="-1.6" x2="2.25" y2="1.6" layer="51"/>
+</package>
+<package name="ESP-03">
+<wire x1="-6.35" y1="-8.89" x2="-6.35" y2="8.61" width="0.5" layer="21"/>
+<wire x1="-6.35" y1="8.61" x2="6.15" y2="8.61" width="0.5" layer="21"/>
+<wire x1="6.15" y1="8.61" x2="6.15" y2="-8.89" width="0.5" layer="21"/>
+<wire x1="6.15" y1="-8.89" x2="-6.35" y2="-8.89" width="0.5" layer="21"/>
+<smd name="P$1" x="-6.35" y="-7.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$2" x="-6.35" y="-5.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$3" x="-6.35" y="-3.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$4" x="-6.35" y="-1.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$5" x="-6.35" y="0.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$6" x="-6.35" y="2.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$7" x="-6.35" y="4.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$8" x="6.15" y="4.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$9" x="6.15" y="2.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$10" x="6.15" y="0.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$11" x="6.15" y="-1.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$12" x="6.15" y="-3.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$13" x="6.15" y="-5.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$14" x="6.15" y="-7.39" dx="2" dy="1.2" layer="1"/>
+<text x="-3.85" y="9.11" size="1.6764" layer="25" font="vector" ratio="12">&gt;NAME</text>
+<text x="0.65" y="-5.39" size="1.9304" layer="21" font="vector" ratio="16" rot="R90">ESP-03</text>
 </package>
 </packages>
 </library>
@@ -1640,12 +1664,12 @@ design rules under a new name.</description>
 <attribute name="NAME" x="85" y="37.45" size="1.27" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="84.75" y="38.025" size="1.016" layer="28" rot="MR0"/>
 </element>
-<element name="IC_EE" library="microchip" package="SO-08" value="25LC080SN" x="48.5" y="10.5" smashed="yes" rot="MR270">
+<element name="IC_FRAM" library="microchip" package="SO-08" value="FM25L04B" x="48.5" y="10.5" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" value="96K4092" x="48.5" y="10.5" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MPN" value="25LC080/SN" x="48.5" y="10.5" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MF" value="MICROCHIP" x="48.5" y="10.5" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="OC_FARNELL" value="1137302" x="48.5" y="10.5" size="1.778" layer="28" rot="MR270" display="off"/>
-<attribute name="NAME" x="51.405" y="13.417" size="1.27" layer="26" font="vector" ratio="16" rot="MR0"/>
+<attribute name="NAME" x="52.655" y="13.417" size="1.27" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="50.405" y="6.563" size="1.27" layer="28" rot="MR0"/>
 </element>
 <element name="R19" library="SparkFun-Resistors" package="0603-RES" value="10K 1%" x="59.5" y="10.5" smashed="yes" rot="MR270">
@@ -1676,6 +1700,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="66.262" y="30.611" size="1.27" layer="26" font="vector" ratio="16" rot="MR90"/>
 <attribute name="VALUE" x="65.607" y="27.984" size="0.4064" layer="28" font="vector" rot="MR90"/>
 </element>
+<element name="ESP" library="misc" package="ESP-03" value="ESP8266" x="64.5" y="17.75"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -1725,14 +1750,13 @@ design rules under a new name.</description>
 <contactref element="CON_RPM-VSS" pad="1"/>
 <contactref element="C6" pad="2"/>
 <contactref element="C8" pad="1"/>
-<via x="53" y="15.5" extent="1-16" drill="0.5"/>
+<via x="53" y="15.25" extent="1-16" drill="0.5"/>
 <via x="39.75" y="20.75" extent="1-16" drill="0.5"/>
 <via x="11.5" y="39.5" extent="1-16" drill="0.5"/>
 <via x="19" y="6" extent="1-16" drill="0.5"/>
 <via x="38.25" y="9.25" extent="1-16" drill="0.5"/>
 <via x="48" y="10" extent="1-16" drill="0.5"/>
-<via x="62.5" y="8.5" extent="1-16" drill="0.5"/>
-<via x="81.5" y="3" extent="1-16" drill="0.5"/>
+<via x="60.5" y="12.75" extent="1-16" drill="0.5"/>
 <via x="88.5" y="32" extent="1-16" drill="0.5"/>
 <via x="32" y="34.25" extent="1-16" drill="0.5"/>
 <via x="75.5" y="21.75" extent="1-16" drill="0.5"/>
@@ -1770,12 +1794,15 @@ design rules under a new name.</description>
 <via x="1.75" y="24.5" extent="1-16" drill="0.5"/>
 <via x="1" y="16.5" extent="1-16" drill="0.5"/>
 <via x="4.25" y="33.25" extent="1-16" drill="0.5"/>
-<contactref element="IC_EE" pad="4"/>
+<contactref element="IC_FRAM" pad="4"/>
 <contactref element="R20" pad="2"/>
 <contactref element="R19" pad="2"/>
 <contactref element="R24" pad="1"/>
 <contactref element="IC1" pad="1"/>
 <via x="84.75" y="1" extent="1-16" drill="0.5"/>
+<via x="68.25" y="36" extent="1-16" drill="0.5"/>
+<contactref element="IC_OPA" pad="12"/>
+<contactref element="IC_OPA" pad="13"/>
 </signal>
 <signal name="+3V3">
 <contactref element="IC_REG" pad="4"/>
@@ -1867,9 +1894,8 @@ design rules under a new name.</description>
 <wire x1="41.7575" y1="41.525" x2="41.725" y2="41.525" width="1.27" layer="1"/>
 <wire x1="41.725" y1="41.525" x2="41.7" y2="41.5" width="1.27" layer="1"/>
 <wire x1="70.8025" y1="38.4175" x2="70.8025" y2="37.8025" width="0.3" layer="1"/>
-<wire x1="47.94" y1="16.94" x2="49.69" y2="16.94" width="0.3" layer="16"/>
-<wire x1="49.69" y1="16.94" x2="49.75" y2="17" width="0.3" layer="16"/>
-<wire x1="49.75" y1="17" x2="50.75" y2="17" width="0.3" layer="16"/>
+<wire x1="47.94" y1="16.94" x2="50.69" y2="16.94" width="0.3" layer="16"/>
+<wire x1="50.69" y1="16.94" x2="50.75" y2="17" width="0.3" layer="16"/>
 <via x="50.75" y="17" extent="1-16" drill="0.5"/>
 <wire x1="50.75" y1="17" x2="50.75" y2="22.25" width="1" layer="1"/>
 <wire x1="50.75" y1="22.25" x2="52.5" y2="24" width="1" layer="1"/>
@@ -1885,15 +1911,10 @@ design rules under a new name.</description>
 <wire x1="51.25" y1="27.25" x2="51.25" y2="33" width="1" layer="1"/>
 <wire x1="51.25" y1="33" x2="51" y2="33.25" width="1" layer="1"/>
 <contactref element="STM32" pad="13"/>
-<contactref element="STM32" pad="1"/>
-<wire x1="38.49" y1="26.39" x2="38.49" y2="25.68" width="0.3" layer="16"/>
-<wire x1="38.49" y1="25.68" x2="37.905" y2="25.095" width="0.3" layer="16"/>
-<wire x1="37.905" y1="25.095" x2="37.25" y2="24.44" width="0.3" layer="16"/>
 <wire x1="44.49" y1="26.39" x2="44.49" y2="24.99" width="0.3" layer="16"/>
 <wire x1="41.87" y1="24.75" x2="41.75" y2="24.75" width="0.3" layer="16"/>
 <wire x1="41.75" y1="24.75" x2="40.75" y2="23.75" width="0.3" layer="16"/>
-<wire x1="40.75" y1="23.75" x2="39.25" y2="23.75" width="0.3" layer="16"/>
-<wire x1="39.25" y1="23.75" x2="37.905" y2="25.095" width="0.3" layer="16"/>
+<wire x1="40.75" y1="23.75" x2="38.5" y2="23.75" width="0.3" layer="16"/>
 <wire x1="39.5" y1="0.5" x2="24.25" y2="0.5" width="0.4" layer="1"/>
 <wire x1="22.5" y1="6.0725" x2="24.3425" y2="7.915" width="0.4" layer="1"/>
 <contactref element="R1" pad="2"/>
@@ -1947,7 +1968,6 @@ design rules under a new name.</description>
 <contactref element="TP2" pad="P$1"/>
 <wire x1="92.5" y1="26" x2="90.4525" y2="26" width="0.4" layer="16"/>
 <wire x1="90.4525" y1="26" x2="90.17" y2="25.7175" width="0.4" layer="16"/>
-<wire x1="50.9" y1="16.85" x2="50.75" y2="17" width="0.3" layer="16"/>
 <via x="47.75" y="13" extent="1-16" drill="0.5"/>
 <wire x1="50.75" y1="17" x2="50.75" y2="13.75" width="1" layer="1"/>
 <wire x1="50.75" y1="13.75" x2="50" y2="13" width="1" layer="1"/>
@@ -1955,9 +1975,9 @@ design rules under a new name.</description>
 <wire x1="49" y1="13" x2="47.75" y2="13" width="1" layer="1"/>
 <via x="49" y="11.25" extent="1-16" drill="0.5"/>
 <wire x1="49" y1="11.25" x2="49" y2="13" width="0.8" layer="1"/>
-<contactref element="IC_EE" pad="7"/>
-<contactref element="IC_EE" pad="8"/>
-<contactref element="IC_EE" pad="3"/>
+<contactref element="IC_FRAM" pad="7"/>
+<contactref element="IC_FRAM" pad="8"/>
+<contactref element="IC_FRAM" pad="3"/>
 <wire x1="45.9" y1="11.135" x2="45.9" y2="12.405" width="0.3" layer="16"/>
 <wire x1="51.1" y1="9.865" x2="49.385" y2="9.865" width="0.3" layer="16"/>
 <wire x1="49.385" y1="9.865" x2="49" y2="10.25" width="0.3" layer="16"/>
@@ -1972,6 +1992,11 @@ design rules under a new name.</description>
 <wire x1="51" y1="6.5" x2="51.75" y2="5.75" width="0.25" layer="16"/>
 <wire x1="51.75" y1="5.75" x2="51.75" y2="3.68" width="0.25" layer="16"/>
 <wire x1="51.75" y1="3.68" x2="51.85" y2="3.58" width="0.25" layer="16"/>
+<wire x1="37.25" y1="24.44" x2="37.81" y2="24.44" width="0.3" layer="16"/>
+<wire x1="37.81" y1="24.44" x2="38.5" y2="23.75" width="0.3" layer="16"/>
+<contactref element="STM32" pad="1"/>
+<wire x1="38.49" y1="26.39" x2="38.49" y2="25.12" width="0.3" layer="16"/>
+<wire x1="38.49" y1="25.12" x2="37.81" y2="24.44" width="0.3" layer="16"/>
 </signal>
 <signal name="+12V">
 <wire x1="70.25" y1="43.5" x2="11" y2="43.5" width="1" layer="1"/>
@@ -2937,7 +2962,7 @@ design rules under a new name.</description>
 <wire x1="44.49" y1="14.99" x2="44.49" y2="13.99" width="0.3" layer="16"/>
 <wire x1="44.49" y1="13.99" x2="43.5" y2="13" width="0.3" layer="16"/>
 <wire x1="43.5" y1="13" x2="43.5" y2="10.5" width="0.3" layer="16"/>
-<contactref element="IC_EE" pad="5"/>
+<contactref element="IC_FRAM" pad="5"/>
 <wire x1="45.9" y1="8.595" x2="44.405" y2="8.595" width="0.3" layer="16"/>
 <wire x1="44.405" y1="8.595" x2="43.5" y2="9.5" width="0.3" layer="16"/>
 <wire x1="43.5" y1="9.5" x2="43.5" y2="10.5" width="0.3" layer="16"/>
@@ -2949,7 +2974,7 @@ design rules under a new name.</description>
 <wire x1="45.25" y1="16.25" x2="46.25" y2="16.25" width="0.3" layer="16"/>
 <wire x1="46.25" y1="16.25" x2="46.75" y2="15.75" width="0.3" layer="16"/>
 <wire x1="46.75" y1="15.75" x2="48" y2="15.75" width="0.3" layer="16"/>
-<contactref element="IC_EE" pad="2"/>
+<contactref element="IC_FRAM" pad="2"/>
 <wire x1="48" y1="15.75" x2="50.75" y2="15.75" width="0.3" layer="16"/>
 <wire x1="50.75" y1="15.75" x2="52.75" y2="13.75" width="0.3" layer="16"/>
 <wire x1="51.1" y1="11.135" x2="52.385" y2="11.135" width="0.3" layer="16"/>
@@ -2958,7 +2983,7 @@ design rules under a new name.</description>
 </signal>
 <signal name="SPI2_SCK">
 <contactref element="STM32" pad="34"/>
-<contactref element="IC_EE" pad="6"/>
+<contactref element="IC_FRAM" pad="6"/>
 <wire x1="45.9" y1="9.865" x2="44.635" y2="9.865" width="0.3" layer="16"/>
 <wire x1="44.635" y1="9.865" x2="44" y2="10.5" width="0.3" layer="16"/>
 <wire x1="44" y1="10.5" x2="44" y2="12.5" width="0.3" layer="16"/>
@@ -2968,7 +2993,7 @@ design rules under a new name.</description>
 <signal name="SPI2_NSS">
 <contactref element="STM32" pad="33"/>
 <wire x1="45.99" y1="14.99" x2="47.91" y2="14.99" width="0.3" layer="16"/>
-<contactref element="IC_EE" pad="1"/>
+<contactref element="IC_FRAM" pad="1"/>
 <wire x1="47.91" y1="14.99" x2="48.515" y2="14.99" width="0.3" layer="16"/>
 <wire x1="48.515" y1="14.99" x2="51.1" y2="12.405" width="0.3" layer="16"/>
 </signal>
@@ -2988,11 +3013,10 @@ design rules under a new name.</description>
 <wire x1="53.425" y1="16.5" x2="53.5775" y2="16.6525" width="0.25" layer="16"/>
 <wire x1="52.75" y1="16.5" x2="53.5" y2="16.5" width="0.25" layer="16"/>
 <wire x1="53.5" y1="16.5" x2="54.75" y2="15.25" width="0.25" layer="16"/>
-<wire x1="54.75" y1="15.25" x2="54.75" y2="10.5" width="0.25" layer="16"/>
-<wire x1="54.75" y1="10.5" x2="54" y2="9.75" width="0.25" layer="16"/>
-<wire x1="54" y1="9.75" x2="54" y2="8.5" width="0.25" layer="16"/>
-<wire x1="54" y1="8.5" x2="53.5" y2="8" width="0.25" layer="16"/>
-<wire x1="53.5" y1="8" x2="53.5" y2="6" width="0.25" layer="16"/>
+<wire x1="54.75" y1="15.25" x2="54.75" y2="9" width="0.25" layer="16"/>
+<wire x1="54.75" y1="9" x2="54" y2="8.25" width="0.25" layer="16"/>
+<wire x1="54" y1="8.25" x2="53.5" y2="7.75" width="0.25" layer="16"/>
+<wire x1="53.5" y1="7.75" x2="53.5" y2="6" width="0.25" layer="16"/>
 <wire x1="44.77" y1="1.345" x2="50.865" y2="1.345" width="0.3" layer="16"/>
 <wire x1="50.865" y1="1.345" x2="50.9" y2="1.38" width="0.3" layer="16"/>
 <wire x1="53.5" y1="6" x2="53.5" y2="2" width="0.25" layer="16"/>
@@ -3418,4 +3442,10 @@ design rules under a new name.</description>
 </errors>
 </board>
 </drawing>
+<compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
+</compatibility>
 </eagle>

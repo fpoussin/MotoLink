@@ -374,6 +374,28 @@ chip</description>
 <rectangle x1="1.4478" y1="-1.651" x2="2.3978" y2="1.649" layer="51"/>
 <rectangle x1="-0.3" y1="-0.4001" x2="0.3" y2="0.4001" layer="35"/>
 </package>
+<package name="ESP-03">
+<wire x1="-6.35" y1="-8.89" x2="-6.35" y2="8.61" width="0.5" layer="21"/>
+<wire x1="-6.35" y1="8.61" x2="6.15" y2="8.61" width="0.5" layer="21"/>
+<wire x1="6.15" y1="8.61" x2="6.15" y2="-8.89" width="0.5" layer="21"/>
+<wire x1="6.15" y1="-8.89" x2="-6.35" y2="-8.89" width="0.5" layer="21"/>
+<smd name="P$1" x="-6.35" y="-7.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$2" x="-6.35" y="-5.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$3" x="-6.35" y="-3.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$4" x="-6.35" y="-1.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$5" x="-6.35" y="0.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$6" x="-6.35" y="2.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$7" x="-6.35" y="4.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$8" x="6.15" y="4.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$9" x="6.15" y="2.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$10" x="6.15" y="0.61" dx="2" dy="1.2" layer="1"/>
+<smd name="P$11" x="6.15" y="-1.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$12" x="6.15" y="-3.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$13" x="6.15" y="-5.39" dx="2" dy="1.2" layer="1"/>
+<smd name="P$14" x="6.15" y="-7.39" dx="2" dy="1.2" layer="1"/>
+<text x="-3.85" y="9.11" size="1.6764" layer="25" font="vector" ratio="12">&gt;NAME</text>
+<text x="0.65" y="-5.39" size="1.9304" layer="21" font="vector" ratio="16" rot="R90">ESP-03</text>
+</package>
 </packages>
 <symbols>
 <symbol name="2001A">
@@ -437,6 +459,26 @@ chip</description>
 <text x="-3.302" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="1" x="-5.08" y="0" visible="off" length="short"/>
 <pin name="2" x="7.62" y="0" visible="off" length="short" rot="R180"/>
+</symbol>
+<symbol name="ESP8266">
+<pin name="GND" x="-17.78" y="-15.24" length="middle"/>
+<pin name="TXD" x="-17.78" y="-5.08" length="middle"/>
+<pin name="RXD" x="-17.78" y="0" length="middle"/>
+<pin name="GPIO16" x="-17.78" y="5.08" length="middle"/>
+<pin name="CH_PD" x="-17.78" y="10.16" length="middle"/>
+<pin name="ANT" x="-17.78" y="15.24" length="middle"/>
+<pin name="VCC" x="17.78" y="15.24" length="middle" rot="R180"/>
+<pin name="GPIO14" x="17.78" y="10.16" length="middle" rot="R180"/>
+<pin name="GPIO12" x="17.78" y="5.08" length="middle" rot="R180"/>
+<pin name="GPIO13" x="17.78" y="0" length="middle" rot="R180"/>
+<pin name="GPIO15" x="17.78" y="-5.08" length="middle" rot="R180"/>
+<pin name="GPIO2" x="17.78" y="-10.16" length="middle" rot="R180"/>
+<pin name="GPIO0" x="17.78" y="-15.24" length="middle" rot="R180"/>
+<wire x1="-12.7" y1="17.78" x2="12.7" y2="17.78" width="0.254" layer="94"/>
+<wire x1="12.7" y1="17.78" x2="12.7" y2="-17.78" width="0.254" layer="94"/>
+<wire x1="12.7" y1="-17.78" x2="-12.7" y2="-17.78" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-17.78" x2="-12.7" y2="17.78" width="0.254" layer="94"/>
+<text x="-3.81" y="17.78" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -608,6 +650,33 @@ Resettable Fuse. Spark Fun Electronics SKU : COM-08357</description>
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="ESP8266">
+<gates>
+<gate name="G$1" symbol="ESP8266" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="ESP-03">
+<connects>
+<connect gate="G$1" pin="ANT" pad="P$7"/>
+<connect gate="G$1" pin="CH_PD" pad="P$6"/>
+<connect gate="G$1" pin="GND" pad="P$1 P$2"/>
+<connect gate="G$1" pin="GPIO0" pad="P$14"/>
+<connect gate="G$1" pin="GPIO12" pad="P$10"/>
+<connect gate="G$1" pin="GPIO13" pad="P$11"/>
+<connect gate="G$1" pin="GPIO14" pad="P$9"/>
+<connect gate="G$1" pin="GPIO15" pad="P$12"/>
+<connect gate="G$1" pin="GPIO16" pad="P$5"/>
+<connect gate="G$1" pin="GPIO2" pad="P$13"/>
+<connect gate="G$1" pin="RXD" pad="P$4"/>
+<connect gate="G$1" pin="TXD" pad="P$3"/>
+<connect gate="G$1" pin="VCC" pad="P$8"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -6523,7 +6592,7 @@ package type ST</description>
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
 <part name="+3V16" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V18" library="supply1" deviceset="+3V3" device=""/>
-<part name="IC_EE" library="microchip" deviceset="25*" device="SN" technology="LC080"/>
+<part name="IC_FRAM" library="microchip" deviceset="25*" device="SN" technology="LC080" value="FM25L04B"/>
 <part name="GND26" library="supply1" deviceset="GND" device=""/>
 <part name="P+7" library="supply1" deviceset="+5V" device=""/>
 <part name="P+8" library="supply1" deviceset="+5V" device=""/>
@@ -6540,6 +6609,8 @@ package type ST</description>
 <part name="IC1" library="linear" deviceset="MCP1703" device="CB"/>
 <part name="R25" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="R26" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
+<part name="GND31" library="supply1" deviceset="GND" device=""/>
+<part name="ESP" library="misc" deviceset="ESP8266" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6694,7 +6765,7 @@ package type ST</description>
 <instance part="GND22" gate="1" x="264.16" y="10.16"/>
 <instance part="+3V16" gate="G$1" x="243.84" y="33.02"/>
 <instance part="+3V18" gate="G$1" x="240.03" y="16.51"/>
-<instance part="IC_EE" gate="G$1" x="256.54" y="22.86"/>
+<instance part="IC_FRAM" gate="G$1" x="256.54" y="22.86"/>
 <instance part="IC_OPA" gate="D" x="39.37" y="148.59"/>
 <instance part="GND26" gate="1" x="53.34" y="182.88"/>
 <instance part="P+7" gate="1" x="63.5" y="198.12"/>
@@ -6712,6 +6783,8 @@ package type ST</description>
 <instance part="IC1" gate="G$1" x="53.34" y="193.04"/>
 <instance part="R25" gate="G$1" x="177.8" y="166.37" rot="R90"/>
 <instance part="R26" gate="G$1" x="186.69" y="163.83" rot="R90"/>
+<instance part="GND31" gate="1" x="31.75" y="143.51"/>
+<instance part="ESP" gate="G$1" x="318.77" y="27.94"/>
 </instances>
 <busses>
 </busses>
@@ -6903,7 +6976,7 @@ package type ST</description>
 </segment>
 <segment>
 <pinref part="GND22" gate="1" pin="GND"/>
-<pinref part="IC_EE" gate="G$1" pin="GND"/>
+<pinref part="IC_FRAM" gate="G$1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="R20" gate="G$1" pin="2"/>
@@ -6920,6 +6993,13 @@ package type ST</description>
 <segment>
 <pinref part="IC1" gate="G$1" pin="GND"/>
 <pinref part="GND26" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="IC_OPA" gate="D" pin="+IN"/>
+<pinref part="IC_OPA" gate="D" pin="-IN"/>
+<wire x1="31.75" y1="151.13" x2="31.75" y2="146.05" width="0.1524" layer="91"/>
+<pinref part="GND31" gate="1" pin="GND"/>
+<junction x="31.75" y="146.05"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -7008,10 +7088,11 @@ package type ST</description>
 <segment>
 <pinref part="STM32" gate="AN_POWER" pin="VDDA"/>
 <wire x1="177.8" y1="25.4" x2="190.5" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="STM32" gate="AN_POWER" pin="VBAT"/>
-<wire x1="177.8" y1="35.56" x2="190.5" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="35.56" x2="190.5" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="+3V2" gate="G$1" pin="+3V3"/>
+<pinref part="STM32" gate="AN_POWER" pin="VBAT"/>
+<wire x1="177.8" y1="35.56" x2="184.15" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="184.15" y1="35.56" x2="190.5" y2="35.56" width="0.1524" layer="91"/>
 <junction x="190.5" y="35.56"/>
 </segment>
 <segment>
@@ -7028,15 +7109,15 @@ package type ST</description>
 <pinref part="+3V18" gate="G$1" pin="+3V3"/>
 <wire x1="240.03" y1="13.97" x2="243.84" y2="13.97" width="0.1524" layer="91"/>
 <wire x1="243.84" y1="13.97" x2="243.84" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="IC_EE" gate="G$1" pin="!HOLD"/>
+<pinref part="IC_FRAM" gate="G$1" pin="!HOLD"/>
 </segment>
 <segment>
 <pinref part="+3V6" gate="G$1" pin="+3V3"/>
-<pinref part="IC_EE" gate="G$1" pin="VCC"/>
+<pinref part="IC_FRAM" gate="G$1" pin="VCC"/>
 </segment>
 <segment>
 <pinref part="+3V16" gate="G$1" pin="+3V3"/>
-<pinref part="IC_EE" gate="G$1" pin="!WP"/>
+<pinref part="IC_FRAM" gate="G$1" pin="!WP"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -7800,7 +7881,7 @@ package type ST</description>
 <segment>
 <wire x1="243.84" y1="22.86" x2="232.41" y2="22.86" width="0.1524" layer="91"/>
 <label x="243.84" y="22.86" size="1.778" layer="95" rot="R180"/>
-<pinref part="IC_EE" gate="G$1" pin="SI"/>
+<pinref part="IC_FRAM" gate="G$1" pin="SI"/>
 </segment>
 </net>
 <net name="SPI2_MISO" class="0">
@@ -7812,7 +7893,7 @@ package type ST</description>
 <segment>
 <wire x1="271.78" y1="22.86" x2="283.21" y2="22.86" width="0.1524" layer="91"/>
 <label x="271.78" y="22.86" size="1.778" layer="95"/>
-<pinref part="IC_EE" gate="G$1" pin="SO"/>
+<pinref part="IC_FRAM" gate="G$1" pin="SO"/>
 </segment>
 </net>
 <net name="SPI2_SCK" class="0">
@@ -7824,7 +7905,7 @@ package type ST</description>
 <segment>
 <wire x1="243.84" y1="20.32" x2="232.41" y2="20.32" width="0.1524" layer="91"/>
 <label x="243.84" y="20.32" size="1.778" layer="95" rot="R180"/>
-<pinref part="IC_EE" gate="G$1" pin="SCK"/>
+<pinref part="IC_FRAM" gate="G$1" pin="SCK"/>
 </segment>
 </net>
 <net name="SPI2_NSS" class="0">
@@ -7836,7 +7917,7 @@ package type ST</description>
 <segment>
 <label x="243.84" y="25.4" size="1.778" layer="95" rot="R180"/>
 <wire x1="232.41" y1="25.4" x2="243.84" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="IC_EE" gate="G$1" pin="!CS"/>
+<pinref part="IC_FRAM" gate="G$1" pin="!CS"/>
 </segment>
 </net>
 <net name="DAC2" class="0">
