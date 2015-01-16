@@ -240,7 +240,7 @@ bool Motolink::writeTablesHeaders()
 
 bool Motolink::readSettings(settings_t *settings)
 {
-
+    (void)settings;
     return true;
 }
 
@@ -273,7 +273,7 @@ bool Motolink::clearTables()
 
 bool Motolink::writeSettings(const settings_t *settings)
 {
-
+    (void)settings;
     return true;
 }
 
@@ -377,7 +377,7 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
 
     recv->remove(0, 1);
 
-    return result && recv->size() == len;
+    return result && (uint)recv->size() == len;
 }
 
 void Motolink::printError(quint8 reply)

@@ -9,8 +9,8 @@
 QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
     QTableView(parent),
     mHeaderEditUi(new Ui::HeaderEdit),
-    mHeaderEditDialog(new QDialog),
     mCellEditUi(new Ui::CellEdit),
+    mHeaderEditDialog(new QDialog),
     mCellEditDialog(new QDialog)
 {
     mHeaderEditUi->setupUi(mHeaderEditDialog);

@@ -149,7 +149,7 @@ MHDetachedWindow::~MHDetachedWindow(void)
 
 }
 
-void MHDetachedWindow::setTabIcon(QIcon &icon)
+void MHDetachedWindow::setTabIcon(const QIcon& icon)
 {
     m_tabIcon = icon;
 }

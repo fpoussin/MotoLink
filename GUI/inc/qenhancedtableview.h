@@ -39,10 +39,10 @@ private:
     void setupConnections(void);
     void setEditBoundaries(int section, Qt::Orientation orientation);
 
-    QDialog *mHeaderEditDialog;
-    QDialog *mCellEditDialog;
     Ui::HeaderEdit *mHeaderEditUi;
     Ui::CellEdit *mCellEditUi;
+    QDialog *mHeaderEditDialog;
+    QDialog *mCellEditDialog;
     int mLastSection;
     Qt::Orientation mLastOrientation;
     bool mMenuReadOnly;
