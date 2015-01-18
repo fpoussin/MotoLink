@@ -387,11 +387,11 @@ static bool sduSpecialRequestsHook(USBDriver *usbp) {
       case CDC_SET_CONTROL_LINE_STATE:
         if (usbp->setup[2] & 1) /* DTR */
         {
-
+		palSetPad(SCS_PORT, SCS_PAD);
         }
         else
         {
-
+		palClearPad(SCS_PORT, SCS_PAD);
         }
         if (usbp->setup[2] & 2) /* RTS */
         {
