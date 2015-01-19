@@ -50,6 +50,7 @@ monitor_t monitoring = {0,0,0,0,0,0,0,100};
 /*===========================================================================*/
 
 static virtual_timer_t vt_freqin;
+static const uint8_t initMsg[] = {0xFE, 0x04, 0xFF, 0xFF};
 
 /*===========================================================================*/
 /* CallBacks                                                                 */
@@ -206,6 +207,15 @@ msg_t ThreadSDU(void *arg)
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
   while (TRUE) {
+
+    if (doKLineInit)
+    {
+      doKLineInit = false;
+
+      klineInit();
+      sdWriteTimeout(&SD1, initMsg, sizeof(initMsg), MS2ST(100));
+      sdReadTimeout(&SD1, buffer_check, sizeof(initMsg), MS2ST(10)); // Read back what we wrote
+	}
 
     pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_IMMEDIATE);
@@ -535,14 +545,14 @@ int main(void)
   /*
    * Creates the threads.
    */
-  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
-  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
-  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), HIGHPRIO, ThreadADC_CCM, NULL);
+  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+1, ThreadBDU, NULL);
+  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+1, ThreadSDU, NULL);
+  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC_CCM, NULL);
   pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock_CCM, NULL);
   pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
   pThreadSER2 = chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   /* Create last as it uses pointers from above */
-  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+1, ThreadMonitor, NULL);
+  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+2, ThreadMonitor, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

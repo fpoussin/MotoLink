@@ -36,3 +36,17 @@ int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+void klineInit(void)
+{
+  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
+
+  palSetPad(KLINE_PORT, KLINE_TX);
+  chThdSleepMilliseconds(70);
+  palClearPad(KLINE_PORT, KLINE_TX);
+  chThdSleepMilliseconds(130);
+
+  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_ALTERNATE(7) | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_ALTERNATE(7) | PAL_STM32_OSPEED_HIGHEST);
+}

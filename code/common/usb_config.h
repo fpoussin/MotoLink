@@ -2,6 +2,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "bulk_usb.h"
+#include "common.h"
 
 /*===========================================================================*/
 /* USB related stuff.                                                        */
@@ -19,6 +20,7 @@
 
 extern SerialUSBDriver SDU1;
 extern BulkUSBDriver BDU1;
+extern bool doKLineInit;
 
 extern const USBConfig usbcfg;
 extern const SerialUSBConfig serusbcfg;
