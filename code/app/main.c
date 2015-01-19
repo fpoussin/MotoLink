@@ -493,10 +493,12 @@ int main(void)
   /*
    * Start OS and HAL
    */
+  /* Disable Flash hack
   uint32_t acr = FLASH->ACR;
   acr &= ~FLASH_ACR_LATENCY;
   acr |= FLASH_ACR_LATENCY_0;
   FLASH->ACR = acr;
+  */
 
   halInit();
   driversInit();
