@@ -388,10 +388,12 @@ static bool sduSpecialRequestsHook(USBDriver *usbp) {
       case CDC_SET_CONTROL_LINE_STATE:
         if (usbp->setup[2] & 1) /* DTR */
         {
+          // K-line init
           doKLineInit = true;
         }
         else
         {
+          // K-Line de-init?
         }
         if (usbp->setup[2] & 2) /* RTS */
         {
