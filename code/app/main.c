@@ -323,7 +323,6 @@ msg_t ThreadADC_CCM(void *arg)
 /*
  * Knock processing thread.
  */
-int main(void);
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];

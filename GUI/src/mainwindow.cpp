@@ -25,16 +25,19 @@ MainWindow::MainWindow(QWidget *parent) :
     mMainUi = new Ui::MainWindow();
     mTasksUi = new Ui::Tasks();
     mLogsUi = new Ui::Logs();
+    mSerialLogsUi = new Ui::Logs();
     mKnockGraphUi = new Ui::KnockGraph();
 
     mTasksWidget = new QWidget();
     mKnockGraphWidget = new QWidget;
     mLogsWidget = new QWidget();
+    mSerialLogsWidget = new QWidget();
 
     mMainUi->setupUi(this);
     mTasksUi->setupUi(mTasksWidget);
     mKnockGraphUi->setupUi(mKnockGraphWidget);
     mLogsUi->setupUi(mLogsWidget);
+    mSerialLogsUi->setupUi(mSerialLogsWidget);
 
     mMtl = new Motolink();
     mHrc = new Hrc();
@@ -339,6 +342,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->actionShow_tasks, SIGNAL(triggered()),this, SLOT(showTasks()));
     QObject::connect(mMainUi->actionShow_Knock_Spectrum, SIGNAL(triggered()),this, SLOT(showKnockGraph()));
     QObject::connect(mMainUi->actionShow_Logs, SIGNAL(triggered()), this, SLOT(showLogs()));
+    QObject::connect(mMainUi->actionShow_Serial_Data, SIGNAL(triggered()), this, SLOT(showSerialData()));
 
     QObject::connect(mMainUi->actionShow_actions, SIGNAL(triggered()), &mUndoView, SLOT(show()));
     QObject::connect(mMainUi->actionUndo, SIGNAL(triggered()), &mUndoStack, SLOT(undo()));
@@ -503,6 +507,7 @@ void MainWindow::uiEnable()
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
     mMainUi->actionShow_Logs->setEnabled(toggle);
+    mMainUi->actionShow_Serial_Data->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);
 }
@@ -518,6 +523,7 @@ void MainWindow::uiDisable()
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
     mMainUi->actionShow_Logs->setEnabled(toggle);
+    mMainUi->actionShow_Serial_Data->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);
 }
@@ -611,6 +617,12 @@ void MainWindow::showKnockGraph()
 {
     mKnockGraphWidget->show();
     mKnockGraphWidget->raise();
+}
+
+void MainWindow::showSerialData()
+{
+    mSerialLogsWidget->show();
+    mSerialLogsWidget->raise();
 }
 
 void MainWindow::showLogs()
@@ -825,6 +837,20 @@ void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
     mAFRModel.setDataFromArray(afr);
     mKnockModel.setDataFromArray(knock);
     this->setTablesCursor(mSensorsStruct.row, mSensorsStruct.col);
+}
+
+void MainWindow::onSerialDataReceived(const QByteArray *data)
+{
+    QString str;
+    const QString prepend(" 0x");
+
+    for (int i = 0; i < data->size(); i++)
+    {
+        str.append(prepend+QString::number(data->at(i), 16));
+    }
+
+    mSerialLogsUi->list->addItem(str);
+    mSerialLogsUi->list->scrollToBottom();
 }
 
 void MainWindow::onSetTps0Pct(void)

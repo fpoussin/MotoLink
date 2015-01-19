@@ -56,6 +56,7 @@ public slots:
     bool readKnockSpectrum(void);
     bool readTables(void);
     bool writeTablesHeaders(void);
+    bool readSerialData(void);
 
     bool sendWake();
 
@@ -88,6 +89,7 @@ signals:
     void receivedKockSpectrum(const QByteArray * data);
     void receivedSettings(const settings_t * settings);
     void receivedTables(const quint8 * AFR, const quint8 * Knock);
+    void receivedSerialData(QByteArray data);
 
 private slots:
     quint8 checkSum(const quint8 *data, quint8 length) const;

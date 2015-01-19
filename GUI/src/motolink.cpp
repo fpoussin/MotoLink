@@ -238,6 +238,24 @@ bool Motolink::writeTablesHeaders()
     return this->sendCmd(&send, &recv, 0, CMD_SET_TABLES_HEADERS);
 }
 
+bool Motolink::readSerialData()
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    int size = 256;
+    this->prepareCmd(&send, CMD_GET_SERIAL_DATA);
+
+    if (this->sendCmd(&send, &recv, size, CMD_GET_SERIAL_DATA))
+    {
+        emit receivedSerialData(recv);
+        return true;
+    }
+
+    return false;
+}
+
 bool Motolink::readSettings(settings_t *settings)
 {
     (void)settings;

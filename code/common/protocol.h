@@ -32,6 +32,7 @@
 #define CMD_SET_TABLES_HEADERS (uint8_t)0x13
 #define CMD_CLEAR_CELL (uint8_t)0x14
 #define CMD_CLEAR_TABLES (uint8_t)0x15
+#define CMD_GET_SERIAL_DATA (uint8_t)0x16
 
 #define FLAG_OK (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02

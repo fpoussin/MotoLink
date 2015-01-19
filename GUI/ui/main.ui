@@ -2394,7 +2394,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
@@ -2442,6 +2442,7 @@
     <addaction name="actionShow_tasks"/>
     <addaction name="actionShow_Knock_Spectrum"/>
     <addaction name="actionShow_Logs"/>
+    <addaction name="actionShow_Serial_Data"/>
     <addaction name="separator"/>
     <addaction name="actionUpdate"/>
    </widget>
@@ -2792,6 +2793,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionShow_Serial_Data">
+   <property name="icon">
+    <iconset resource="../res/oxygen.qrc">
+     <normaloff>:/oxygen/32x32/apps/kig.png</normaloff>:/oxygen/32x32/apps/kig.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Serial Data...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>

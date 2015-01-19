@@ -88,6 +88,7 @@ private slots:
     void showSettingsTab(void);
     void showTasks(void);
     void showKnockGraph(void);
+    void showSerialData(void);
 
     void showLogs(void);
     void writeLogs(const QString & msg);
@@ -100,6 +101,7 @@ private slots:
     void onMonitoringReceived(const monitor_t * monitoring);
     void onKnockSpectrumReceived(const QByteArray * data);
     void onTablesReceived(const quint8 * afr, const quint8 * knock);
+    void onSerialDataReceived(const QByteArray * data);
 
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
@@ -133,9 +135,11 @@ private:
     Ui::Tasks *mTasksUi;
     Ui::KnockGraph *mKnockGraphUi;
     Ui::Logs *mLogsUi;
+    Ui::Logs *mSerialLogsUi;
     QWidget *mTasksWidget;
     QWidget *mKnockGraphWidget;
     QWidget *mLogsWidget;
+    QWidget *mSerialLogsWidget;
     QCPItemText *mKnockFreqLabel;
     QTranslator mTranslator;
     QSettings mSettings;
