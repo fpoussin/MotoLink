@@ -50,7 +50,12 @@ monitor_t monitoring = {0,0,0,0,0,0,0,100};
 /*===========================================================================*/
 
 static virtual_timer_t vt_freqin;
-static const uint8_t initMsg[] = {0xFE, 0x04, 0xFF, 0xFF};
+static const uint8_t initMsg[] = {0xFE, 0x04, 0xFF, 0xFF}; // original HDS init msg
+
+static const uint8_t initHex1[] = {0x27, 0x0B, 0xE0, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x48, 0x6F, 0x43}; // HelloHo
+static const uint8_t initHex2[] = {0x07 , 0x08 , 0x49 , 0x7F , 0x61 , 0x6D , 0x7F, 0xDC}; // Iam
+static const uint8_t initHex3[] = {0x27 , 0x0B , 0xE0 , 0x77 , 0x41 , 0x72 , 0x65 , 0x59 , 0x6F , 0x75 , 0x22}; // AreYou
+static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7F , 0x27}; // in.
 
 /*===========================================================================*/
 /* CallBacks                                                                 */
@@ -156,7 +161,7 @@ msg_t ThreadCAN(void *p)
 /*
  * USB Bulk thread.
  */
-THD_WORKING_AREA(waThreadBDU, 640);
+THD_WORKING_AREA(waThreadBDU, 700);
 msg_t ThreadBDU(void *arg)
 {
   event_listener_t el1;
@@ -199,7 +204,7 @@ msg_t ThreadSDU(void *arg)
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
   uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
-  size_t read, i;
+  size_t read;
   chRegSetThreadName("SDU");
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
@@ -210,31 +215,21 @@ msg_t ThreadSDU(void *arg)
 
     if (doKLineInit)
     {
-      doKLineInit = false;
-
       klineInit();
-      sdWriteTimeout(&SD1, initMsg, sizeof(initMsg), MS2ST(100));
-      sdReadTimeout(&SD1, buffer_check, sizeof(initMsg), MS2ST(10)); // Read back what we wrote
+      sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
+      doKLineInit = false;
 	}
 
     pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
-    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_IMMEDIATE);
+    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
       pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
-      sdReadTimeout(&SD1, buffer_check, read, MS2ST(10)); // Read back what we wrote
-      for (i=0; i<sizeof(buffer_check); i++)
-      {
-    	  if (buffer[i] != buffer_check[i])
-    	  {
-    		  // Echo check has failed
-    	  }
-      }
     }
 
     pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
-    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), TIME_IMMEDIATE);
+    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
       pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
@@ -252,7 +247,7 @@ msg_t ThreadSDU(void *arg)
 pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
-THD_WORKING_AREA(waThreadADC, 64);
+THD_WORKING_AREA(waThreadADC, 128);
 msg_t ThreadADC_CCM(void *arg)
 {
   (void)arg;
@@ -326,7 +321,7 @@ msg_t ThreadADC_CCM(void *arg)
 static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
-THD_WORKING_AREA(waThreadKnock, 548);
+THD_WORKING_AREA(waThreadKnock, 600);
 msg_t ThreadKnock_CCM(void *arg)
 {
   (void)arg;
@@ -533,6 +528,10 @@ int main(void)
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
 
+  // Enable K-line
+  palSetPad(KL_CS_PORT, KL_CS_PAD);
+  palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
+
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
   dacConvertOne(&DACD1, 2048); // This sets the offset for the knock ADC opamp.
@@ -547,13 +546,13 @@ int main(void)
    * Creates the threads.
    */
   pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+1, ThreadBDU, NULL);
-  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+1, ThreadSDU, NULL);
+  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+2, ThreadSDU, NULL);
   pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC_CCM, NULL);
   pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock_CCM, NULL);
   pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
   pThreadSER2 = chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   /* Create last as it uses pointers from above */
-  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+2, ThreadMonitor, NULL);
+  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+5, ThreadMonitor, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

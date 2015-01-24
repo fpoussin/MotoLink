@@ -39,16 +39,27 @@ int map(int x, int in_min, int in_max, int out_min, int out_max)
 
 void klineInit(void)
 {
-  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+
+  palSetPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
+  chThdSleepMilliseconds(70); // Low for 70ms
+  palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
+  chThdSleepMilliseconds(130); // High for 130ms
+
+  /*
+  // Set pin mode to GPIO
   palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
-  palSetPad(KLINE_PORT, KLINE_TX);
-  chThdSleepMilliseconds(70);
+  // Toggle K-line bus
   palClearPad(KLINE_PORT, KLINE_TX);
-  chThdSleepMilliseconds(130);
+  chThdSleepMilliseconds(70); // Low for 70ms
+  palSetPad(KLINE_PORT, KLINE_TX);
+  chThdSleepMilliseconds(130); // High for 130ms
 
+  // Set pin mode back to UART
   palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_PULLUP);
   palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OTYPE_OPENDRAIN);
+  */
 }

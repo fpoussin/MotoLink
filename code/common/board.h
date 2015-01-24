@@ -64,6 +64,10 @@
 
 #define KL_CS_PORT GPIOC
 #define KL_CS_PAD 12
+
+#define KLINE_PORT GPIOA
+#define KLINE_TX 9
+#define KLINE_RX 10
  
 #define USB_CONN_PORT GPIOB
 #define USB_CONN_PAD   13
@@ -89,10 +93,6 @@
 
 #define DAC_PORT GPIOA
 #define DAC_PAD 4
- 
-#define KLINE_PORT GPIOA
-#define KLINE_TX 9
-#define KLINE_RX 10
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
