@@ -40,10 +40,17 @@ int map(int x, int in_min, int in_max, int out_min, int out_max)
 void klineInit(void)
 {
 
+  palClearPad(KL_CS_PORT, KL_CS_PAD);
+  chThdSleepMilliseconds(5);
+
   palSetPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
   chThdSleepMilliseconds(70); // Low for 70ms
   palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
   chThdSleepMilliseconds(130); // High for 130ms
+
+  palSetPad(KL_CS_PORT, KL_CS_PAD);
+  chThdSleepMilliseconds(5);
+
 
   /*
   // Set pin mode to GPIO
