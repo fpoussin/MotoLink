@@ -74,6 +74,7 @@ void klineInit(void)
 bool fiveBaudInit(SerialDriver *sd)
 {
   uint8_t input_buf[3];
+  size_t bytes;
   // Set pin mode to GPIO
   palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
   palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
@@ -98,12 +99,24 @@ bool fiveBaudInit(SerialDriver *sd)
 
   chThdSetPriority(prio); // Revert back original priority
 
-  size_t read = sdReadTimeout(sd, input_buf, sizeof(input_buf), MS2ST(1000)); // 300ms max according to ISO9141
+  chThdSleepMilliseconds(25);
+  bytes = sdReadTimeout(sd, input_buf, sizeof(input_buf), MS2ST(500)); // 300ms max according to ISO9141
 
-  if (read == 3 && input_buf[0] == 0x55)
+  if (bytes != 3 || input_buf[0] != 0x55)
   {
-	  return true;
+	  return false;
   }
 
-  return false;
+  chThdSleepMilliseconds(35); // 25-50 ms pause per ISO standard
+  uint8_t key = input_buf[2] ^ 0xFF; // Invert key byte
+  sdWriteTimeout(sd, &key, 1, MS2ST(100));
+
+  chThdSleepMilliseconds(35); // 25-50 ms pause per ISO standard
+  bytes = sdReadTimeout(sd, input_buf, 1, MS2ST(100));
+  if (bytes != 1 || input_buf[0] != 0xCC)
+  {
+	  return false;
+  }
+
+  return true;
 }
