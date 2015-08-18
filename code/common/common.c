@@ -79,8 +79,10 @@ bool fiveBaudInit(SerialDriver *sd)
   palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
   palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
-  const unsigned char prio = chThdGetPriorityX();
+  const uint8_t prio = chThdGetPriorityX();
   chThdSetPriority(HIGHPRIO);
+
+  K_HIGH(320); // As per ISO standard
 
   // Send 0x33 at 5 baud (00110011)
   // K-line level: |_--__--__-|
