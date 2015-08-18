@@ -10,5 +10,6 @@ uint8_t checksum(const uint8_t *data, uint8_t length);
 inline bool getSwitch1(void);
 inline int map(int x, int in_min, int in_max, int out_min, int out_max);
 void klineInit(void);
+bool fiveBaudInit(SerialDriver *sd);
 
 #endif

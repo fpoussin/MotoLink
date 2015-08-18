@@ -215,7 +215,8 @@ msg_t ThreadSDU(void *arg)
 
     if (doKLineInit)
     {
-      klineInit();
+      //klineInit();
+      fiveBaudInit(&SD1);
       sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
       doKLineInit = false;
 	}
