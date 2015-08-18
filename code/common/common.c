@@ -73,7 +73,7 @@ void klineInit(void)
 
 bool fiveBaudInit(SerialDriver *sd)
 {
-  uint8_t input_buf;
+  uint8_t input_buf[3];
   // Set pin mode to GPIO
   palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
   palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
@@ -82,12 +82,13 @@ bool fiveBaudInit(SerialDriver *sd)
   chThdSetPriority(HIGHPRIO);
 
   // Send 0x33 at 5 baud (00110011)
+  // K-line level: |_--__--__-|
   K_LOW(200); // Low for 200ms - start bit
   K_HIGH(400); // High for 400ms - 00
   K_LOW(400); // Low for 400ms - 11
   K_HIGH(400); // High for 400ms - 00
   K_LOW(400); // Low for 400ms - 11
-  K_HIGH(200); // High for 400ms - stop bit
+  K_HIGH(200); // High for 200ms - stop bit
 
   // Set pin mode back to UART
   palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_ALTERNATE(7) | \
@@ -97,9 +98,9 @@ bool fiveBaudInit(SerialDriver *sd)
 
   chThdSetPriority(prio); // Revert back original priority
 
-  size_t read = sdReadTimeout(sd, &input_buf, 1, MS2ST(1000)); // 300ms max according to ISO9141
+  size_t read = sdReadTimeout(sd, input_buf, sizeof(input_buf), MS2ST(1000)); // 300ms max according to ISO9141
 
-  if (read > 0 && input_buf == 0x55)
+  if (read == 3 && input_buf[0] == 0x55)
   {
 	  return true;
   }
