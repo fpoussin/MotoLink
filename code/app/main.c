@@ -136,12 +136,12 @@ PWMConfig pwmcfg = {
 /*===========================================================================*/
 
 THD_WORKING_AREA(waThreadCAN, 256);
-msg_t ThreadCAN(void *p)
+static THD_FUNCTION(ThreadCAN, arg)
 {
   event_listener_t el;
   CANRxFrame rxmsg;
 
-  (void)p;
+  (void)arg;
   chRegSetThreadName("CAN Bus");
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
@@ -155,14 +155,14 @@ msg_t ThreadCAN(void *p)
     }
   }
   chEvtUnregister(&CAND1.rxfull_event, &el);
-  return 0;
+  return;
 }
 
 /*
  * USB Bulk thread.
  */
 THD_WORKING_AREA(waThreadBDU, 700);
-msg_t ThreadBDU(void *arg)
+static THD_FUNCTION(ThreadBDU, arg)
 {
   event_listener_t el1;
   eventmask_t flags;
@@ -192,14 +192,14 @@ msg_t ThreadBDU(void *arg)
     else
      chThdSleepMilliseconds(2);
   }
-  return 0;
+  return;
 }
 
 /*
  * USB Serial thread.
  */
 THD_WORKING_AREA(waThreadSDU, 1024);
-msg_t ThreadSDU(void *arg)
+static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
@@ -239,7 +239,7 @@ msg_t ThreadSDU(void *arg)
 
     chThdSleepMilliseconds(1);
   }
-  return 0;
+  return;
 }
 
 /*
@@ -249,7 +249,7 @@ pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
 THD_WORKING_AREA(waThreadADC, 128);
-msg_t ThreadADC_CCM(void *arg)
+static THD_FUNCTION(ThreadADC_CCM, arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
@@ -313,7 +313,7 @@ msg_t ThreadADC_CCM(void *arg)
       tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col] ? sensors_data.knock_value : tableKnock[row][col];
     }
   }
-  return 0;
+  return;
 }
 
 /*
@@ -323,7 +323,7 @@ static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
 THD_WORKING_AREA(waThreadKnock, 600);
-msg_t ThreadKnock_CCM(void *arg)
+static THD_FUNCTION(ThreadKnock_CCM, arg)
 {
   (void)arg;
   chRegSetThreadName("Knock");
@@ -378,7 +378,7 @@ msg_t ThreadKnock_CCM(void *arg)
     sensors_data.knock_value = calculateKnockIntensity(freq, ratio, FFT_FREQ, output_knock, sizeof(output_knock));
     sensors_data.knock_freq = freq;
   }
-  return 0;
+  return;
 }
 
 /* Pointer to the idle thread */
@@ -391,7 +391,7 @@ static inline thread_t *chThdGetIdleX(void) {
  * CPU Load Monitoring thread.
  */
 THD_WORKING_AREA(waThreadMonitor, 256);
-msg_t ThreadMonitor(void *arg)
+static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
@@ -450,14 +450,14 @@ msg_t ThreadMonitor(void *arg)
 	monitoring.idle = (((chThdGetIdleX()->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
 	monitoring.irq = ((irq_ticks*10000)/total_ticks);
   }
-  return 0;
+  return;
 }
 
 /*
  * Uart2 thread.
  */
 THD_WORKING_AREA(waThreadSER2, 128);
-msg_t ThreadSER2(void *arg)
+static THD_FUNCTION(ThreadSER2, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
@@ -476,7 +476,7 @@ msg_t ThreadSER2(void *arg)
 
     chThdSleepMilliseconds(1);
   }
-  return 0;
+  return;
 }
 
 /*===========================================================================*/

@@ -19,7 +19,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "chprintf.h"
 #include "common.h"
 #include "communication.h"
 
@@ -54,7 +53,8 @@ static PWMConfig pwmcfg = {
  * Red LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBlinker, 384);
-static msg_t ThreadBlinker(void *arg) {
+static THD_FUNCTION(ThreadBlinker, arg)
+{
 
   (void)arg;
   chRegSetThreadName("Blinker");
@@ -84,15 +84,15 @@ static msg_t ThreadBlinker(void *arg) {
     else
       TIM2->PSC = (STM32_TIMCLK1 / 5000) - 1;
   }
-  return 0;
+  return;
 }
 
 /*
  * USB Bulk thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBDU, 1024);
-static msg_t ThreadBDU_CCM(void *arg) {
-
+static THD_FUNCTION(ThreadBDU_CCM, arg)
+{
   event_listener_t el1;
   eventmask_t flags;
   (void)arg;
@@ -119,15 +119,15 @@ static msg_t ThreadBDU_CCM(void *arg) {
       readCommand_CCM((BaseChannel *)&BDU1, reset_flags);
     }
   }
-  return 0;
+  return;
 }
 
 /*
  * USB Serial thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadSDU, 1024);
-static msg_t ThreadSDU(void *arg) {
-
+static THD_FUNCTION(ThreadSDU, arg)
+{
   uint8_t buffer[16];
   event_listener_t el1;
   eventmask_t flags_usb;
@@ -152,14 +152,14 @@ static msg_t ThreadSDU(void *arg) {
       chThdSleepMilliseconds(10);
     }
   }
-  return 0;
+  return;
 }
 
 /*
  * Application entry point.
  */
-int main(void) {
-
+int main(void)
+{
   /* Begin charging switch cap */
   palInit(&pal_default_config);
 
