@@ -1,7 +1,7 @@
 [Version]
 Signature = "$Windows NT$"
 Class = USB
-ClassGUID = {36FC9E60-C465-11CF-8056-444553540000}
+ClassGUID = {88BAE032-5A81-49f0-BC3D-A4FF138216D6}
 Provider = %ProviderName%
 DriverPackageDisplayName = %Product%
 DriverVer = 06/27/2014,1.0

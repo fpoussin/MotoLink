@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QDataStream>
 #include "bootloader.h"
 
 #define _LOCK_ QMutexLocker locker(&mMutex);

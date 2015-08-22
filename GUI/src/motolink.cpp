@@ -87,7 +87,7 @@ bool Motolink::usbProbeConnect()
         if (ret >= 0 || mAbortConnect) {
             break;
         }
-        _usleep(100000);
+        QThread::msleep(100);
         emit connectionProgress(timer.elapsed()/100);
     }
 
@@ -288,7 +288,7 @@ bool Motolink::clearCell(uint tableId, int row, int col)
         return false;
 
     QByteArray send, recv;
-    cell_t cell = {row&0xFF, col&0xFF};
+    cell_t cell = {(uint8_t)row, (uint8_t)col};
     send.append(tableId&0xFF);
     send.append((char*)&cell, sizeof(cell));
     this->prepareCmd(&send, CMD_CLEAR_CELL);
@@ -334,9 +334,9 @@ bool Motolink::bootAppIfNeeded()
     if (this->getMode() == MODE_BL)
     {
         mBtl->boot();
-        _usleep(100000);
+        QThread::msleep(100);
         this->usbDisconnect();
-        _usleep(2000000);
+        QThread::msleep(2000);
         this->usbConnect();
         return true;
     }

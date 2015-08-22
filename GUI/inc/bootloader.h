@@ -14,7 +14,7 @@ typedef quint16 uint16_t;
 typedef quint32 uint32_t;
 #include "protocol.h"
 
-//#define WAIT_USB _usleep(40000);
+//#define WAIT_USB _QThread::usleep(40000);
 #define _WAIT_USB_
 
 class Bootloader : public QObject

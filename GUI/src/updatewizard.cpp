@@ -205,7 +205,7 @@ void UpdateWizard::startFwUpdate()
             /* Wait 2s for windows to detect the bootloader */
             for (uint i = 0; i <= 20; i++)
             {
-                 _usleep(100000);
+                 QThread::msleep(100);
                  mUi->pbProgress->setValue(i*5);
                  QCoreApplication::processEvents();
             }

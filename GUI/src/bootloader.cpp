@@ -106,7 +106,7 @@ bool Bootloader::eraseFlash(quint32 len)
 
     mUsb->write(&send, send.size());
 
-    _usleep(13*len);
+     QThread::usleep(13*len);
 
     mUsb->read(&recv, 1);
 

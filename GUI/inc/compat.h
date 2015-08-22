@@ -29,12 +29,6 @@ This file is part of QSTLink2.
     #define QElapsedTimer QTime
 #endif
 
-#ifdef WIN32
-    #define _usleep(num) Sleep(num/1000)
-#else
-    #define _usleep(num) usleep(num)
-#endif
-
 #define PrintError() qCritical ("In %s, at %s:%d", Q_FUNC_INFO, __FILE__, __LINE__)
 #define PrintFuncName() qDebug() << "***[" << Q_FUNC_INFO << "]***"
 
