@@ -20,7 +20,7 @@ DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the versio
 
 INCLUDEPATH += inc ../code/common/
 
-include(QtUsb/QtUsb.pri)
+include(QtUsb/src/QtUsb.pri)
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \

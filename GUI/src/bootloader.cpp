@@ -1,6 +1,6 @@
 #include "bootloader.h"
 
-Bootloader::Bootloader(QUsb *usb, QObject *parent) :
+Bootloader::Bootloader(QUsbDevice *usb, QObject *parent) :
     QObject(parent)
 {
     mUsb = usb;

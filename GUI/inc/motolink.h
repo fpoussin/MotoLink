@@ -102,7 +102,7 @@ private:
     void printError(quint8 reply);
     QMutex mMutex;
     QThread *mThread;
-    QUsb *mUsb;
+    QUsbDevice *mUsb;
     Bootloader *mBtl;
     bool mConnected;
     bool mAbortConnect;

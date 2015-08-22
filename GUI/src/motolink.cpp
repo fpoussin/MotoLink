@@ -3,16 +3,28 @@
 Motolink::Motolink(QObject *parent) :
     QObject(parent)
 {
-    mUsb = new QUsb;
+    mUsb = new QUsbDevice;
     mThread = new QThread;
 
     mGuid = "656d69a0-4f42-45c4-b92c-bffa3b9e6bd1";
     mVid = 0x0483;
     mPid = 0xABCD;
 
-    mUsb->setGuid(mGuid);
-    mUsb->setDeviceIds(mPid, mVid);
-    mUsb->setEndPoints(0x83, 0x03);
+    QtUsb::DeviceFilter filter;
+    QtUsb::DeviceConfig config;
+
+    filter.guid = mGuid;
+    filter.pid = mPid;
+    filter.vid = mVid;
+
+    config.readEp = 0x83;
+    config.writeEp = 0x03;
+    config.alternate = 0;
+    config.config = 1;
+    config.interface = 0;
+
+    mUsb->setFilter(filter);
+    mUsb->setConfig(config);
     mUsb->setTimeout(200);
 
     mBtl = new Bootloader(mUsb);
@@ -41,12 +53,10 @@ Motolink::~Motolink()
 
 bool Motolink::usbConnect()
 {
-    QByteArray tmp;
     if (mConnected)
         return true;
     _LOCK_
     mConnected = (mUsb->open() == 0);
-    mUsb->read(&tmp, 512);
     _UNLOCK_
 
     if (!mConnected || !this->sendWake())
@@ -56,6 +66,7 @@ bool Motolink::usbConnect()
         return false;
     }
 
+    mUsb->flush();
     return true;
 }
 
@@ -89,7 +100,8 @@ bool Motolink::usbProbeConnect()
     }
 
     /* Clean buffer */
-    mUsb->read(&tmp, 256);
+    //mUsb->read(&tmp, 256);
+    mUsb->flush();
 
     _UNLOCK_
     if (!this->sendWake())
@@ -360,19 +372,20 @@ bool Motolink::sendSimpleCmd(quint8 cmd)
 {
     _WAIT_USB_
     _LOCK_
-    bool result;
+    bool result = false;
     QByteArray send, recv;
     this->prepareCmd(&send, cmd);
 
-    if (mUsb->write(&send, send.size()) < send.size())
+    if (mUsb->write(&send, send.size()) != send.size())
     {
         return 0;
     }
-    mUsb->read(&recv, 1);
-    result = recv.at(0) == (MASK_REPLY_OK | cmd);
-    if (!result)
-        this->printError(recv.at(0));
-
+    if (mUsb->read(&recv, 1) > 0)
+    {
+        result = recv.at(0) == (MASK_REPLY_OK | cmd);
+        if (!result)
+            this->printError(recv.at(0));
+    }
     return result;
 }
 
