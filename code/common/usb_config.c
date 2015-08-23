@@ -380,8 +380,15 @@ static bool sduSpecialRequestsHook(USBDriver *usbp) {
   if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
     switch (usbp->setup[1]) {
       case CDC_GET_LINE_CODING:
+        usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+        return TRUE;
 
       case CDC_SET_LINE_CODING:
+        if (usbp->setup[4] == sizeof(cdc_linecoding_t))
+        {
+          memcpy(&linecoding, &usbp->setup[5], sizeof(cdc_linecoding_t));
+          setLineCoding(&linecoding, &SD1, &uart1Cfg);
+        }
         usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
         return TRUE;
 

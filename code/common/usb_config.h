@@ -3,6 +3,7 @@
 #include "hal.h"
 #include "bulk_usb.h"
 #include "common.h"
+#include <string.h>
 
 /*===========================================================================*/
 /* USB related stuff.                                                        */
@@ -25,6 +26,9 @@ extern bool doKLineInit;
 extern const USBConfig usbcfg;
 extern const SerialUSBConfig serusbcfg;
 extern const BulkUSBConfig bulkusbcfg;
+
+extern SerialConfig uart1Cfg;
+extern SerialConfig uart2Cfg;
 
 bool usbConnected(void);
 bool usb_lld_connect_bus(USBDriver *usbp);

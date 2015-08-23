@@ -122,3 +122,49 @@ bool fiveBaudInit(SerialDriver *sd)
 
   return true;
 }
+
+void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp)
+{
+  const uint32_t baudrate = (uint32_t)lcp->dwDTERate;
+
+  scp->speed = baudrate;
+  scp->cr1 = 0;
+  scp->cr2 = 0;
+  scp->cr3 = 0;
+
+  switch (lcp->bCharFormat)
+  {
+    case 0:
+      scp->cr2 = USART_CR2_STOP1_BITS;
+      break;
+    case 1:
+      scp->cr2 = USART_CR2_STOP1P5_BITS;
+      break;
+    case 2:
+      scp->cr2 = USART_CR2_STOP2_BITS;
+      break;
+    default:
+      break;
+  }
+
+  switch (lcp->bParityType)
+  {
+    default:
+      break;
+  }
+
+  switch (lcp->bDataBits)
+  {
+    default:
+      break;
+  }
+
+  if (sdp->state != SD_UNINIT)
+    return;
+
+  while(sdp->state != SD_READY) chThdSleepMilliseconds(2);
+  sdStop(sdp);
+
+  while(sdp->state != SD_STOP) chThdSleepMilliseconds(2);
+  sdStart(sdp, scp);
+}

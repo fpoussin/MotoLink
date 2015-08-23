@@ -101,15 +101,15 @@ static const DACConfig daccfg1 = {
   0 /* DAC CR flags */
 };
 
-const SerialConfig uart1Cfg =
+SerialConfig uart1Cfg =
 {
- 10400, // bit rate
+ 19200, // bit rate
  0,
  USART_CR2_STOP1_BITS,
  0
 };
 
-const SerialConfig uart2Cfg =
+SerialConfig uart2Cfg =
 {
  19200, // bit rate
  0,
@@ -213,7 +213,9 @@ static THD_FUNCTION(ThreadSDU, arg)
 
   while (TRUE) {
 
-    if (doKLineInit)
+    while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+
+    if (doKLineInit && 0)
     {
       //klineInit();
       fiveBaudInit(&SD1);
