@@ -42,6 +42,14 @@ static PWMConfig pwmcfg = {
   0
 };
 
+SerialConfig uart1Cfg =
+{
+ 19200, // bit rate
+ 0,
+ USART_CR2_STOP1_BITS,
+ 0
+};
+
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
@@ -126,31 +134,47 @@ static THD_FUNCTION(ThreadBDU_CCM, arg)
  * USB Serial thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadSDU, 1024);
-static THD_FUNCTION(ThreadSDU, arg)
+static THD_FUNCTION(ThreadSDU_CCM, arg)
 {
-  uint8_t buffer[16];
-  event_listener_t el1;
-  eventmask_t flags_usb;
   (void)arg;
+  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
+  size_t read;
   chRegSetThreadName("SDU");
-  chEvtRegisterMask(chnGetEventSource(&SDU1), &el1, CHN_INPUT_AVAILABLE);
+
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
+  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-  while (TRUE)
-  {
-    chEvtWaitOneTimeout(EVENT_MASK(1), TIME_IMMEDIATE);
-    flags_usb = chEvtGetAndClearFlags(&el1);
+  while (TRUE) {
 
-    if (flags_usb & CHN_INPUT_AVAILABLE) { /* Incoming data from USB */
+    while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-      /* Does nothing with the data */
-      chnReadTimeout((BaseChannel *)&SDU1, buffer, sizeof(buffer), MS2ST(5));
+    if (doKLineInit && 0)
+    {
+      //klineInit();
+      fiveBaudInit(&SD1);
+      sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
+      doKLineInit = false;
+	}
+
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
+    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
+    if (read > 0)
+    {
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
-    else {
-      chThdSleepMilliseconds(10);
+
+    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
+    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
+    if (read > 0)
+    {
+      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
+
+    chThdSleepMilliseconds(1);
   }
   return;
 }
@@ -219,7 +243,7 @@ int main(void)
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU_CCM, NULL);
-  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU_CCM, NULL);
 
   while (TRUE)    {
       while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
