@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.3.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.005" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -374,28 +374,6 @@ chip</description>
 <rectangle x1="1.4478" y1="-1.651" x2="2.3978" y2="1.649" layer="51"/>
 <rectangle x1="-0.3" y1="-0.4001" x2="0.3" y2="0.4001" layer="35"/>
 </package>
-<package name="ESP-03">
-<wire x1="-6.35" y1="-8.89" x2="-6.35" y2="8.61" width="0.5" layer="21"/>
-<wire x1="-6.35" y1="8.61" x2="6.15" y2="8.61" width="0.5" layer="21"/>
-<wire x1="6.15" y1="8.61" x2="6.15" y2="-8.89" width="0.5" layer="21"/>
-<wire x1="6.15" y1="-8.89" x2="-6.35" y2="-8.89" width="0.5" layer="21"/>
-<smd name="P$1" x="-6.35" y="-7.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$2" x="-6.35" y="-5.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$3" x="-6.35" y="-3.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$4" x="-6.35" y="-1.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$5" x="-6.35" y="0.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$6" x="-6.35" y="2.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$7" x="-6.35" y="4.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$8" x="6.15" y="4.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$9" x="6.15" y="2.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$10" x="6.15" y="0.61" dx="2" dy="1.2" layer="1"/>
-<smd name="P$11" x="6.15" y="-1.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$12" x="6.15" y="-3.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$13" x="6.15" y="-5.39" dx="2" dy="1.2" layer="1"/>
-<smd name="P$14" x="6.15" y="-7.39" dx="2" dy="1.2" layer="1"/>
-<text x="-3.85" y="9.11" size="1.6764" layer="25" font="vector" ratio="12">&gt;NAME</text>
-<text x="0.65" y="-5.39" size="1.9304" layer="21" font="vector" ratio="16" rot="R90">ESP-03</text>
-</package>
 </packages>
 <symbols>
 <symbol name="2001A">
@@ -459,26 +437,6 @@ chip</description>
 <text x="-3.302" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="1" x="-5.08" y="0" visible="off" length="short"/>
 <pin name="2" x="7.62" y="0" visible="off" length="short" rot="R180"/>
-</symbol>
-<symbol name="ESP8266">
-<pin name="GND" x="-17.78" y="-15.24" length="middle"/>
-<pin name="TXD" x="-17.78" y="-5.08" length="middle"/>
-<pin name="RXD" x="-17.78" y="0" length="middle"/>
-<pin name="GPIO16" x="-17.78" y="5.08" length="middle"/>
-<pin name="CH_PD" x="-17.78" y="10.16" length="middle"/>
-<pin name="ANT" x="-17.78" y="15.24" length="middle"/>
-<pin name="VCC" x="17.78" y="15.24" length="middle" rot="R180"/>
-<pin name="GPIO14" x="17.78" y="10.16" length="middle" rot="R180"/>
-<pin name="GPIO12" x="17.78" y="5.08" length="middle" rot="R180"/>
-<pin name="GPIO13" x="17.78" y="0" length="middle" rot="R180"/>
-<pin name="GPIO15" x="17.78" y="-5.08" length="middle" rot="R180"/>
-<pin name="GPIO2" x="17.78" y="-10.16" length="middle" rot="R180"/>
-<pin name="GPIO0" x="17.78" y="-15.24" length="middle" rot="R180"/>
-<wire x1="-12.7" y1="17.78" x2="12.7" y2="17.78" width="0.254" layer="94"/>
-<wire x1="12.7" y1="17.78" x2="12.7" y2="-17.78" width="0.254" layer="94"/>
-<wire x1="12.7" y1="-17.78" x2="-12.7" y2="-17.78" width="0.254" layer="94"/>
-<wire x1="-12.7" y1="-17.78" x2="-12.7" y2="17.78" width="0.254" layer="94"/>
-<text x="-3.81" y="17.78" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -650,33 +608,6 @@ Resettable Fuse. Spark Fun Electronics SKU : COM-08357</description>
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="ESP8266">
-<gates>
-<gate name="G$1" symbol="ESP8266" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="ESP-03">
-<connects>
-<connect gate="G$1" pin="ANT" pad="P$7"/>
-<connect gate="G$1" pin="CH_PD" pad="P$6"/>
-<connect gate="G$1" pin="GND" pad="P$1 P$2"/>
-<connect gate="G$1" pin="GPIO0" pad="P$14"/>
-<connect gate="G$1" pin="GPIO12" pad="P$10"/>
-<connect gate="G$1" pin="GPIO13" pad="P$11"/>
-<connect gate="G$1" pin="GPIO14" pad="P$9"/>
-<connect gate="G$1" pin="GPIO15" pad="P$12"/>
-<connect gate="G$1" pin="GPIO16" pad="P$5"/>
-<connect gate="G$1" pin="GPIO2" pad="P$13"/>
-<connect gate="G$1" pin="RXD" pad="P$4"/>
-<connect gate="G$1" pin="TXD" pad="P$3"/>
-<connect gate="G$1" pin="VCC" pad="P$8"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -6610,7 +6541,6 @@ package type ST</description>
 <part name="R25" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="R26" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
 <part name="GND31" library="supply1" deviceset="GND" device=""/>
-<part name="ESP" library="misc" deviceset="ESP8266" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6784,7 +6714,6 @@ package type ST</description>
 <instance part="R25" gate="G$1" x="177.8" y="166.37" rot="R90"/>
 <instance part="R26" gate="G$1" x="186.69" y="163.83" rot="R90"/>
 <instance part="GND31" gate="1" x="31.75" y="143.51"/>
-<instance part="ESP" gate="G$1" x="318.77" y="27.94"/>
 </instances>
 <busses>
 </busses>
