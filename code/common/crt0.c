@@ -27,6 +27,8 @@
  */
 
 #include <stdint.h>
+#include <string.h>
+#include "vectors.h"
 
 #if !defined(FALSE)
 #define FALSE       0
@@ -233,6 +235,12 @@ extern funcp_t __fini_array_start;
  */
 extern funcp_t __fini_array_end;
 
+/**
+ * @brief   ISR Vector table.
+ * @pre     The symbol must be aligned to a 32 bits boundary.
+ */
+extern vectors_t _vectors;
+
 /** @} */
 
 /**
@@ -343,12 +351,22 @@ void Reset_Handler(void) {
 #if CRT0_INIT_CCM
   /* CCM segment initialization.*/
   {
-    uint32_t *tp, *dp;
+    uint32_t *tp, *dp, *end;
+    extern vectors_t _vectors_CCM;
 
     tp = &_siccm;
     dp = &_sccm;
     while (dp < &_eccm)
       *dp++ = *tp++;
+
+    tp = (uint32_t*)&_vectors;
+    dp = (uint32_t*)&_vectors_CCM;
+    end = (uint32_t*)((&_vectors_CCM)+sizeof(vectors_t));
+
+    while (dp < end)
+      *dp++ = *tp++;
+
+	SCB->VTOR = (uint32_t)&_vectors_CCM;
   }
 #endif
 

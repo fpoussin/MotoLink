@@ -36,7 +36,7 @@ SECTIONS
 
     startup : ALIGN(16) SUBALIGN(16)
     {
-        KEEP(*(vectors))
+        KEEP(*(.vectors))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
@@ -87,10 +87,10 @@ SECTIONS
         *(.ccm)
         *(.ccm*)
         *(.text.*_CCM*)
-	*(.text.Vector*)
-	*(.text.*_port_*)
-	*chcore*.o(.text*)
-	*(.text.*FLASH_*)
+		*(.text.Vector*)
+		*(.text.*_port_*)
+		*chcore*.o(.text*)
+		*(.text.*FLASH_*)
         *(.text.SysTick_Handler*)
         *(.data.*_CCM*)
         . = ALIGN(4);

@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,
-              2011,2012,2013,2014 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -29,9 +28,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "cmparams.h"
+#include "vectors.h"
 
-#if (CORTEX_NUM_VECTORS & 7) != 0
+#if (CORTEX_NUM_VECTORS % 8) != 0
 #error "the constant CORTEX_NUM_VECTORS must be a multiple of 8"
 #endif
 
@@ -40,44 +39,18 @@
 #endif
 
 /**
- * @brief   Type of an IRQ vector.
- */
-typedef void  (*irq_vector_t)(void);
-
-/**
- * @brief   Type of a structure representing the whole vectors table.
- */
-typedef struct {
-  uint32_t      *init_stack;
-  irq_vector_t  reset_handler;
-  irq_vector_t  nmi_handler;
-  irq_vector_t  hardfault_handler;
-  irq_vector_t  memmanage_handler;
-  irq_vector_t  busfault_handler;
-  irq_vector_t  usagefault_handler;
-  irq_vector_t  vector1c;
-  irq_vector_t  vector20;
-  irq_vector_t  vector24;
-  irq_vector_t  vector28;
-  irq_vector_t  svc_handler;
-  irq_vector_t  debugmonitor_handler;
-  irq_vector_t  vector34;
-  irq_vector_t  pendsv_handler;
-  irq_vector_t  systick_handler;
-  irq_vector_t  vectors[CORTEX_NUM_VECTORS];
-} vectors_t;
-
-/**
  * @brief   Unhandled exceptions handler.
  * @details Any undefined exception vector points to this function by default.
  *          This function simply stops the system into an infinite loop.
  *
  * @notapi
  */
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void _unhandled_exception(void) {
+/*lint -restore*/
 
-  while (true)
-    ;
+  while (true) {
+  }
 }
 
 #if !defined(__DOXYGEN__)
@@ -461,9 +434,11 @@ void Vector3FC(void) __attribute__((weak, alias("_unhandled_exception")));
  * @brief   STM32 vectors table.
  */
 #if !defined(__DOXYGEN__)
-__attribute__ ((used, section("vectors")))
+__attribute__ ((used, section(".vectors")))
 #endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 vectors_t _vectors = {
+/*lint -restore*/
   &__main_stack_end__,Reset_Handler,      NMI_Handler,        HardFault_Handler,
   MemManage_Handler,  BusFault_Handler,   UsageFault_Handler, Vector1C,
   Vector20,           Vector24,           Vector28,           SVC_Handler,
@@ -528,7 +503,7 @@ vectors_t _vectors = {
     Vector170,          Vector174,          Vector178,          Vector17C,
 #endif
 #if CORTEX_NUM_VECTORS > 80
-    Vector180,          Vector184,          Vector188,          Vector17C,
+    Vector180,          Vector184,          Vector188,          Vector18C,
 #endif
 #if CORTEX_NUM_VECTORS > 84
     Vector190,          Vector194,          Vector198,          Vector19C,
@@ -649,5 +624,10 @@ vectors_t _vectors = {
 #endif
   }
 };
+
+/**
+ * @brief   STM32 CCM vectors table.
+ */
+vectors_t _vectors_CCM;
 
 /** @} */

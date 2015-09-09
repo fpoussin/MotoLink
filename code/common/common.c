@@ -1,4 +1,6 @@
 #include "common.h"
+#include "string.h"
+#include "vectors.h"
 
 uint32_t leToInt(uint8_t *ptr) {
 
