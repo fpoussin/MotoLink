@@ -7,6 +7,7 @@
 
 #include "ch.h"
 #include "vectors.h"
+#include "string.h"
 
 /**
  * @brief   CCM segment initialization switch.
@@ -59,7 +60,7 @@ void __late_init(void)
 
     tp = (uint32_t*)&_vectors;
     dp = (uint32_t*)&_vectors_CCM;
-    end = (uint32_t*)((&_vectors_CCM)+sizeof(vectors_t));
+    end = ((uint32_t*)(&_vectors_CCM)+sizeof(vectors_t));
 
     while (dp < end)
       *dp++ = *tp++;
