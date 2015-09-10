@@ -84,6 +84,7 @@ SECTIONS
     {
         . = ALIGN(4);
         PROVIDE(_sccm = .);
+        KEEP(*vectors.o(*._vectors_CCM*))
         *(.ccm)
         *(.ccm*)
         *(.text.*_CCM*)

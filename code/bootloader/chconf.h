@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -99,7 +99,8 @@
  * @details When this option is activated the function @p chSysInit()
  *          does not spawn the idle thread. The application @p main()
  *          function becomes the idle thread and must implement an
- *          infinite loop. */
+ *          infinite loop.
+ */
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 
 /** @} */
@@ -440,7 +441,7 @@
  * @details This hook is invoked just before switching between threads.
  */
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-  /* System halt code here.*/                                               \
+  /* Context switch code here.*/                                            \
 }
 
 /**
@@ -449,7 +450,7 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define CH_CFG_IDLE_ENTER_HOOK() {                                         \
+#define CH_CFG_IDLE_ENTER_HOOK() {                                          \
 }
 
 /**
@@ -458,7 +459,7 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define CH_CFG_IDLE_LEAVE_HOOK() {                                         \
+#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
 }
 
 /**

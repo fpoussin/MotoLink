@@ -625,9 +625,4 @@ vectors_t _vectors = {
   }
 };
 
-/**
- * @brief   STM32 CCM vectors table.
- */
-vectors_t _vectors_CCM;
-
 /** @} */

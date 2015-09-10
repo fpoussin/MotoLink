@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
 
 /*
  * STM32F3xx drivers configuration.
@@ -131,6 +134,7 @@
 #define STM32_I2C_BUSY_TIMEOUT              50
 #define STM32_I2C_I2C1_IRQ_PRIORITY         10
 #define STM32_I2C_I2C2_IRQ_PRIORITY         10
+#define STM32_I2C_USE_DMA                   TRUE
 #define STM32_I2C_I2C1_DMA_PRIORITY         1
 #define STM32_I2C_I2C2_DMA_PRIORITY         1
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
@@ -219,3 +223,5 @@
 #define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      13
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+
+#endif /* _MCUCONF_H_ */

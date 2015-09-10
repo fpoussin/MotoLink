@@ -1,4 +1,5 @@
 # List of all the board related files.
+BOARDSRC += ../common/init.c
 BOARDSRC += ../common/common.c
 BOARDSRC += ../common/board.c
 BOARDSRC += ../common/usb_config.c
