@@ -28,6 +28,14 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
+#if defined(_FROM_ASM_)
+  .extern uint32_t __user_flash_address__
+#else
+  extern uint32_t __user_flash_address__;
+#endif
+
+#define CORTEX_VTOR_INIT ((uint32_t)&__user_flash_address__)
+
 /*===========================================================================*/
 /**
  * @name System timers settings
