@@ -14,7 +14,7 @@ include TransformFunctions/files.mk
 
 TOOLCHAIN := arm-none-eabi-
 CC := $(TOOLCHAIN)gcc
-AR := $(TOOLCHAIN)ar
+AR := $(TOOLCHAIN)gcc-ar
 
 RM := rm -f
 
