@@ -143,6 +143,8 @@
 <layer number="229" name="229bmp" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="230" name="230bmp" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="231" name="231bmp" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="232" name="Eagle3D_PG2" color="7" fill="1" visible="no" active="no"/>
+<layer number="233" name="Eagle3D_PG3" color="7" fill="1" visible="no" active="no"/>
 <layer number="248" name="Housing" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="249" name="Edge" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="250" name="Descript" color="3" fill="1" visible="no" active="no"/>
@@ -8720,9 +8722,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="STM32" gate="POWER" pin="VSS_3"/>
 <wire x1="176.53" y1="76.2" x2="176.53" y2="81.28" width="0.1524" layer="91"/>
 <junction x="176.53" y="76.2"/>
-<pinref part="STM32" gate="POWER" pin="VSS_4"/>
-<wire x1="176.53" y1="81.28" x2="176.53" y2="86.36" width="0.1524" layer="91"/>
-<junction x="176.53" y="81.28"/>
 <pinref part="GND10" gate="1" pin="GND"/>
 <junction x="176.53" y="71.12"/>
 </segment>
@@ -9101,15 +9100,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="BUT1" class="0">
 <segment>
-<pinref part="STM32" gate="PORTC_H" pin="PC14"/>
-<wire x1="142.24" y1="46.99" x2="135.89" y2="46.99" width="0.1524" layer="91"/>
-<label x="142.24" y="46.99" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <wire x1="71.12" y1="48.26" x2="67.31" y2="48.26" width="0.1524" layer="91"/>
 <label x="62.23" y="48.26" size="1.778" layer="95"/>
 <wire x1="67.31" y1="48.26" x2="62.23" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="S2" gate="1" pin="P"/>
+</segment>
+<segment>
+<pinref part="STM32" gate="POWER" pin="VSS_4"/>
+<wire x1="176.53" y1="86.36" x2="184.15" y2="86.36" width="0.1524" layer="91"/>
+<label x="176.53" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="AN1" class="0">
@@ -9188,7 +9187,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="DAC1" class="0">
 <segment>
-<wire x1="142.24" y1="128.27" x2="134.62" y2="128.27" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="128.27" x2="129.54" y2="128.27" width="0.1524" layer="91"/>
 <label x="142.24" y="128.27" size="1.778" layer="95" rot="R180"/>
 <pinref part="STM32" gate="PORTA_L" pin="PA4"/>
 </segment>
@@ -9312,9 +9311,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="194.31" y="179.07" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="STM32" gate="PORTA_L" pin="PA2"/>
-<wire x1="142.24" y1="133.35" x2="134.62" y2="133.35" width="0.1524" layer="91"/>
-<label x="142.24" y="133.35" size="1.778" layer="95" rot="R180"/>
+<pinref part="STM32" gate="PORTB_L" pin="PB6"/>
+<wire x1="176.53" y1="123.19" x2="190.5" y2="123.19" width="0.1524" layer="91"/>
+<label x="176.53" y="123.19" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED2_TRIG" class="0">
@@ -9324,9 +9323,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="194.31" y="176.53" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="STM32" gate="PORTA_L" pin="PA3"/>
-<wire x1="142.24" y1="130.81" x2="134.62" y2="130.81" width="0.1524" layer="91"/>
-<label x="142.24" y="130.81" size="1.778" layer="95" rot="R180"/>
+<pinref part="STM32" gate="PORTB_L" pin="PB7"/>
+<wire x1="176.53" y1="120.65" x2="190.5" y2="120.65" width="0.1524" layer="91"/>
+<label x="176.53" y="120.65" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -9468,13 +9467,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="41.91" y="21.59"/>
 </segment>
 </net>
-<net name="RELAY_TRIG" class="0">
-<segment>
-<pinref part="STM32" gate="PORTA_L" pin="PA7"/>
-<wire x1="142.24" y1="120.65" x2="134.62" y2="120.65" width="0.1524" layer="91"/>
-<label x="142.24" y="120.65" size="1.778" layer="95" rot="R180"/>
-</segment>
-</net>
 <net name="USB_DETECT" class="0">
 <segment>
 <pinref part="Q2" gate="A" pin="O5"/>
@@ -9557,13 +9549,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="287.02" y1="72.39" x2="287.02" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="276.86" y1="66.04" x2="287.02" y2="66.04" width="0.1524" layer="91"/>
 <junction x="287.02" y="66.04"/>
-</segment>
-</net>
-<net name="BUT2" class="0">
-<segment>
-<wire x1="142.24" y1="49.53" x2="135.89" y2="49.53" width="0.1524" layer="91"/>
-<label x="142.24" y="49.53" size="1.778" layer="95" rot="R180"/>
-<pinref part="STM32" gate="PORTC_H" pin="PC13"/>
 </segment>
 </net>
 <net name="UART2_TX" class="0">
@@ -9703,10 +9688,10 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="IC_EE" gate="G$1" pin="!CS"/>
 </segment>
 </net>
-<net name="DAC2" class="0">
+<net name="SPI1_SCK" class="0">
 <segment>
 <pinref part="STM32" gate="PORTA_L" pin="PA5"/>
-<wire x1="142.24" y1="125.73" x2="134.62" y2="125.73" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="125.73" x2="129.54" y2="125.73" width="0.1524" layer="91"/>
 <label x="142.24" y="125.73" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
@@ -9929,13 +9914,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="X2" gate="G$1" pin="8"/>
 </segment>
 </net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="STM32" gate="PORTB_L" pin="PB2"/>
-<wire x1="176.53" y1="133.35" x2="190.5" y2="133.35" width="0.1524" layer="91"/>
-<label x="176.53" y="133.35" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="N$4" class="0">
 <segment>
 <pinref part="IC_OPA" gate="D" pin="-IN"/>
@@ -9980,12 +9958,27 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="237.49" y="125.73" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
+<net name="SPI1_MISO" class="0">
+<segment>
+<pinref part="STM32" gate="PORTA_L" pin="PA6"/>
+<wire x1="142.24" y1="123.19" x2="129.54" y2="123.19" width="0.1524" layer="91"/>
+<label x="142.24" y="123.19" size="1.778" layer="95" rot="R180"/>
+</segment>
+</net>
+<net name="SPI1_MOSI" class="0">
+<segment>
+<pinref part="STM32" gate="PORTA_L" pin="PA7"/>
+<wire x1="142.24" y1="120.65" x2="129.54" y2="120.65" width="0.1524" layer="91"/>
+<label x="142.24" y="120.65" size="1.778" layer="95" rot="R180"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
 <errors>
 <approved hash="104,1,110.49,121.92,IC_OPAP,V+,+5V,,,"/>
 <approved hash="104,1,110.49,106.68,IC_OPAP,V-,GND,,,"/>
+<approved hash="202,1,194.31,184.15,Q2,I1,,,,"/>
 <approved hash="104,1,176.53,45.72,STM32POWER,VDD_1,+3V3,,,"/>
 <approved hash="104,1,176.53,50.8,STM32POWER,VDD_2,+3V3,,,"/>
 <approved hash="104,1,176.53,55.88,STM32POWER,VDD_3,+3V3,,,"/>
@@ -9996,22 +9989,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <approved hash="104,1,176.53,86.36,STM32POWER,VSS_4,GND,,,"/>
 <approved hash="104,1,177.8,35.56,STM32AN_POWER,VBAT,+3V3,,,"/>
 <approved hash="104,1,177.8,30.48,STM32AN_POWER,VSSA,GND,,,"/>
-<approved hash="104,1,177.8,25.4,STM32AN_POWER,VDDA,+3V3,,,"/>
-<approved hash="104,1,226.06,134.62,TVS2,VN,GND,,,"/>
-<approved hash="104,1,251.46,134.62,TVS2,VBUS,USB_VBUS,,,"/>
-<approved hash="202,1,292.1,185.42,Q1,I2,,,,"/>
-<approved hash="202,1,292.1,180.34,Q1,I4,,,,"/>
-<approved hash="202,1,292.1,175.26,Q1,I6,,,,"/>
 <approved hash="104,1,264.16,35.56,IC_EE,VCC,+3V3,,,"/>
-<approved hash="113,1,133.35,153.437,CON_DBG,,,,,"/>
-<approved hash="113,1,41.2327,59.8847,CON_PWR,,,,,"/>
-<approved hash="113,1,28.5327,108.145,CON_AN,,,,,"/>
-<approved hash="113,1,183.322,160.215,CON_RPM-VSS,,,,,"/>
-<approved hash="113,1,39.9627,87.8247,CON_KNK,,,,,"/>
-<approved hash="113,1,33.6042,33.0623,TP3,,,,,"/>
-<approved hash="113,1,299.127,122.995,CON_USB,,,,,"/>
-<approved hash="113,1,74.3458,25.3577,TP2,,,,,"/>
+<approved hash="202,1,78.74,172.72,VR2,BP,,,,"/>
+<approved hash="106,1,176.53,133.35,N$2,,,,,"/>
+<approved hash="106,1,237.49,125.73,SWO,,,,,"/>
+<approved hash="113,1,46.8268,228.156,TP3,,,,,"/>
+<approved hash="113,1,112.446,218.398,TP2,,,,,"/>
 <approved hash="113,1,290.144,115.612,TP4,,,,,"/>
+<approved hash="113,1,412.598,51.8753,X2,,,,,"/>
+<approved hash="113,1,501.057,100.135,JP2,,,,,"/>
 </errors>
 </schematic>
 </drawing>
