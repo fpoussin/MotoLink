@@ -1,6 +1,12 @@
 MotoLink
 ===================
 
+[![GitHub version](https://badge.fury.io/gh/fpoussin%2Fmotolink.svg)](https://badge.fury.io/gh/fpoussin%2Fmotolink)  
+GUI code:  
+[![Build Status](http://vps2.ntx.so/jenkins/buildStatus/icon?job=Motolink-GUI)](http://vps2.ntx.so/jenkins/job/Motolink-GUI)  
+MCU code:  
+[![Build Status](http://vps2.ntx.so/jenkins/buildStatus/icon?job=Motolink-ARM)](http://vps2.ntx.so/jenkins/job/Motolink-ARM)
+
 CAN Bus, K-Line interface for motorcycles.
 
 Primarily intended to communicate with Honda HRC ECUs, as a USB CDC to K-Line connection.
