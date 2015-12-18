@@ -22,5 +22,6 @@ code/*/.dep
 code/*/build
 code/*/.cproject
 code/*/.project
+code/*/*.user
 
 *.o
