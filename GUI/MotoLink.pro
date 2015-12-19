@@ -10,9 +10,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
-#win32:CONFIG += console
+win32:CONFIG += console
 
-VERSION = 0.1
+VERSION = 0.2
 message(Version $$VERSION)
 
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
@@ -56,7 +56,8 @@ HEADERS  += \
     inc/mtlfile.h \
     inc/qenhancedtableview.h \
     inc/mhtabbar.h \
-    inc/mhtabwidget.h
+    inc/mhtabwidget.h \
+    ../code/common/protocol.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

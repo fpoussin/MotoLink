@@ -242,7 +242,8 @@ void MainWindow::disconnectMtl()
 void MainWindow::showAbout()
 {
     QMessageBox::information(this,tr("About Motolink"),
-       tr("<strong>Version: " __MTL_VER__ "</strong><br/><br/>")+
+       tr("<strong>Version: ") + __MTL_VER__ + "</strong><br/>"+
+       tr("Built on: ") + QString(__DATE__)+" "+QString(__TIME__) + "<br/><br/>"+
        tr("Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
        "You can find more information "
        "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
@@ -506,7 +507,6 @@ void MainWindow::uiEnable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
-    mMainUi->actionShow_Logs->setEnabled(toggle);
     mMainUi->actionShow_Serial_Data->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);
@@ -522,7 +522,6 @@ void MainWindow::uiDisable()
     mMainUi->actionSend_Configuration->setEnabled(toggle);
     mMainUi->actionShow_tasks->setEnabled(toggle);
     mMainUi->actionShow_Knock_Spectrum->setEnabled(toggle);
-    mMainUi->actionShow_Logs->setEnabled(toggle);
     mMainUi->actionShow_Serial_Data->setEnabled(toggle);
     mMainUi->bReadMtl->setEnabled(toggle);
     mMainUi->bWriteMtl->setEnabled(toggle);

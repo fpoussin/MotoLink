@@ -1809,3 +1809,10 @@ common/usb_config.c
 common/usb_config.h
 common/vectors.c
 common/vectors.h
+bootloader/Makefile
+app/Makefile
+common/mx2board.py
+common/link.ld
+app/link.ld
+common/common.mk
+common/startup_stm32f3xx.mk

@@ -39,11 +39,11 @@ void Update::onResult(QNetworkReply *reply)
         it.next();
         QScriptValue release = it.value();
 
-        QString version = release.property("name").toString();
+        QString version = release.property("tag_name").toString();
         version.remove(QRegExp("[a-zA-Z]"));
 
         if (version.isEmpty()) {
-            qDebug() << tr("Unable to get latest version");
+            qDebug() << tr("Unable to get latest version") << version;
             return;
         }
 

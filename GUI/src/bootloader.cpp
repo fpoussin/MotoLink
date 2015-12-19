@@ -55,17 +55,19 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     send.append(data->constData(), data->size());
     this->prepareCmd(&send, CMD_WRITE);
 
-    qint32 wr = mUsb->write(&send, send.size());
+    if (mUsb->write(&send, send.size()) != send.size())
+        return -1;
 
+    QThread::msleep(10);
     mUsb->read(&recv, 1);
 
     if (recv.size() < 1)
-        return -1;
+        return -2;
 
     if (!(recv.at(0) == (MASK_REPLY_OK | CMD_WRITE)))
-        return -1;
+        return -3;
 
-    return wr;
+    return send.size();
 }
 
 qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)

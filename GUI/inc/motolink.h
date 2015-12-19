@@ -63,8 +63,8 @@ public slots:
 
     void startUpdate(QByteArray *data);
     void haltTransfer(void);
-    void sendFirmware(QByteArray *data);
-    void verifyFirmware(QByteArray *data);
+    bool sendFirmware(QByteArray *data);
+    bool verifyFirmware(QByteArray *data);
 
     bool writeSettings(const settings_t *settings);
     bool readSettings(settings_t *settings);

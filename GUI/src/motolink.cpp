@@ -25,7 +25,7 @@ Motolink::Motolink(QObject *parent) :
 
     mUsb->setFilter(filter);
     mUsb->setConfig(config);
-    mUsb->setTimeout(200);
+    mUsb->setTimeout(300);
 
     mBtl = new Bootloader(mUsb);
 
@@ -66,6 +66,14 @@ bool Motolink::usbConnect()
         return false;
     }
 
+    if (mUsb->getSpeed() != QtUsb::fullSpeed)
+    {
+        qWarning("Incorrect USB speed: %s",
+                 mUsb->getSpeedString().toStdString().data());
+        mConnected = false;
+        return false;
+    }
+
     mUsb->flush();
     return true;
 }
@@ -93,6 +101,16 @@ bool Motolink::usbProbeConnect()
 
     if (ret < 0) {
         qWarning("Probing Failed");
+        emit connectionResult(false);
+        mConnected = false;
+        emit connectionProgress(0);
+        return false;
+    }
+
+    if (mUsb->getSpeed() != QtUsb::fullSpeed)
+    {
+        qWarning("Incorrect USB speed: %s",
+                 mUsb->getSpeedString().toStdString().data());
         emit connectionResult(false);
         mConnected = false;
         emit connectionProgress(0);
@@ -315,8 +333,8 @@ bool Motolink::sendWake()
 
 void Motolink::startUpdate(QByteArray *data)
 {
-    this->sendFirmware(data);
-    this->verifyFirmware(data);
+    if (this->sendFirmware(data))
+        this->verifyFirmware(data);
 
     emit updateDone();
 }
@@ -466,7 +484,7 @@ void Motolink::haltTransfer(void)
     emit signalStatus(tr("Aborted"));
 }
 
-void Motolink::sendFirmware(QByteArray *data)
+bool Motolink::sendFirmware(QByteArray *data)
 {
     QDataStream file(data, QIODevice::ReadOnly);
     emit signalLock(true);
@@ -483,7 +501,7 @@ void Motolink::sendFirmware(QByteArray *data)
 
         emit signalStatus(tr("Erase failed"));
         emit signalLock(false);
-        return;
+        return false;
     }
     else {
         emit signalStatus(tr("Erase OK"));
@@ -514,7 +532,10 @@ void Motolink::sendFirmware(QByteArray *data)
         if (wrote < read){
             emit signalStatus(tr("Transfer failed"));
             qWarning() << tr("Transfer failed") << wrote << read;
-            break;
+
+            delete buf2;
+            emit signalLock(false);
+            return false;
         }
 
         oldprogress = progress;
@@ -530,9 +551,11 @@ void Motolink::sendFirmware(QByteArray *data)
     emit signalStatus(tr("Transfer done"));
 
     emit signalLock(false);
+
+    return true;
 }
 
-void Motolink::verifyFirmware(QByteArray *data)
+bool Motolink::verifyFirmware(QByteArray *data)
 {
     QDataStream file(data, QIODevice::ReadOnly);
     emit signalLock(true);
@@ -564,7 +587,7 @@ void Motolink::verifyFirmware(QByteArray *data)
             emit signalStatus(tr("Verification Failed"));
             qWarning() << tr("Verification Failed");
             emit signalLock(false);
-            return;
+            return false;
         }
 
         if (data_remote != data_local) {
@@ -580,7 +603,7 @@ void Motolink::verifyFirmware(QByteArray *data)
             qWarning() << tr("Verification failed at 0x")+QString::number(addr, 16) <<
                            "\r\n" << tr("Expecting:") << stmp << "\r\n       " << tr("Got:") << sbuf;
             emit signalLock(false);
-            return;
+            return false;
         }
         oldprogress = progress;
         progress = (i*100)/data->size();
@@ -594,4 +617,6 @@ void Motolink::verifyFirmware(QByteArray *data)
     emit signalStatus(tr("Verification OK"));
     qDebug() << tr("Verification OK");
     emit signalLock(false);
+
+    return true;
 }

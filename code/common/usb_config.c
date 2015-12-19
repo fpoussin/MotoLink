@@ -94,7 +94,7 @@ static const uint8_t vcom_configuration_descriptor_data[106] = {
   USB_DESC_ENDPOINT     (USBD1_INTERRUPT_REQUEST_EP|0x80,
                          0x03,          /* bmAttributes (Interrupt).        */
                          0x0008,        /* wMaxPacketSize.                  */
-                         0xFF),         /* bInterval.                       */
+                         0x40),         /* bInterval.                       */
   /* Interface Descriptor.*/
   USB_DESC_INTERFACE    (0x01,          /* bInterfaceNumber.                */
                          0x00,          /* bAlternateSetting.               */
