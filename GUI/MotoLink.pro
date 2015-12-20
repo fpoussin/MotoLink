@@ -4,13 +4,15 @@
 #
 #-------------------------------------------------
 
+# Note: USB has trouble with MSVC 2015, stick to 2013.
+
 QT += core gui xml network script scripttools
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
-win32:CONFIG += console
+#win32:CONFIG += console
 
 VERSION = 0.2
 message(Version $$VERSION)
