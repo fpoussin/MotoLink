@@ -6053,88 +6053,6 @@ This is the "EZ" version, which has limited top masking for improved ease of ass
 </deviceset>
 </devicesets>
 </library>
-<library name="adafruit">
-<packages>
-<package name="EG1213">
-<wire x1="-5" y1="1.9" x2="-0.7" y2="1.9" width="0.127" layer="21"/>
-<wire x1="-0.7" y1="1.9" x2="0.7" y2="1.9" width="0.127" layer="21"/>
-<wire x1="0.7" y1="1.9" x2="5" y2="1.9" width="0.127" layer="21"/>
-<wire x1="5" y1="1.9" x2="5" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="5" y1="-1.9" x2="2.1" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="2.1" y1="-1.9" x2="1" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="1" y1="-1.9" x2="-1" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="-1" y1="-1.9" x2="-2.1" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="-2.1" y1="-1.9" x2="-5" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="-5" y1="-1.9" x2="-5" y2="1.9" width="0.127" layer="21"/>
-<wire x1="-0.7" y1="1.9" x2="-0.7" y2="1.2" width="0.127" layer="21"/>
-<wire x1="-0.7" y1="1.2" x2="0.7" y2="1.2" width="0.127" layer="21"/>
-<wire x1="0.7" y1="1.2" x2="0.7" y2="1.9" width="0.127" layer="21"/>
-<wire x1="-2.1" y1="-1.9" x2="-2.1" y2="-1.6" width="0.127" layer="21"/>
-<wire x1="-2.1" y1="-1.6" x2="2.1" y2="-1.6" width="0.127" layer="21"/>
-<wire x1="2.1" y1="-1.6" x2="2.1" y2="-1.9" width="0.127" layer="21"/>
-<wire x1="-1" y1="-1.9" x2="-1" y2="-7" width="0.127" layer="21"/>
-<wire x1="-1" y1="-7" x2="1" y2="-7" width="0.127" layer="21"/>
-<wire x1="1" y1="-7" x2="1" y2="-1.9" width="0.127" layer="21"/>
-<pad name="2" x="0" y="0" drill="0.7" diameter="1.4224"/>
-<pad name="MT2" x="4.8" y="0" drill="1.4" diameter="2.54"/>
-<pad name="MT1" x="-4.8" y="0" drill="1.4" diameter="2.54"/>
-<pad name="1" x="-2" y="0" drill="0.7" diameter="1.4224"/>
-<pad name="3" x="1.9" y="0" drill="0.7" diameter="1.4224"/>
-<text x="-2.7" y="2.4" size="1.27" layer="21" font="vector">&gt;NAME</text>
-</package>
-</packages>
-<symbols>
-<symbol name="TSU">
-<wire x1="0" y1="-3.175" x2="0" y2="-2.54" width="0.254" layer="94"/>
-<wire x1="0" y1="-2.54" x2="-1.905" y2="3.175" width="0.254" layer="94"/>
-<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.254" layer="94"/>
-<wire x1="2.54" y1="2.54" x2="2.54" y2="3.175" width="0.254" layer="94"/>
-<wire x1="-2.54" y1="2.54" x2="-1.27" y2="2.54" width="0.254" layer="94"/>
-<wire x1="-2.54" y1="2.54" x2="-2.54" y2="3.175" width="0.254" layer="94"/>
-<wire x1="-0.889" y1="0" x2="-1.27" y2="0" width="0.1524" layer="94"/>
-<wire x1="-1.905" y1="0" x2="-2.54" y2="0" width="0.1524" layer="94"/>
-<wire x1="-3.175" y1="0" x2="-3.81" y2="0" width="0.1524" layer="94"/>
-<wire x1="-6.35" y1="1.905" x2="-5.08" y2="1.905" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="1.905" x2="-6.35" y2="0" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="-1.905" x2="-5.08" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="0" x2="-4.445" y2="0" width="0.1524" layer="94"/>
-<wire x1="-6.35" y1="0" x2="-6.35" y2="-1.905" width="0.254" layer="94"/>
-<text x="-8.255" y="-1.905" size="1.778" layer="95" rot="R90">&gt;NAME</text>
-<text x="-5.715" y="2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="P" x="0" y="-5.08" visible="pad" length="short" direction="pas" rot="R90"/>
-<pin name="S" x="2.54" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
-<pin name="O" x="-2.54" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
-</symbol>
-<symbol name="MT">
-<pin name="MT" x="0" y="0" length="middle" direction="pas"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="EG1213" prefix="S">
-<description>&lt;b&gt;E-Switch right-angle slide SPDT&lt;/b&gt; Part #EG1213
-&lt;p&gt;http://www.ladyada.net/library/eagle&lt;/p&gt;</description>
-<gates>
-<gate name="1" symbol="TSU" x="0" y="0"/>
-<gate name="G$1" symbol="MT" x="-7.62" y="-10.16"/>
-<gate name="G$2" symbol="MT" x="-7.62" y="-12.7"/>
-</gates>
-<devices>
-<device name="" package="EG1213">
-<connects>
-<connect gate="1" pin="O" pad="1"/>
-<connect gate="1" pin="P" pad="2"/>
-<connect gate="1" pin="S" pad="3"/>
-<connect gate="G$1" pin="MT" pad="MT1"/>
-<connect gate="G$2" pin="MT" pad="MT2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="microbuilder">
 <description>&lt;h2&gt;&lt;b&gt;microBuilder.eu&lt;/b&gt; Eagle Footprint Library&lt;/h2&gt;
 
@@ -8772,7 +8690,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
 <part name="GND24" library="supply1" deviceset="GND" device=""/>
-<part name="S2" library="adafruit" deviceset="EG1213" device=""/>
 <part name="P+5" library="supply1" deviceset="+12V" device=""/>
 <part name="TP3" library="microbuilder" deviceset="TESTPOINT" device="ROUND1MM"/>
 <part name="R22" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="1K"/>
@@ -8811,7 +8728,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="P+12" library="supply1" deviceset="+5V" device=""/>
 <part name="C9" library="SparkFun-Passives" deviceset="CAP_POL" device="PTH2" value="100uF 16v"/>
 <part name="S1" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SMD-4" value=""/>
-<part name="JP1" library="SparkFun-Connectors" deviceset="USB" device="SMD" value="USBSMD"/>
+<part name="JP1" library="SparkFun-Connectors" deviceset="USB" device="PTH" value="USB-B"/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
 <part name="P+13" library="supply1" deviceset="+12V" device=""/>
 <part name="P+14" library="supply1" deviceset="+5V" device=""/>
@@ -8825,11 +8742,12 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
 <part name="X2" library="con-molex-micro-fit-3_0" deviceset="HEADER_POS16_?" device="43045-1600"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="JP2" library="SparkFun-Connectors" deviceset="M03" device="LOCK"/>
+<part name="CON_RS232" library="SparkFun-Connectors" deviceset="M03" device="LOCK"/>
 <part name="GND17" library="supply1" deviceset="GND" device=""/>
 <part name="D5" library="SparkFun-DiscreteSemi" deviceset="DIODE" device="SOD" value="BAT165"/>
 <part name="JP4" library="SparkFun-Connectors" deviceset="M05" device="JST"/>
 <part name="+3V8" library="supply1" deviceset="+3V3" device=""/>
+<part name="S3" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SIDE_EZ" value=""/>
 </parts>
 <sheets>
 <sheet>
@@ -8942,7 +8860,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="GND14" gate="1" x="29.21" y="8.89"/>
 <instance part="GND21" gate="1" x="436.88" y="86.36"/>
 <instance part="GND24" gate="1" x="81.28" y="43.18"/>
-<instance part="S2" gate="1" x="76.2" y="48.26" rot="R270"/>
 <instance part="P+5" gate="1" x="62.23" y="163.83"/>
 <instance part="TP3" gate="G$1" x="49.53" y="228.6" smashed="yes" rot="R180">
 <attribute name="NAME" x="45.72" y="226.06" size="1.27" layer="95" rot="R180"/>
@@ -9002,7 +8919,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="+3V3" gate="G$1" x="81.28" y="76.2"/>
 <instance part="X2" gate="G$1" x="415.29" y="54.61" rot="MR180"/>
 <instance part="GND15" gate="1" x="62.23" y="205.74"/>
-<instance part="JP2" gate="G$1" x="505.46" y="101.6" rot="R180"/>
+<instance part="CON_RS232" gate="G$1" x="505.46" y="101.6" rot="R180"/>
 <instance part="GND17" gate="1" x="497.84" y="95.25"/>
 <instance part="D5" gate="G$1" x="123.19" y="215.9" smashed="yes" rot="R180">
 <attribute name="NAME" x="128.27" y="215.4174" size="1.778" layer="95" rot="R180"/>
@@ -9010,6 +8927,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </instance>
 <instance part="JP4" gate="G$1" x="245.11" y="133.35" rot="MR0"/>
 <instance part="+3V8" gate="G$1" x="278.13" y="144.78"/>
+<instance part="S3" gate="G$1" x="76.2" y="48.26"/>
 </instances>
 <busses>
 </busses>
@@ -9121,10 +9039,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="GND14" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="S2" gate="1" pin="S"/>
-<pinref part="GND24" gate="1" pin="GND"/>
-</segment>
-<segment>
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="IC_EE" gate="G$1" pin="GND"/>
 </segment>
@@ -9221,9 +9135,14 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="GND15" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="JP2" gate="G$1" pin="3"/>
+<pinref part="CON_RS232" gate="G$1" pin="3"/>
 <pinref part="GND17" gate="1" pin="GND"/>
 <wire x1="497.84" y1="99.06" x2="497.84" y2="97.79" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND24" gate="1" pin="GND"/>
+<pinref part="S3" gate="G$1" pin="2"/>
+<wire x1="81.28" y1="45.72" x2="81.28" y2="48.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -9458,7 +9377,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="71.12" y1="48.26" x2="67.31" y2="48.26" width="0.1524" layer="91"/>
 <label x="62.23" y="48.26" size="1.778" layer="95"/>
 <wire x1="67.31" y1="48.26" x2="62.23" y2="48.26" width="0.1524" layer="91"/>
-<pinref part="S2" gate="1" pin="P"/>
+<pinref part="S3" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="STM32" gate="POWER" pin="VSS_4"/>
@@ -9858,7 +9777,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="454.66" y="96.52" size="1.778" layer="95"/>
 <wire x1="468.63" y1="96.52" x2="491.49" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="491.49" y1="96.52" x2="491.49" y2="101.6" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="G$1" pin="2"/>
+<pinref part="CON_RS232" gate="G$1" pin="2"/>
 <wire x1="491.49" y1="101.6" x2="497.84" y2="101.6" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -9867,7 +9786,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="454.66" y1="101.6" x2="468.63" y2="101.6" width="0.1524" layer="91"/>
 <label x="454.66" y="101.6" size="1.778" layer="95"/>
 <pinref part="IC_232" gate="G$1" pin="T2OUT"/>
-<pinref part="JP2" gate="G$1" pin="1"/>
+<pinref part="CON_RS232" gate="G$1" pin="1"/>
 <wire x1="497.84" y1="104.14" x2="488.95" y2="104.14" width="0.1524" layer="91"/>
 <wire x1="488.95" y1="104.14" x2="488.95" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="488.95" y1="101.6" x2="468.63" y2="101.6" width="0.1524" layer="91"/>
@@ -9995,6 +9914,11 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="D6" gate="G$1" pin="A"/>
 <wire x1="340.36" y1="71.12" x2="337.82" y2="71.12" width="0.1524" layer="91"/>
 <label x="325.12" y="63.5" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="Q2" gate="A" pin="I1"/>
+<wire x1="194.31" y1="184.15" x2="181.61" y2="184.15" width="0.1524" layer="91"/>
+<label x="194.31" y="184.15" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="SPI2_MOSI" class="0">
@@ -10320,6 +10244,18 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="STM32" gate="PORTA_L" pin="PA7"/>
 <wire x1="142.24" y1="120.65" x2="129.54" y2="120.65" width="0.1524" layer="91"/>
 <label x="142.24" y="120.65" size="1.778" layer="95" rot="R180"/>
+</segment>
+</net>
+<net name="VCC_DETECT" class="0">
+<segment>
+<pinref part="Q2" gate="A" pin="O1"/>
+<wire x1="219.71" y1="184.15" x2="232.41" y2="184.15" width="0.1524" layer="91"/>
+<label x="219.71" y="184.15" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="STM32" gate="PORTB_L" pin="PB5"/>
+<wire x1="176.53" y1="125.73" x2="190.5" y2="125.73" width="0.1524" layer="91"/>
+<label x="176.53" y="125.73" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
