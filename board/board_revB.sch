@@ -8894,7 +8894,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="IC_232" gate="G$1" x="434.34" y="111.76"/>
 <instance part="C10" gate="G$1" x="412.75" y="123.19" rot="R180"/>
 <instance part="C11" gate="G$1" x="412.75" y="113.03" rot="R180"/>
-<instance part="C12" gate="G$1" x="454.66" y="114.3" rot="MR180"/>
+<instance part="C12" gate="G$1" x="455.93" y="114.3" rot="MR180"/>
 <instance part="GND36" gate="1" x="462.28" y="109.22"/>
 <instance part="C13" gate="G$1" x="449.58" y="132.08" rot="R90"/>
 <instance part="VR1" gate="G$1" x="81.28" y="210.82" rot="MR0"/>
@@ -8920,7 +8920,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="X2" gate="G$1" x="415.29" y="54.61" rot="MR180"/>
 <instance part="GND15" gate="1" x="62.23" y="205.74"/>
 <instance part="CON_RS232" gate="G$1" x="505.46" y="101.6" rot="R180"/>
-<instance part="GND17" gate="1" x="497.84" y="95.25"/>
+<instance part="GND17" gate="1" x="497.84" y="91.44"/>
 <instance part="D5" gate="G$1" x="123.19" y="215.9" smashed="yes" rot="R180">
 <attribute name="NAME" x="128.27" y="215.4174" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="127" y="219.4814" size="1.778" layer="96" rot="R180"/>
@@ -9060,7 +9060,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </segment>
 <segment>
 <pinref part="C12" gate="G$1" pin="1"/>
-<wire x1="454.66" y1="109.22" x2="458.47" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="455.93" y1="109.22" x2="458.47" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="458.47" y1="109.22" x2="458.47" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="GND36" gate="1" pin="GND"/>
 <wire x1="458.47" y1="111.76" x2="462.28" y2="111.76" width="0.1524" layer="91"/>
@@ -9137,7 +9137,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <pinref part="CON_RS232" gate="G$1" pin="3"/>
 <pinref part="GND17" gate="1" pin="GND"/>
-<wire x1="497.84" y1="99.06" x2="497.84" y2="97.79" width="0.1524" layer="91"/>
+<wire x1="497.84" y1="99.06" x2="497.84" y2="93.98" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND24" gate="1" pin="GND"/>
@@ -10143,6 +10143,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <pinref part="IC_232" gate="G$1" pin="V-"/>
 <pinref part="C12" gate="G$1" pin="2"/>
+<wire x1="455.93" y1="116.84" x2="454.66" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$29" class="0">
@@ -10264,7 +10265,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <errors>
 <approved hash="104,1,110.49,121.92,IC_OPAP,V+,+5V,,,"/>
 <approved hash="104,1,110.49,106.68,IC_OPAP,V-,GND,,,"/>
-<approved hash="202,1,194.31,184.15,Q2,I1,,,,"/>
 <approved hash="104,1,176.53,45.72,STM32POWER,VDD_1,+3V3,,,"/>
 <approved hash="104,1,176.53,50.8,STM32POWER,VDD_2,+3V3,,,"/>
 <approved hash="104,1,176.53,55.88,STM32POWER,VDD_3,+3V3,,,"/>
@@ -10272,16 +10272,20 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <approved hash="104,1,176.53,76.2,STM32POWER,VSS_2,GND,,,"/>
 <approved hash="104,1,176.53,81.28,STM32POWER,VSS_3,GND,,,"/>
 <approved hash="104,1,176.53,60.96,STM32POWER,VDD_4,+3V3,,,"/>
+<approved hash="104,1,176.53,86.36,STM32POWER,VSS_4,BUT1,,,"/>
 <approved hash="104,1,177.8,35.56,STM32AN_POWER,VBAT,+3V3,,,"/>
 <approved hash="104,1,177.8,30.48,STM32AN_POWER,VSSA,GND,,,"/>
 <approved hash="104,1,264.16,35.56,IC_EE,VCC,+3V3,,,"/>
 <approved hash="202,1,78.74,172.72,VR2,BP,,,,"/>
-<approved hash="106,1,237.49,125.73,SWO,,,,,"/>
+<approved hash="106,1,142.24,123.19,SPI1_MISO,,,,,"/>
+<approved hash="106,1,142.24,120.65,SPI1_MOSI,,,,,"/>
+<approved hash="106,1,142.24,125.73,SPI1_SCK,,,,,"/>
 <approved hash="113,1,46.8268,228.156,TP3,,,,,"/>
 <approved hash="113,1,112.446,218.398,TP2,,,,,"/>
 <approved hash="113,1,290.144,115.612,TP4,,,,,"/>
 <approved hash="113,1,412.598,51.8753,X2,,,,,"/>
-<approved hash="113,1,501.057,100.135,JP2,,,,,"/>
+<approved hash="113,1,501.057,100.135,CON_RS232,,,,,"/>
+<approved hash="113,1,240.707,134.815,JP4,,,,,"/>
 </errors>
 </schematic>
 </drawing>
