@@ -8387,7 +8387,7 @@ Source: http://www.jst.com .. eZH.pdf</description>
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
 <part name="+3V16" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V18" library="supply1" deviceset="+3V3" device=""/>
-<part name="IC_EE" library="microchip" deviceset="25*" device="SN" technology="LC080" value="FM25L04B"/>
+<part name="IC_EE" library="microchip" deviceset="25*" device="SN" technology="LC080" value="FM25L04B/AT24C256"/>
 <part name="GND26" library="supply1" deviceset="GND" device=""/>
 <part name="P+8" library="supply1" deviceset="+5V" device=""/>
 <part name="R19" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="2K 1%"/>

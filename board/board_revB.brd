@@ -1626,7 +1626,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="14" y="7.725" size="1.016" layer="27" rot="R180"/>
 <attribute name="PROD_ID" value="RES-11150" x="11.75" y="4.75" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="IC_EE" library="microchip" package="SO-08" value="FM25L04B" x="69.5" y="37.75" smashed="yes" rot="R90">
+<element name="IC_EE" library="microchip" package="SO-08" value="FM25L04B/AT24C256" x="69.5" y="37.75" locked="yes" smashed="yes" rot="R90">
 <attribute name="OC_NEWARK" value="96K4092" x="69.5" y="37.75" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="25LC080/SN" x="69.5" y="37.75" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MF" value="MICROCHIP" x="69.5" y="37.75" size="1.778" layer="27" rot="R90" display="off"/>
