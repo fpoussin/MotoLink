@@ -30,13 +30,13 @@ uint8_t reset_flags = FLAG_OK;
 
 static PWMConfig pwmcfg = {
   10000,    /* 10kHz PWM clock frequency.   */
-  50,      /* Initial PWM period 10mS.       */
+  50,      /* Initial PWM period 5mS.       */
   NULL,
   {
-   {PWM_OUTPUT_DISABLED, NULL},
-   {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL}
   },
   0,
   0
@@ -55,15 +55,14 @@ SerialConfig uart1Cfg =
 /*===========================================================================*/
 
 // Duty
-#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD2, x*100)
+#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD4, x*100)
 
 /*
- * Red LED blinker thread, times are in milliseconds.
+ * Blue LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBlinker, 384);
 static THD_FUNCTION(ThreadBlinker, arg)
 {
-
   (void)arg;
   chRegSetThreadName("Blinker");
 
@@ -76,21 +75,21 @@ static THD_FUNCTION(ThreadBlinker, arg)
                              D(26), D(24), D(22), D(20), D(18), D(16), D(14), D(12), D(10), D(8), D(6),
                              D(4), D(2)};
 
-  TIM2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
-  if (dmaStreamAllocate(STM32_DMA1_STREAM2, 1, NULL, NULL)) chSysHalt("DMA error");
-  dmaStreamSetPeripheral(STM32_DMA1_STREAM2, &TIM2->CCR3);
-  dmaStreamSetMemory0(STM32_DMA1_STREAM2, dimmer);
-  dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, sizeof(dimmer)/sizeof(uint16_t));
-  dmaStreamSetMode(STM32_DMA1_STREAM2, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
+  TIM4->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
+  if (dmaStreamAllocate(STM32_DMA1_STREAM7, 1, NULL, NULL)) chSysHalt("DMA error");
+  dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM4->CCR2);
+  dmaStreamSetMemory0(STM32_DMA1_STREAM7, dimmer);
+  dmaStreamSetTransactionSize(STM32_DMA1_STREAM7, sizeof(dimmer)/sizeof(uint16_t));
+  dmaStreamSetMode(STM32_DMA1_STREAM7, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
                    | STM32_DMA_CR_EN | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
 
   while (TRUE)
   {
     chThdSleepMilliseconds(100);
     if (usbConnected())
-      TIM2->PSC = (STM32_TIMCLK1 / 10000) - 1;
+      TIM4->PSC = (STM32_TIMCLK1 / 10000) - 1;
     else
-      TIM2->PSC = (STM32_TIMCLK1 / 5000) - 1;
+      TIM4->PSC = (STM32_TIMCLK1 / 5000) - 1;
   }
   return;
 }
@@ -119,11 +118,11 @@ static THD_FUNCTION(ThreadBDU_CCM, arg)
 
     idle_duty = usbConnected() ? 500 : 0;
 
-    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, idle_duty));
+    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, idle_duty));
 
     if (flags & CHN_INPUT_AVAILABLE)
     {
-      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 10000));
       readCommand_CCM((BaseChannel *)&BDU1, reset_flags);
     }
   }
@@ -138,7 +137,6 @@ static THD_FUNCTION(ThreadSDU_CCM, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
-  uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
   size_t read;
   chRegSetThreadName("SDU");
 
@@ -150,27 +148,15 @@ static THD_FUNCTION(ThreadSDU_CCM, arg)
 
     while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-    if (doKLineInit && 0)
-    {
-      //klineInit();
-      fiveBaudInit(&SD1);
-      sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
-      doKLineInit = false;
-	}
-
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
 
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
       sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
@@ -232,7 +218,9 @@ int main(void)
   halInit();
   chSysInit();
 
-  pwmStart(&PWMD2, &pwmcfg);
+  usbDisconnectBus(bulkusbcfg.usbp);
+
+  pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
 
   bduObjectInit(&BDU1);
@@ -245,18 +233,18 @@ int main(void)
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU_CCM, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU_CCM, NULL);
 
-  while (TRUE)    {
+  while (TRUE)    {
       while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
 
       chThdSleepMilliseconds(100);
 
       if (usbConnected())
       {
-        usbConnectBus(serusbcfg.usbp);
+        usbConnectBus(bulkusbcfg.usbp);
       }
       else
       {
-        usbDisconnectBus(serusbcfg.usbp);
+        usbDisconnectBus(bulkusbcfg.usbp);
       }
     }
 }

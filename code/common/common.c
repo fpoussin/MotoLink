@@ -31,7 +31,7 @@ uint8_t checksum(const uint8_t *data, uint8_t length)
 
 bool getSwitch1(void)
 {
-	return palReadPad(SWITCH_PORT, SWITCH_PAD) == PAL_HIGH;
+    return palReadPad(SWITCH_PORT, SWITCH_PAD) == PAL_LOW;
 }
 
 int map(int x, int in_min, int in_max, int out_min, int out_max)

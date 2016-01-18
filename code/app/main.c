@@ -122,10 +122,10 @@ PWMConfig pwmcfg = {
   50,      /* Initial PWM period 10mS.       */
   NULL,
   {
-   {PWM_OUTPUT_DISABLED, NULL},
-   {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+   {PWM_OUTPUT_DISABLED, NULL},
+   {PWM_OUTPUT_DISABLED, NULL}
   },
   0,
   0
@@ -182,11 +182,11 @@ static THD_FUNCTION(ThreadBDU, arg)
 
     idle_duty = usbConnected() ? 500 : 0;
 
-    pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, idle_duty));
+    pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, idle_duty));
 
     if (flags & CHN_INPUT_AVAILABLE)
     {
-      pwmEnableChannel(&PWMD2, LED_BLUE_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
       readCommand_CCM((BaseChannel *)&BDU1);
     }
     else
@@ -223,19 +223,19 @@ static THD_FUNCTION(ThreadSDU, arg)
       doKLineInit = false;
 	}
 
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
+    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 1000));
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
 
-    pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 1000));
+    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
       sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
@@ -507,8 +507,8 @@ int main(void)
   gptStart(&GPTD1, &gpt1Cfg);
   gptStartContinuous(&GPTD1, 20000);
 
-  pwmStart(&PWMD2, &pwmcfg);
-  pwmEnableChannel(&PWMD2, LED_GREEN_PAD, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 8000));
+  pwmStart(&PWMD4, &pwmcfg);
+  pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
 
   /*
    * Initialize extra driver objects.
@@ -533,7 +533,7 @@ int main(void)
 
   // Enable K-line
   palSetPad(KL_CS_PORT, KL_CS_PAD);
-  palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
+  //palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
