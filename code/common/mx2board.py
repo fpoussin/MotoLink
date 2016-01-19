@@ -27,6 +27,8 @@ PIN_ODR = "VAL_GPIO{0}_ODR"
 PIN_AFRL = "VAL_GPIO{0}_AFRL"
 PIN_AFRH = "VAL_GPIO{0}_AFRH"
 
+FMT = "{0}"
+
 PIN_CONF_LIST = [PIN_MODER, PIN_OTYPER, PIN_OSPEEDR, PIN_PUPDR, PIN_ODR]
 PIN_CONF_LIST_AF = [PIN_AFRL, PIN_AFRH]
 PIN_SEP = "| \\"
@@ -114,21 +116,21 @@ PIN_FUNC_MAPPING_DEFAULT = {
         "TIM3_CH[1-4]": (PIN_MODE_ALTERNATE,
                          PIN_OTYPE_PUSHPULL,
                          PIN_OSPEED_50M,
-                         PIN_PUPDR_PULLUP,
+                         PIN_PUPDR_FLOATING,
                          PIN_ODR_HIGH,
                          PIN_AFIO_AF.format("{0}", 2)),
 
         "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
                          PIN_OTYPE_PUSHPULL,
                          PIN_OSPEED_50M,
-                         PIN_PUPDR_PULLUP,
+                         PIN_PUPDR_FLOATING,
                          PIN_ODR_HIGH,
-                         PIN_AFIO_AF.format("{0}", 2)),
+                         PIN_AFIO_AF.format("{0}", 10)),
 
         "USART[1-3]_TX": (PIN_MODE_ALTERNATE,
                           PIN_OTYPE_OPENDRAIN,
                           PIN_OSPEED_50M,
-                          PIN_PUPDR_PULLUP,
+                          PIN_PUPDR_FLOATING,
                           PIN_ODR_HIGH,
                           PIN_AFIO_AF.format("{0}", 7)),
 
@@ -166,7 +168,7 @@ PIN_FUNC_MAPPING = {
             "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
                              PIN_OTYPE_PUSHPULL,
                              PIN_OSPEED_50M,
-                             PIN_PUPDR_PULLUP,
+                             PIN_PUPDR_FLOATING,
                              PIN_ODR_HIGH,
                              PIN_AFIO_AF.format("{0}", 2)),
 
@@ -182,9 +184,9 @@ PIN_FUNC_MAPPING = {
             "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
                              PIN_OTYPE_PUSHPULL,
                              PIN_OSPEED_50M,
-                             PIN_PUPDR_PULLUP,
+                             PIN_PUPDR_FLOATING,
                              PIN_ODR_HIGH,
-                             PIN_AFIO_AF.format("{0}", 4))
+                             PIN_AFIO_AF.format("{0}", 2))
         },
 }
 
