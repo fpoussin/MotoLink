@@ -2,9 +2,11 @@
 
 from subprocess import Popen, PIPE
 
+
 class app(object):
     def __init__(self):
         pass
+
 
 motolink = app()
 motolink.name = "MotoLink"
@@ -54,6 +56,14 @@ for app in APPS:
 
         print ""
         print app.name
-        print "CCM used: {}% - {:4.1f}/{}k".format((ccm*100)/app.max_ccm, ccm/1024.0, app.max_ccm/1024.0)
-        print "RAM used: {}% - {:4.1f}/{}k".format((ram*100)/app.max_ram, ram/1024.0, app.max_ram/1024.0)
-        print "ROM used: {}% - {:4.1f}/{}k".format((rom*100)/app.max_rom, rom/1024.0, app.max_rom/1024.0)
+        print "CCM used: {}% - {:4.1f}/{}k".format((ccm*100)/app.max_ccm,
+                                                   ccm/1024.0,
+                                                   app.max_ccm/1024.0)
+
+        print "RAM used: {}% - {:4.1f}/{}k".format((ram*100)/app.max_ram,
+                                                   ram/1024.0,
+                                                   app.max_ram/1024.0)
+
+        print "ROM used: {}% - {:4.1f}/{}k".format((rom*100)/app.max_rom,
+                                                   rom/1024.0,
+                                                   app.max_rom/1024.0)

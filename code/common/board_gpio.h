@@ -1,6 +1,48 @@
 #ifndef _BOARD_GPIO_H_
 #define _BOARD_GPIO_H_
 
+#define PORT_KNOCK_OFFSET GPIOA
+#define PAD_KNOCK_OFFSET 4
+
+#define PORT_SCS_TRIG GPIOB
+#define PAD_SCS_TRIG 4
+
+#define PORT_KNK_AN GPIOB
+#define PAD_KNK_AN 4
+
+#define PORT_VCC_DETECT GPIOB
+#define PAD_VCC_DETECT 4
+
+#define PORT_LED1 GPIOB
+#define PAD_LED1 4
+
+#define PORT_LED2 GPIOB
+#define PAD_LED2 4
+
+#define PORT_AN0 GPIOC
+#define PAD_AN0 4
+
+#define PORT_AN1 GPIOC
+#define PAD_AN1 4
+
+#define PORT_AN2 GPIOC
+#define PAD_AN2 4
+
+#define PORT_FREQ2_IN GPIOC
+#define PAD_FREQ2_IN 4
+
+#define PORT_FREQ1_IN GPIOC
+#define PAD_FREQ1_IN 4
+
+#define PORT_USB_CTRL GPIOC
+#define PAD_USB_CTRL 4
+
+#define PORT_KLINE_CS GPIOC
+#define PAD_KLINE_CS 4
+
+#define PORT_BUTTON1 GPIOF
+#define PAD_BUTTON1 4
+
 /* PORT A */
 #define VAL_GPIOA_MODER ( \
     PIN_MODE_ANALOG(0) | \
@@ -111,7 +153,6 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 5))
-/* END OF PORT A */
 
 /* PORT B */
 #define VAL_GPIOB_MODER ( \
@@ -151,7 +192,7 @@
     PIN_OTYPE_PUSHPULL(15))
 
 #define VAL_GPIOB_OSPEEDR ( \
-    PIN_OSPEED_50M(0) | \
+    PIN_OSPEED_2M(0) | \
     PIN_OSPEED_2M(1) | \
     PIN_OSPEED_2M(2) | \
     PIN_OSPEED_50M(3) | \
@@ -211,8 +252,8 @@
     PIN_AFIO_AF(3, 7) | \
     PIN_AFIO_AF(4, 7) | \
     PIN_AFIO_AF(5, 0) | \
-    PIN_AFIO_AF(6, 2) | \
-    PIN_AFIO_AF(7, 2))
+    PIN_AFIO_AF(6, 4) | \
+    PIN_AFIO_AF(7, 4))
 
 #define VAL_GPIOB_AFRH ( \
     PIN_AFIO_AF(8, 9) | \
@@ -223,7 +264,6 @@
     PIN_AFIO_AF(13, 5) | \
     PIN_AFIO_AF(14, 5) | \
     PIN_AFIO_AF(15, 5))
-/* END OF PORT B */
 
 /* PORT C */
 #define VAL_GPIOC_MODER ( \
@@ -242,7 +282,7 @@
     PIN_MODE_OUTPUT(12) | \
     PIN_MODE_ANALOG(13) | \
     PIN_MODE_ANALOG(14) | \
-    PIN_MODE_INPUT(15))
+    PIN_MODE_ANALOG(15))
 
 #define VAL_GPIOC_OTYPER ( \
     PIN_OTYPE_PUSHPULL(0) | \
@@ -271,11 +311,11 @@
     PIN_OSPEED_2M(5) | \
     PIN_OSPEED_50M(6) | \
     PIN_OSPEED_50M(7) | \
-    PIN_OSPEED_50M(8) | \
+    PIN_OSPEED_2M(8) | \
     PIN_OSPEED_2M(9) | \
     PIN_OSPEED_50M(10) | \
     PIN_OSPEED_50M(11) | \
-    PIN_OSPEED_50M(12) | \
+    PIN_OSPEED_2M(12) | \
     PIN_OSPEED_2M(13) | \
     PIN_OSPEED_2M(14) | \
     PIN_OSPEED_2M(15))
@@ -296,7 +336,7 @@
     PIN_PUPDR_FLOATING(12) | \
     PIN_PUPDR_FLOATING(13) | \
     PIN_PUPDR_FLOATING(14) | \
-    PIN_PUPDR_PULLUP(15))
+    PIN_PUPDR_FLOATING(15))
 
 #define VAL_GPIOC_ODR ( \
     PIN_ODR_HIGH(0) | \
@@ -335,7 +375,6 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
-/* END OF PORT C */
 
 /* PORT D */
 #define VAL_GPIOD_MODER ( \
@@ -447,7 +486,6 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
-/* END OF PORT D */
 
 /* PORT E */
 #define VAL_GPIOE_MODER ( \
@@ -559,12 +597,11 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
-/* END OF PORT E */
 
 /* PORT F */
 #define VAL_GPIOF_MODER ( \
-    PIN_MODE_INPUT(0) | \
-    PIN_MODE_INPUT(1) | \
+    PIN_MODE_ANALOG(0) | \
+    PIN_MODE_ANALOG(1) | \
     PIN_MODE_ANALOG(2) | \
     PIN_MODE_ANALOG(3) | \
     PIN_MODE_INPUT(4) | \
@@ -671,6 +708,5 @@
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
     PIN_AFIO_AF(15, 0))
-/* END OF PORT F */
 
 #endif
