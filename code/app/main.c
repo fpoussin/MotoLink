@@ -182,11 +182,11 @@ static THD_FUNCTION(ThreadBDU, arg)
 
     idle_duty = usbConnected() ? 500 : 0;
 
-    pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, idle_duty));
+    pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, idle_duty));
 
     if (flags & CHN_INPUT_AVAILABLE)
     {
-      pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
+      pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
       readCommand_CCM((BaseChannel *)&BDU1);
     }
     else
@@ -223,19 +223,19 @@ static THD_FUNCTION(ThreadSDU, arg)
       doKLineInit = false;
 	}
 
-    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 1000));
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
 
-    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 1000));
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
@@ -507,8 +507,8 @@ int main(void)
   gptStart(&GPTD1, &gpt1Cfg);
   gptStartContinuous(&GPTD1, 20000);
 
-  pwmStart(&PWMD4, &pwmcfg);
-  pwmEnableChannel(&PWMD4, LED_CHN_BLUE, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 8000));
+  pwmStart(&PWMD_LED1, &pwmcfg);
+  pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
 
   /*
    * Initialize extra driver objects.
