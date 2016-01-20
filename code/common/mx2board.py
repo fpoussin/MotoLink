@@ -268,7 +268,7 @@ for port_key in sorted(all_pads.keys()):
                     port_key)
             output += "#define PAD_{0} {1}\n".format(
                     pad_data['label'].replace('-', '_'),
-                    pad_name[2:])
+                    pad_key)
             output += "\n"
 
 # Each Port (A...L)

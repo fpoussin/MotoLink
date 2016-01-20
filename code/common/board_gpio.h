@@ -5,40 +5,40 @@
 #define PAD_KNOCK_OFFSET 4
 
 #define PORT_SCS_TRIG GPIOB
-#define PAD_SCS_TRIG 4
+#define PAD_SCS_TRIG 0
 
 #define PORT_KNK_AN GPIOB
-#define PAD_KNK_AN 4
+#define PAD_KNK_AN 1
 
 #define PORT_VCC_DETECT GPIOB
-#define PAD_VCC_DETECT 4
+#define PAD_VCC_DETECT 5
 
 #define PORT_LED1 GPIOB
-#define PAD_LED1 4
+#define PAD_LED1 6
 
 #define PORT_LED2 GPIOB
-#define PAD_LED2 4
+#define PAD_LED2 7
 
 #define PORT_AN0 GPIOC
-#define PAD_AN0 4
+#define PAD_AN0 1
 
 #define PORT_AN1 GPIOC
-#define PAD_AN1 4
+#define PAD_AN1 2
 
 #define PORT_AN2 GPIOC
-#define PAD_AN2 4
+#define PAD_AN2 3
 
 #define PORT_FREQ2_IN GPIOC
-#define PAD_FREQ2_IN 4
+#define PAD_FREQ2_IN 6
 
 #define PORT_FREQ1_IN GPIOC
-#define PAD_FREQ1_IN 4
+#define PAD_FREQ1_IN 7
 
 #define PORT_USB_CTRL GPIOC
-#define PAD_USB_CTRL 4
+#define PAD_USB_CTRL 8
 
 #define PORT_KLINE_CS GPIOC
-#define PAD_KLINE_CS 4
+#define PAD_KLINE_CS 12
 
 #define PORT_BUTTON1 GPIOF
 #define PAD_BUTTON1 4
