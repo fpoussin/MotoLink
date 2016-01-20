@@ -15,4 +15,6 @@ void klineInit(void);
 bool fiveBaudInit(SerialDriver *sd);
 void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp);
 
+bool vbatDetect(void);
+
 #endif

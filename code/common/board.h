@@ -52,48 +52,8 @@
 /*
  * IO pins assignments.
  */
- 
-#define SWITCH_PORT GPIOF
-#define SWITCH_PAD 4
 
-#define SCS_PORT GPIOB
-#define SCS_PAD 0
-
-#define KL_CS_PORT GPIOC
-#define KL_CS_PAD 12
-
-#define KLINE_PORT GPIOC
-#define KLINE_TX 10
-#define KLINE_RX 11
- 
-#define USB_CONN_PORT GPIOC
-#define USB_CONN_PAD   8
-
-#define USB_DETECT_PORT GPIOC
-#define USB_DETECT_PAD   15
-
-#define LED_PORT GPIOB
-#define LED_RED_PAD 6
-#define LED_BLUE_PAD 7
-
-#define LED_TIM TIM4
-#define LED_CHN_RED 0
-#define LED_CHN_BLUE 1
-
-#define FREQIN_PORT GPIOC
-#define FREQIN_PAD1 6
-#define FREQIN_PAD2 7
-
-#define AN_PORT GPIOC
-#define AN1_PAD 1
-#define AN2_PAD 2
-#define AN3_PAD 3
-
-#define KNOCK_PORT GPIOB
-#define KNOCK_PAD 1
-
-#define DAC_PORT GPIOA
-#define DAC_PAD 4
+// All in board_gpio.h
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset

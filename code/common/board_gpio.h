@@ -16,11 +16,17 @@
 #define PORT_LED1 GPIOB
 #define PAD_LED1 6
 #define TIM_LED1 TIM4
+#define CCR_LED1 CCR1
+#define PWMD_LED1 PWMD4
+#define ICUD_LED1 ICUD4
 #define CHN_LED1 0
 
 #define PORT_LED2 GPIOB
 #define PAD_LED2 7
 #define TIM_LED2 TIM4
+#define CCR_LED2 CCR2
+#define PWMD_LED2 PWMD4
+#define ICUD_LED2 ICUD4
 #define CHN_LED2 1
 
 #define PORT_AN0 GPIOC
@@ -35,18 +41,33 @@
 #define PORT_FREQ2_IN GPIOC
 #define PAD_FREQ2_IN 6
 #define TIM_FREQ2_IN TIM3
+#define CCR_FREQ2_IN CCR1
+#define PWMD_FREQ2_IN PWMD3
+#define ICUD_FREQ2_IN ICUD3
 #define CHN_FREQ2_IN 0
 
 #define PORT_FREQ1_IN GPIOC
 #define PAD_FREQ1_IN 7
 #define TIM_FREQ1_IN TIM3
+#define CCR_FREQ1_IN CCR2
+#define PWMD_FREQ1_IN PWMD3
+#define ICUD_FREQ1_IN ICUD3
 #define CHN_FREQ1_IN 1
 
 #define PORT_USB_CTRL GPIOC
 #define PAD_USB_CTRL 8
 
+#define PORT_KLINE_TX GPIOC
+#define PAD_KLINE_TX 10
+
+#define PORT_KLINE_RX GPIOC
+#define PAD_KLINE_RX 11
+
 #define PORT_KLINE_CS GPIOC
 #define PAD_KLINE_CS 12
+
+#define PORT_USB_DETECT GPIOC
+#define PAD_USB_DETECT 15
 
 #define PORT_BUTTON1 GPIOF
 #define PAD_BUTTON1 4
@@ -290,7 +311,7 @@
     PIN_MODE_OUTPUT(12) | \
     PIN_MODE_ANALOG(13) | \
     PIN_MODE_ANALOG(14) | \
-    PIN_MODE_ANALOG(15))
+    PIN_MODE_INPUT(15))
 
 #define VAL_GPIOC_OTYPER ( \
     PIN_OTYPE_PUSHPULL(0) | \
@@ -344,7 +365,7 @@
     PIN_PUPDR_FLOATING(12) | \
     PIN_PUPDR_FLOATING(13) | \
     PIN_PUPDR_FLOATING(14) | \
-    PIN_PUPDR_FLOATING(15))
+    PIN_PUPDR_PULLUP(15))
 
 #define VAL_GPIOC_ODR ( \
     PIN_ODR_HIGH(0) | \
@@ -608,8 +629,8 @@
 
 /* PORT F */
 #define VAL_GPIOF_MODER ( \
-    PIN_MODE_ANALOG(0) | \
-    PIN_MODE_ANALOG(1) | \
+    PIN_MODE_INPUT(0) | \
+    PIN_MODE_INPUT(1) | \
     PIN_MODE_ANALOG(2) | \
     PIN_MODE_ANALOG(3) | \
     PIN_MODE_INPUT(4) | \

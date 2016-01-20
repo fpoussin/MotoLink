@@ -101,7 +101,7 @@ bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 bool usb_lld_connect_bus(USBDriver *usbp) {
 
   (void)usbp;
-  palSetPad(USB_CONN_PORT, USB_CONN_PAD);
+  palSetPad(PORT_USB_CTRL, PAD_USB_CTRL);
   return TRUE;
 }
 
@@ -111,7 +111,7 @@ bool usb_lld_connect_bus(USBDriver *usbp) {
 bool usb_lld_disconnect_bus(USBDriver *usbp) {
 
   (void)usbp;
-  palClearPad(USB_CONN_PORT, USB_CONN_PAD);
+  palClearPad(PORT_USB_CTRL, PAD_USB_CTRL);
   return FALSE;
 }
 #endif

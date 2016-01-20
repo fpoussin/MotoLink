@@ -232,11 +232,11 @@ mx_file.close()
 lines = []
 
 for t in tmp:
-    if re.search(r"^P[A-L]\d{1,2}\.", t, re.M):
+    if re.search(r"^P[A-L]\d{1,2}(-OSC.+)?\.", t, re.M):
         split = t.split('=')
         pad_name = split[0].split(".")[0]
         pad_port = pad_name[1:2]
-        pad_num = int(pad_name[2:])
+        pad_num = int(pad_name[2:4].replace('.', '').replace('-', ''))
         pad_prop = split[0].split(".")[-1]
         prop_value = split[-1].rstrip('\r\n')
 
@@ -271,11 +271,16 @@ for port_key in sorted(all_pads.keys()):
                     pad_data['label'],
                     pad_key)
             if "TIM" in pad_data['signal'] and "CH" in pad_data['signal']:
-                output += "#define TIM_{0} {1}\n".format(
+                timer = pad_data['signal'].replace('S_TIM', '').replace('_CH', '')[:-1]
+                output += "#define TIM_{0} TIM{1}\n".format(
+                        pad_data['label'], timer)
+                output += "#define CCR_{0} CCR{1}\n".format(
                         pad_data['label'],
-                        pad_data['signal']
-                            .replace('S_', '')
-                            .replace('_CH', '')[:-1])
+                        int(pad_data['signal'][-1:]))
+                output += "#define PWMD_{0} PWMD{1}\n".format(
+                        pad_data['label'], timer)
+                output += "#define ICUD_{0} ICUD{1}\n".format(
+                        pad_data['label'], timer)
                 output += "#define CHN_{0} {1}\n\n".format(
                         pad_data['label'],
                         int(pad_data['signal'][-1:])-1)

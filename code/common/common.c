@@ -31,7 +31,7 @@ uint8_t checksum(const uint8_t *data, uint8_t length)
 
 bool getSwitch1(void)
 {
-    return palReadPad(SWITCH_PORT, SWITCH_PAD) == PAL_LOW;
+    return palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW;
 }
 
 int map(int x, int in_min, int in_max, int out_min, int out_max)
@@ -39,8 +39,8 @@ int map(int x, int in_min, int in_max, int out_min, int out_max)
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-#define K_LOW(time) palClearPad(KLINE_PORT, KLINE_TX); chThdSleepMilliseconds(time);
-#define K_HIGH(time) palSetPad(KLINE_PORT, KLINE_TX); chThdSleepMilliseconds(time);
+#define K_LOW(time) palClearPad(PORT_KLINE_TX, PAD_KLINE_TX); chThdSleepMilliseconds(time);
+#define K_HIGH(time) palSetPad(PORT_KLINE_TX, PAD_KLINE_TX); chThdSleepMilliseconds(time);
 
 void klineInit(void)
 {
@@ -58,17 +58,17 @@ void klineInit(void)
 */
 
   // Set pin mode to GPIO
-  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
   // Toggle K-line bus
   K_LOW(70); // Low for 70ms
   K_HIGH(130); // High for 130ms
 
   // Set pin mode back to UART
-  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_ALTERNATE(7) | \
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_PULLUP);
-  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_ALTERNATE(7) | \
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OTYPE_OPENDRAIN);
 
 }
@@ -78,8 +78,8 @@ bool fiveBaudInit(SerialDriver *sd)
   uint8_t input_buf[3];
   size_t bytes;
   // Set pin mode to GPIO
-  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
   const uint8_t prio = chThdGetPriorityX();
   chThdSetPriority(HIGHPRIO);
@@ -96,9 +96,9 @@ bool fiveBaudInit(SerialDriver *sd)
   K_HIGH(200); // High for 200ms - stop bit
 
   // Set pin mode back to UART
-  palSetPadMode(KLINE_PORT, KLINE_TX, PAL_MODE_ALTERNATE(7) | \
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_PULLUP);
-  palSetPadMode(KLINE_PORT, KLINE_RX, PAL_MODE_ALTERNATE(7) | \
+  palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OTYPE_OPENDRAIN);
 
   chThdSetPriority(prio); // Revert back original priority
@@ -169,4 +169,9 @@ void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp)
 
   while(sdp->state != SD_STOP) chThdSleepMilliseconds(2);
   sdStart(sdp, scp);
+}
+
+bool vbatDetect(void)
+{
+    return palReadPad(PORT_VCC_DETECT, PAD_VCC_DETECT) == PAL_LOW;
 }

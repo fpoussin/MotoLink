@@ -75,9 +75,9 @@ static THD_FUNCTION(ThreadBlinker, arg)
                              D(26), D(24), D(22), D(20), D(18), D(16), D(14), D(12), D(10), D(8), D(6),
                              D(4), D(2)};
 
-  TIM4->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
+  TIM_LED2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
   if (dmaStreamAllocate(STM32_DMA1_STREAM7, 1, NULL, NULL)) chSysHalt("DMA error");
-  dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM4->CCR2);
+  dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM_LED2->CCR_LED2);
   dmaStreamSetMemory0(STM32_DMA1_STREAM7, dimmer);
   dmaStreamSetTransactionSize(STM32_DMA1_STREAM7, sizeof(dimmer)/sizeof(uint16_t));
   dmaStreamSetMode(STM32_DMA1_STREAM7, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
@@ -87,9 +87,9 @@ static THD_FUNCTION(ThreadBlinker, arg)
   {
     chThdSleepMilliseconds(100);
     if (usbConnected())
-      TIM4->PSC = (STM32_TIMCLK1 / 10000) - 1;
+      TIM_LED2->PSC = (STM32_TIMCLK1 / 10000) - 1;
     else
-      TIM4->PSC = (STM32_TIMCLK1 / 5000) - 1;
+      TIM_LED2->PSC = (STM32_TIMCLK1 / 5000) - 1;
   }
   return;
 }
@@ -118,11 +118,11 @@ static THD_FUNCTION(ThreadBDU_CCM, arg)
 
     idle_duty = usbConnected() ? 500 : 0;
 
-    pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, idle_duty));
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, idle_duty));
 
     if (flags & CHN_INPUT_AVAILABLE)
     {
-      pwmEnableChannel(&PWMD4, LED_CHN_RED, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 10000));
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
       readCommand_CCM((BaseChannel *)&BDU1, reset_flags);
     }
   }

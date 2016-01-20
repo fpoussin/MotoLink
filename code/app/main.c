@@ -532,8 +532,7 @@ int main(void)
   timcapStart(&TIMCAPD3, &tc_conf);
 
   // Enable K-line
-  palSetPad(KL_CS_PORT, KL_CS_PAD);
-  //palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
+  palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
