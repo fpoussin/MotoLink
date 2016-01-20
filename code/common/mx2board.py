@@ -263,13 +263,24 @@ for port_key in sorted(all_pads.keys()):
         pad_data = all_pads[port_key][pad_key]
         print "P{0}{1} - {2}".format(port_key, pad_key, pad_data)
         if pad_data['label']:
+            pad_data['label'] = pad_data['label'].replace('-', '_')
             output += "#define PORT_{0} GPIO{1}\n".format(
-                    pad_data['label'].replace('-', '_'),
+                    pad_data['label'],
                     port_key)
             output += "#define PAD_{0} {1}\n".format(
-                    pad_data['label'].replace('-', '_'),
+                    pad_data['label'],
                     pad_key)
-            output += "\n"
+            if "TIM" in pad_data['signal'] and "CH" in pad_data['signal']:
+                output += "#define TIM_{0} {1}\n".format(
+                        pad_data['label'],
+                        pad_data['signal']
+                            .replace('S_', '')
+                            .replace('_CH', '')[:-1])
+                output += "#define CHN_{0} {1}\n\n".format(
+                        pad_data['label'],
+                        int(pad_data['signal'][-1:])-1)
+            else:
+                output += "\n"
 
 # Each Port (A...L)
 for port_key in sorted(all_pads.keys()):

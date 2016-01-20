@@ -15,9 +15,13 @@
 
 #define PORT_LED1 GPIOB
 #define PAD_LED1 6
+#define TIM_LED1 TIM4
+#define CHN_LED1 0
 
 #define PORT_LED2 GPIOB
 #define PAD_LED2 7
+#define TIM_LED2 TIM4
+#define CHN_LED2 1
 
 #define PORT_AN0 GPIOC
 #define PAD_AN0 1
@@ -30,9 +34,13 @@
 
 #define PORT_FREQ2_IN GPIOC
 #define PAD_FREQ2_IN 6
+#define TIM_FREQ2_IN TIM3
+#define CHN_FREQ2_IN 0
 
 #define PORT_FREQ1_IN GPIOC
 #define PAD_FREQ1_IN 7
+#define TIM_FREQ1_IN TIM3
+#define CHN_FREQ1_IN 1
 
 #define PORT_USB_CTRL GPIOC
 #define PAD_USB_CTRL 8
