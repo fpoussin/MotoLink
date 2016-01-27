@@ -41,7 +41,7 @@ for app in APPS:
             columns = filter(None, line.split(" "))
             if ".stacks" in columns[0]:
                 ram += int(columns[1])
-            elif ".ccm" in columns[0]:
+            elif ".ram4" in columns[0]:
                 ccm += int(columns[1])
                 rom += int(columns[1])
             elif ".bss" in columns[0]:

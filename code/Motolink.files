@@ -285,7 +285,6 @@ app/dsp_lib/FilteringFunctions/arm_fir_interpolate_f32.c
 ChibiOS-RT/os/hal/ports/KINETIS/K20x/hal_lld.c
 ChibiOS-RT/os/hal/ports/AVR/i2c_lld.c
 app/dsp_lib/SupportFunctions/arm_fill_f32.c
-common/init.c
 ChibiOS-RT/os/hal/src/dac.c
 ChibiOS-RT/os/common/ports/e200/devices/SPC56ELxx/ppcparams.h
 ChibiOS-RT/os/hal/templates/sdc_lld.h
@@ -343,7 +342,6 @@ ChibiOS-RT/os/hal/ports/STM32/LLD/SPIv2/spi_lld.h
 ChibiOS-RT/os/hal/ports/STM32/LLD/RTCv2/rtc_lld.h
 ChibiOS-RT/os/rt/templates/chcore.h
 app/dsp_lib/SupportFunctions/arm_fill_q31.c
-common/bulk_usb.h
 ChibiOS-RT/os/ext/CMSIS/include/core_cm0.h
 ChibiOS-RT/os/rt/src/chevents.c
 app/dsp_lib/BasicMathFunctions/arm_add_f32.c
@@ -475,7 +473,6 @@ ChibiOS-Contrib/os/hal/ports/STM32/LLD/TIMv1/eicu_lld.c
 ChibiOS-Contrib/os/hal/ports/NRF51/NRF51822/spi_lld.c
 ChibiOS-RT/os/ext/CMSIS/ST/stm32f038xx.h
 ChibiOS-Contrib/os/hal/src/hal_community.c
-common/vectors.h
 ChibiOS-RT/os/hal/boards/EA_LPCXPRESSO_BB_11U14/board.c
 ChibiOS-RT/os/hal/include/hal_streams.h
 app/dsp_lib/ControllerFunctions/arm_pid_reset_f32.c
@@ -1084,10 +1081,8 @@ ChibiOS-RT/os/hal/src/sdc.c
 ChibiOS-RT/os/nil/ports/AVR/nilcore.c
 common/usb_config.c
 app/dsp_lib/SupportFunctions/arm_q7_to_q15.c
-common/bulk_usb.c
 app/dsp_lib/StatisticsFunctions/arm_rms_q31.c
 ChibiOS-RT/os/common/ports/e200/devices/SPC56ECxx/boot.h
-common/vectors.c
 app/dsp_lib/FilteringFunctions/arm_iir_lattice_init_q31.c
 app/dsp_lib/TransformFunctions/arm_dct4_q31.c
 app/dsp_lib/FilteringFunctions/arm_correlate_fast_q15.c
@@ -1816,3 +1811,5 @@ common/link.ld
 app/link.ld
 common/common.mk
 common/startup_stm32f3xx.mk
+bootloader/link.ld
+binsize.py

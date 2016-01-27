@@ -1,11 +1,7 @@
 app
 app/dsp_lib/inc
 bootloader
-ChibiOS-Contrib/os/common/ports/ARMCMx/devices/NRF51822
-ChibiOS-Contrib/os/common/ports/ARMCMx/devices/TM4C123x
-ChibiOS-Contrib/os/common/ports/ARMCMx/devices/TM4C129x
 ChibiOS-Contrib/os/hal/include
-ChibiOS-Contrib/os/hal/ports/NRF51/NRF51822
 ChibiOS-Contrib/os/hal/ports/STM32/LLD/CRCv1
 ChibiOS-Contrib/os/hal/ports/STM32/LLD/DMA2Dv1
 ChibiOS-Contrib/os/hal/ports/STM32/LLD/FSMCv1
@@ -20,6 +16,7 @@ ChibiOS-Drivers
 ChibiOS-Drivers/inc
 ChibiOS-Drivers/stm32
 ChibiOS-RT/os/common/ports/ARMCMx/devices/STM32F3xx
+ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/
 ChibiOS-RT/os/ext/CMSIS/include
 ChibiOS-RT/os/ext/CMSIS/KINETIS
 ChibiOS-RT/os/ext/CMSIS/ST
@@ -46,12 +43,6 @@ ChibiOS-RT/os/hal/ports/STM32/LLD/USARTv1
 ChibiOS-RT/os/hal/ports/STM32/LLD/USARTv2
 ChibiOS-RT/os/hal/ports/STM32/LLD/USBv1
 ChibiOS-RT/os/hal/ports/STM32/STM32F3xx
-ChibiOS-RT/os/hal/templates
-ChibiOS-RT/os/hal/templates/osal
-ChibiOS-RT/os/nil/include
-ChibiOS-RT/os/nil/ports/ARMCMx
-ChibiOS-RT/os/nil/ports/ARMCMx/compilers/GCC
-ChibiOS-RT/os/nil/templates
 ChibiOS-RT/os/rt/include
 ChibiOS-RT/os/rt/ports/ARMCMx
 ChibiOS-RT/os/rt/ports/ARMCMx/cmsis_os
@@ -64,3 +55,4 @@ ChibiOS-RT/os/various/devices_lib/lcd
 ChibiOS-RT/os/various/lwip_bindings
 ChibiOS-RT/os/various/lwip_bindings/arch
 common
+.

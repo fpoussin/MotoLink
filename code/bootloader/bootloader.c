@@ -4,7 +4,7 @@ uint8_t bl_wake = 0;
 typedef volatile uint32_t vu32;
 typedef uint32_t u32;
 
-void startIWDG(void) {
+CCM_FUNC void startIWDG(void) {
 
     const uint16_t LsiFreq = 40000; // 40KHz
     IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
@@ -17,7 +17,7 @@ void startIWDG(void) {
     IWDG_Enable();
 }
 
-void startUserApp(void) {
+CCM_FUNC void startUserApp(void) {
 
   usbStop(&USBD1);
   usbDisconnectBus(&USBD1);
@@ -30,7 +30,7 @@ void startUserApp(void) {
   jumpToUser(USER_APP_ADDR);
 }
 
-void jumpToUser(uint32_t address) {
+CCM_FUNC void jumpToUser(uint32_t address) {
 
   typedef void (*pFunction)(void);
 
@@ -59,7 +59,7 @@ void jumpToUser(uint32_t address) {
   Jump_To_Application();
 }
 
-uint8_t checkUserCode(uint32_t address) {
+CCM_FUNC uint8_t checkUserCode(uint32_t address) {
 
   const uint32_t sp = *(vu32 *) address;
 
@@ -71,7 +71,7 @@ uint8_t checkUserCode(uint32_t address) {
   return 0;
 }
 
-uint8_t eraseFlash(uint32_t len) {
+CCM_FUNC uint8_t eraseFlash(uint32_t len) {
 
   uint32_t addr;
   const uint32_t from = USER_APP_ADDR;
@@ -97,7 +97,7 @@ uint8_t eraseFlash(uint32_t len) {
   return 0;
 }
 
-uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len) {
+CCM_FUNC uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len) {
 
   uint8_t i;
 

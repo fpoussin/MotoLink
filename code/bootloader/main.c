@@ -76,7 +76,7 @@ static THD_FUNCTION(ThreadBlinker, arg)
                              D(4), D(2)};
 
   TIM_LED2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
-  if (dmaStreamAllocate(STM32_DMA1_STREAM7, 1, NULL, NULL)) chSysHalt("DMA error");
+  if (dmaStreamAllocate(STM32_DMA1_STREAM7, 1, NULL, NULL)) chSysHalt("TIM DMA error");
   dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM_LED2->CCR_LED2);
   dmaStreamSetMemory0(STM32_DMA1_STREAM7, dimmer);
   dmaStreamSetTransactionSize(STM32_DMA1_STREAM7, sizeof(dimmer)/sizeof(uint16_t));
@@ -98,7 +98,7 @@ static THD_FUNCTION(ThreadBlinker, arg)
  * USB Bulk thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBDU, 1024);
-static THD_FUNCTION(ThreadBDU_CCM, arg)
+CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 {
   event_listener_t el1;
   eventmask_t flags;
@@ -109,7 +109,7 @@ static THD_FUNCTION(ThreadBDU_CCM, arg)
   chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
+  while(BDU1.state != SDU_READY) chThdSleepMilliseconds(10);
 
   while (TRUE)
   {
@@ -133,7 +133,7 @@ static THD_FUNCTION(ThreadBDU_CCM, arg)
  * USB Serial thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadSDU, 1024);
-static THD_FUNCTION(ThreadSDU_CCM, arg)
+static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
@@ -148,7 +148,7 @@ static THD_FUNCTION(ThreadSDU_CCM, arg)
 
     while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
+    read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
@@ -157,7 +157,7 @@ static THD_FUNCTION(ThreadSDU_CCM, arg)
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
+      chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
     chThdSleepMilliseconds(1);
@@ -223,15 +223,15 @@ int main(void)
   pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
 
-  bduObjectInit(&BDU1);
+  sduObjectInit(&BDU1);
   sduObjectInit(&SDU1);
 
-  bduStart(&BDU1, &bulkusbcfg);
+  sduStart(&BDU1, &bulkusbcfg);
   sduStart(&SDU1, &serusbcfg);;
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU_CCM, NULL);
-  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU_CCM, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
   while (TRUE)    {
       while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);

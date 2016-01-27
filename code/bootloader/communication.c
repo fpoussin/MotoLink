@@ -1,7 +1,7 @@
 #include "communication.h"
 #include "common.h"
 
-uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
+CCM_FUNC uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
 {
   cmd_header_t header;
   uint8_t data_buf[DATA_BUF_SIZE];
@@ -85,7 +85,7 @@ uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags)
 }
 
 
-uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
+CCM_FUNC uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
 
   if ((len-4) % 4) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_WRITE, MS2ST(25));
@@ -105,7 +105,7 @@ uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
   return res;
 }
 
-uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
+CCM_FUNC uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
 
   uint32_t address = leToInt(buf);
   uint32_t buf_len = leToInt(buf+4);
@@ -115,7 +115,7 @@ uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
   return 0;
 }
 
-uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
+CCM_FUNC uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
 
   uint8_t buf[2];
   buf[0] = MASK_REPLY_OK  | CMD_GET_FLAGS;
@@ -125,7 +125,7 @@ uint8_t sendFlags(BaseChannel * chn, uint8_t flags) {
   return 0;
 }
 
-uint8_t sendMode(BaseChannel * chn) {
+CCM_FUNC uint8_t sendMode(BaseChannel * chn) {
 
   uint8_t buf[2];
   buf[0] = MASK_REPLY_OK | CMD_GET_MODE;
@@ -135,7 +135,7 @@ uint8_t sendMode(BaseChannel * chn) {
   return 0;
 }
 
-uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
+CCM_FUNC uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
 
   uint32_t len = leToInt(buf);
 
@@ -148,7 +148,7 @@ uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
   return 0;
 }
 
-uint8_t resetHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(50));
 
@@ -164,14 +164,14 @@ uint8_t resetHandler(BaseChannel * chn) {
   return 0;
 }
 
-uint8_t wakeHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t wakeHandler(BaseChannel * chn) {
 
   bl_wake = 1;
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, MS2ST(50));
   return 0;
 }
 
-uint8_t bootHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t bootHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_BOOT, MS2ST(50));
   chThdSleepMilliseconds(100);

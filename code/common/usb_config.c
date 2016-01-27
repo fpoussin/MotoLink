@@ -5,7 +5,7 @@
  * Serial over USB Driver structure.
  */
 SerialUSBDriver SDU1;
-BulkUSBDriver BDU1;
+SerialUSBDriver BDU1;
 bool doKLineInit = false;
 
 /*
@@ -315,8 +315,8 @@ static USBOutEndpointState ep3outstate;
 static const USBEndpointConfig ep3config = {
   USB_EP_MODE_TYPE_BULK,
   NULL,
-  bduDataTransmitted,
-  bduDataReceived,
+  sduDataTransmitted,
+  sduDataReceived,
   0x0040,
   0x0040,
   &ep3instate,
@@ -351,7 +351,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     usbInitEndpointI(usbp, USBD2_DATA_REQUEST_EP, &ep3config);
 
     /* Resetting the state of the Bulk driver subsystem.*/
-    bduConfigureHookI(&BDU1);
+    sduConfigureHookI(&BDU1);
 
     chSysUnlockFromISR();
     return;
@@ -364,10 +364,6 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   }
   return;
 }
-
-#define CDC_SET_LINE_CODING             0x20
-#define CDC_GET_LINE_CODING             0x21
-#define CDC_SET_CONTROL_LINE_STATE      0x22
 
 static cdc_linecoding_t linecoding = {
   {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */
@@ -441,10 +437,11 @@ const SerialUSBConfig serusbcfg = {
 /*
  * Bulk USB driver configuration.
  */
-const BulkUSBConfig bulkusbcfg = {
+const SerialUSBConfig bulkusbcfg = {
   &USBD1,
   USBD2_DATA_REQUEST_EP,
-  USBD2_DATA_AVAILABLE_EP
+  USBD2_DATA_AVAILABLE_EP,
+  USBD2_INTERRUPT_REQUEST_EP
 };
 
 /*

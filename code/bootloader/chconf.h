@@ -28,6 +28,9 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
+#include "vectors.h"
+#define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
+
 /*===========================================================================*/
 /**
  * @name System timers settings

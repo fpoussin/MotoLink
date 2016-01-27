@@ -74,6 +74,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f30x_flash.h"
+#include "common.h"
 
 /** @addtogroup STM32F30x_StdPeriph_Driver
   * @{
@@ -128,7 +129,7 @@
   *            @arg FLASH_Latency_2: FLASH Two Latency cycles      
   * @retval None
   */
-void FLASH_SetLatency(uint32_t FLASH_Latency)
+CCM_FUNC void FLASH_SetLatency(uint32_t FLASH_Latency)
 {
    uint32_t tmpreg = 0;
   
@@ -154,7 +155,7 @@ void FLASH_SetLatency(uint32_t FLASH_Latency)
   *            @arg FLASH_HalfCycleAccess_Disable: FLASH Half Cycle Disable
   * @retval None
   */
-void FLASH_HalfCycleAccessCmd(FunctionalState NewState)
+CCM_FUNC void FLASH_HalfCycleAccessCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
@@ -175,7 +176,7 @@ void FLASH_HalfCycleAccessCmd(FunctionalState NewState)
   *          This parameter  can be: ENABLE or DISABLE.
   * @retval None
   */
-void FLASH_PrefetchBufferCmd(FunctionalState NewState)
+CCM_FUNC void FLASH_PrefetchBufferCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
@@ -225,7 +226,7 @@ void FLASH_PrefetchBufferCmd(FunctionalState NewState)
   * @param  None
   * @retval None
   */
-void FLASH_Unlock(void)
+CCM_FUNC void FLASH_Unlock(void)
 {
   if((FLASH->CR & FLASH_CR_LOCK) != RESET)
   {
@@ -240,7 +241,7 @@ void FLASH_Unlock(void)
   * @param  None
   * @retval None
   */
-void FLASH_Lock(void)
+CCM_FUNC void FLASH_Lock(void)
 {
   /* Set the LOCK Bit to lock the FLASH Registers access */
   FLASH->CR |= FLASH_CR_LOCK;
@@ -258,7 +259,7 @@ void FLASH_Lock(void)
   * @retval FLASH Status: The returned value can be: 
   *         FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
+CCM_FUNC FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
 {
   FLASH_Status status = FLASH_COMPLETE;
 
@@ -296,7 +297,7 @@ FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_EraseAllPages(void)
+CCM_FUNC FLASH_Status FLASH_EraseAllPages(void)
 {
   FLASH_Status status = FLASH_COMPLETE;
 
@@ -331,7 +332,7 @@ FLASH_Status FLASH_EraseAllPages(void)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
   */
-FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
+CCM_FUNC FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
 {
   FLASH_Status status = FLASH_COMPLETE;
   __IO uint32_t tmp = 0;
@@ -389,7 +390,7 @@ FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT. 
   */
-FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
+CCM_FUNC FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
 {
   FLASH_Status status = FLASH_COMPLETE;
 
@@ -480,7 +481,7 @@ FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
   * @param  None
   * @retval None
   */
-void FLASH_OB_Unlock(void)
+CCM_FUNC void FLASH_OB_Unlock(void)
 {
   if((FLASH->CR & FLASH_CR_OPTWRE) == RESET)
   { 
@@ -495,7 +496,7 @@ void FLASH_OB_Unlock(void)
   * @param  None
   * @retval None
   */
-void FLASH_OB_Lock(void)
+CCM_FUNC void FLASH_OB_Lock(void)
 {
   /* Set the OPTWREN Bit to lock the option bytes block access */
   FLASH->CR &= ~FLASH_CR_OPTWRE;
@@ -506,7 +507,7 @@ void FLASH_OB_Lock(void)
   * @param  None
   * @retval None
   */
-void FLASH_OB_Launch(void)
+CCM_FUNC void FLASH_OB_Launch(void)
 {
   /* Set the OBL_Launch bit to launch the option byte loading */
   FLASH->CR |= FLASH_CR_OBL_LAUNCH; 
@@ -519,7 +520,7 @@ void FLASH_OB_Launch(void)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_OB_Erase(void)
+CCM_FUNC FLASH_Status FLASH_OB_Erase(void)
 {
   uint16_t rdptmp = OB_RDP_Level_0;
 
@@ -589,7 +590,7 @@ FLASH_Status FLASH_OB_Erase(void)
   * @retval FLASH Status: The returned value can be: 
   *         FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_OB_EnableWRP(uint32_t OB_WRP)
+CCM_FUNC FLASH_Status FLASH_OB_EnableWRP(uint32_t OB_WRP)
 {
   uint16_t WRP0_Data = 0xFFFF, WRP1_Data = 0xFFFF;
   
@@ -648,7 +649,7 @@ FLASH_Status FLASH_OB_EnableWRP(uint32_t OB_WRP)
   *     @retval FLASH Status: The returned value can be: 
   * FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_OB_RDPConfig(uint8_t OB_RDP)
+CCM_FUNC FLASH_Status FLASH_OB_RDPConfig(uint8_t OB_RDP)
 {
   FLASH_Status status = FLASH_COMPLETE;
   
@@ -713,7 +714,7 @@ FLASH_Status FLASH_OB_RDPConfig(uint8_t OB_RDP)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG, 
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, uint8_t OB_STDBY)
+CCM_FUNC FLASH_Status FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, uint8_t OB_STDBY)
 {
   FLASH_Status status = FLASH_COMPLETE; 
 
@@ -757,7 +758,7 @@ FLASH_Status FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, uint8_t OB_ST
   *     @arg OB_BOOT1_SET: BOOT1 Set
   * @retval None
   */
-FLASH_Status FLASH_OB_BOOTConfig(uint8_t OB_BOOT1)
+CCM_FUNC FLASH_Status FLASH_OB_BOOTConfig(uint8_t OB_BOOT1)
 {
   FLASH_Status status = FLASH_COMPLETE; 
 
@@ -799,7 +800,7 @@ FLASH_Status FLASH_OB_BOOTConfig(uint8_t OB_BOOT1)
   *     @arg OB_VDDA_ANALOG_OFF: Analog monitoring on VDDA Power source OFF
   * @retval None
   */
-FLASH_Status FLASH_OB_VDDAConfig(uint8_t OB_VDDA_ANALOG)
+CCM_FUNC FLASH_Status FLASH_OB_VDDAConfig(uint8_t OB_VDDA_ANALOG)
 {
   FLASH_Status status = FLASH_COMPLETE; 
 
@@ -841,7 +842,7 @@ FLASH_Status FLASH_OB_VDDAConfig(uint8_t OB_VDDA_ANALOG)
   *             @arg OB_SRAM_PARITY_RESET: Reset SRAM partiy.
   * @retval None
   */
-FLASH_Status FLASH_OB_SRAMParityConfig(uint8_t OB_SRAM_Parity)
+CCM_FUNC FLASH_Status FLASH_OB_SRAMParityConfig(uint8_t OB_SRAM_Parity)
 {
   FLASH_Status status = FLASH_COMPLETE; 
 
@@ -887,7 +888,7 @@ FLASH_Status FLASH_OB_SRAMParityConfig(uint8_t OB_SRAM_Parity)
   * @retval FLASH Status: The returned value can be: 
   * FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_OB_WriteUser(uint8_t OB_USER)
+CCM_FUNC FLASH_Status FLASH_OB_WriteUser(uint8_t OB_USER)
 {
   FLASH_Status status = FLASH_COMPLETE; 
 
@@ -931,7 +932,7 @@ FLASH_Status FLASH_OB_WriteUser(uint8_t OB_USER)
   * @retval FLASH Status: The returned value can be: FLASH_ERROR_PG,
   *         FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
+CCM_FUNC FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
 {
   FLASH_Status status = FLASH_COMPLETE;
   /* Check the parameters */
@@ -962,7 +963,7 @@ FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
   * @param  None
   * @retval The FLASH User Option Bytes .
   */
-uint8_t FLASH_OB_GetUser(void)
+CCM_FUNC uint8_t FLASH_OB_GetUser(void)
 {
   /* Return the User Option Byte */
   return (uint8_t)(FLASH->OBR >> 8);
@@ -973,7 +974,7 @@ uint8_t FLASH_OB_GetUser(void)
   * @param  None
   * @retval The FLASH Write Protection Option Bytes value
   */
-uint32_t FLASH_OB_GetWRP(void)
+CCM_FUNC uint32_t FLASH_OB_GetWRP(void)
 {
   /* Return the FLASH write protection Register value */
   return (uint32_t)(FLASH->WRPR);
@@ -984,7 +985,7 @@ uint32_t FLASH_OB_GetWRP(void)
   * @param  None
   * @retval FLASH ReadOut Protection Status(SET or RESET)
   */
-FlagStatus FLASH_OB_GetRDP(void)
+CCM_FUNC FlagStatus FLASH_OB_GetRDP(void)
 {
   FlagStatus readstatus = RESET;
   
@@ -1024,7 +1025,7 @@ FlagStatus FLASH_OB_GetRDP(void)
   *     @arg FLASH_IT_ERR: FLASH Error Interrupt 
   * @retval None 
   */
-void FLASH_ITConfig(uint32_t FLASH_IT, FunctionalState NewState)
+CCM_FUNC void FLASH_ITConfig(uint32_t FLASH_IT, FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FLASH_IT(FLASH_IT)); 
@@ -1052,7 +1053,7 @@ void FLASH_ITConfig(uint32_t FLASH_IT, FunctionalState NewState)
   *     @arg FLASH_FLAG_EOP: FLASH End of Programming flag        
   * @retval The new state of FLASH_FLAG (SET or RESET).
   */
-FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
+CCM_FUNC FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
 {
   FlagStatus bitstatus = RESET;
 
@@ -1080,7 +1081,7 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
   *     @arg FLASH_FLAG_EOP: FLASH End of Programming flag                
   * @retval None
   */
-void FLASH_ClearFlag(uint32_t FLASH_FLAG)
+CCM_FUNC void FLASH_ClearFlag(uint32_t FLASH_FLAG)
 {
   /* Check the parameters */
   assert_param(IS_FLASH_CLEAR_FLAG(FLASH_FLAG));
@@ -1095,7 +1096,7 @@ void FLASH_ClearFlag(uint32_t FLASH_FLAG)
   * @retval FLASH Status: The returned value can be: 
   *         FLASH_BUSY, FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP or FLASH_COMPLETE.
   */
-FLASH_Status FLASH_GetStatus(void)
+CCM_FUNC FLASH_Status FLASH_GetStatus(void)
 {
   FLASH_Status FLASHstatus = FLASH_COMPLETE;
   
@@ -1131,7 +1132,7 @@ FLASH_Status FLASH_GetStatus(void)
   * @retval FLASH Status: The returned value can be: FLASH_BUSY, 
   *         FLASH_ERROR_PROGRAM, FLASH_ERROR_WRP, FLASH_COMPLETE or FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
+CCM_FUNC FLASH_Status FLASH_WaitForLastOperation(uint32_t Timeout)
 { 
   FLASH_Status status = FLASH_COMPLETE;
    

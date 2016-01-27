@@ -18,8 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-__ram_start__           = ORIGIN(ram);
-__ram_size__            = LENGTH(ram);
+__ram_start__           = ORIGIN(ram0);
+__ram_size__            = LENGTH(ram0);
 __ram_end__             = __ram_start__ + __ram_size__;
 
 __flash_page_size__ = 0x800;
@@ -27,6 +27,28 @@ __flash_page_size__ = 0x800;
 __ee_address__ = ORIGIN(eeprom);
 __ee_length__   = LENGTH(eeprom);
 
+
+/* RAM region to be used for Main stack. This stack accommodates the processing
+   of all exceptions and interrupts*/
+REGION_ALIAS("MAIN_STACK_RAM", ram0);
+
+/* RAM region to be used for the process stack. This is the stack used by
+   the main() function.*/
+REGION_ALIAS("PROCESS_STACK_RAM", ram0);
+
+/* RAM region to be used for data segment.*/
+REGION_ALIAS("DATA_RAM", ram0);
+
+/* RAM region to be used for BSS segment.*/
+REGION_ALIAS("BSS_RAM", ram0);
+
+/* RAM region to be used for the default heap.*/
+REGION_ALIAS("HEAP_RAM", ram0);
+
+INCLUDE rules.ld
+
+
+/*
 ENTRY(Reset_Handler)
 
 SECTIONS
@@ -172,3 +194,4 @@ _end            = .;
 
 __heap_base__   = _end;
 __heap_end__    = __ram_end__;
+*/
