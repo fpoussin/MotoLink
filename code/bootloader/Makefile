@@ -88,7 +88,6 @@ PROJECT = bootloader
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT
 # Startup files.
-include ../common/startup_stm32f3xx.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
