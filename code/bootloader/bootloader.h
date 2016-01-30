@@ -30,6 +30,6 @@ uint8_t eraseFlash(uint32_t len);
 uint8_t writeFlash(uint32_t addr, uint32_t *buf, uint8_t len);
 
 extern uint8_t bl_wake;
-extern uint8_t reset_flags;
+//extern uint8_t reset_flags;
 
 #endif

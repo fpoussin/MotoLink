@@ -24,8 +24,8 @@
 /*
  * Board identifier.
  */
-#define BOARD_MOTOLINK_REV_A
-#define BOARD_NAME                  "Motolink board Revision A"
+#define BOARD_MOTOLINK_REV_B
+#define BOARD_NAME                  "Motolink board Revision B"
 
 /*
  * Board oscillators-related settings.
@@ -40,8 +40,6 @@
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                8000000
 #endif
-
-//#define STM32_HSE_BYPASS
 
 /*
  * MCU type as defined in the ST header.

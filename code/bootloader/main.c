@@ -26,7 +26,7 @@
 /* Config                                                                    */
 /*===========================================================================*/
 
-uint8_t reset_flags = FLAG_OK;
+volatile uint8_t reset_flags = FLAG_OK;
 
 static PWMConfig pwmcfg = {
   10000,    /* 10kHz PWM clock frequency.   */
@@ -106,10 +106,10 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
   chRegSetThreadName("BDU");
   uint16_t idle_duty = 0;
 
-  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
+  chEvtRegisterMask(chnGetEventSource(&SDU2), &el1, ALL_EVENTS);
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(BDU1.state != SDU_READY) chThdSleepMilliseconds(10);
+  while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
 
   while (TRUE)
   {
@@ -123,8 +123,10 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-      readCommand_CCM((BaseChannel *)&BDU1, reset_flags);
+      readCommand_CCM((BaseChannel *)&SDU2, reset_flags);
     }
+
+    chThdSleepMilliseconds(1);
   }
   return;
 }
@@ -211,23 +213,24 @@ int main(void)
 
   if (reset_flags == FLAG_OK)
   {
-    jumpToUser(USER_APP_ADDR);
+    //jumpToUser(USER_APP_ADDR);
+    startUserApp();
     while (1);
   }
 
   halInit();
   chSysInit();
 
-  usbDisconnectBus(bulkusbcfg.usbp);
+  usbDisconnectBus(serusbcfg1.usbp);
 
   pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
 
-  sduObjectInit(&BDU1);
   sduObjectInit(&SDU1);
+  sduObjectInit(&SDU2);
 
-  sduStart(&BDU1, &bulkusbcfg);
-  sduStart(&SDU1, &serusbcfg);;
+  sduStart(&SDU1, &serusbcfg1);
+  sduStart(&SDU2, &serusbcfg2);
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
@@ -240,11 +243,11 @@ int main(void)
 
       if (usbConnected())
       {
-        usbConnectBus(bulkusbcfg.usbp);
+        usbConnectBus(serusbcfg1.usbp);
       }
       else
       {
-        usbDisconnectBus(bulkusbcfg.usbp);
+        usbDisconnectBus(serusbcfg1.usbp);
       }
     }
 }

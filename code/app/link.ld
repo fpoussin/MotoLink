@@ -23,6 +23,7 @@
  */
 MEMORY
 {
+    bflash : org = 0x08000000, len = 20k
     flash  : org = 0x08005000, len = 128k
     eeprom : org = 0x8025000, len = 108k
     ram0   : org = 0x20000000, len = 40k

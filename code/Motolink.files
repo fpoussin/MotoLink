@@ -1813,3 +1813,5 @@ common/common.mk
 common/startup_stm32f3xx.mk
 bootloader/link.ld
 binsize.py
+ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/vectors.h
+ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/crt1.c

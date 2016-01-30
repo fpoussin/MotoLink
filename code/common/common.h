@@ -5,6 +5,7 @@
 #include "hal.h"
 
 #define CCM_FUNC __attribute__((section(".ram4_init.code")))
+//#define CCM_FUNC
 
 inline uint32_t leToInt(uint8_t *ptr);
 inline uint32_t beToInt(uint8_t *ptr);

@@ -29,7 +29,9 @@
 #define _CHCONF_H_
 
 #include "vectors.h"
-#define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
+#if defined(VECTORS_SECTION)
+#define CORTEX_VTOR_INIT ((uint32_t)&_vectors_reloc)
+#endif
 
 /*===========================================================================*/
 /**

@@ -24,7 +24,8 @@
 MEMORY
 {
     flash  : org = 0x08000000, len = 20k
-    eeprom : org = 0x8025000, len = 108k
+    uflash : org = 0x08005000, len = 128k
+    eeprom : org = 0x08025000, len = 108k
     ram0   : org = 0x20000000, len = 40k
     ram1   : org = 0x00000000, len = 0
     ram2   : org = 0x00000000, len = 0
@@ -44,7 +45,7 @@ MEMORY
     ccmram (rwx) : org = 0x10000000, len = 8k
 }
 */
-__user_flash_address__ = ORIGIN(flash);
-__user_flash_length__   = LENGTH(flash);
+__user_flash_address__ = ORIGIN(uflash);
+__user_flash_length__   = LENGTH(uflash);
 
 INCLUDE ../common/link.ld

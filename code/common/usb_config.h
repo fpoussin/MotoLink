@@ -17,15 +17,14 @@
 
 #define USBD2_DATA_REQUEST_EP           3
 #define USBD2_DATA_AVAILABLE_EP         3
-#define USBD2_INTERRUPT_REQUEST_EP      4
-
-extern SerialUSBDriver SDU1;
-extern SerialUSBDriver BDU1;
-extern bool doKLineInit;
 
 extern const USBConfig usbcfg;
-extern const SerialUSBConfig serusbcfg;
-extern const SerialUSBConfig bulkusbcfg;
+extern SerialUSBConfig serusbcfg1;
+extern SerialUSBConfig serusbcfg2;
+extern SerialUSBDriver SDU1;
+extern SerialUSBDriver SDU2;
+
+extern bool doKLineInit;
 
 extern SerialConfig uart1Cfg;
 extern SerialConfig uart2Cfg;
