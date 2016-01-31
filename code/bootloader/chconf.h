@@ -30,7 +30,7 @@
 
 #include "vectors.h"
 #if defined(VECTORS_SECTION)
-#define CORTEX_VTOR_INIT ((uint32_t)&_vectors_reloc)
+#define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
 #endif
 
 /*===========================================================================*/

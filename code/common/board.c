@@ -16,6 +16,20 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "vectors.h"
+
+#if defined(VECTORS_SECTION)
+typedef struct {
+  uint32_t      *init_stack;
+  irq_vector_t  reset_handler;
+} vectors_base_t;
+
+extern uint32_t __main_stack_end__;
+extern void Reset_Handler(void);
+
+__attribute__ ((used, aligned(128), section(".vectors")))
+vectors_base_t _vectors_base = {&__main_stack_end__, Reset_Handler};
+#endif
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 /**

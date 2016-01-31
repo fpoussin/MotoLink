@@ -1815,3 +1815,4 @@ bootloader/link.ld
 binsize.py
 ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/vectors.h
 ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/crt1.c
+ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/rules.ld
