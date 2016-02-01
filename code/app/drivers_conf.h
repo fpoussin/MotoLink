@@ -6,7 +6,7 @@
  * @brief   Enables the Drivers.
  */
 #if !defined(DRIVER_USE_DAC) || defined(__DOXYGEN__)
-#define DRIVER_USE_DAC                 TRUE
+#define DRIVER_USE_DAC                 FALSE
 #endif
 
 #if !defined(DRIVER_USE_IWDG) || defined(__DOXYGEN__)

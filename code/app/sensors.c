@@ -176,7 +176,6 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   NULL,
   ADC_CFGR_CONT,                        /* CFGR    */
   ADC_TR(0, 4095),          /* TR1     */
-  ADC_CCR_TSEN | ADC_CCR_VBATEN, /* CCR     */
   {                         /* SMPR[2] */
     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_181P5) | /* Sampling rate = 562000/(61.5+12.5) = 2.9KHz  */
     ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_181P5) | /* 7.56Khz for 3 channels = 965Hz */
@@ -192,7 +191,6 @@ const ADCConversionGroup adcgrpcfg_sensors = {
   }
 };
 
-
 /* ADC34 Clk is 72Mhz/1 72Mhz  */
 const ADCConversionGroup adcgrpcfg_knock = {
   TRUE,
@@ -201,7 +199,6 @@ const ADCConversionGroup adcgrpcfg_knock = {
   NULL,
   ADC_CFGR_CONT | ADC_CFGR_ALIGN,    /* CFGR - Align result to left (convert 12 to 16 bits) */
   ADC_TR(0, 4095),                  /* TR1     */
-  0,    /* CCR     */
   {                                 /* SMPR[2] */
     ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_601P5),  /* Sampling rate = 72000000/(601.5+12.5) = 117.263Khz  */
     0,

@@ -55,7 +55,7 @@
  * @brief   Enables the DAC subsystem.
  */
 #if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
-#define HAL_USE_DAC                 FALSE
+#define HAL_USE_DAC                 TRUE
 #endif
 
 /**
@@ -143,13 +143,6 @@
 #endif
 
 /**
- * @brief   Enables the  Bulk USB subsystem.
- */
-#if !defined(HAL_USE_BULK_USB) || defined(__DOXYGEN__)
-#define HAL_USE_BULK_USB          TRUE
-#endif
-
-/**
  * @brief   Enables the SPI subsystem.
  */
 #if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
@@ -168,6 +161,13 @@
  */
 #if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
 #define HAL_USE_USB                 TRUE
+#endif
+
+/**
+ * @brief   Enables the WDG subsystem.
+ */
+#if !defined(HAL_USE_WDG) || defined(__DOXYGEN__)
+#define HAL_USE_WDG                 FALSE
 #endif
 
 /*===========================================================================*/

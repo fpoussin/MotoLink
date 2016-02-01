@@ -96,9 +96,9 @@ GPTConfig gpt1Cfg =
   0
 };
 
-static const DACConfig daccfg1 = {
-  DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
-  0 /* DAC CR flags */
+const DACConfig dac1cfg1 = {
+  2047U,
+  DAC_DHRM_12BIT_RIGHT
 };
 
 SerialConfig uart1Cfg =
@@ -170,10 +170,10 @@ static THD_FUNCTION(ThreadBDU, arg)
   chRegSetThreadName("BDU");
   uint16_t idle_duty = 0;
 
-  chEvtRegisterMask(chnGetEventSource(&BDU1), &el1, ALL_EVENTS);
+  chEvtRegisterMask(chnGetEventSource(&SDU2), &el1, ALL_EVENTS);
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(BDU1.state != BDU_READY) chThdSleepMilliseconds(10);
+  while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
 
   while (TRUE)
   {
@@ -187,7 +187,7 @@ static THD_FUNCTION(ThreadBDU, arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
-      readCommand_CCM((BaseChannel *)&BDU1);
+      readCommand_CCM((BaseChannel *)&SDU2);
     }
     else
      chThdSleepMilliseconds(2);
@@ -224,7 +224,7 @@ static THD_FUNCTION(ThreadSDU, arg)
 	}
 
     pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
-    read = sdReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
+    read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
       pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
@@ -236,7 +236,7 @@ static THD_FUNCTION(ThreadSDU, arg)
     if (read > 0)
     {
       pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
-      sdWriteTimeout(&SDU1, buffer, read, MS2ST(100));
+      chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
     chThdSleepMilliseconds(1);
@@ -514,7 +514,7 @@ int main(void)
    * Initialize extra driver objects.
    */
   sduObjectInit(&SDU1);
-  bduObjectInit(&BDU1);
+  sduObjectInit(&SDU2);
 
   /*
    * Start peripherals
@@ -522,22 +522,28 @@ int main(void)
   sdStart(&SD1, &uart1Cfg);
   sdStart(&SD2, &uart2Cfg);
   usbStart(&USBD1, &usbcfg);
-  sduStart(&SDU1, &serusbcfg);
-  bduStart(&BDU1, &bulkusbcfg);
+  sduStart(&SDU1, &serusbcfg1);
+  sduStart(&SDU2, &serusbcfg2);
   canStart(&CAND1, &cancfg);
-  dacStart(&DACD1, &daccfg1);
-  dacStart(&DACD2, &daccfg1);
+  dacStart(&DACD1, &dac1cfg1);
+  dacStart(&DACD2, &dac1cfg1);
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
+
+  adcSTM32EnableTS(&ADCD1);
+  adcSTM32EnableVBAT(&ADCD1);
+
+  adcSTM32EnableTS(&ADCD3);
+  adcSTM32EnableVBAT(&ADCD3);
 
   // Enable K-line
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-  dacConvertOne(&DACD1, 2048); // This sets the offset for the knock ADC opamp.
-  dacConvertOne(&DACD2, 2048);
+  dacPutChannelX(&DACD1, 1, 2048); // This sets the offset for the knock ADC opamp.
+  dacPutChannelX(&DACD2, 1, 2048);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
