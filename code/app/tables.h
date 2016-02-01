@@ -9,6 +9,7 @@
 #define TABLES_H_
 
 #include "ch.h"
+#include "common.h"
 
 extern uint8_t tableAFR[11][16];
 extern uint8_t tableKnock[11][16];

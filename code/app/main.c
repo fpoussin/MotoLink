@@ -35,18 +35,10 @@
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
-thread_t* pThreadSER2 = NULL;
-thread_t* pThreadBDU = NULL;
-thread_t* pThreadSDU = NULL;
-thread_t* pThreadADC = NULL;
-thread_t* pThreadKnock = NULL;
-thread_t* pThreadCAN = NULL;
-thread_t* pThreadMonitor = NULL;
-
 monitor_t monitoring = {0,0,0,0,0,0,0,100};
 
 /*===========================================================================*/
-/* Structs                                                                   */
+/* Structs / Vars                                                            */
 /*===========================================================================*/
 
 static virtual_timer_t vt_freqin;
@@ -57,24 +49,26 @@ static const uint8_t initHex2[] = {0x07 , 0x08 , 0x49 , 0x7F , 0x61 , 0x6D , 0x7
 static const uint8_t initHex3[] = {0x27 , 0x0B , 0xE0 , 0x77 , 0x41 , 0x72 , 0x65 , 0x59 , 0x6F , 0x75 , 0x22}; // AreYou
 static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7F , 0x27}; // in.
 
+bool recording = false;
+
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-void iwdgGptCb_CCM(GPTDriver *gptp)
+CCM_FUNC void iwdgGptCb(GPTDriver *gptp)
 {
   (void) gptp;
-  iwdgReset(&IWDGD);
+  wdgReset(&WDGD1);
 }
 
-void freqinVTHandler_CCM(void *arg)
+CCM_FUNC void freqinVTHandler(void *arg)
 {
   (void)arg;
 
   reEnableInputCapture_CCM(&TIMCAPD3);
 
   chSysLockFromISR();
-  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler_CCM, NULL);
+  chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
   chSysUnlockFromISR();
 }
 
@@ -91,7 +85,7 @@ const CANConfig cancfg = {
 GPTConfig gpt1Cfg =
 {
   100000,      /* timer clock.*/
-  iwdgGptCb_CCM,  /* Timer callback.*/
+  iwdgGptCb,  /* Timer callback.*/
   0,
   0
 };
@@ -136,7 +130,7 @@ PWMConfig pwmcfg = {
 /*===========================================================================*/
 
 THD_WORKING_AREA(waThreadCAN, 256);
-static THD_FUNCTION(ThreadCAN, arg)
+CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 {
   event_listener_t el;
   CANRxFrame rxmsg;
@@ -162,7 +156,7 @@ static THD_FUNCTION(ThreadCAN, arg)
  * USB Bulk thread.
  */
 THD_WORKING_AREA(waThreadBDU, 700);
-static THD_FUNCTION(ThreadBDU, arg)
+CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 {
   event_listener_t el1;
   eventmask_t flags;
@@ -187,7 +181,7 @@ static THD_FUNCTION(ThreadBDU, arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
-      readCommand_CCM((BaseChannel *)&SDU2);
+      readCommand((BaseChannel *)&SDU2);
     }
     else
      chThdSleepMilliseconds(2);
@@ -199,11 +193,11 @@ static THD_FUNCTION(ThreadBDU, arg)
  * USB Serial thread.
  */
 THD_WORKING_AREA(waThreadSDU, 1024);
-static THD_FUNCTION(ThreadSDU, arg)
+CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
-  uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
+  //uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
   size_t read;
   chRegSetThreadName("SDU");
 
@@ -214,7 +208,7 @@ static THD_FUNCTION(ThreadSDU, arg)
   while (TRUE) {
 
     while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
-
+/*
     if (doKLineInit && 0)
     {
       //klineInit();
@@ -222,20 +216,20 @@ static THD_FUNCTION(ThreadSDU, arg)
       sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
       doKLineInit = false;
 	}
-
-    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
+*/
+    //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
+      //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
 
-    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
+    //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
+      //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
@@ -251,7 +245,7 @@ pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
 THD_WORKING_AREA(waThreadADC, 128);
-static THD_FUNCTION(ThreadADC_CCM, arg)
+CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 {
   (void)arg;
   chRegSetThreadName("Sensors");
@@ -280,9 +274,9 @@ static THD_FUNCTION(ThreadADC_CCM, arg)
     for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
     {
       pos = i * ADC_GRP1_NUM_CHANNELS;
-      an[0] += median_filter_CCM(&an1, sensorsDataPtr[pos]);
-      an[1] += median_filter_CCM(&an2, sensorsDataPtr[pos+1]);
-      an[2] += median_filter_CCM(&an3, sensorsDataPtr[pos+2]);
+      an[0] += median_filter(&an1, sensorsDataPtr[pos]);
+      an[1] += median_filter(&an2, sensorsDataPtr[pos+1]);
+      an[2] += median_filter(&an3, sensorsDataPtr[pos+2]);
     }
 
     /* Averaging */
@@ -325,7 +319,7 @@ static float32_t input[FFT_SIZE*2];
 static float32_t output[FFT_SIZE*2];
 static float32_t mag_knock[FFT_SIZE/2];
 THD_WORKING_AREA(waThreadKnock, 600);
-static THD_FUNCTION(ThreadKnock_CCM, arg)
+CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
 {
   (void)arg;
   chRegSetThreadName("Knock");
@@ -393,12 +387,12 @@ static inline thread_t *chThdGetIdleX(void) {
  * CPU Load Monitoring thread.
  */
 THD_WORKING_AREA(waThreadMonitor, 256);
-static THD_FUNCTION(ThreadMonitor, arg)
+CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
-  uint32_t  run_offset, irq_ticks, total_ticks;
-  pThreadMonitor = chThdGetSelfX();
+  uint32_t  run_offset, irq_ticks = 0, total_ticks;
+  thread_t* tp = NULL;
 
   DWT->CTRL |= DWT_CTRL_EXCEVTENA_Msk;
 
@@ -406,21 +400,12 @@ static THD_FUNCTION(ThreadMonitor, arg)
   {
 	chSysLock();
 
-	pThreadSER2->runtime = 0;
-	pThreadBDU->runtime = 0;
-	pThreadSDU->runtime = 0;
-	pThreadCAN->runtime = 0;
-	pThreadKnock->runtime = 0;
-	pThreadADC->runtime = 0;
-	chThdGetIdleX()->runtime = 0;
-
-	pThreadSER2->irqtime = 0;
-    pThreadBDU->irqtime = 0;
-    pThreadSDU->irqtime = 0;
-    pThreadCAN->irqtime = 0;
-    pThreadKnock->irqtime = 0;
-    pThreadADC->irqtime = 0;
-    chThdGetIdleX()->irqtime = 0;
+    tp = chRegFirstThread();
+    do {
+        tp->runtime = 0;
+        tp->irqtime = 0;
+        tp = chRegNextThread(tp);
+    } while (tp != NULL);
 
     run_offset = DWT->CYCCNT;
 
@@ -433,23 +418,26 @@ static THD_FUNCTION(ThreadMonitor, arg)
 
 	/* Convert to systick time base */
 	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
-	irq_ticks = pThreadSER2->irqtime
-	    +pThreadBDU->irqtime
-	    +pThreadSDU->irqtime
-	    +pThreadCAN->irqtime
-	    +pThreadKnock->irqtime
-	    +pThreadADC->irqtime
-	    +chThdGetIdleX()->irqtime;
+
+    tp = chRegFirstThread();
+    do {
+        irq_ticks += tp->irqtime;
+        tp = chRegNextThread(tp);
+    } while (tp != NULL);
 
 	chSysUnlock();
 
-	monitoring.ser2 = ((pThreadSER2->runtime*10000)/total_ticks) | RUNNING(pThreadSER2);
-	monitoring.bdu = ((pThreadBDU->runtime*10000)/total_ticks) | RUNNING(pThreadBDU);
-	monitoring.sdu = ((pThreadSDU->runtime*10000)/total_ticks) | RUNNING(pThreadSDU);
-	monitoring.can = ((pThreadCAN->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
-	monitoring.knock = ((pThreadKnock->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
-	monitoring.sensors = ((pThreadADC->runtime*10000)/total_ticks) | RUNNING(pThreadADC);
-	monitoring.idle = (((chThdGetIdleX()->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
+    // TODO: Dynamic thread usage list
+
+/*
+    monitoring.ser2 = ((user_threads_list[1]->runtime*10000)/total_ticks) | RUNNING(pThreadSER2);
+    monitoring.bdu = ((user_threads_list[2]->runtime*10000)/total_ticks) | RUNNING(pThreadBDU);
+    monitoring.sdu = ((user_threads_list[3]->runtime*10000)/total_ticks) | RUNNING(pThreadSDU);
+    monitoring.can = ((user_threads_list[4]->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
+    monitoring.knock = ((user_threads_list[5]->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
+    monitoring.sensors = ((user_threads_list[6]->runtime*10000)/total_ticks) | RUNNING(pThreadADC);
+    monitoring.idle = (((user_threads_list[0]->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
+    */
 	monitoring.irq = ((irq_ticks*10000)/total_ticks);
   }
   return;
@@ -459,7 +447,7 @@ static THD_FUNCTION(ThreadMonitor, arg)
  * Uart2 thread.
  */
 THD_WORKING_AREA(waThreadSER2, 128);
-static THD_FUNCTION(ThreadSER2, arg)
+CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
@@ -481,6 +469,51 @@ static THD_FUNCTION(ThreadSER2, arg)
   return;
 }
 
+THD_WORKING_AREA(waThreadButton, 64);
+CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
+{
+    (void)arg;
+    uint8_t count = 0;
+    while (true)
+    {
+        if (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW)
+        {
+            count++;
+        }
+        else
+        {
+            count = 0;
+        }
+
+        if (count > 10)
+        {
+            /* Toggle Record mode */
+            recording = !recording;
+        }
+
+        chThdSleepMilliseconds(100);
+    }
+   return;
+}
+
+
+THD_WORKING_AREA(waThreadRecord, 128);
+CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
+{
+    (void)arg;
+    while (true)
+    {
+        if (recording)
+        {
+            palTogglePad(PORT_LED1, PAD_LED1);
+            /* Record code */
+
+        }
+        chThdSleepMilliseconds(500);
+    }
+   return;
+}
+
 /*===========================================================================*/
 /* Main Thread                                                               */
 /*===========================================================================*/
@@ -490,12 +523,6 @@ int main(void)
   /*
    * Start OS and HAL
    */
-  /* Disable Flash hack
-  uint32_t acr = FLASH->ACR;
-  acr &= ~FLASH_ACR_LATENCY;
-  acr |= FLASH_ACR_LATENCY_0;
-  FLASH->ACR = acr;
-  */
 
   halInit();
   driversInit();
@@ -507,7 +534,7 @@ int main(void)
   gptStart(&GPTD1, &gpt1Cfg);
   gptStartContinuous(&GPTD1, 20000);
 
-  pwmStart(&PWMD_LED1, &pwmcfg);
+  pwmStart(&PWMD_LED2, &pwmcfg);
   pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
 
   /*
@@ -548,17 +575,19 @@ int main(void)
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
 
-  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler_CCM, NULL);
+  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
 
   /*
    * Creates the threads.
    */
-  pThreadBDU = chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+1, ThreadBDU, NULL);
-  pThreadSDU = chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+2, ThreadSDU, NULL);
-  pThreadADC = chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC_CCM, NULL);
-  pThreadKnock = chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock_CCM, NULL);
-  pThreadCAN = chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
-  pThreadSER2 = chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+1, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+2, ThreadSDU, NULL);
+  chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC, NULL);
+  chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
+  chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
+  chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
+  chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+3, ThreadButton, NULL);
+  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+3, ThreadRecord, NULL);
   /* Create last as it uses pointers from above */
   chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+5, ThreadMonitor, NULL);
 

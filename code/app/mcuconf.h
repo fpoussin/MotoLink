@@ -208,7 +208,7 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI1                  TRUE
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
@@ -250,6 +250,6 @@
 /*
  * WDG driver system settings.
  */
-#define STM32_WDG_USE_IWDG                  FALSE
+#define STM32_WDG_USE_IWDG                  TRUE
 
 #endif /* _MCUCONF_H_ */

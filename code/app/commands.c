@@ -8,7 +8,7 @@
 settings_t settings;
 static uint8_t input_buf[DATA_BUF_SIZE];
 
-uint8_t readCommand_CCM(BaseChannel *chn)
+CCM_FUNC uint8_t readCommand(BaseChannel *chn)
 {
   cmd_header_t header;
   uint16_t data_read;
@@ -143,6 +143,8 @@ uint8_t wakeHandler(BaseChannel * chn) {
 }
 
 uint8_t sendMonitoring(BaseChannel * chn) {
+
+  // TODO: Dynamic list with names
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
   chnWriteTimeout(chn, (uint8_t*)&monitoring, sizeof(monitor_t), PUT_TIMEOUT);

@@ -4,17 +4,15 @@ uint8_t bl_wake = 0;
 typedef volatile uint32_t vu32;
 typedef uint32_t u32;
 
+static const WDGConfig wdgcfg = {
+  STM32_IWDG_PR_64,
+  STM32_IWDG_RL(250), // 250ms
+  STM32_IWDG_WIN_DISABLED
+};
+
 CCM_FUNC void startIWDG(void) {
 
-    const uint16_t LsiFreq = 40000; // 40KHz
-    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-
-    IWDG_SetPrescaler(IWDG_Prescaler_32); // 40000/32 = 1250Hz
-
-    IWDG_SetReload(LsiFreq/128); // (1/1250)*(40000/128) = 250ms
-    IWDG_ReloadCounter();
-
-    IWDG_Enable();
+    wdgStart(&WDGD1, &wdgcfg);
 }
 
 CCM_FUNC void startUserApp(void) {

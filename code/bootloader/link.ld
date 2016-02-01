@@ -35,16 +35,7 @@ MEMORY
     ram6   : org = 0x00000000, len = 0
     ram7   : org = 0x00000000, len = 0
 }
-/*
-MEMORY
-{
-    flash (rx) : org = 0x08000000, len = 20k
-    user_flash (rx) : org = 0x08005000, len = 128k
-    eeprom (rwx) : org = 0x8025000, len = 108k
-    ram (rwx) : org = 0x20000000, len = 40k
-    ccmram (rwx) : org = 0x10000000, len = 8k
-}
-*/
+
 __user_flash_address__ = ORIGIN(uflash);
 __user_flash_length__   = LENGTH(uflash);
 

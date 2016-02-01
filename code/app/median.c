@@ -1,7 +1,7 @@
 /*
  * median.c
  *
- *  Created on: 22 août 2014
+ *  Created on: 22 aoÃ»t 2014
  *      Author: Mobyfab
  */
 
@@ -19,7 +19,7 @@ void median_init(median_t* conf, uint16_t stopper, pair_t* buffer, uint16_t size
   conf->big = big_tmp;                            /* Pointer to head (largest) of linked list.*/
 }
 
-uint16_t median_filter_CCM(median_t* conf, uint16_t datum)
+CCM_FUNC uint16_t median_filter(median_t* conf, uint16_t datum)
 {
  pair_t *successor;                              /* Pointer to successor of replaced data item */
  pair_t *scan;                                   /* Pointer used to scan down the sorted list */
@@ -100,7 +100,7 @@ uint16_t median_filter_CCM(median_t* conf, uint16_t datum)
  return median->value;
 }
 
-uint16_t middle_of_3(uint16_t a, uint16_t b, uint16_t c)
+CCM_FUNC uint16_t middle_of_3(uint16_t a, uint16_t b, uint16_t c)
 {
  uint16_t middle;
 

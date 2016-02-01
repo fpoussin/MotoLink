@@ -10,7 +10,7 @@
 #endif
 
 #if !defined(DRIVER_USE_IWDG) || defined(__DOXYGEN__)
-#define DRIVER_USE_IWDG                TRUE
+#define DRIVER_USE_IWDG                FALSE
 #endif
 
 #if !defined(DRIVER_USE_TIMCAP) || defined(__DOXYGEN__)

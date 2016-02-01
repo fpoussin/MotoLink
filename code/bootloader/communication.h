@@ -6,7 +6,7 @@
 #include "bootloader.h"
 #include "protocol.h"
 
-uint8_t readCommand_CCM(BaseChannel *chn, uint8_t flags);
+uint8_t readCommand(BaseChannel *chn, uint8_t flags);
 uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len);
 uint8_t readHandler(BaseChannel *chn, uint8_t* buf);
 uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf);

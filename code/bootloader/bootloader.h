@@ -5,7 +5,6 @@
 #include "protocol.h"
 
 #include "stm32f30x_flash.h"
-#include "stm32f30x_iwdg.h"
 #include "usb_config.h"
 
 /* From linker script */

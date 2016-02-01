@@ -456,7 +456,6 @@ app/dsp_lib/FilteringFunctions/arm_lms_norm_q31.c
 ChibiOS-RT/os/hal/boards/EA_LPCXPRESSO_BB_1343/board.c
 ChibiOS-RT/os/hal/boards/NGX_BB_LPC11U14/board.h
 ChibiOS-RT/os/ext/CMSIS/ST/system_stm32f0xx.h
-common/stm32f30x_iwdg.h
 ChibiOS-RT/os/hal/ports/STM32/STM32F3xx/stm32_dma.c
 ChibiOS-RT/os/ext/CMSIS/ST/stm32f302xc.h
 ChibiOS-RT/os/rt/include/chqueues.h
@@ -980,7 +979,6 @@ app/dsp_lib/FilteringFunctions/arm_fir_decimate_init_q15.c
 app/dsp_lib/MatrixFunctions/arm_mat_trans_q15.c
 ChibiOS-RT/os/common/ports/e200/devices/SPC560BCxx/intc.h
 ChibiOS-Drivers/src/24xx_driver.c
-common/stm32f30x_iwdg.c
 ChibiOS-RT/os/hal/templates/spi_lld.c
 app/dsp_lib/ComplexMathFunctions/arm_cmplx_dot_prod_q15.c
 ChibiOS-Contrib/os/hal/include/nand.h

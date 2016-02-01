@@ -123,7 +123,7 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
     if (flags & CHN_INPUT_AVAILABLE)
     {
       pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-      readCommand_CCM((BaseChannel *)&SDU2, reset_flags);
+      readCommand((BaseChannel *)&SDU2, reset_flags);
     }
 
     chThdSleepMilliseconds(1);
