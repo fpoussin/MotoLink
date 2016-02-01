@@ -14,4 +14,4 @@
 
 [submodule "code/ChibiOS-Contrib"]
 	path = code/ChibiOS-Contrib
-	url = https://github.com/ChibiOS/ChibiOS-Contrib.git
+	url = https://github.com/fpoussin/ChibiOS-Contrib.git
