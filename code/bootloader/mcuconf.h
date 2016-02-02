@@ -33,7 +33,6 @@
 
 #define STM32F3xx_MCUCONF
 #define STM32_DMA_REQUIRED
-#include "drivers_conf.h"
 
 /*
  * HAL driver system settings.

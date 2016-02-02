@@ -1,4 +1,4 @@
-#include "eeprom.h"
+#include "storage.h"
 #include <string.h>
 
 uint32_t * eeFindCurrentPage(void)

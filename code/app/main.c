@@ -525,7 +525,6 @@ int main(void)
    */
 
   halInit();
-  driversInit();
   chSysInit();
   setupIPC();
 

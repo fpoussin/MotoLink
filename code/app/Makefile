@@ -87,14 +87,15 @@ PROJECT = motolink
 
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT
+CHIBIOS_CONTRIB = ../ChibiOS-Contrib
 # Startup files.
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
+include $(CHIBIOS_CONTRIB)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # Custom Drivers
-include $(CHIBIOS)/../ChibiOS-Drivers/drivers.mk
+include $(CHIBIOS)/../ChibiOS-Contrib/os/hal/hal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
@@ -113,10 +114,10 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(STM32DRIVERSRC) \
+       $(CHIBIOS_CONTRIB)/os/various/crcsw.c \
        main.c commands.c \
        sensors.c debug.c \
-       eeprom.c median.c \
+       storage.c median.c \
        ipc.c innovate.c \
        opamp.c tables.c
 
@@ -149,7 +150,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(STM32DRIVERINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various $(CHIBIOS_CONTRIB)/os/various
 
 #
 # Project, sources and paths

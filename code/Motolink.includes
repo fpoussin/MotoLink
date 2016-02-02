@@ -56,3 +56,6 @@ ChibiOS-RT/os/various/lwip_bindings
 ChibiOS-RT/os/various/lwip_bindings/arch
 common
 .
+ChibiOS-Contrib/os/hal/src
+ChibiOS-Contrib/os/hal
+ChibiOS-Contrib/os/hal/ports/STM32/LLD/USBHv1

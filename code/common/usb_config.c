@@ -167,7 +167,7 @@ static const uint8_t vcom_configuration_descriptor_data[] = {
   /* Interface Descriptor.*/
   USB_DESC_INTERFACE    (0x02,          /* bInterfaceNumber.                */
                          0x00,          /* bAlternateSetting.               */
-                         0x02,          /* bNumEndpoints.                   */
+                         0x03,          /* bNumEndpoints.                   */
                          0xFF,          /* bInterfaceClass (Vendor Specific). */
                          0xFF,
                          0xFF,

@@ -33,7 +33,6 @@
 
 #define STM32F3xx_MCUCONF
 #define STM32_DMA_REQUIRED
-#include "drivers_conf.h"
 
 /*
  * HAL driver system settings.
@@ -153,7 +152,7 @@
  * I2C driver system settings.
  */
 #define STM32_I2C_USE_I2C1                  FALSE
-#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C2                  TRUE
 #define STM32_I2C_BUSY_TIMEOUT              50
 #define STM32_I2C_I2C1_IRQ_PRIORITY         10
 #define STM32_I2C_I2C2_IRQ_PRIORITY         10
@@ -251,5 +250,7 @@
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  TRUE
+
+#include "mcuconf_community.h"
 
 #endif /* _MCUCONF_H_ */

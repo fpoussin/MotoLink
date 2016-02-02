@@ -1,6 +1,6 @@
 
-#ifndef _EEPROM_H_
-#define _EEPROM_H_
+#ifndef _STORAGE_H_
+#define _STORAGE_H_
 
 #include "ch.h"
 #include "stm32f30x_flash.h"
