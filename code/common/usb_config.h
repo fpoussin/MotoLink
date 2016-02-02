@@ -8,16 +8,6 @@
 /* USB related stuff.                                                        */
 /*===========================================================================*/
 
-/*
- * Endpoints to be used for USBD1.
- */
-#define USBD1_DATA_REQUEST_EP           1
-#define USBD1_DATA_AVAILABLE_EP         1
-#define USBD1_INTERRUPT_REQUEST_EP      2
-
-#define USBD2_DATA_REQUEST_EP           3
-#define USBD2_DATA_AVAILABLE_EP         3
-
 extern const USBConfig usbcfg;
 extern SerialUSBConfig serusbcfg1;
 extern SerialUSBConfig serusbcfg2;
