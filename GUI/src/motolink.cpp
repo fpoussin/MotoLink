@@ -17,8 +17,8 @@ Motolink::Motolink(QObject *parent) :
     filter.pid = mPid;
     filter.vid = mVid;
 
-    config.readEp = 0x83;
-    config.writeEp = 0x03;
+    config.readEp = 0x84;
+    config.writeEp = 0x04;
     config.alternate = 0;
     config.config = 1;
     config.interface = 0;
