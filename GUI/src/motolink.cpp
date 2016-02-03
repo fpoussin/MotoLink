@@ -21,7 +21,7 @@ Motolink::Motolink(QObject *parent) :
     config.writeEp = 0x04;
     config.alternate = 0;
     config.config = 1;
-    config.interface = 0;
+    config.interface = 1;
 
     mUsb->setFilter(filter);
     mUsb->setConfig(config);

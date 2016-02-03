@@ -34,7 +34,7 @@ extern TIMCAPConfig tc_conf;
 extern uint16_t irq_pct;
 extern const char *irq_name;
 
-void reEnableInputCapture_CCM(TIMCAPDriver *timcapp);
+void reEnableInputCapture(TIMCAPDriver *timcapp);
 
 uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
 uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal);

@@ -19,7 +19,7 @@ static bool TIM3CC1UD, TIM3CC2UD;
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-void reEnableInputCapture_CCM(TIMCAPDriver *timcapp)
+CCM_FUNC void reEnableInputCapture(TIMCAPDriver *timcapp)
 {
 
   if ((timcapp->tim->DIER & TIM_DIER_CC1IE) == 0)
@@ -38,7 +38,7 @@ void reEnableInputCapture_CCM(TIMCAPDriver *timcapp)
 
 }
 
-void captureOverflowCb_CCM(TIMCAPDriver *timcapp)
+CCM_FUNC void captureOverflowCb(TIMCAPDriver *timcapp)
 {
   if (TIM3CC1UD && (timcapp->tim->DIER & TIM_DIER_CC1IE))
   {
@@ -56,7 +56,7 @@ void captureOverflowCb_CCM(TIMCAPDriver *timcapp)
   TIM3CC2UD = true;
 }
 
-void capture1Cb_CCM(TIMCAPDriver *timcapp)
+CCM_FUNC void capture1Cb(TIMCAPDriver *timcapp)
 {
   if(TIM3CC1CaptureNumber == 0)
   {
@@ -93,7 +93,7 @@ void capture1Cb_CCM(TIMCAPDriver *timcapp)
   }
 }
 
-void capture2Cb_CCM(TIMCAPDriver *timcapp)
+CCM_FUNC void capture2Cb(TIMCAPDriver *timcapp)
 {
   if(TIM3CC2CaptureNumber == 0)
   {
@@ -131,7 +131,7 @@ void capture2Cb_CCM(TIMCAPDriver *timcapp)
 }
 
 /* Every 64 samples at 965Hz each, triggers at around 15Hz */
-void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+CCM_FUNC void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
@@ -142,7 +142,7 @@ void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 }
 
 /* Every 1024 samples at 117.263KHz each, triggers at around 114Hz */
-void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+CCM_FUNC void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
 {
   (void)adcp;
 
@@ -162,8 +162,8 @@ TIMCAPConfig tc_conf = {
     TIMCAP_INPUT_DISABLED,
     TIMCAP_INPUT_DISABLED},
    200000, /* TIM3 Runs at 36Mhz max. (1/200000)*65536 = 0.32s Max, 3.12Hz Min */
-   {capture1Cb_CCM, capture2Cb_CCM, NULL, NULL},
-   captureOverflowCb_CCM,
+   {capture1Cb, capture2Cb, NULL, NULL},
+   captureOverflowCb,
    0,
    0
 };

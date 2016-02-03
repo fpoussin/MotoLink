@@ -213,7 +213,6 @@ int main(void)
 
   if (reset_flags == FLAG_OK)
   {
-    //jumpToUser(USER_APP_ADDR);
     startUserApp();
     while (1);
   }

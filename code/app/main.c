@@ -60,14 +60,14 @@ bool recording = false;
 CCM_FUNC void iwdgGptCb(GPTDriver *gptp)
 {
   (void) gptp;
-  wdgReset(&WDGD1);
+  wdgResetI(&WDGD1);
 }
 
 CCM_FUNC void freqinVTHandler(void *arg)
 {
   (void)arg;
 
-  reEnableInputCapture_CCM(&TIMCAPD3);
+  reEnableInputCapture(&TIMCAPD3);
 
   chSysLockFromISR();
   chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
@@ -206,6 +206,9 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+
+  // Enable K-line
+  palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
 
   while (TRUE) {
 
@@ -401,7 +404,7 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 
   while (TRUE)
   {
-	chSysLock();
+    //chSysLock();
 
     tp = chRegFirstThread();
     do {
@@ -412,12 +415,12 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 
     run_offset = DWT->CYCCNT;
 
-	chSysUnlock();
+    //chSysUnlock();
 
 	/* Populate load data */
 	chThdSleepMilliseconds(250);
 
-	chSysLock();
+	//chSysLock();
 
 	/* Convert to systick time base */
 	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
@@ -428,7 +431,7 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
         tp = chRegNextThread(tp);
     } while (tp != NULL);
 
-	chSysUnlock();
+	//chSysUnlock();
 
     tp = chRegFirstThread();
     do {
@@ -550,7 +553,6 @@ int main(void)
   sduStart(&SDU2, &serusbcfg2);
   canStart(&CAND1, &cancfg);
   dacStart(&DACD1, &dac1cfg1);
-  dacStart(&DACD2, &dac1cfg1);
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
@@ -561,13 +563,9 @@ int main(void)
   adcSTM32EnableTS(&ADCD3);
   adcSTM32EnableVBAT(&ADCD3);
 
-  // Enable K-line
-  palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
-
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-  dacPutChannelX(&DACD1, 1, 2048); // This sets the offset for the knock ADC opamp.
-  dacPutChannelX(&DACD2, 1, 2048);
+  dacPutChannelX(&DACD1, 0, 2048); // This sets the offset for the knock ADC opamp.
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
@@ -586,7 +584,7 @@ int main(void)
   chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+3, ThreadButton, NULL);
   chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+3, ThreadRecord, NULL);
   /* Create last as it uses pointers from above */
-  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+5, ThreadMonitor, NULL);
+  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+10, ThreadMonitor, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
