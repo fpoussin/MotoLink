@@ -416,7 +416,8 @@
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/ \
   uint32_t runtime; \
-  uint32_t irqtime;
+  uint32_t irqtime; \
+  uint16_t pct;
 
 
 /**
@@ -430,6 +431,7 @@
   /* Add threads initialization code here.*/                                \
   tp->runtime = 0; \
   tp->irqtime = 0; \
+  tp->pct = 0; \
 }
 
 /**

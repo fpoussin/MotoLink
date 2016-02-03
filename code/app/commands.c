@@ -144,11 +144,24 @@ uint8_t wakeHandler(BaseChannel * chn) {
 
 uint8_t sendMonitoring(BaseChannel * chn) {
 
-  // TODO: Dynamic list with names
+    chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
+    thread_t *tp = chRegFirstThread();
+    uint8_t name_len = 0;
+    do {
+        name_len = strlen(tp->p_name);
+        chnPutTimeout(chn, name_len+2, PUT_TIMEOUT); // How much data we'll send
+        chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
+        chnWriteTimeout(chn, (uint8_t*)&tp->p_name, name_len, PUT_TIMEOUT); // Send the thread name
 
-  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)&monitoring, sizeof(monitor_t), PUT_TIMEOUT);
-  return 0;
+        tp = chRegNextThread(tp);
+    } while (tp != NULL);
+
+    // Last, we send the IRQ stats.
+    chnWriteTimeout(chn, (uint8_t*)&irq_pct, sizeof(irq_pct), PUT_TIMEOUT);
+    chnWriteTimeout(chn, (uint8_t*)irq_name, sizeof(irq_name), PUT_TIMEOUT);
+    chnPutTimeout(chn, 0x00, PUT_TIMEOUT); // No more data to send
+
+    return 0;
 }
 
 uint8_t sendFFT(BaseChannel * chn) {

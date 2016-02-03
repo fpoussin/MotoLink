@@ -35,7 +35,9 @@
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
-monitor_t monitoring = {0,0,0,0,0,0,0,100};
+thread_t *pThreadMonitor = NULL;
+uint16_t irq_pct = 0;
+const char *irq_name = "Interrupts";
 
 /*===========================================================================*/
 /* Structs / Vars                                                            */
@@ -241,9 +243,9 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 /*
  * Sensors thread.
  */
-pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
-pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
-pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
+static pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
+static pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
+static pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
 THD_WORKING_AREA(waThreadADC, 128);
 CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 {
@@ -391,6 +393,7 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
+  pThreadMonitor = chThdGetSelfX();
   uint32_t  run_offset, irq_ticks = 0, total_ticks;
   thread_t* tp = NULL;
 
@@ -427,18 +430,13 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 
 	chSysUnlock();
 
-    // TODO: Dynamic thread usage list
+    tp = chRegFirstThread();
+    do {
+        tp->pct = ((tp->runtime*10000)/total_ticks) | RUNNING(tp);
+        tp = chRegNextThread(tp);
+    } while (tp != NULL);
 
-/*
-    monitoring.ser2 = ((user_threads_list[1]->runtime*10000)/total_ticks) | RUNNING(pThreadSER2);
-    monitoring.bdu = ((user_threads_list[2]->runtime*10000)/total_ticks) | RUNNING(pThreadBDU);
-    monitoring.sdu = ((user_threads_list[3]->runtime*10000)/total_ticks) | RUNNING(pThreadSDU);
-    monitoring.can = ((user_threads_list[4]->runtime*10000)/total_ticks) | RUNNING(pThreadCAN);
-    monitoring.knock = ((user_threads_list[5]->runtime*10000)/total_ticks) | RUNNING(pThreadKnock);
-    monitoring.sensors = ((user_threads_list[6]->runtime*10000)/total_ticks) | RUNNING(pThreadADC);
-    monitoring.idle = (((user_threads_list[0]->runtime*10000)/total_ticks)) | RUNNING(chThdGetIdleX());
-    */
-	monitoring.irq = ((irq_ticks*10000)/total_ticks);
+    irq_pct = ((irq_ticks*10000)/total_ticks);
   }
   return;
 }

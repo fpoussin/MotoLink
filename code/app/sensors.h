@@ -31,7 +31,8 @@ extern const ADCConversionGroup adcgrpcfg_knock;
 
 extern sensors_t sensors_data;
 extern TIMCAPConfig tc_conf;
-extern monitor_t monitoring;
+extern uint16_t irq_pct;
+extern const char *irq_name;
 
 void reEnableInputCapture_CCM(TIMCAPDriver *timcapp);
 

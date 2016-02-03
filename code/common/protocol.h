@@ -79,17 +79,6 @@ typedef struct {
 } sensors_t;
 
 typedef struct {
-  uint16_t ser2;
-  uint16_t bdu;
-  uint16_t sdu;
-  uint16_t can;
-  uint16_t knock;
-  uint16_t sensors;
-  uint16_t irq;
-  uint16_t idle;
-} monitor_t;
-
-typedef struct {
   uint16_t knockFreq;
   uint16_t knockRatio;
   uint16_t tpsMinV;
