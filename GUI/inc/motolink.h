@@ -35,7 +35,14 @@ typedef struct {
     bool active;
 } mtl_task_t;
 
+typedef struct {
+  quint8 iname;
+  quint8 type;
+  quint16 value;
+} mtl_value_t;
+
 typedef QList<mtl_task_t> TaskList;
+typedef QList<mtl_value_t> ValueList;
 
 class Motolink : public QObject
 {
@@ -123,6 +130,7 @@ private:
     bool mStopTranfer;
     sensors_data_t mSensors;
     TaskList mMonitoring;
+    QStringList mNames;
     QByteArray mKnockData;
     quint8 mAFRTable[11][16];
     quint8 mKnockTable[11][16];

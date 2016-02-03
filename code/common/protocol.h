@@ -64,6 +64,12 @@ typedef struct {
 } cell_t;
 
 typedef struct {
+  uint8_t iname;
+  uint8_t type;
+  uint16_t value;
+} value_t;
+
+typedef struct {
   uint16_t an7;
   uint16_t an8;
   uint16_t an9;
