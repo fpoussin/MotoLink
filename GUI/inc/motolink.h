@@ -8,6 +8,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QDataStream>
+#include <QList>
 #include "bootloader.h"
 
 #define _LOCK_ QMutexLocker locker(&mMutex);
@@ -28,6 +29,14 @@ typedef struct {
     quint8 col;
 } sensors_data_t ;
 
+typedef struct {
+    QString name;
+    float cpu;
+    bool active;
+} mtl_task_t;
+
+typedef QList<mtl_task_t> TaskList;
+
 class Motolink : public QObject
 {
     Q_OBJECT
@@ -38,7 +47,7 @@ public:
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     bool isConnected(void) { return mConnected; }
     const sensors_data_t * getSensors(void) { return &mSensors; }
-    const monitor_t * getMonitoring(void) { return &mMonitoring; }
+    const TaskList * getMonitoring(void) { return &mMonitoring; }
     const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
     const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
     const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
@@ -86,7 +95,7 @@ signals:
     void timeElapsed(int time);
 
     void receivedSensors(const sensors_data_t * sensors);
-    void receivedMonitoring(const monitor_t * monitoring);
+    void receivedMonitoring(const TaskList * monitoring);
     void receivedKockSpectrum(const QByteArray * data);
     void receivedSettings(const settings_t * settings);
     void receivedTables(const quint8 * AFR, const quint8 * Knock);
@@ -100,6 +109,7 @@ private:
     void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     bool sendSimpleCmd(quint8 cmd);
     bool sendCmd(QByteArray* send, QByteArray *recv, uint len, quint8 cmd);
+    int readMore(QByteArray *recv, uint len);
     void printError(quint8 reply);
     QMutex mMutex;
     QThread *mThread;
@@ -112,7 +122,7 @@ private:
     quint16 mVid;
     bool mStopTranfer;
     sensors_data_t mSensors;
-    monitor_t mMonitoring;
+    TaskList mMonitoring;
     QByteArray mKnockData;
     quint8 mAFRTable[11][16];
     quint8 mKnockTable[11][16];

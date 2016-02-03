@@ -395,7 +395,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
     QObject::connect(mMtl, SIGNAL(receivedSensors(sensors_data_t const*)), this, SLOT(onSensorsReceived(sensors_data_t const*)));
-    QObject::connect(mMtl, SIGNAL(receivedMonitoring(monitor_t const*)), this, SLOT(onMonitoringReceived(monitor_t const*)));
+    QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const*)), this, SLOT(onMonitoringReceived(TaskList const*)));
     QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
     QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(writeLogs(QString)));
@@ -759,51 +759,36 @@ void MainWindow::onSensorsReceived(sensors_data_t const * data)
     //mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr*10.0));
 }
 
-void MainWindow::onMonitoringReceived(const monitor_t *monitoring)
+void MainWindow::onMonitoringReceived(const TaskList *monitoring)
 {
-    const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
-    const quint16 maskState = 0x8000; /* Thread state */
-    QTableWidgetItem *item;
+    QTableWidgetItem *nameItem, *cpuItem;
+    QTableWidget *table = mTasksUi->tableWidget;
 
-    item = mTasksUi->tableWidget->item(0, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->ser2 & maskUsage)/100.0);
-    if (monitoring->ser2 & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
+    table->clear();
 
-    item = mTasksUi->tableWidget->item(1, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->bdu & maskUsage)/100.0);
-    if (monitoring->bdu & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
+    for (int i = 0; i < monitoring->size(); i++)
+    {
+        nameItem = new QTableWidgetItem();
+        table->setItem(i, 0, nameItem);
 
-    item = mTasksUi->tableWidget->item(2, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->sdu & maskUsage)/100.0);
-    if (monitoring->sdu & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
+        cpuItem = new QTableWidgetItem();
+        table->setItem(i, 1, cpuItem);
 
-    item = mTasksUi->tableWidget->item(3, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->can & maskUsage)/100.0);
-    if (monitoring->can & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
+        nameItem->setData(Qt::DisplayRole, monitoring->at(i).name);
+        cpuItem->setData(Qt::DisplayRole, monitoring->at(i).cpu);
 
-    item = mTasksUi->tableWidget->item(4, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->knock & maskUsage)/100.0);
-    if (monitoring->knock & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
+        if (monitoring->at(i).active)
+        {
+            nameItem->setBackgroundColor(Qt::white);
+            cpuItem->setBackgroundColor(Qt::white);
+        }
+        else
+        {
+            nameItem->setBackgroundColor(Qt::lightGray);
+            cpuItem->setBackgroundColor(Qt::lightGray);
+        }
 
-    item = mTasksUi->tableWidget->item(5, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->sensors & maskUsage)/100.0);
-    if (monitoring->sensors & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
-
-    item = mTasksUi->tableWidget->item(6, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->irq & maskUsage)/100.0);
-    item->setBackgroundColor(Qt::lightGray);
-
-    item = mTasksUi->tableWidget->item(7, 0);
-    item->setData(Qt::DisplayRole, float(monitoring->idle & maskUsage)/100.0);
-    if (monitoring->idle & maskState) item->setBackgroundColor(Qt::white);
-    else item->setBackgroundColor(Qt::lightGray);
-
+    }
 }
 
 void MainWindow::onKnockSpectrumReceived(const QByteArray *data)

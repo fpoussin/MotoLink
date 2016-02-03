@@ -148,8 +148,8 @@ uint8_t sendMonitoring(BaseChannel * chn) {
     thread_t *tp = chRegFirstThread();
     uint8_t name_len = 0;
     do {
-        name_len = strlen(tp->p_name);
-        chnPutTimeout(chn, name_len+2, PUT_TIMEOUT); // How much data we'll send
+        name_len = sizeof(tp->p_name);
+        chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
         chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
         chnWriteTimeout(chn, (uint8_t*)&tp->p_name, name_len, PUT_TIMEOUT); // Send the thread name
 
@@ -157,8 +157,11 @@ uint8_t sendMonitoring(BaseChannel * chn) {
     } while (tp != NULL);
 
     // Last, we send the IRQ stats.
+    name_len = sizeof(irq_name);
+    chnPutTimeout(chn, name_len, PUT_TIMEOUT);
     chnWriteTimeout(chn, (uint8_t*)&irq_pct, sizeof(irq_pct), PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)irq_name, sizeof(irq_name), PUT_TIMEOUT);
+    chnWriteTimeout(chn, (uint8_t*)irq_name, name_len, PUT_TIMEOUT);
+
     chnPutTimeout(chn, 0x00, PUT_TIMEOUT); // No more data to send
 
     return 0;

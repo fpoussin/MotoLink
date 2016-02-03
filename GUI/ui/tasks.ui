@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>290</height>
+    <width>300</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>200</width>
-    <height>290</height>
+    <width>300</width>
+    <height>300</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>200</width>
-    <height>290</height>
+    <width>300</width>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -76,181 +76,26 @@
      <attribute name="verticalHeaderStretchLastSection">
       <bool>false</bool>
      </attribute>
-     <row>
+     <column>
       <property name="text">
-       <string>Serial 2</string>
+       <string>Name</string>
       </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
+      <property name="textAlignment">
+       <set>AlignCenter</set>
       </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Main USB</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/devices/drive-removable-media-usb.png</normaloff>:/oxygen/32x32/devices/drive-removable-media-usb.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Serial USB</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>CAN BUS</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/apps/esd.png</normaloff>:/oxygen/32x32/apps/esd.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Knock Sensor</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/images/images.qrc">
-        <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Other Sensors</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/images/images.qrc">
-        <normaloff>:/images/icon-afr-sensor.png</normaloff>:/images/icon-afr-sensor.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Interrupts</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/actions/quickopen-function.png</normaloff>:/oxygen/32x32/actions/quickopen-function.png</iconset>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Idle</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../res/oxygen.qrc">
-        <normaloff>:/oxygen/32x32/actions/view-refresh.png</normaloff>:/oxygen/32x32/actions/view-refresh.png</iconset>
-      </property>
-     </row>
+     </column>
      <column>
       <property name="text">
        <string>CPU %</string>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="1" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="2" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="3" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="4" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="5" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="6" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
-     <item row="7" column="0">
-      <property name="text">
-       <string>0</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-      </property>
-      <property name="flags">
-       <set>NoItemFlags</set>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../res/oxygen.qrc"/>
-  <include location="../res/images/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -207,10 +207,44 @@ bool Motolink::readMonitoring(void)
 {
     QByteArray send, recv;
     this->prepareCmd(&send, CMD_GET_MONITOR);
+    int toRead = 0;
+    mtl_task_t task;
+    QString taskName;
+    quint16 taskCpu;
 
-    if (this->sendCmd(&send, &recv, sizeof(monitor_t), CMD_GET_MONITOR))
+    const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
+    const quint16 maskState = 0x8000; /* Thread state */
+
+    if (this->sendCmd(&send, &recv, 1, CMD_GET_MONITOR))
     {
-        memcpy((void*)&mMonitoring, (void*)recv.constData(), sizeof(monitor_t));
+        recv.clear();
+        mMonitoring.clear();
+        while (this->readMore(&recv, 1) > 0)
+        {
+            toRead = (uchar)recv.at(0);
+            recv.clear();
+
+            if (toRead < 1)
+                return false;
+
+            // Percentage
+            if (this->readMore(&recv, 2) != 2)
+                return false;
+            taskCpu = *((quint16*)recv.constData());
+            recv.clear();
+
+            // Name
+            if (this->readMore(&recv, toRead) != toRead)
+                return false;
+            taskName = recv.constData();
+            recv.clear();
+
+            task.cpu = (taskCpu & maskUsage) / 100.0;
+            task.name = taskName;
+            task.active = taskCpu & maskState;
+
+            mMonitoring.append(task);
+        }
         emit receivedMonitoring(&mMonitoring);
         return true;
     }
@@ -427,6 +461,11 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
     recv->remove(0, 1);
 
     return result && (uint)recv->size() == len;
+}
+
+int Motolink::readMore(QByteArray *recv, uint len)
+{
+   return mUsb->read(recv, len);
 }
 
 void Motolink::printError(quint8 reply)

@@ -98,7 +98,7 @@ private slots:
     void doTablesPolling(void);
     void doSensorsRedraw(void);
     void onSensorsReceived(const sensors_data_t *data);
-    void onMonitoringReceived(const monitor_t * monitoring);
+    void onMonitoringReceived(const TaskList *monitoring);
     void onKnockSpectrumReceived(const QByteArray * data);
     void onTablesReceived(const quint8 * afr, const quint8 * knock);
     void onSerialDataReceived(const QByteArray * data);
