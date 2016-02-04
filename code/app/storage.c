@@ -32,8 +32,8 @@ static SPIEepromFileConfig eeTablesCfg = {
 static SPIEepromFileStream settingsFile, tablesFile;
 static EepromFileStream *settingsFS, *tablesFS;
 
-static tables_t tables_buf;
 static const uint32_t magic_key = 0xABEF1289;
+static tables_t tables_buf = {0xABEF1289, 0, {}, {}, 0};
 static uint32_t gCrc = 0;
 static uint32_t counters[EEPROM_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
@@ -111,11 +111,14 @@ uint32_t eeFindCurrentPage(void)
     const uint32_t to = from+EEPROM_SIZE;
     msg_t status;
 
+    // TODO: Fix
+
     for (addr=from; addr <= to; addr += EEPROM_TABLES_PAGE_SIZE)
 	{
         fileStreamSeek(tablesFS, addr);
+
         status = fileStreamRead(tablesFS, (uint8_t*)&magic, sizeof magic);
-        if (status != MSG_OK || magic == magic_key)
+        if (status != MSG_OK)
 		{
             continue;
 		}
@@ -134,7 +137,7 @@ uint32_t eeFindCurrentPage(void)
     addr = 0;
     for (i = 0; i < (sizeof counters / sizeof counters[0]); i++)
     {
-        if (counters[i] >= max_counter)
+        if (counters[i] > max_counter)
         {
             max_counter = counters[i];
             addr = i * EEPROM_TABLES_PAGE_SIZE; // Move address to page with highest counter
@@ -181,47 +184,42 @@ uint32_t eeFindPrevPage(void)
 uint8_t eePushPage(uint32_t page, uint8_t *buffer, uint32_t len)
 {
     if (fileStreamSeek(tablesFS, page) != MSG_OK)
-        return 2;
-
-    if (fileStreamWrite(tablesFS, (const uint8_t*)&magic_key, 4) != MSG_OK)
-        return 3;
+        return 1;
 
     if (fileStreamWrite(tablesFS, buffer, len) != MSG_OK)
-        return 4;
+        return 2;
 
     return 0;
-
-	return 1;
 }
 
 uint8_t eePullPage(uint32_t page, uint8_t *buffer, uint32_t len)
 {
-    msg_t status;
-
-    fileStreamSeek(tablesFS, page+4);
-    status = fileStreamRead(tablesFS, buffer, len);
-    if (status != MSG_OK)
-    {
+    if (fileStreamSeek(tablesFS, page) != MSG_OK)
         return 1;
-    }
+
+    if (fileStreamRead(tablesFS, buffer, len) != MSG_OK)
+        return 2;
+
     return 0;
 }
 
 void readTablesFromEE(void)
 {
     uint32_t crc1, crc2 = 0;
-    eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    //eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    eePullPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
 
     crc1 = tables_buf.crc;
-    crc2 = getCrcDma(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+    crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
     if (crc1 != crc2)
     {
         // Try previous page
+        /*
         eePullPage(eeFindPrevPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
         crc1 = tables_buf.crc;
-        crc2 = getCrcDma(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
-        if (crc1 != crc2)
+        crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+        if (crc1 != crc2)*/
             return;
     }
 
@@ -234,7 +232,8 @@ void writeTablesToEE(void)
     memcpy(tableAFR, tables_buf.afr, sizeof tableAFR);
     memcpy(tableKnock, tables_buf.knock, sizeof tableKnock);
 
-    tables_buf.crc = getCrcDma(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+    tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
-    eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    //eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    eePushPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
 }

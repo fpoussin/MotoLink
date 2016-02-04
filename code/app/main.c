@@ -486,7 +486,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 }
 
 
-THD_WORKING_AREA(waThreadRecord, 128);
+THD_WORKING_AREA(waThreadRecord, 4096);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
@@ -498,6 +498,7 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 
     while (true)
     {
+        readTablesFromEE();
         if (recording)
         {
             if (duty == 0)
@@ -559,7 +560,9 @@ int main(void)
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
+
   spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
+  eeInit();
 
   adcSTM32EnableTS(&ADCD1);
   adcSTM32EnableVBAT(&ADCD1);
