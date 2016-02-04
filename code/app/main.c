@@ -222,19 +222,15 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
       doKLineInit = false;
 	}
 */
-    //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
     }
 
-    //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 1000));
     read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      //pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 8000));
       chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
     }
 
@@ -404,8 +400,6 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 
   while (TRUE)
   {
-    //chSysLock();
-
     tp = chRegFirstThread();
     do {
         tp->runtime = 0;
@@ -413,14 +407,11 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
         tp = chRegNextThread(tp);
     } while (tp != NULL);
 
+    irq_ticks = 0;
     run_offset = DWT->CYCCNT;
-
-    //chSysUnlock();
 
 	/* Populate load data */
 	chThdSleepMilliseconds(250);
-
-	//chSysLock();
 
 	/* Convert to systick time base */
 	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
@@ -430,8 +421,6 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
         irq_ticks += tp->irqtime;
         tp = chRegNextThread(tp);
     } while (tp != NULL);
-
-	//chSysUnlock();
 
     tp = chRegFirstThread();
     do {
@@ -474,6 +463,7 @@ THD_WORKING_AREA(waThreadButton, 64);
 CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 {
     (void)arg;
+    chRegSetThreadName("Button");
     uint8_t count = 0;
     while (true)
     {
@@ -490,6 +480,9 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
         {
             /* Toggle Record mode */
             recording = !recording;
+            while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
+                chThdSleepMilliseconds(10);
+            };
         }
 
         chThdSleepMilliseconds(100);
@@ -502,14 +495,25 @@ THD_WORKING_AREA(waThreadRecord, 128);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
+    chRegSetThreadName("Recording");
+    uint16_t duty = 0;
     while (true)
     {
         if (recording)
         {
-            palTogglePad(PORT_LED1, PAD_LED1);
+            if (duty == 0)
+                duty = 10000;
+            else duty = 0;
+
             /* Record code */
 
         }
+        else
+        {
+            duty = 0;
+        }
+
+        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
         chThdSleepMilliseconds(500);
     }
    return;

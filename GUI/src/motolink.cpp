@@ -215,33 +215,44 @@ bool Motolink::readMonitoring(void)
     const quint16 maskUsage = 0x3FFF; /* Remove thread state in last 2 bits */
     const quint16 maskState = 0x8000; /* Thread state */
 
-    if (this->sendCmd(&send, &recv, 1, CMD_GET_MONITOR))
+    if (this->sendCmd(&send, &recv, 0, CMD_GET_MONITOR))
     {
         recv.clear();
         mMonitoring.clear();
+        _LOCK_
         while (this->readMore(&recv, 1) > 0)
         {
             toRead = (uchar)recv.at(0);
             recv.clear();
 
-            if (toRead < 1)
-                return false;
+            if (toRead == 0)
+            {
+                break;
+            }
 
             // Percentage
-            if (this->readMore(&recv, 2) != 2)
+            int pct_size = this->readMore(&recv, 2);
+            if (pct_size != 2)
+            {
                 return false;
+            }
             taskCpu = *((quint16*)recv.constData());
             recv.clear();
 
             // Name
-            if (this->readMore(&recv, toRead) != toRead)
+            int name_size = this->readMore(&recv, toRead);
+            if (name_size != toRead)
+            {
                 return false;
+            }
             taskName = recv.constData();
             recv.clear();
 
             task.cpu = (taskCpu & maskUsage) / 100.0;
             task.name = taskName;
             task.active = taskCpu & maskState;
+
+            //qDebug() << task.name << task.cpu;
 
             mMonitoring.append(task);
         }

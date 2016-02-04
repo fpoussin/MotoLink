@@ -175,7 +175,11 @@ CCM_FUNC uint8_t bootHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_BOOT, MS2ST(50));
   chThdSleepMilliseconds(100);
+
   usbStop(&USBD1);
+  usbDisconnectBus(&USBD1);
+
+  chSysDisable();
 
   startUserApp();
   return 0;

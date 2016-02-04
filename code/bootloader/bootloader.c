@@ -17,11 +17,6 @@ CCM_FUNC void startIWDG(void) {
 
 CCM_FUNC void startUserApp(void) {
 
-  usbStop(&USBD1);
-  usbDisconnectBus(&USBD1);
-
-  chSysDisable();
-
   /* Setup IWDG in case the target application does not load */
   startIWDG();
 

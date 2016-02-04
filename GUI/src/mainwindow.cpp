@@ -764,15 +764,12 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
     QTableWidgetItem *nameItem, *cpuItem;
     QTableWidget *table = mTasksUi->tableWidget;
 
-    table->clear();
+    table->clearContents();
 
     for (int i = 0; i < monitoring->size(); i++)
     {
         nameItem = new QTableWidgetItem();
-        table->setItem(i, 0, nameItem);
-
         cpuItem = new QTableWidgetItem();
-        table->setItem(i, 1, cpuItem);
 
         nameItem->setData(Qt::DisplayRole, monitoring->at(i).name);
         cpuItem->setData(Qt::DisplayRole, monitoring->at(i).cpu);
@@ -788,6 +785,10 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
             cpuItem->setBackgroundColor(Qt::lightGray);
         }
 
+        if (table->rowCount() <= i)
+            table->insertRow(i);
+        table->setItem(i, 0, nameItem);
+        table->setItem(i, 1, cpuItem);
     }
 }
 
