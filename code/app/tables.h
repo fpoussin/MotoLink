@@ -11,11 +11,23 @@
 #include "ch.h"
 #include "common.h"
 
-extern uint8_t tableAFR[11][16];
-extern uint8_t tableKnock[11][16];
+typedef uint8_t cell_table_t[11][16];
+typedef uint8_t cell_rows_t[11];
+typedef uint8_t cell_cols_t[16];
 
-extern uint8_t tableRows[11];
-extern uint8_t tableColumns[16];
+extern cell_table_t tableAFR;
+extern cell_table_t tableKnock;
+
+extern cell_rows_t tableRows;
+extern cell_cols_t tableColumns;
+
+typedef struct {
+  uint32_t magic;
+  uint32_t cnt;
+  cell_table_t afr;
+  cell_table_t knock;
+  uint32_t crc;
+} tables_t;
 
 void writeRows(uint8_t* rows, uint8_t size);
 void writeColumns(uint8_t* columns, uint8_t size);

@@ -262,7 +262,9 @@ for port_key in sorted(all_pads.keys()):
     for pad_key in sorted(all_pads[port_key].keys()):
         pad_data = all_pads[port_key][pad_key]
         print "P{0}{1} - {2}".format(port_key, pad_key, pad_data)
-        if pad_data['label']:
+        if pad_data['signal'] != "GPIO_Analog":
+            if not pad_data['label']:
+                pad_data['label'] = pad_data['signal']
             pad_data['label'] = pad_data['label'].replace('-', '_')
             output += "#define PORT_{0} GPIO{1}\n".format(
                     pad_data['label'],
@@ -273,14 +275,17 @@ for port_key in sorted(all_pads.keys()):
             if "TIM" in pad_data['signal'] and "CH" in pad_data['signal']:
                 timer = pad_data['signal'].replace('S_TIM', '').replace('_CH', '')[:-1]
                 output += "#define TIM_{0} TIM{1}\n".format(
-                        pad_data['label'], timer)
+                        pad_data['label'],
+                        timer)
                 output += "#define CCR_{0} CCR{1}\n".format(
                         pad_data['label'],
                         int(pad_data['signal'][-1:]))
                 output += "#define PWMD_{0} PWMD{1}\n".format(
-                        pad_data['label'], timer)
+                        pad_data['label'],
+                        timer)
                 output += "#define ICUD_{0} ICUD{1}\n".format(
-                        pad_data['label'], timer)
+                        pad_data['label'],
+                        timer)
                 output += "#define CHN_{0} {1}\n\n".format(
                         pad_data['label'],
                         int(pad_data['signal'][-1:])-1)

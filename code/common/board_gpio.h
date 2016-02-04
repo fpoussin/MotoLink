@@ -4,11 +4,47 @@
 #define PORT_KNOCK_OFFSET GPIOA
 #define PAD_KNOCK_OFFSET 4
 
+#define PORT_SPI1_SCK GPIOA
+#define PAD_SPI1_SCK 5
+
+#define PORT_SPI1_MISO GPIOA
+#define PAD_SPI1_MISO 6
+
+#define PORT_SPI1_MOSI GPIOA
+#define PAD_SPI1_MOSI 7
+
+#define PORT_USART1_TX GPIOA
+#define PAD_USART1_TX 9
+
+#define PORT_USART1_RX GPIOA
+#define PAD_USART1_RX 10
+
+#define PORT_USB_DM GPIOA
+#define PAD_USB_DM 11
+
+#define PORT_USB_DP GPIOA
+#define PAD_USB_DP 12
+
+#define PORT_SYS_JTMS_SWDIO GPIOA
+#define PAD_SYS_JTMS_SWDIO 13
+
+#define PORT_SYS_JTCK_SWCLK GPIOA
+#define PAD_SYS_JTCK_SWCLK 14
+
+#define PORT_SPI1_NSS GPIOA
+#define PAD_SPI1_NSS 15
+
 #define PORT_SCS_TRIG GPIOB
 #define PAD_SCS_TRIG 0
 
 #define PORT_KNK_AN GPIOB
 #define PAD_KNK_AN 1
+
+#define PORT_USART2_TX GPIOB
+#define PAD_USART2_TX 3
+
+#define PORT_USART2_RX GPIOB
+#define PAD_USART2_RX 4
 
 #define PORT_VCC_DETECT GPIOB
 #define PAD_VCC_DETECT 5
@@ -28,6 +64,24 @@
 #define PWMD_LED2 PWMD4
 #define ICUD_LED2 ICUD4
 #define CHN_LED2 1
+
+#define PORT_CAN_RX GPIOB
+#define PAD_CAN_RX 8
+
+#define PORT_CAN_TX GPIOB
+#define PAD_CAN_TX 9
+
+#define PORT_SPI2_NSS GPIOB
+#define PAD_SPI2_NSS 12
+
+#define PORT_SPI2_SCK GPIOB
+#define PAD_SPI2_SCK 13
+
+#define PORT_SPI2_MISO GPIOB
+#define PAD_SPI2_MISO 14
+
+#define PORT_SPI2_MOSI GPIOB
+#define PAD_SPI2_MOSI 15
 
 #define PORT_AN0 GPIOC
 #define PAD_AN0 1
@@ -68,6 +122,12 @@
 
 #define PORT_USB_DETECT GPIOC
 #define PAD_USB_DETECT 15
+
+#define PORT_RCC_OSC_IN GPIOF
+#define PAD_RCC_OSC_IN 0
+
+#define PORT_RCC_OSC_OUT GPIOF
+#define PAD_RCC_OSC_OUT 1
 
 #define PORT_BUTTON1 GPIOF
 #define PAD_BUTTON1 4

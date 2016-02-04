@@ -119,6 +119,27 @@
 #define rccEnableCRC(lp) rccEnableAHB(RCC_AHBENR_CRCEN, lp)
 #define rccDisableCRC(lp) rccDisableAHB(RCC_AHBENR_CRCEN, lp)
 
+/*===========================================================================*/
+/* CRC driver settings.                                                      */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables DMA engine when performing CRC transactions.
+ * @note    Enabling this option also enables asynchronous API.
+ */
+#if !defined(CRC_USE_DMA) || defined(__DOXYGEN__)
+#define CRC_USE_DMA                 TRUE
+#endif
+
+/**
+ * @brief   Enables the @p crcAcquireUnit() and @p crcReleaseUnit() APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(CRC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define CRC_USE_MUTUAL_EXCLUSION    TRUE
+#endif
+
+
 #endif /* _HALCONF_COMMUNITY_H_ */
 
 /** @} */

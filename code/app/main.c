@@ -22,6 +22,7 @@
 #include "commands.h"
 #include "sensors.h"
 #include "innovate.h"
+#include "storage.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -378,12 +379,6 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
   return;
 }
 
-/* Pointer to the idle thread */
-static inline thread_t *chThdGetIdleX(void) {
-
-  return ch.rlist.r_queue.p_prev;
-}
-
 /*
  * CPU Load Monitoring thread.
  */
@@ -497,6 +492,10 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
     (void)arg;
     chRegSetThreadName("Recording");
     uint16_t duty = 0;
+
+    /* Load tables from EE first */
+    readTablesFromEE();
+
     while (true)
     {
         if (recording)
@@ -505,8 +504,8 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
                 duty = 10000;
             else duty = 0;
 
-            /* Record code */
-
+            /* Record tables */
+            writeTablesToEE();
         }
         else
         {
@@ -560,6 +559,7 @@ int main(void)
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
+  spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
 
   adcSTM32EnableTS(&ADCD1);
   adcSTM32EnableVBAT(&ADCD1);

@@ -24,10 +24,6 @@ __ram_end__             = __ram_start__ + __ram_size__;
 
 __flash_page_size__ = 0x800;
 
-__ee_address__ = ORIGIN(eeprom);
-__ee_length__   = LENGTH(eeprom);
-
-
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts*/
 REGION_ALIAS("MAIN_STACK_RAM", ram4);

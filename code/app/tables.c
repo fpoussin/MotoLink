@@ -8,13 +8,13 @@
 #include "tables.h"
 
 /* Columns are divided by 100 */
-uint8_t tableColumns[16] = {0, 10, 20, 30, 40, 50, 60, 70,
+cell_cols_t tableColumns = {0, 10, 20, 30, 40, 50, 60, 70,
                             80, 90, 100, 110, 120, 130,
                             140, 180};
-uint8_t tableRows[11] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+cell_rows_t tableRows = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
 
-uint8_t tableAFR[11][16];
-uint8_t tableKnock[11][16];
+cell_table_t tableAFR;
+cell_table_t tableKnock;
 
 void writeRows(uint8_t* rows, uint8_t size)
 {

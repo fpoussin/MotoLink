@@ -48,12 +48,6 @@
 #define STM32F30X //Fix 
 
 /*
- * IO pins assignments.
- */
-
-// All in board_gpio.h
-
-/*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  * Please refer to the STM32 Reference Manual for details.
@@ -75,6 +69,9 @@
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
 #define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
+/*
+ * IO pins assignments.
+ */
 #include "board_gpio.h"
 
 #if !defined(_FROM_ASM_)

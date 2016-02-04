@@ -13,7 +13,7 @@ motolink.name = "MotoLink"
 motolink.path = "app/build/motolink.elf"
 motolink.max_ccm = 8*1024
 motolink.max_ram = 40*1024
-motolink.max_rom = 128*1024
+motolink.max_rom = 236*1024
 
 bootloader = app()
 bootloader.name = "BootLoader"
