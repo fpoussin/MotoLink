@@ -4,7 +4,6 @@
 
 #include "ch.h"
 #include "common.h"
-#include "stm32f30x_flash.h"
 #include "tables.h"
 
 #define EEPROM_SIZE (64*1024)
@@ -12,9 +11,8 @@
 #define EEPROM_WRITE_TIME_MS 10
 #define EEPROM_SPID SPID2
 #define EEPROM_SPIDCONFIG spi2cfg
-#define EEPROM_DRIVER_NAME "25XX"
-#define EEPROM_SPLIT 2048
-#define EEPROM_TABLES_PAGE_SIZE 2048
+#define EEPROM_SPLIT 4096
+#define EEPROM_TABLES_PAGE_SIZE 1024
 
 extern const SPIConfig EEPROM_SPIDCONFIG;
 

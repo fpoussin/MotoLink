@@ -96,8 +96,8 @@ static uint32_t getCrcDma(const CRCConfig *config, uint8_t *data, uint16_t len)
 
 void eeInit(void) {
 
-    settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DRIVER_NAME));
-    tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DRIVER_NAME));
+    settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
+    tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
     fileStreamSeek(settingsFS, 0);
     fileStreamSeek(tablesFS, 0);

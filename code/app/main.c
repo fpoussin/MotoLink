@@ -486,7 +486,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 }
 
 
-THD_WORKING_AREA(waThreadRecord, 4096);
+THD_WORKING_AREA(waThreadRecord, 256);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
