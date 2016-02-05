@@ -210,7 +210,7 @@ void readTablesFromEE(void)
     eePullPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
 
     crc1 = tables_buf.crc;
-    crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+    crc2 = getCrcDma(&crc32_dma_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
     if (crc1 != crc2)
     {
@@ -232,7 +232,7 @@ void writeTablesToEE(void)
     memcpy(tableAFR, tables_buf.afr, sizeof tableAFR);
     memcpy(tableKnock, tables_buf.knock, sizeof tableKnock);
 
-    tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+    tables_buf.crc = getCrc(&crc32_dma_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
     //eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
     eePushPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);

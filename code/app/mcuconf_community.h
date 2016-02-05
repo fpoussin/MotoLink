@@ -101,7 +101,7 @@
 #define STM32_CRC_USE_CRC1                  TRUE
 #define STM32_CRC_CRC1_DMA_IRQ_PRIORITY     5
 #define STM32_CRC_CRC1_DMA_PRIORITY         2
-#define STM32_CRC_CRC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 2)
+#define STM32_CRC_CRC1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 1)
 
 #define CRCSW_USE_CRC1                      FALSE
 #define CRCSW_CRC32_TABLE                   TRUE

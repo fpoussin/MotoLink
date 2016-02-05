@@ -128,7 +128,7 @@
  * @note    Enabling this option also enables asynchronous API.
  */
 #if !defined(CRC_USE_DMA) || defined(__DOXYGEN__)
-#define CRC_USE_DMA                 FALSE
+#define CRC_USE_DMA                 TRUE
 #endif
 
 /**
