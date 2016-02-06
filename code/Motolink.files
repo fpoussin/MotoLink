@@ -1882,3 +1882,5 @@ ChibiOS-Contrib/os/hal/include/nand.h
 ChibiOS-Contrib/os/hal/include/onewire.h
 ChibiOS-Contrib/os/hal/include/timcap.h
 ChibiOS-Contrib/os/hal/include/usbh.h
+app/settings.c
+app/settings.h

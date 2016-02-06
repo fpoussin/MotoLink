@@ -95,6 +95,7 @@ typedef struct {
   uint16_t AfrMinV;
   uint16_t AfrMaxV;
   uint16_t dummy;
+  uint32_t crc;
 } settings_t;
 
 #endif

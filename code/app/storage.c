@@ -34,6 +34,7 @@ static EepromFileStream *settingsFS, *tablesFS;
 
 static const uint32_t magic_key = 0xABEF1289;
 static tables_t tables_buf = {0xABEF1289, 0, {}, {}, 0};
+static settings_t settings_buf;
 static uint32_t gCrc = 0;
 static uint32_t counters[EEPROM_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
@@ -236,4 +237,28 @@ void writeTablesToEE(void)
 
     //eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
     eePushPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
+}
+
+void readSettingsFromEE()
+{
+    uint32_t crc1, crc2 = 0;
+    eePullPage(0, (uint8_t*)&settings_buf, sizeof settings_buf);
+
+    crc1 = settings_buf.crc;
+    crc2 = getCrcDma(&crc32_dma_config, (uint8_t*)&settings_buf, (sizeof settings_buf - sizeof settings_buf.crc));
+
+    if (crc1 != crc2)
+    {
+        return;
+    }
+
+    eePushPage(0, (uint8_t*)&settings_buf, sizeof settings_buf);
+}
+
+void writeSettingsToEE()
+{
+    memcpy(&settings, &settings_buf, sizeof settings);
+
+    settings_buf.crc = getCrc(&crc32_dma_config, (uint8_t*)&settings_buf, (sizeof settings_buf - sizeof settings_buf.crc));
+    eePushPage(0, (uint8_t*)&settings_buf, sizeof settings_buf);
 }

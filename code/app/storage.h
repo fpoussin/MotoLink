@@ -5,6 +5,7 @@
 #include "ch.h"
 #include "common.h"
 #include "tables.h"
+#include "settings.h"
 
 #define EEPROM_SIZE (64*1024)
 #define EEPROM_PAGE_SIZE 32
@@ -24,7 +25,11 @@ extern const SPIConfig EEPROM_SPIDCONFIG;
 
 /* Public functions */
 void eeInit(void);
+
 void readTablesFromEE(void);
 void writeTablesToEE(void);
+
+void readSettingsFromEE(void);
+void writeSettingsToEE(void);
 
 #endif

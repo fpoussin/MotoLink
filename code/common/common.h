@@ -3,6 +3,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "protocol.h"
 
 #define CCM_FUNC __attribute__((section(".ram4_init.code")))
 //#define CCM_FUNC

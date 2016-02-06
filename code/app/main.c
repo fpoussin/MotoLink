@@ -495,10 +495,10 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 
     /* Load tables from EE first */
     readTablesFromEE();
+    readSettingsFromEE();
 
     while (true)
     {
-        readTablesFromEE();
         if (recording)
         {
             if (duty == 0)

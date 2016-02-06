@@ -1,11 +1,11 @@
 #include "commands.h"
 #include "common.h"
 #include "usb_config.h"
+#include "storage.h"
 
 #define PUT_TIMEOUT MS2ST(25)
 
 /* TODO: make settings load/save (eeprom) function */
-settings_t settings;
 static uint8_t input_buf[DATA_BUF_SIZE];
 
 CCM_FUNC uint8_t readCommand(BaseChannel *chn)
@@ -186,6 +186,7 @@ uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
   settings_t* settings_buf = (settings_t*)buf;
 
   memcpy(&settings, settings_buf, sizeof(settings));
+  writeSettingsToEE();
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_SETTINGS, PUT_TIMEOUT);
   return 0;
