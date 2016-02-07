@@ -55,15 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mUndoView.setWindowTitle(tr("Actions History - ")+this->windowTitle());
     mHasChanged = false;
 
-    mMainUi->sbIdle->setName(tr("Idle"));
-    mMainUi->sbPitLimiter->setName(tr("Pit Limiter"));
-    mMainUi->sbShiftLight->setName(tr("Shift Light"));
-    mMainUi->sbThresholdMin->setName(tr("Minimum Threshold"));
-    mMainUi->sbThresholdMax->setName(tr("Maximum Threshold"));
-
-    mMainUi->sbIdle->setUndoStack(&mUndoStack);
-    mMainUi->sbPitLimiter->setUndoStack(&mUndoStack);
-    mMainUi->sbShiftLight->setUndoStack(&mUndoStack);
     mMainUi->sbThresholdMin->setUndoStack(&mUndoStack);
     mMainUi->sbThresholdMax->setUndoStack(&mUndoStack);
 
@@ -286,9 +277,6 @@ void MainWindow::setupDefaults(void)
     mTablesViewList.append(mMainUi->tableIgnMap);
     mTablesViewList.append(mMainUi->tableKnk);
 
-    mSpinBoxList.append(mMainUi->sbIdle);
-    mSpinBoxList.append(mMainUi->sbPitLimiter);
-    mSpinBoxList.append(mMainUi->sbShiftLight);
     mSpinBoxList.append(mMainUi->sbThresholdMax);
     mSpinBoxList.append(mMainUi->sbThresholdMin);
 
@@ -379,6 +367,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->bReadMtl, SIGNAL(clicked()), this, SLOT(onReadMtlSettings()));
     QObject::connect(mMainUi->bWriteMtl, SIGNAL(clicked()), this, SLOT(onWriteMtlSettings()));
 
+
+
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
              mRecentFilesActions[i]->setVisible(false);
@@ -389,6 +379,7 @@ void MainWindow::setupConnections(void)
          }
 
     /* Sensors UI update */
+
     QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
     QObject::connect(&mTablesTimer, SIGNAL(timeout()), this, SLOT(doTablesPolling()));
@@ -399,6 +390,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
     QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(writeLogs(QString)));
+    QObject::connect(mMtl, SIGNAL(communicationError(QString)), mMtl, SLOT(clearUsb()));
 
     QObject::connect(&mFile, SIGNAL(readFailed(QString)), this, SLOT(onSimpleError(QString)));
 }
@@ -646,9 +638,6 @@ void MainWindow::exportToMTLFile()
     mFile.addTable(&mIgnModel);
     mFile.addTable(&mKnockModel);
 
-    mFile.addProperty("Idle", mMainUi->sbIdle->value());
-    mFile.addProperty("PitLimiter", mMainUi->sbPitLimiter->value());
-    mFile.addProperty("ShiftLight", mMainUi->sbShiftLight->value());
     mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
     mFile.addProperty("SpeedDiv", mMainUi->dsbSpeedDiv->value());
 
@@ -669,15 +658,6 @@ void MainWindow::exportToMTLFile()
 void MainWindow::importFromMTLFile()
 {
     QVariant prop;
-
-    mFile.getProperty("Idle", &prop);
-    mMainUi->sbIdle->setValue(prop.toInt());
-
-    mFile.getProperty("PitLimiter", &prop);
-    mMainUi->sbPitLimiter->setValue(prop.toInt());
-
-    mFile.getProperty("ShiftLight", &prop);
-    mMainUi->sbShiftLight->setValue(prop.toInt());
 
     mFile.getProperty("RpmDiv", &prop);
     mMainUi->dsbRpmDiv->setValue(prop.toDouble());
@@ -927,10 +907,35 @@ void MainWindow::setTablesCursor(uint row, uint col)
 
 void MainWindow::onReadMtlSettings()
 {
+    if (mMtl->readSettings())
+    {
+        // Unpack settings
+        const settings_t *s = mMtl->getSettings();
+        mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::DisplayRole, (float)s->AfrMinV/1000.0);
+        mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::DisplayRole, (float)s->AfrMaxV/1000.0);
 
+        if (s->functions & FUNC_AFR_DISA)
+            mMainUi->cbAFRInput->setCurrentIndex(0);
+        else if (s->functions & FUNC_AFR_AN)
+            mMainUi->cbAFRInput->setCurrentIndex(1);
+        else if (s->functions & FUNC_AFR_MTS)
+            mMainUi->cbAFRInput->setCurrentIndex(2);
+
+        this->writeLogs("Read settings OK");
+    }
+    else
+        this->writeLogs("Read settings Fail");
 }
 
 void MainWindow::onWriteMtlSettings()
 {
+    // Pack settings
+    settings_t s;
 
+    if (mMtl->writeSettings())
+    {
+        this->writeLogs("Write settings OK");
+    }
+    else
+        this->writeLogs("Write settings Fail");
 }

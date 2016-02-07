@@ -331,10 +331,39 @@ bool Motolink::readSerialData()
     return false;
 }
 
-bool Motolink::readSettings(settings_t *settings)
+bool Motolink::readSettings()
 {
-    (void)settings;
-    return true;
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    this->prepareCmd(&send, CMD_GET_SETTINGS);
+
+    if (this->sendCmd(&send, &recv, sizeof(settings_t), CMD_GET_SETTINGS))
+    {
+        memcpy(&mSettings, recv.constData(), recv.size());
+        emit receivedSettings(&mSettings);
+        return true;
+    }
+
+    return false;
+}
+
+bool Motolink::writeSettings()
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    send.append((char*)&mSettings, sizeof(settings_t));
+    this->prepareCmd(&send, CMD_SET_SETTINGS);
+
+    if (this->sendCmd(&send, &recv, 0, CMD_SET_SETTINGS))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 bool Motolink::writeTablesHeaders(const quint8 *rows, const quint8 *cols)
@@ -364,12 +393,11 @@ bool Motolink::clearTables()
     return this->sendSimpleCmd(CMD_CLEAR_TABLES);
 }
 
-bool Motolink::writeSettings(const settings_t *settings)
+void Motolink::clearUsb()
 {
-    (void)settings;
-    return true;
+    if (this->mConnected)
+        this->mUsb->flush();
 }
-
 
 bool Motolink::sendWake()
 {

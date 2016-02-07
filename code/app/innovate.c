@@ -50,7 +50,8 @@ void readMtsHeader(BaseChannel *chn, uint8_t *buf)
             & (buf[3] & MTS_LAMBDA_MASK2);
 
         /* Multiplied by 10 */
-        sensors_data.afr = ((lambda+500) * afr_multiplier) / 1000;
+        if (settings.functions & FUNC_AFR_MTS)
+            sensors_data.afr = ((lambda+500) * afr_multiplier) / 1000;
       }
     }
     else

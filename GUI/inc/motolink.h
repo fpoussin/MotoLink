@@ -55,6 +55,7 @@ public:
     bool isConnected(void) { return mConnected; }
     const sensors_data_t * getSensors(void) { return &mSensors; }
     const TaskList * getMonitoring(void) { return &mMonitoring; }
+    const settings_t * getSettings(void) { return &mSettings; }
     const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
     const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
     const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
@@ -82,13 +83,15 @@ public slots:
     bool sendFirmware(QByteArray *data);
     bool verifyFirmware(QByteArray *data);
 
-    bool writeSettings(const settings_t *settings);
-    bool readSettings(settings_t *settings);
+    bool writeSettings();
+    bool readSettings();
 
     bool writeTablesHeaders(const quint8 *rows, const quint8 *cols);
 
     bool clearCell(uint tableId, int row, int col);
     bool clearTables(void);
+
+    void clearUsb(void);
 
 signals:
     void transferProgress(int p);
@@ -129,6 +132,7 @@ private:
     quint16 mVid;
     bool mStopTranfer;
     sensors_data_t mSensors;
+    settings_t mSettings;
     TaskList mMonitoring;
     QStringList mNames;
     QByteArray mKnockData;

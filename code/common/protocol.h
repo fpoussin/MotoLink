@@ -51,6 +51,11 @@
 #define KNOCK_RATIO 4.66f
 #define KNOCK_MAX (3.3*KNOCK_RATIO)
 
+#define FUNC_RECORD 0x01
+#define FUNC_AFR_DISA 0x02
+#define FUNC_AFR_MTS 0x04
+#define FUNC_AFR_AN 0x08
+
 typedef struct {
   uint8_t magic1;
   uint8_t magic2;
@@ -91,10 +96,9 @@ typedef struct {
   uint16_t tpsMaxV;
   uint16_t fuelMinTh;
   uint16_t fuelMaxChange;
-  uint16_t AfrInput;
   uint16_t AfrMinV;
   uint16_t AfrMaxV;
-  uint16_t dummy;
+  uint16_t functions;
   uint32_t crc;
 } settings_t;
 

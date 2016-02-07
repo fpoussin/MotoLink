@@ -52,8 +52,6 @@ static const uint8_t initHex2[] = {0x07 , 0x08 , 0x49 , 0x7F , 0x61 , 0x6D , 0x7
 static const uint8_t initHex3[] = {0x27 , 0x0B , 0xE0 , 0x77 , 0x41 , 0x72 , 0x65 , 0x59 , 0x6F , 0x75 , 0x22}; // AreYou
 static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7F , 0x27}; // in.
 
-bool recording = false;
-
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
@@ -370,11 +368,8 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
 
-    // TODO: Get freq and ratio from settings
-    uint16_t freq = 8500;
-    uint16_t ratio = 3000;
-    sensors_data.knock_value = calculateKnockIntensity(freq, ratio, FFT_FREQ, output_knock, sizeof(output_knock));
-    sensors_data.knock_freq = freq;
+    sensors_data.knock_value = calculateKnockIntensity(settings.knockFreq, settings.knockRatio, FFT_FREQ, output_knock, sizeof(output_knock));
+    sensors_data.knock_freq = settings.knockFreq;
   }
   return;
 }
@@ -454,7 +449,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
   return;
 }
 
-THD_WORKING_AREA(waThreadButton, 64);
+THD_WORKING_AREA(waThreadButton, 128);
 CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 {
     (void)arg;
@@ -471,10 +466,12 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
             count = 0;
         }
 
-        if (count > 10)
+        if (count > 9)
         {
             /* Toggle Record mode */
-            recording = !recording;
+            settings.functions |= FUNC_RECORD;
+
+            writeSettingsToEE();
             while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
                 chThdSleepMilliseconds(10);
             };
@@ -486,7 +483,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 }
 
 
-THD_WORKING_AREA(waThreadRecord, 256);
+THD_WORKING_AREA(waThreadRecord, 4096);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
@@ -494,12 +491,12 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
     uint16_t duty = 0;
 
     /* Load tables from EE first */
-    readTablesFromEE();
+    //readTablesFromEE();
     readSettingsFromEE();
 
     while (true)
     {
-        if (recording)
+        if (settings.functions & FUNC_RECORD)
         {
             if (duty == 0)
                 duty = 10000;
@@ -512,6 +509,8 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
         {
             duty = 0;
         }
+
+        readSettingsFromEE();
 
         pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
         chThdSleepMilliseconds(500);

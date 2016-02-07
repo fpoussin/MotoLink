@@ -10,6 +10,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "settings.h"
 
 #define MTS_HEADER_MASK ((uint8_t)0xA2) /* Bits 1, 5, 7 */
 #define MTS_LENGTH_MASK1 ((uint8_t)0x01) /* Bit 0 */
