@@ -466,9 +466,9 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
         if (count > 9)
         {
             /* Toggle Record mode */
-            settings.functions |= FUNC_RECORD;
-
+            settings.functions ^= FUNC_RECORD;
             writeSettingsToEE();
+
             while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
                 chThdSleepMilliseconds(10);
             };
