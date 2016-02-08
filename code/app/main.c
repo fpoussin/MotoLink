@@ -29,14 +29,13 @@
 /*===========================================================================*/
 
 /* Check if tp was the previous thread */
-#define RUNNING(tp) (uint16_t)((tp == pThreadMonitor->p_next) << 15)
+#define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->p_next) << 15)
 #define FREQIN_INTERVAL MS2ST(50)
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
-thread_t *pThreadMonitor = NULL;
 uint16_t irq_pct = 0;
 const char *irq_name = "Interrupts";
 
@@ -56,11 +55,11 @@ static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-CCM_FUNC void iwdgGptCb(GPTDriver *gptp)
-{
-  (void) gptp;
-  wdgResetI(&WDGD1);
-}
+static const WDGConfig wdgcfg = {
+  STM32_IWDG_PR_64,
+  STM32_IWDG_RL(250), // 250ms
+  STM32_IWDG_WIN_DISABLED
+};
 
 CCM_FUNC void freqinVTHandler(void *arg)
 {
@@ -81,14 +80,6 @@ const CANConfig cancfg = {
   CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
   CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
   CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
-};
-
-GPTConfig gpt1Cfg =
-{
-  100000,      /* timer clock.*/
-  iwdgGptCb,  /* Timer callback.*/
-  0,
-  0
 };
 
 const DACConfig dac1cfg1 = {
@@ -169,6 +160,8 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
+
+  pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 500));
 
   while (TRUE)
   {
@@ -368,7 +361,12 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
 
-    sensors_data.knock_value = calculateKnockIntensity(settings.knockFreq, settings.knockRatio, FFT_FREQ, output_knock, sizeof(output_knock));
+    sensors_data.knock_value = calculateKnockIntensity(
+                settings.knockFreq,
+                settings.knockRatio,
+                FFT_FREQ,
+                output_knock,
+                sizeof(output_knock));
     sensors_data.knock_freq = settings.knockFreq;
   }
   return;
@@ -382,7 +380,6 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");
-  pThreadMonitor = chThdGetSelfX();
   uint32_t  run_offset, irq_ticks = 0, total_ticks;
   thread_t* tp = NULL;
 
@@ -483,7 +480,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 }
 
 
-THD_WORKING_AREA(waThreadRecord, 4096);
+THD_WORKING_AREA(waThreadRecord, 1024);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
@@ -492,7 +489,7 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 
     /* Load tables from EE first */
     //readTablesFromEE();
-    readSettingsFromEE();
+    //readSettingsFromEE();
 
     while (true)
     {
@@ -510,12 +507,25 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
             duty = 0;
         }
 
-        readSettingsFromEE();
-
         pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
         chThdSleepMilliseconds(500);
     }
    return;
+}
+
+THD_WORKING_AREA(waThreadWdg, 64);
+CCM_FUNC static THD_FUNCTION(ThreadWdg, arg)
+{
+    (void)arg;
+    chRegSetThreadName("Watchdog");
+
+    while (true)
+    {
+        wdgResetI(&WDGD1);
+        chThdSleepMilliseconds(200);
+    }
+
+    return;
 }
 
 /*===========================================================================*/
@@ -533,12 +543,6 @@ int main(void)
   setupIPC();
 
   usbDisconnectBus(&USBD1);
-
-  gptStart(&GPTD1, &gpt1Cfg);
-  gptStartContinuous(&GPTD1, 20000);
-
-  pwmStart(&PWMD_LED2, &pwmcfg);
-  pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
 
   /*
    * Initialize extra driver objects.
@@ -559,6 +563,7 @@ int main(void)
   adcStart(&ADCD1, NULL);
   adcStart(&ADCD3, NULL);
   timcapStart(&TIMCAPD3, &tc_conf);
+  pwmStart(&PWMD_LED2, &pwmcfg);
 
   spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
   eeInit();
@@ -589,13 +594,11 @@ int main(void)
   chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+3, ThreadButton, NULL);
   chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+3, ThreadRecord, NULL);
+  chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
+
   /* Create last as it uses pointers from above */
   chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+10, ThreadMonitor, NULL);
 
-  /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
-   */
   while (TRUE)
   {
     while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);

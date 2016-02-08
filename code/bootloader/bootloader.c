@@ -3,10 +3,11 @@
 uint8_t bl_wake = 0;
 typedef volatile uint32_t vu32;
 typedef uint32_t u32;
+typedef void (*pFunction)(void);
 
 static const WDGConfig wdgcfg = {
   STM32_IWDG_PR_64,
-  STM32_IWDG_RL(250), // 250ms
+  STM32_IWDG_RL(500), // 500ms
   STM32_IWDG_WIN_DISABLED
 };
 
@@ -20,12 +21,11 @@ CCM_FUNC void startUserApp(void) {
   /* Setup IWDG in case the target application does not load */
   startIWDG();
 
+  chSysDisable();
   jumpToUser(USER_APP_ADDR);
 }
 
 CCM_FUNC void jumpToUser(uint32_t address) {
-
-  typedef void (*pFunction)(void);
 
   pFunction Jump_To_Application;
 

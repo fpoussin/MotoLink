@@ -212,7 +212,7 @@ void readTablesFromEE(void)
 {
     uint32_t crc1, crc2 = 0;
     eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
-    //eePullPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
+    //eePullPage(4096, (uint8_t*)&tables_buf, sizeof tables_buf);
 
     crc1 = tables_buf.crc;
     crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
@@ -240,7 +240,7 @@ void writeTablesToEE(void)
     tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
     eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
-    //eePushPage(2048, (uint8_t*)&tables_buf, sizeof tables_buf);
+    //eePushPage(4096, (uint8_t*)&tables_buf, sizeof tables_buf);
 }
 
 void readSettingsFromEE()

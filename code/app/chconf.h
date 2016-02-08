@@ -82,7 +82,7 @@
  * @note    The round robin preemption is not supported in tickless mode and
  *          must be set to zero in that case.
  */
-#define CH_CFG_TIME_QUANTUM                 50
+#define CH_CFG_TIME_QUANTUM                 30
 
 /**
  * @brief   Managed RAM size.
@@ -398,7 +398,7 @@
  * @note    This debug option is not currently compatible with the
  *          tickless mode.
  */
-#define CH_DBG_THREADS_PROFILING            TRUE
+#define CH_DBG_THREADS_PROFILING            FALSE
 
 /** @} */
 

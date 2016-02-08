@@ -173,7 +173,9 @@ static THD_FUNCTION(ThreadSDU, arg)
 int main(void)
 {
   /* Begin charging switch cap */
-  palInit(&pal_default_config);
+  halInit();
+  chSysInit();
+  //palInit(&pal_default_config);
 
   /*!< Independent Watchdog reset flag */
   if (RCC->CSR & RCC_CSR_IWDGRSTF) {
@@ -187,6 +189,12 @@ int main(void)
     /* Bootloader called by user app */
 
     reset_flags |= FLAG_SFTRST;
+  }
+
+  if (RCC->CSR & RCC_CSR_PINRSTF) {
+    /* Bootloader called by reset pin */
+
+    //reset_flags |= FLAG_PINRST;
   }
 
   /* Check user app */
@@ -211,16 +219,13 @@ int main(void)
   /*!< Remove hardware reset flags */
   RCC->CSR |= RCC_CSR_RMVF;
 
+  usbDisconnectBus(serusbcfg1.usbp);
+
   if (reset_flags == FLAG_OK)
   {
     startUserApp();
     while (1);
   }
-
-  halInit();
-  chSysInit();
-
-  usbDisconnectBus(serusbcfg1.usbp);
 
   pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
@@ -235,7 +240,8 @@ int main(void)
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
 
-  while (TRUE)    {
+  while (TRUE)
+  {
       while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
 
       chThdSleepMilliseconds(100);

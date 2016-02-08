@@ -743,6 +743,7 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
 {
     QTableWidgetItem *nameItem, *cpuItem;
     QTableWidget *table = mTasksUi->tableWidget;
+    QString flt_str;
 
     table->clearContents();
 
@@ -751,8 +752,9 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
         nameItem = new QTableWidgetItem();
         cpuItem = new QTableWidgetItem();
 
+        flt_str.sprintf("%05.2f", monitoring->at(i).cpu);
         nameItem->setData(Qt::DisplayRole, monitoring->at(i).name);
-        cpuItem->setData(Qt::DisplayRole, monitoring->at(i).cpu);
+        cpuItem->setData(Qt::DisplayRole, flt_str);
 
         if (monitoring->at(i).active)
         {

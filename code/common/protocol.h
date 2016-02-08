@@ -40,6 +40,7 @@
 #define FLAG_NOAPP (uint8_t)0x08
 #define FLAG_WAKE (uint8_t)0x10
 #define FLAG_SWITCH (uint8_t)0x20
+#define FLAG_PINRST (uint8_t)0x40
 
 #define MODE_BL (uint8_t)0x01
 #define MODE_APP (uint8_t)0x02
@@ -51,10 +52,10 @@
 #define KNOCK_RATIO 4.66f
 #define KNOCK_MAX (3.3*KNOCK_RATIO)
 
-#define FUNC_RECORD 0x01
-#define FUNC_AFR_DISA 0x02
-#define FUNC_AFR_MTS 0x04
-#define FUNC_AFR_AN 0x08
+#define FUNC_RECORD (uint8_t)0x01
+#define FUNC_AFR_DISA (uint8_t)0x02
+#define FUNC_AFR_MTS (uint8_t)0x04
+#define FUNC_AFR_AN (uint8_t)0x08
 
 typedef struct {
   uint8_t magic1;

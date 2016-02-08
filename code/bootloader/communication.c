@@ -151,14 +151,12 @@ CCM_FUNC uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
 CCM_FUNC uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, MS2ST(50));
-
-  chThdSleepMilliseconds(500);
+  chThdSleepMilliseconds(300);
 
   usbDisconnectBus(&USBD1);
   usbStop(&USBD1);
 
   chSysDisable();
-
   NVIC_SystemReset();
 
   return 0;
@@ -174,13 +172,12 @@ CCM_FUNC uint8_t wakeHandler(BaseChannel * chn) {
 CCM_FUNC uint8_t bootHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_BOOT, MS2ST(50));
-  chThdSleepMilliseconds(100);
+  chThdSleepMilliseconds(200);
 
-  usbStop(&USBD1);
   usbDisconnectBus(&USBD1);
-
-  chSysDisable();
+  usbStop(&USBD1);
 
   startUserApp();
+
   return 0;
 }
