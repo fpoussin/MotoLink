@@ -125,13 +125,13 @@ uint32_t eeFindCurrentPage(void)
         fileStreamSeek(tablesFS, addr);
 
         status = fileStreamRead(tablesFS, (uint8_t*)&magic, sizeof magic);
-        if (status != MSG_OK)
+        if (status != FILE_OK)
 		{
             continue;
 		}
 
         status = fileStreamRead(tablesFS, (uint8_t*)&counters[i], sizeof counters[0]);
-        if (status != MSG_OK)
+        if (status != FILE_OK)
         {
             counters[i] = 0;
             continue;
@@ -200,7 +200,7 @@ uint8_t eePushPage(uint32_t page, uint8_t *buffer, uint32_t len)
         return 1;
     }
 
-    if (fileStreamWrite(tablesFS, buffer, len) != MSG_OK)
+    if (fileStreamWrite(tablesFS, buffer, len) != FILE_OK)
     {
         fileStreamClose(tablesFS);
         return 2;
@@ -220,7 +220,7 @@ uint8_t eePullPage(uint32_t page, uint8_t *buffer, uint32_t len)
         return 1;
     }
 
-    if (fileStreamRead(tablesFS, buffer, len) != MSG_OK)
+    if (fileStreamRead(tablesFS, buffer, len) != FILE_OK)
     {
         fileStreamClose(tablesFS);
         return 2;
@@ -261,8 +261,8 @@ void writeTablesToEE(void)
 
     tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
-    //eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
-    eePushPage(4096, (uint8_t*)&tables_buf, sizeof tables_buf);
+    eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    //eePushPage(4096, (uint8_t*)&tables_buf, sizeof tables_buf);
 }
 
 void readSettingsFromEE()
@@ -270,13 +270,13 @@ void readSettingsFromEE()
     uint32_t crc1, crc2 = 0;
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    if (fileStreamSeek(settingsFS, 1024) != 1024)
+    if (fileStreamSeek(settingsFS, 0) != 0)
     {
         fileStreamClose(settingsFS);
         return;
     }
-
-    if (fileStreamRead(settingsFS, (uint8_t*)&settings_buf, sizeof settings_buf) != MSG_OK)
+/*  TODO: Fix (hardfault)*/
+    if (fileStreamRead(settingsFS, (uint8_t*)&settings_buf, sizeof settings_buf) != FILE_OK)
     {
         fileStreamClose(settingsFS);
         return;
@@ -302,13 +302,13 @@ void writeSettingsToEE()
 
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    if (fileStreamSeek(settingsFS, 1024) != 1024)
+    if (fileStreamSeek(settingsFS, 0) != 0)
     {
         fileStreamClose(settingsFS);
         return;
     }
 
-    if (fileStreamWrite(settingsFS, (uint8_t*)&settings_buf, sizeof settings_buf) != MSG_OK)
+    if (fileStreamWrite(settingsFS, (uint8_t*)&settings_buf, sizeof settings_buf) != FILE_OK)
     {
         fileStreamClose(settingsFS);
         return;

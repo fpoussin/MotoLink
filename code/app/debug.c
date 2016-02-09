@@ -1,57 +1,82 @@
 #include "ch.h"
 
-void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress )
-{
-  /* These are volatile to try and prevent the compiler/linker optimising them
-  away as the variables never actually get used.  If the debugger won't show the
-  values of the variables, make them global my moving their declaration outside
-  of this function. */
-  volatile uint32_t r0;
-  volatile uint32_t r1;
-  volatile uint32_t r2;
-  volatile uint32_t r3;
-  volatile uint32_t r12;
-  volatile uint32_t lr; /* Link register. */
-  volatile uint32_t pc; /* Program counter. */
-  volatile uint32_t psr;/* Program status register. */
-
-  r0 = pulFaultStackAddress[ 0 ];
-  r1 = pulFaultStackAddress[ 1 ];
-  r2 = pulFaultStackAddress[ 2 ];
-  r3 = pulFaultStackAddress[ 3 ];
-
-  r12 = pulFaultStackAddress[ 4 ];
-  lr = pulFaultStackAddress[ 5 ];
-  pc = pulFaultStackAddress[ 6 ];
-  psr = pulFaultStackAddress[ 7 ];
-
-  /* When the following line is hit, the variables contain the register values. */
-  for( ;; );
-}
-
-void HardFaultVector0(void)
-{
-  __asm volatile
-  (
-      " tst lr, #4                                                \n"
-      " ite eq                                                    \n"
-      " mrseq r0, msp                                             \n"
-      " mrsne r0, psp                                             \n"
-      " ldr r1, [r0, #24]                                         \n"
-      " ldr r2, handler2_address_const                            \n"
-      " bx r2                                                     \n"
-      " handler2_address_const: .word prvGetRegistersFromStack    \n"
-  );
-  while(1) {};
-}
+#define FLT_HARD  1
+#define FLT_USAGE 2
+#define FLT_ZERODIV 3
+#define FLT_UNALIGNED 4
+#define FLT_BUS 5
+#define FLT_MEM 6
+#define FLT_UNDEFINSTR 7
+#define FLT_INVSTATE 8
+#define FLT_INVPC 9
+#define FLT_NOCP 10
 
 void **HARDFAULT_PSP;
 register void *stack_pointer asm("sp");
+static volatile uint8_t fault = 0;
+static volatile uint8_t reason = 0;
 
 void HardFault_Handler(void)
 {
-    // Hijack the process stack pointer to make backtrace work
-    asm("mrs %0, psp" : "=r"(HARDFAULT_PSP) : :);
-    stack_pointer = HARDFAULT_PSP;
-    while(1);
+   volatile uint32_t hfsr = SCB->HFSR;
+   volatile uint32_t cfsr = SCB->CFSR;
+
+   // Hijack the process stack pointer to make backtrace work
+   //asm("mrs %0, psp" : "=r"(HARDFAULT_PSP) : :);
+   //stack_pointer = HARDFAULT_PSP;
+
+   if (hfsr & SCB_HFSR_FORCED_Msk)
+   {
+       fault = FLT_HARD;
+   }
+
+   if((cfsr & SCB_CFSR_USGFAULTSR_Msk) != 0)
+   {
+       fault = FLT_USAGE;
+
+       if(((cfsr >> 16) & (1 << 9)) != 0)
+       {
+           reason = FLT_ZERODIV;
+       }
+
+       else if(((cfsr >> 16) & (1 << 8)) != 0)
+       {
+           reason = FLT_UNALIGNED;
+       }
+
+       else if(((cfsr >> 16) & (1 << 3)) != 0)
+       {
+           reason = FLT_NOCP;
+       }
+
+       else if(((cfsr >> 16) & (1 << 2)) != 0)
+       {
+           reason = FLT_INVPC;
+       }
+
+       else if(((cfsr >> 16) & (1 << 1)) != 0)
+       {
+           reason = FLT_INVSTATE;
+       }
+
+       else if(((cfsr >> 16) & (1 << 0)) != 0)
+       {
+           reason = FLT_UNDEFINSTR;
+       }
+
+   }
+
+   else if((cfsr & SCB_CFSR_BUSFAULTSR_Msk) != 0)
+   {
+       fault = FLT_BUS;
+   }
+
+   else if((cfsr & SCB_CFSR_MEMFAULTSR_Msk) != 0)
+   {
+      fault = FLT_MEM;
+   }
+
+   __ASM volatile("BKPT #01");
+   while(1);
 }
+

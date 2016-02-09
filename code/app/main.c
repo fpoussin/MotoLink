@@ -479,8 +479,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
    return;
 }
 
-
-THD_WORKING_AREA(waThreadRecord, 1024);
+THD_WORKING_AREA(waThreadRecord, 4096);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
@@ -488,8 +487,8 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
     uint16_t duty = 0;
 
     /* Load tables from EE first */
-    //readTablesFromEE();
-    //readSettingsFromEE();
+    readTablesFromEE();
+    readSettingsFromEE();
 
     while (true)
     {
@@ -586,14 +585,14 @@ int main(void)
   /*
    * Creates the threads.
    */
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+1, ThreadBDU, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+5, ThreadBDU, NULL);
   chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+2, ThreadSDU, NULL);
   chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC, NULL);
   chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
   chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
   chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
-  chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+3, ThreadButton, NULL);
-  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+3, ThreadRecord, NULL);
+  chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+1, ThreadButton, NULL);
+  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO, ThreadRecord, NULL);
   chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
 
   /* Create last as it uses pointers from above */

@@ -5,8 +5,8 @@
 
 #define PUT_TIMEOUT MS2ST(25)
 
-/* TODO: make settings load/save (eeprom) function */
 static uint8_t input_buf[DATA_BUF_SIZE];
+static const char* sys_name = "System";
 
 CCM_FUNC uint8_t readCommand(BaseChannel *chn)
 {
@@ -148,13 +148,15 @@ uint8_t sendMonitoring(BaseChannel * chn) {
     thread_t *tp = chRegFirstThread();
     uint8_t name_len = 0;
     do {
-        if (tp->p_name != NULL)
+        if (tp->p_name == NULL)
         {
-            name_len = strlen(tp->p_name);
-            chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
-            chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
-            chnWriteTimeout(chn, (uint8_t*)tp->p_name, name_len, PUT_TIMEOUT); // Send the thread name
+            tp->p_name = sys_name;
         }
+        name_len = strlen(tp->p_name);
+        chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
+        chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
+        chnWriteTimeout(chn, (uint8_t*)tp->p_name, name_len, PUT_TIMEOUT); // Send the thread name
+
         tp = chRegNextThread(tp);
     } while (tp != NULL);
 

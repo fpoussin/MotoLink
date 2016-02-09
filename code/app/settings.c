@@ -10,6 +10,6 @@ settings_t settings = {
     3,
     800,
     2200,
-    0,
+    FUNC_RECORD,
     0
 };
