@@ -102,7 +102,7 @@ typedef struct {
   uint16_t AfrMinV;
   uint16_t AfrMaxV;
   uint16_t functions;
-  crc_t crc;
+  uint16_t padding1;
 } settings_t;
 
 #endif

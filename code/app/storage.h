@@ -10,7 +10,7 @@
 // EEPROM is M95640 (ST)
 #define EEPROM_SIZE 8192 // 64Kb, 8KB
 #define EEPROM_PAGE_SIZE 32
-#define EEPROM_WRITE_TIME_MS 10 // 5ms byte/page write in datasheet
+#define EEPROM_WRITE_TIME_MS 7 // 5ms byte/page write in datasheet
 #define EEPROM_SPID SPID2
 #define EEPROM_SPIDCONFIG spi2cfg
 #define EEPROM_SPLIT 1024
@@ -28,10 +28,10 @@ extern const SPIConfig EEPROM_SPIDCONFIG;
 /* Public functions */
 void eeInit(void);
 
-void readTablesFromEE(void);
-void writeTablesToEE(void);
+uint8_t readTablesFromEE(void);
+uint8_t writeTablesToEE(void);
 
-void readSettingsFromEE(void);
-void writeSettingsToEE(void);
+uint8_t readSettingsFromEE(void);
+uint8_t writeSettingsToEE(void);
 
 #endif

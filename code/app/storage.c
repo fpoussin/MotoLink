@@ -33,7 +33,7 @@ static SPIEepromFileStream settingsFile, tablesFile;
 static EepromFileStream *settingsFS, *tablesFS;
 
 static const uint32_t magic_key = 0xABEF1289;
-static tables_t tables_buf = {0xABEF1289, 0, {}, {}, 0};
+static tables_t tables_buf = {0xABEF1289, 0, {}, {}, 0x87654321};
 static settings_t settings_buf = {0};
 static uint32_t counters[(EEPROM_SIZE - EEPROM_TABLES_START) / EEPROM_TABLES_PAGE_SIZE];
 
@@ -59,7 +59,7 @@ static const CRCConfig crc32_config = {
   .end_cb = crc_callback
 };
 
-static uint32_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
+CCM_FUNC static crc_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
 {
   gCrc = 0;
 
@@ -68,7 +68,7 @@ static uint32_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
   crcReset(&CRCD1);
   crcStartCalc(&CRCD1, len, &data);
   while (gCrc == 0)
-      chThdSleepMilliseconds(1);                  /* Wait for callback to verify      */
+      chThdSleepMilliseconds(10);                  /* Wait for callback to verify      */
   crcStop(&CRCD1);                    /* Deactive CRC driver);            */
   crcReleaseUnit(&CRCD1);             /* Acquire ownership of the bus.    */
 
@@ -86,7 +86,7 @@ static const CRCConfig crc32_config = {
   .reflect_remainder = 1
 };
 
-static uint32_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
+CCM_FUNC static crc_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
 {
   uint32_t crc;
 
@@ -109,7 +109,7 @@ void eeInit(void) {
     //tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 }
 
-uint32_t eeFindCurrentPage(void)
+CCM_FUNC uint32_t eeFindCurrentPage(void)
 {
     uint32_t addr, magic, max_counter = 0;
     uint8_t i = 0;
@@ -156,7 +156,7 @@ uint32_t eeFindCurrentPage(void)
     return addr;
 }
 
-uint32_t eeFindNextPage(void)
+CCM_FUNC uint32_t eeFindNextPage(void)
 {
     uint32_t addr = eeFindCurrentPage();
 
@@ -173,7 +173,7 @@ uint32_t eeFindNextPage(void)
 	return addr;
 }
 
-uint32_t eeFindPrevPage(void)
+CCM_FUNC uint32_t eeFindPrevPage(void)
 {
     uint32_t addr = eeFindCurrentPage();
 
@@ -190,7 +190,7 @@ uint32_t eeFindPrevPage(void)
     return addr;
 }
 
-uint8_t eePushPage(int32_t page, uint8_t *buffer, uint32_t len)
+CCM_FUNC uint8_t eePushPage(int32_t page, uint8_t *buffer, uint32_t len)
 {
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
@@ -200,7 +200,7 @@ uint8_t eePushPage(int32_t page, uint8_t *buffer, uint32_t len)
         return 1;
     }
 
-    if (fileStreamWrite(tablesFS, buffer, len) != MSG_OK)
+    if (fileStreamWrite(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
         return 2;
@@ -210,7 +210,7 @@ uint8_t eePushPage(int32_t page, uint8_t *buffer, uint32_t len)
     return 0;
 }
 
-uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
+CCM_FUNC uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
 {
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
@@ -220,7 +220,7 @@ uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
         return 1;
     }
 
-    if (fileStreamRead(tablesFS, buffer, len) != MSG_OK)
+    if (fileStreamRead(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
         return 2;
@@ -230,11 +230,12 @@ uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
     return 0;
 }
 
-void readTablesFromEE(void)
+CCM_FUNC uint8_t readTablesFromEE(void)
 {
     uint32_t crc1, crc2 = 0;
     volatile size_t len =  sizeof tables_buf;
-    eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    if (eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf) != 0)
+        return 1;
 
     crc1 = tables_buf.crc;
     crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (len - sizeof tables_buf.crc));
@@ -242,19 +243,22 @@ void readTablesFromEE(void)
     if (crc1 != crc2)
     {
         // Try previous page
-
-        eePullPage(eeFindPrevPage(), (uint8_t*)&tables_buf, len);
+        return 2;
+        if (eePullPage(eeFindPrevPage(), (uint8_t*)&tables_buf, len) != 0)
+            return 2;
         crc1 = tables_buf.crc;
         crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (len - sizeof tables_buf.crc));
         if (crc1 != crc2)
-            return;
+            return 3;
     }
 
     memcpy(tables_buf.afr, tableAFR, sizeof tableAFR);
     memcpy(tables_buf.knock, tableKnock, sizeof tableKnock);
+
+    return 0;
 }
 
-void writeTablesToEE(void)
+CCM_FUNC uint8_t writeTablesToEE(void)
 {
     memcpy(tableAFR, tables_buf.afr, sizeof tableAFR);
     memcpy(tableKnock, tables_buf.knock, sizeof tableKnock);
@@ -262,12 +266,12 @@ void writeTablesToEE(void)
     tables_buf.magic = magic_key;
     tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
 
-   eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    return eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
 }
 
-void readSettingsFromEE()
+CCM_FUNC uint8_t readSettingsFromEE()
 {
-    uint32_t crc1, crc2 = 0;
+    crc_t crc1 = 0, crc2 = 0;
     const size_t len = sizeof settings;
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
@@ -275,36 +279,55 @@ void readSettingsFromEE()
     if (fileStreamRead(settingsFS, (uint8_t*)&settings_buf, len) != len)
     {
         fileStreamClose(settingsFS);
-        return;
+        return 1;
     }
 
-    crc1 = settings_buf.crc;
-    crc2 = getCrc(&crc32_config, (uint8_t*)&settings_buf, (len - sizeof settings_buf.crc));
+    // Fetch CRC from EE
+    if (fileStreamRead(settingsFS, (uint8_t*)&crc1, sizeof crc1) != sizeof crc1)
+    {
+        fileStreamClose(settingsFS);
+        return 2;
+    }
+
+    // Calculate CRC from EE data
+    crc2 = getCrc(&crc32_config, (uint8_t*)&settings_buf, len);
 
     if (crc1 != crc2)
     {
         fileStreamClose(settingsFS);
-        return;
+        return 3;
     }
 
     fileStreamClose(settingsFS);
     memcpy(&settings, &settings_buf, len);
+
+    return 0;
 }
 
-void writeSettingsToEE()
+CCM_FUNC uint8_t writeSettingsToEE()
 {
     const size_t len = sizeof settings;
-    memcpy(&settings_buf, &settings, len - sizeof settings_buf.crc);
-    settings_buf.crc = getCrc(&crc32_config, (uint8_t*)&settings_buf, (len - sizeof settings_buf.crc));
+    crc_t crc = 0;
+    memcpy(&settings_buf, &settings, len);
+    crc = getCrc(&crc32_config, (uint8_t*)&settings_buf, len);
 
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
     fileStreamSeek(settingsFS, 0);
+    // Copy data to EE
     if (fileStreamWrite(settingsFS, (uint8_t*)&settings_buf, len) != len)
     {
         fileStreamClose(settingsFS);
-        return;
+        return 1;
+    }
+
+    // Copy CRC to EE
+    if (fileStreamWrite(settingsFS, (uint8_t*)&crc, sizeof crc) != sizeof crc)
+    {
+        fileStreamClose(settingsFS);
+        return 2;
     }
 
     fileStreamClose(settingsFS);
+    return 0;
 }

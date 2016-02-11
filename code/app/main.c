@@ -375,7 +375,7 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
 /*
  * CPU Load Monitoring thread.
  */
-THD_WORKING_AREA(waThreadMonitor, 256);
+THD_WORKING_AREA(waThreadMonitor, 128);
 CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
@@ -468,10 +468,19 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
             /* Toggle Record mode */
             settings.functions ^= FUNC_RECORD;
             writeSettingsToEE();
+            readSettingsFromEE();
 
             while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
-                chThdSleepMilliseconds(10);
+                chThdSleepMilliseconds(100);
             };
+
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
         }
 
         chThdSleepMilliseconds(100);
@@ -485,21 +494,32 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
     (void)arg;
     chRegSetThreadName("Recording");
     uint16_t duty = 0;
+    uint8_t result = 0;
 
     /* Load tables from EE first */
     readTablesFromEE();
-    readSettingsFromEE();
+
+    if (readSettingsFromEE() != 0)
+    {
+        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+        writeSettingsToEE();
+        chThdSleepMilliseconds(3000);
+    }
 
     while (true)
     {
         if (settings.functions & FUNC_RECORD)
         {
-            if (duty == 0)
-                duty = 10000;
-            else duty = 0;
-
             /* Record tables */
-            writeTablesToEE();
+            result = writeTablesToEE();
+            if (result == 0)
+            {
+                duty = duty == 0 ? 10000 : 0;
+            }
+            else
+            {
+                duty = duty == 0 ? 1000 : 0;
+            }
         }
         else
         {

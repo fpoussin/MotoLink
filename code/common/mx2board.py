@@ -148,8 +148,22 @@ PIN_FUNC_MAPPING_DEFAULT = {
                 PIN_ODR_HIGH,
                 PIN_AFIO_AF.format("{0}", 14)),
 
-        "SPI[12]_": (PIN_MODE_ALTERNATE,
+        "SPI[12]_(MOSI|SCK)": (PIN_MODE_ALTERNATE,
                      PIN_OTYPE_PUSHPULL,
+                     PIN_OSPEED_100M,
+                     PIN_PUPDR_FLOATING,
+                     PIN_ODR_HIGH,
+                     PIN_AFIO_AF.format("{0}", 5)),
+
+        "SPI[12]_NSS": (PIN_MODE_OUTPUT,
+                     PIN_OTYPE_PUSHPULL,
+                     PIN_OSPEED_100M,
+                     PIN_PUPDR_FLOATING,
+                     PIN_ODR_HIGH,
+                     PIN_AFIO_AF.format("{0}", 0)),
+
+        "SPI[12]_MISO": (PIN_MODE_ALTERNATE,
+                     PIN_OTYPE_OPENDRAIN,
                      PIN_OSPEED_100M,
                      PIN_PUPDR_FLOATING,
                      PIN_ODR_HIGH,
@@ -349,7 +363,7 @@ for port_key in sorted(all_pads.keys()):
                         break
 
             if not match:
-                print "Missing Peripheral:", signal, "at", "P" + port + str(pad_key)
+                print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
                 error = True
                 break
         output = output[:-6]
@@ -382,7 +396,7 @@ for port_key in sorted(all_pads.keys()):
                     break
 
         if not match:
-            print "Missing Peripheral:", signal, "at", "P" + port + str(pad_key)
+            print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
             error = True
             break
 
@@ -417,7 +431,7 @@ for port_key in sorted(all_pads.keys()):
                     break
 
         if not match:
-            print "Missing Peripheral:", signal, "at", "P" + port + str(pad_key)
+            print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
             error = True
             break
 
