@@ -10,24 +10,26 @@
 #define FLT_INVSTATE 8
 #define FLT_INVPC 9
 #define FLT_NOCP 10
+#define FLT_BUS_VECTOR 11
 
 void **HARDFAULT_PSP;
 register void *stack_pointer asm("sp");
-static volatile uint8_t fault = 0;
-static volatile uint8_t reason = 0;
 
 void HardFault_Handler(void)
 {
    volatile uint32_t hfsr = SCB->HFSR;
    volatile uint32_t cfsr = SCB->CFSR;
-
-   // Hijack the process stack pointer to make backtrace work
-   //asm("mrs %0, psp" : "=r"(HARDFAULT_PSP) : :);
-   //stack_pointer = HARDFAULT_PSP;
+   volatile uint8_t fault = 0;
+   volatile uint8_t reason = 0;
 
    if (hfsr & SCB_HFSR_FORCED_Msk)
    {
        fault = FLT_HARD;
+   }
+
+   if (hfsr & SCB_HFSR_VECTTBL_Msk)
+   {
+       fault = FLT_BUS_VECTOR;
    }
 
    if((cfsr & SCB_CFSR_USGFAULTSR_Msk) != 0)
@@ -75,6 +77,12 @@ void HardFault_Handler(void)
    {
       fault = FLT_MEM;
    }
+
+   // Hijack the process stack pointer to make backtrace work
+   //asm("mrs %0, psp" : "=r"(HARDFAULT_PSP) : :);
+   //stack_pointer = HARDFAULT_PSP;
+
+    port_disable();
 
    __ASM volatile("BKPT #01");
    while(1);

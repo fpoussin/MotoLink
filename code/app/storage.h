@@ -7,14 +7,15 @@
 #include "tables.h"
 #include "settings.h"
 
-#define EEPROM_SIZE (64*1024)
+// EEPROM is M95640 (ST)
+#define EEPROM_SIZE 8192 // 64Kb, 8KB
 #define EEPROM_PAGE_SIZE 32
-#define EEPROM_WRITE_TIME_MS 10
+#define EEPROM_WRITE_TIME_MS 10 // 5ms byte/page write in datasheet
 #define EEPROM_SPID SPID2
 #define EEPROM_SPIDCONFIG spi2cfg
-#define EEPROM_SPLIT 4096
+#define EEPROM_SPLIT 1024
 #define EEPROM_TABLES_PAGE_SIZE 1024
-#define EEPROM_TABLES_START 4096
+#define EEPROM_TABLES_START 1024
 
 extern const SPIConfig EEPROM_SPIDCONFIG;
 

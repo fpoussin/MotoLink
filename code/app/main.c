@@ -479,7 +479,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
    return;
 }
 
-THD_WORKING_AREA(waThreadRecord, 4096);
+THD_WORKING_AREA(waThreadRecord, 256);
 CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
@@ -564,7 +564,6 @@ int main(void)
   timcapStart(&TIMCAPD3, &tc_conf);
   pwmStart(&PWMD_LED2, &pwmcfg);
 
-  spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
   eeInit();
 
   adcSTM32EnableTS(&ADCD1);

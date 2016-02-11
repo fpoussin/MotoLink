@@ -57,6 +57,8 @@
 #define FUNC_AFR_MTS (uint8_t)0x04
 #define FUNC_AFR_AN (uint8_t)0x08
 
+typedef uint32_t crc_t;
+
 typedef struct {
   uint8_t magic1;
   uint8_t magic2;
@@ -100,7 +102,7 @@ typedef struct {
   uint16_t AfrMinV;
   uint16_t AfrMaxV;
   uint16_t functions;
-  uint32_t crc;
+  crc_t crc;
 } settings_t;
 
 #endif

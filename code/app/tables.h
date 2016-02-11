@@ -26,7 +26,7 @@ typedef struct {
   uint32_t cnt;
   cell_table_t afr;
   cell_table_t knock;
-  uint32_t crc;
+  crc_t crc;
 } tables_t;
 
 void writeRows(uint8_t* rows, uint8_t size);
