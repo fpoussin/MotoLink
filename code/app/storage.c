@@ -10,8 +10,8 @@ const SPIConfig EEPROM_SPIDCONFIG = {
 };
 
 static SPIEepromFileConfig eeSettingsCfg = {
-  0,
-  EEPROM_SPLIT-1,
+  EEPROM_SETTINGS_START,
+  EEPROM_SETTINGS_END,
   EEPROM_SIZE,
   EEPROM_PAGE_SIZE,
   MS2ST(EEPROM_WRITE_TIME_MS),
@@ -20,7 +20,7 @@ static SPIEepromFileConfig eeSettingsCfg = {
 };
 
 static SPIEepromFileConfig eeTablesCfg = {
-  EEPROM_SPLIT,
+  EEPROM_TABLES_START,
   EEPROM_SIZE,
   EEPROM_SIZE,
   EEPROM_PAGE_SIZE,
@@ -33,9 +33,9 @@ static SPIEepromFileStream settingsFile, tablesFile;
 static EepromFileStream *settingsFS, *tablesFS;
 
 static const uint32_t magic_key = 0xABEF1289;
-static tables_t tables_buf = {0xABEF1289, 0, {}, {}, 0x87654321};
+static tables_t tables_buf = {0xABEF1289, 0, {}, {}};
 static settings_t settings_buf = {0};
-static uint32_t counters[(EEPROM_SIZE - EEPROM_TABLES_START) / EEPROM_TABLES_PAGE_SIZE];
+static uint32_t counters[EEPROM_TABLES_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
 #define openSettingsFS SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX)
 #define openTablesFS SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX))
@@ -102,36 +102,33 @@ CCM_FUNC static crc_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t le
 
 #endif
 
-void eeInit(void) {
-
+void eeInit(void)
+{
     spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
-    //settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
-    //tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 }
 
-CCM_FUNC uint32_t eeFindCurrentPage(void)
+CCM_FUNC uint32_t eeFindCurrentPageAddr(void)
 {
     uint32_t addr, magic, max_counter = 0;
     uint8_t i = 0;
-    const uint32_t from = EEPROM_TABLES_START;
-    const uint32_t to = from+EEPROM_SIZE;
+    const uint32_t from = EEPROM_TABLES_FIRST;
+    const uint32_t to = from+EEPROM_TABLES_SIZE;
     msg_t status;
 
-    // TODO: Fix
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    for (addr=from; addr <= to; addr += EEPROM_TABLES_PAGE_SIZE)
+    for (addr=from; addr < to; addr += EEPROM_TABLES_PAGE_SIZE)
 	{
         fileStreamSeek(tablesFS, addr);
 
         status = fileStreamRead(tablesFS, (uint8_t*)&magic, sizeof magic);
-        if (status != MSG_OK)
+        if (status != sizeof magic || magic != magic_key)
 		{
             continue;
 		}
 
         status = fileStreamRead(tablesFS, (uint8_t*)&counters[i], sizeof counters[0]);
-        if (status != MSG_OK)
+        if (status != sizeof counters[0])
         {
             counters[i] = 0;
             continue;
@@ -141,7 +138,7 @@ CCM_FUNC uint32_t eeFindCurrentPage(void)
 	}
 
     // Find highest counter
-    addr = EEPROM_TABLES_START;
+    addr = from;
     for (i = 0; i < (sizeof counters / sizeof counters[0]); i++)
     {
         if (counters[i] > max_counter)
@@ -156,14 +153,14 @@ CCM_FUNC uint32_t eeFindCurrentPage(void)
     return addr;
 }
 
-CCM_FUNC uint32_t eeFindNextPage(void)
+CCM_FUNC uint32_t eeFindNextPageAddr(void)
 {
-    uint32_t addr = eeFindCurrentPage();
+    uint32_t addr = eeFindCurrentPageAddr();
 
 	/* Check if at last page */
-    if(addr >= EEPROM_SIZE - EEPROM_TABLES_PAGE_SIZE)
+    if(addr >= EEPROM_TABLES_LAST)
 	{
-        addr = EEPROM_TABLES_START;
+        addr = EEPROM_TABLES_FIRST;
 	}
     else
     {
@@ -173,14 +170,14 @@ CCM_FUNC uint32_t eeFindNextPage(void)
 	return addr;
 }
 
-CCM_FUNC uint32_t eeFindPrevPage(void)
+CCM_FUNC uint32_t eeFindPrevPageAddr(void)
 {
-    uint32_t addr = eeFindCurrentPage();
+    uint32_t addr = eeFindCurrentPageAddr();
 
     /* Check if at first page */
-    if(addr == EEPROM_TABLES_START)
+    if(addr == EEPROM_TABLES_FIRST)
     {
-        addr = EEPROM_SIZE - EEPROM_TABLES_PAGE_SIZE;
+        addr = EEPROM_TABLES_LAST;
     }
     else
     {
@@ -190,40 +187,55 @@ CCM_FUNC uint32_t eeFindPrevPage(void)
     return addr;
 }
 
-CCM_FUNC uint8_t eePushPage(int32_t page, uint8_t *buffer, uint32_t len)
+CCM_FUNC uint8_t eePushPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t len)
 {
-    tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
-
-    if (fileStreamSeek(tablesFS, page) != page)
-    {
-        fileStreamClose(tablesFS);
+    // Check max length
+    if (len > EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t))
         return 1;
-    }
 
+    tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
+    *crc = getCrc(&crc32_config, buffer, len);
+
+    fileStreamSeek(tablesFS, addr);
     if (fileStreamWrite(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
         return 2;
     }
 
+    // CRC at the end of the page
+    fileStreamSeek(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
+    if (fileStreamWrite(tablesFS, (uint8_t*)crc, sizeof(crc_t)) != sizeof(crc_t))
+    {
+        fileStreamClose(tablesFS);
+        return 3;
+    }
+
     fileStreamClose(tablesFS);
     return 0;
 }
 
-CCM_FUNC uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
+CCM_FUNC uint8_t eePullPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t len)
 {
+    // Check max length
+    if (len > EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t))
+        return 1;
+
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    if (fileStreamSeek(tablesFS, page) != page)
-    {
-        fileStreamClose(tablesFS);
-        return 1;
-    }
-
+    fileStreamSeek(tablesFS, addr);
     if (fileStreamRead(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
         return 2;
+    }
+
+    // CRC at the end of the page
+    fileStreamSeek(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
+    if (fileStreamRead(tablesFS, (uint8_t*)crc, sizeof(crc_t)) != sizeof(crc_t))
+    {
+        fileStreamClose(tablesFS);
+        return 4;
     }
 
     fileStreamClose(tablesFS);
@@ -232,22 +244,20 @@ CCM_FUNC uint8_t eePullPage(int32_t page, uint8_t *buffer, uint32_t len)
 
 CCM_FUNC uint8_t readTablesFromEE(void)
 {
-    uint32_t crc1, crc2 = 0;
-    volatile size_t len =  sizeof tables_buf;
-    if (eePullPage(eeFindCurrentPage(), (uint8_t*)&tables_buf, sizeof tables_buf) != 0)
+    crc_t crc1, crc2 = 0;
+    size_t len = sizeof(tables_buf);
+
+    if (eePullPage(eeFindCurrentPageAddr(), (uint8_t*)&tables_buf, &crc1, len) != 0)
         return 1;
 
-    crc1 = tables_buf.crc;
-    crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (len - sizeof tables_buf.crc));
+    crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, len);
 
     if (crc1 != crc2)
     {
         // Try previous page
-        return 2;
-        if (eePullPage(eeFindPrevPage(), (uint8_t*)&tables_buf, len) != 0)
+        if (eePullPage(eeFindPrevPageAddr(), (uint8_t*)&tables_buf, &crc1, len) != 0)
             return 2;
-        crc1 = tables_buf.crc;
-        crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, (len - sizeof tables_buf.crc));
+        crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, len);
         if (crc1 != crc2)
             return 3;
     }
@@ -260,13 +270,23 @@ CCM_FUNC uint8_t readTablesFromEE(void)
 
 CCM_FUNC uint8_t writeTablesToEE(void)
 {
+    crc_t crc1 = 0, crc2 = 0;
+    uint8_t res1, res2;
+    size_t len =  sizeof(tables_buf);
     memcpy(tableAFR, tables_buf.afr, sizeof tableAFR);
     memcpy(tableKnock, tables_buf.knock, sizeof tableKnock);
 
     tables_buf.magic = magic_key;
-    tables_buf.crc = getCrc(&crc32_config, (uint8_t*)&tables_buf, (sizeof tables_buf - sizeof tables_buf.crc));
+    tables_buf.cnt++;
 
-    return eePushPage(eeFindNextPage(), (uint8_t*)&tables_buf, sizeof tables_buf);
+    res1 = eePushPage(eeFindNextPageAddr(), (uint8_t*)&tables_buf, &crc1, len);
+    res2 = eePullPage(eeFindCurrentPageAddr(), (uint8_t*)&tables_buf, &crc2, len);
+
+    // return 0 if write, read and crc comparison are successful
+    if (res1 == 0 && res2 == 0 && crc1 == crc2)
+        return 0;
+
+    return 1;
 }
 
 CCM_FUNC uint8_t readSettingsFromEE()

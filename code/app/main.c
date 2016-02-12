@@ -470,17 +470,17 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
             writeSettingsToEE();
             readSettingsFromEE();
 
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(200);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+
             while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
                 chThdSleepMilliseconds(100);
             };
-
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
         }
 
         chThdSleepMilliseconds(100);
