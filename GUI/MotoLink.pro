@@ -14,7 +14,7 @@ TARGET = MotoLink
 TEMPLATE = app
 #win32:CONFIG += console
 
-VERSION = 0.2
+VERSION = 0.0.3
 message(Version $$VERSION)
 
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
@@ -81,7 +81,7 @@ TRANSLATIONS = res/motolink_fr.ts
 CODECFORTR = UTF-8
 
 buildscripts.target = .buildscripts
-buildscripts.commands = cd $$_PRO_FILE_PWD_/res && python makefw.py -v 0.1
+buildscripts.commands = cd $$_PRO_FILE_PWD_/res && python makefw.py -v $$VERSION
 
 QMAKE_EXTRA_TARGETS += buildscripts
 PRE_TARGETDEPS += .buildscripts
