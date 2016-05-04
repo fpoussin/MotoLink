@@ -185,13 +185,15 @@ uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_SET_SETTINGS, PUT_TIMEOUT);
     return 1;
   }
-  settings_t* settings_buf = (settings_t*)buf;
 
-  memcpy(&settings, settings_buf, sizeof(settings));
-  writeSettingsToEE();
-
-  chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_SETTINGS, PUT_TIMEOUT);
-  return 0;
+  memcpy(&settings, (settings_t*)buf, sizeof(settings_t));
+  if (writeSettingsToEE() == 0)
+  {
+      chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_SETTINGS, PUT_TIMEOUT);
+      return 0;
+  }
+  chnPutTimeout(chn, MASK_CMD_ERR | CMD_SET_SETTINGS, PUT_TIMEOUT);
+  return 1;
 }
 
 uint8_t readSettings(BaseChannel * chn)
