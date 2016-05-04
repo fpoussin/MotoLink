@@ -52,13 +52,23 @@ public:
     ~Motolink();
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
-    bool isConnected(void) { return mConnected; }
-    const sensors_data_t * getSensors(void) { return &mSensors; }
-    const TaskList * getMonitoring(void) { return &mMonitoring; }
-    const settings_t * getSettings(void) { return &mSettings; }
-    const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
-    const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
-    const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
+    inline bool isConnected(void) { return mConnected; }
+    inline const sensors_data_t * getSensors(void) { return &mSensors; }
+    inline const TaskList * getMonitoring(void) { return &mMonitoring; }
+    inline const settings_t * getSettings(void) { return &mSettings; }
+    inline const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
+    inline const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
+    inline const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
+
+    inline quint16 getKnockFreq(void) { return mSettings.knockFreq ;}
+    inline quint16 getKnockRatio(void) { return mSettings.knockRatio ;}
+    inline float getTPSMinV(void) { return mSettings.tpsMinV/1000.0 ;}
+    inline float getTPSMaxV(void) { return mSettings.tpsMaxV/1000.0 ;}
+    inline float getFuelMinTh(void) { return mSettings.fuelMinTh/1000.0 ;}
+
+    inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
+    inline void setTPSMaxV(float v) { mSettings.tpsMaxV = v * 1000.0 ;}
+
 
 public slots:
     bool usbConnect(void);

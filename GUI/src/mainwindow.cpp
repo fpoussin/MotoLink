@@ -772,6 +772,8 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
         table->setItem(i, 0, nameItem);
         table->setItem(i, 1, cpuItem);
     }
+
+    //table->sortItems(1, Qt::DescendingOrder);
 }
 
 void MainWindow::onKnockSpectrumReceived(const QByteArray *data)
@@ -931,8 +933,8 @@ void MainWindow::onReadMtlSettings()
 
 void MainWindow::onWriteMtlSettings()
 {
-    // Pack settings
-    settings_t s;
+    mMtl->setTPSMinV(mMainUi->tableSensorTPS->item(0, 0)->data(Qt::DisplayRole).toFloat());
+    mMtl->setTPSMaxV(mMainUi->tableSensorTPS->item(1, 0)->data(Qt::DisplayRole).toFloat());
 
     if (mMtl->writeSettings())
     {
