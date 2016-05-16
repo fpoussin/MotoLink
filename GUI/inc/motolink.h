@@ -55,20 +55,29 @@ public:
     inline bool isConnected(void) { return mConnected; }
     inline const sensors_data_t * getSensors(void) { return &mSensors; }
     inline const TaskList * getMonitoring(void) { return &mMonitoring; }
-    inline const settings_t * getSettings(void) { return &mSettings; }
     inline const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
     inline const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
     inline const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
 
     inline quint16 getKnockFreq(void) { return mSettings.knockFreq ;}
     inline quint16 getKnockRatio(void) { return mSettings.knockRatio ;}
-    inline float getTPSMinV(void) { return mSettings.tpsMinV/1000.0 ;}
-    inline float getTPSMaxV(void) { return mSettings.tpsMaxV/1000.0 ;}
-    inline float getFuelMinTh(void) { return mSettings.fuelMinTh/1000.0 ;}
+    inline float getTPSMinV(void) { return mSettings.tpsMinV / 1000.0 ;}
+    inline float getTPSMaxV(void) { return mSettings.tpsMaxV / 1000.0 ;}
+    inline float getFuelMinTh(void) { return mSettings.fuelMinTh / 1000.0 ;}
+    inline bool getFunctionAFR_Disabled(void) { return mSettings.functions & FUNC_AFR_DISA ;}
+    inline bool getFunctionAFR_Analog(void) { return mSettings.functions & FUNC_AFR_AN ;}
+    inline bool getFunctionAFR_MTS(void) { return mSettings.functions & FUNC_AFR_MTS ;}
+    inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
 
-    inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
-    inline void setTPSMaxV(float v) { mSettings.tpsMaxV = v * 1000.0 ;}
-
+    inline void setTPSMinV(float v) { mSettings.tpsMinV = (float)v * 1000.0 ;}
+    inline void setTPSMaxV(float v) { mSettings.tpsMaxV = (float)v * 1000.0 ;}
+    inline void setFunctionAFR_Disabled(void) { mSettings.functions &= ~(FUNC_AFR_AN |FUNC_AFR_MTS);
+                                                mSettings.functions |= FUNC_AFR_DISA ;}
+    inline void setFunctionAFR_Analog(void) {   mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_MTS);
+                                                mSettings.functions |= FUNC_AFR_AN ;}
+    inline void setFunctionAFR_MTS(void) {      mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_AN);
+                                                mSettings.functions |= FUNC_AFR_MTS ;}
+    inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD; else mSettings.functions &= ~FUNC_RECORD ;}
 
 public slots:
     bool usbConnect(void);

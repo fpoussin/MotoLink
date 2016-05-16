@@ -212,6 +212,7 @@ void MainWindow::connectMtl()
         mSlowPollingTimer.start();
         mTablesTimer.start();
         mRedrawTimer.start();
+        onReadMtlSettings();
         mMainUi->statusBar->showMessage("Connected");
     }
     else {
@@ -914,16 +915,17 @@ void MainWindow::onReadMtlSettings()
     if (mMtl->readSettings())
     {
         // Unpack settings
-        const settings_t *s = mMtl->getSettings();
-        mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::DisplayRole, (float)s->AfrMinV/1000.0);
-        mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::DisplayRole, (float)s->AfrMaxV/1000.0);
+        mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::DisplayRole, mMtl->getTPSMinV());
+        mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::DisplayRole, mMtl->getTPSMaxV());
 
-        if (s->functions & FUNC_AFR_DISA)
+        if (mMtl->getFunctionAFR_Disabled())
             mMainUi->cbAFRInput->setCurrentIndex(0);
-        else if (s->functions & FUNC_AFR_AN)
+        else if (mMtl->getFunctionAFR_Analog())
             mMainUi->cbAFRInput->setCurrentIndex(1);
-        else if (s->functions & FUNC_AFR_MTS)
+        else if (mMtl->getFunctionAFR_MTS())
             mMainUi->cbAFRInput->setCurrentIndex(2);
+
+        mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
 
         this->writeLogs("Read settings OK");
     }
@@ -935,6 +937,27 @@ void MainWindow::onWriteMtlSettings()
 {
     mMtl->setTPSMinV(mMainUi->tableSensorTPS->item(0, 0)->data(Qt::DisplayRole).toFloat());
     mMtl->setTPSMaxV(mMainUi->tableSensorTPS->item(1, 0)->data(Qt::DisplayRole).toFloat());
+
+    switch (mMainUi->cbAFRInput->currentIndex())
+    {
+        case 0:
+        mMtl->setFunctionAFR_Disabled();
+        break;
+
+        case 1:
+        mMtl->setFunctionAFR_Analog();
+        break;
+
+        case 2:
+        mMtl->setFunctionAFR_MTS();
+        break;
+
+        default:
+        mMtl->setFunctionAFR_Disabled();
+        break;
+    }
+
+    mMtl->setFunctionRecord(mMainUi->cbRecording->isChecked());
 
     if (mMtl->writeSettings())
     {
