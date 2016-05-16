@@ -1651,6 +1651,13 @@
                 </property>
                </widget>
               </item>
+              <item row="9" column="0" alignment="Qt::AlignHCenter">
+               <widget class="QCheckBox" name="cbRecording">
+                <property name="text">
+                 <string>Recording</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -2554,8 +2561,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/images/images.qrc"/>
   <include location="../res/oxygen.qrc"/>
+  <include location="../res/images/images.qrc"/>
  </resources>
  <connections/>
 </ui>
