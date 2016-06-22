@@ -645,9 +645,9 @@ void MainWindow::exportToMTLFile()
     mFile.addProperty("AFRInput", mMainUi->cbAFRInput->currentIndex());
 
     mFile.addProperty("TPS0",
-                      mMainUi->tableSensorTPS->item(0, 0)->data(Qt::EditRole));
+                      mMainUi->dsbTPS0->value());
     mFile.addProperty("TPS100",
-                      mMainUi->tableSensorTPS->item(1, 0)->data(Qt::EditRole));
+                      mMainUi->dsbTPS100->value());
 
     mFile.addProperty("AFR0V",
                       mMainUi->tableSensorAFR->item(0, 0)->data(Qt::EditRole));
@@ -670,9 +670,9 @@ void MainWindow::importFromMTLFile()
     mMainUi->cbAFRInput->setCurrentIndex(prop.toInt());
 
     mFile.getProperty("TPS0", &prop);
-    mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, prop);
+    mMainUi->dsbTPS0->setValue(prop.toFloat());
     mFile.getProperty("TPS100", &prop);
-    mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, prop);
+    mMainUi->dsbTPS100->setValue(prop.toFloat());
 
     mFile.getProperty("AFR0V", &prop);
     mMainUi->tableSensorAFR->item(0, 0)->setData(Qt::EditRole, prop);
@@ -826,13 +826,13 @@ void MainWindow::onSerialDataReceived(const QByteArray *data)
 void MainWindow::onSetTps0Pct(void)
 {
     float tps = mMtl->getSensors()->vAn8;
-    mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
+    mMainUi->dsbTPS0->setValue(tps);
 }
 
 void MainWindow::onSetTps100Pct(void)
 {
     float tps = mMtl->getSensors()->vAn8;
-    mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::EditRole, QString::number(tps, 'f', 3));
+    mMainUi->dsbTPS100->setValue(tps);
 }
 
 void MainWindow::onDataChanged()
@@ -915,8 +915,8 @@ void MainWindow::onReadMtlSettings()
     if (mMtl->readSettings())
     {
         // Unpack settings
-        mMainUi->tableSensorTPS->item(0, 0)->setData(Qt::DisplayRole, mMtl->getTPSMinV());
-        mMainUi->tableSensorTPS->item(1, 0)->setData(Qt::DisplayRole, mMtl->getTPSMaxV());
+        mMainUi->dsbTPS0->setValue(mMtl->getTPSMinV());
+        mMainUi->dsbTPS100->setValue(mMtl->getTPSMaxV());
 
         if (mMtl->getFunctionAFR_Disabled())
             mMainUi->cbAFRInput->setCurrentIndex(0);
@@ -935,8 +935,8 @@ void MainWindow::onReadMtlSettings()
 
 void MainWindow::onWriteMtlSettings()
 {
-    mMtl->setTPSMinV(mMainUi->tableSensorTPS->item(0, 0)->data(Qt::DisplayRole).toFloat());
-    mMtl->setTPSMaxV(mMainUi->tableSensorTPS->item(1, 0)->data(Qt::DisplayRole).toFloat());
+    mMtl->setTPSMinV(mMainUi->dsbTPS0->value());
+    mMtl->setTPSMaxV(mMainUi->dsbTPS100->value());
 
     switch (mMainUi->cbAFRInput->currentIndex())
     {

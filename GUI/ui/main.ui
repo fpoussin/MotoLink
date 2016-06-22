@@ -615,19 +615,6 @@
          <number>4</number>
         </property>
         <item row="0" column="1">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="2">
          <widget class="QGroupBox" name="groupBox_5">
           <property name="font">
            <font>
@@ -969,13 +956,13 @@
             <widget class="QGroupBox" name="groupBox_2">
              <property name="minimumSize">
               <size>
-               <width>240</width>
+               <width>0</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>300</width>
+               <width>320</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1236,11 +1223,24 @@
                 </layout>
                </widget>
               </item>
+              <item row="5" column="0">
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="0" column="0">
                <widget class="QFrame" name="frame_13">
                 <property name="minimumSize">
                  <size>
-                  <width>140</width>
+                  <width>160</width>
                   <height>0</height>
                  </size>
                 </property>
@@ -1272,7 +1272,65 @@
                  <property name="spacing">
                   <number>4</number>
                  </property>
-                 <item row="0" column="0">
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="dsbTPS100">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximum">
+                    <double>5.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>4.500000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QDoubleSpinBox" name="dsbTPS0">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximum">
+                    <double>5.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>0.500000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="lTPS100">
+                   <property name="text">
+                    <string>100%</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="lTPS0">
+                   <property name="text">
+                    <string>0%</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
                   <widget class="QLabel" name="ltTPS">
                    <property name="font">
                     <font>
@@ -1288,116 +1346,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QTableWidget" name="tableSensorTPS">
-                   <property name="minimumSize">
-                    <size>
-                     <width>90</width>
-                     <height>78</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>90</width>
-                     <height>78</height>
-                    </size>
-                   </property>
-                   <property name="verticalScrollBarPolicy">
-                    <enum>Qt::ScrollBarAlwaysOff</enum>
-                   </property>
-                   <property name="horizontalScrollBarPolicy">
-                    <enum>Qt::ScrollBarAlwaysOff</enum>
-                   </property>
-                   <attribute name="horizontalHeaderDefaultSectionSize">
-                    <number>60</number>
-                   </attribute>
-                   <attribute name="horizontalHeaderMinimumSectionSize">
-                    <number>20</number>
-                   </attribute>
-                   <attribute name="horizontalHeaderStretchLastSection">
-                    <bool>true</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderDefaultSectionSize">
-                    <number>25</number>
-                   </attribute>
-                   <attribute name="verticalHeaderMinimumSectionSize">
-                    <number>30</number>
-                   </attribute>
-                   <attribute name="verticalHeaderStretchLastSection">
-                    <bool>true</bool>
-                   </attribute>
-                   <row>
-                    <property name="text">
-                     <string notr="true">0%</string>
-                    </property>
-                   </row>
-                   <row>
-                    <property name="text">
-                     <string notr="true">100%</string>
-                    </property>
-                   </row>
-                   <column>
-                    <property name="text">
-                     <string>Voltage</string>
-                    </property>
-                   </column>
-                   <item row="0" column="0">
-                    <property name="text">
-                     <string notr="true">0.5</string>
-                    </property>
-                    <property name="textAlignment">
-                     <set>AlignCenter</set>
-                    </property>
-                    <property name="flags">
-                     <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
-                    </property>
-                   </item>
-                   <item row="1" column="0">
-                    <property name="text">
-                     <string notr="true">4.5</string>
-                    </property>
-                    <property name="textAlignment">
-                     <set>AlignCenter</set>
-                    </property>
-                    <property name="flags">
-                     <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QPushButton" name="bTpsSet0">
-                   <property name="maximumSize">
-                    <size>
-                     <width>110</width>
-                     <height>30</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <weight>50</weight>
-                     <bold>false</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Set 0%</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QPushButton" name="bTpsSet100">
-                   <property name="font">
-                    <font>
-                     <weight>50</weight>
-                     <bold>false</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Set 100%</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0">
+                 <item row="5" column="1">
                   <spacer name="verticalSpacer_9">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -1410,21 +1359,34 @@
                    </property>
                   </spacer>
                  </item>
+                 <item row="1" column="2">
+                  <widget class="QPushButton" name="bTpsSet0">
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Set</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="2">
+                  <widget class="QPushButton" name="bTpsSet100">
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Set</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
-              </item>
-              <item row="5" column="0">
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </widget>
@@ -1755,6 +1717,12 @@
            <size>
             <width>140</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>140</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="font">
@@ -2121,7 +2089,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>21</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
@@ -2130,7 +2098,7 @@
     </property>
     <widget class="QMenu" name="menuRecent_files">
      <property name="title">
-      <string>Recent files</string>
+      <string>&amp;Recent files</string>
      </property>
      <property name="icon">
       <iconset resource="../res/oxygen.qrc">
@@ -2158,7 +2126,7 @@
    </widget>
    <widget class="QMenu" name="menuConnection">
     <property name="title">
-     <string>MotoLink</string>
+     <string>&amp;MotoLink</string>
     </property>
     <addaction name="actionConnect"/>
     <addaction name="actionDisconnect"/>
@@ -2183,14 +2151,14 @@
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
-     <string>Language</string>
+     <string>&amp;Language</string>
     </property>
     <addaction name="actionEnglish"/>
     <addaction name="actionFran_ais"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Options</string>
+     <string>Optio&amp;ns</string>
     </property>
     <addaction name="actionAutosave"/>
     <addaction name="actionAuto_Send"/>
@@ -2213,7 +2181,7 @@
      <normaloff>:/oxygen/32x32/actions/document-open.png</normaloff>:/oxygen/32x32/actions/document-open.png</iconset>
    </property>
    <property name="text">
-    <string>Open...</string>
+    <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -2228,7 +2196,7 @@
      <normaloff>:/oxygen/32x32/actions/document-save.png</normaloff>:/oxygen/32x32/actions/document-save.png</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -2243,7 +2211,7 @@
      <normaloff>:/oxygen/32x32/actions/document-save-as.png</normaloff>:/oxygen/32x32/actions/document-save-as.png</iconset>
    </property>
    <property name="text">
-    <string>Save As...</string>
+    <string>Sa&amp;ve As...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -2258,7 +2226,7 @@
      <normaloff>:/oxygen/32x32/actions/application-exit.png</normaloff>:/oxygen/32x32/actions/application-exit.png</iconset>
    </property>
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -2273,7 +2241,7 @@
      <normaloff>:/oxygen/32x32/actions/help-about.png</normaloff>:/oxygen/32x32/actions/help-about.png</iconset>
    </property>
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
@@ -2285,7 +2253,7 @@
      <normaloff>:/images/Qt-logo.png</normaloff>:/images/Qt-logo.png</iconset>
    </property>
    <property name="text">
-    <string>About QT</string>
+    <string>About &amp;QT</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
@@ -2297,7 +2265,7 @@
      <normaloff>:/oxygen/32x32/actions/network-connect.png</normaloff>:/oxygen/32x32/actions/network-connect.png</iconset>
    </property>
    <property name="text">
-    <string>Connect</string>
+    <string>&amp;Connect</string>
    </property>
    <property name="shortcut">
     <string>F3</string>
@@ -2312,7 +2280,7 @@
      <normaloff>:/oxygen/32x32/actions/network-disconnect.png</normaloff>:/oxygen/32x32/actions/network-disconnect.png</iconset>
    </property>
    <property name="text">
-    <string>Disconnect</string>
+    <string>&amp;Disconnect</string>
    </property>
    <property name="shortcut">
     <string>F4</string>
@@ -2327,7 +2295,7 @@
      <normaloff>:/oxygen/32x32/actions/document-import.png</normaloff>:/oxygen/32x32/actions/document-import.png</iconset>
    </property>
    <property name="text">
-    <string>Import from HRC...</string>
+    <string>&amp;Import from HRC...</string>
    </property>
   </action>
   <action name="actionExport">
@@ -2336,7 +2304,7 @@
      <normaloff>:/oxygen/32x32/actions/document-export.png</normaloff>:/oxygen/32x32/actions/document-export.png</iconset>
    </property>
    <property name="text">
-    <string>Export to HRC...</string>
+    <string>&amp;Export to HRC...</string>
    </property>
   </action>
   <action name="actionNew">
@@ -2345,7 +2313,7 @@
      <normaloff>:/oxygen/32x32/actions/document-new.png</normaloff>:/oxygen/32x32/actions/document-new.png</iconset>
    </property>
    <property name="text">
-    <string>New...</string>
+    <string>&amp;New...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -2360,7 +2328,7 @@
      <normaloff>:/oxygen/32x32/actions/help-contents.png</normaloff>:/oxygen/32x32/actions/help-contents.png</iconset>
    </property>
    <property name="text">
-    <string>Index</string>
+    <string>&amp;Index</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -2375,7 +2343,7 @@
      <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
    </property>
    <property name="text">
-    <string>Update Firmware...</string>
+    <string>&amp;Update Firmware...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
@@ -2390,7 +2358,7 @@
      <normaloff>:/oxygen/32x32/actions/edit-undo.png</normaloff>:/oxygen/32x32/actions/edit-undo.png</iconset>
    </property>
    <property name="text">
-    <string>Undo</string>
+    <string>&amp;Undo</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -2408,7 +2376,7 @@
      <normaloff>:/oxygen/32x32/actions/edit-redo.png</normaloff>:/oxygen/32x32/actions/edit-redo.png</iconset>
    </property>
    <property name="text">
-    <string>Redo</string>
+    <string>&amp;Redo</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
@@ -2423,7 +2391,7 @@
      <normaloff>:/oxygen/32x32/actions/svn-commit.png</normaloff>:/oxygen/32x32/actions/svn-commit.png</iconset>
    </property>
    <property name="text">
-    <string>Send Configuration</string>
+    <string>&amp;Send Configuration</string>
    </property>
   </action>
   <action name="actionGet_Configuration">
@@ -2432,7 +2400,7 @@
      <normaloff>:/oxygen/32x32/actions/svn-update.png</normaloff>:/oxygen/32x32/actions/svn-update.png</iconset>
    </property>
    <property name="text">
-    <string>Get Configuration</string>
+    <string>&amp;Get Configuration</string>
    </property>
   </action>
   <action name="actionEnglish">
@@ -2441,7 +2409,7 @@
      <normaloff>:/images/flags/us.png</normaloff>:/images/flags/us.png</iconset>
    </property>
    <property name="text">
-    <string notr="true">English</string>
+    <string notr="true">&amp;English</string>
    </property>
   </action>
   <action name="actionFran_ais">
@@ -2450,7 +2418,7 @@
      <normaloff>:/images/flags/fr.png</normaloff>:/images/flags/fr.png</iconset>
    </property>
    <property name="text">
-    <string notr="true">Français</string>
+    <string notr="true">&amp;Français</string>
    </property>
   </action>
   <action name="actionShow_actions">
@@ -2459,7 +2427,7 @@
      <normaloff>:/oxygen/32x32/actions/view-history.png</normaloff>:/oxygen/32x32/actions/view-history.png</iconset>
    </property>
    <property name="text">
-    <string>Show actions</string>
+    <string>&amp;Show actions</string>
    </property>
   </action>
   <action name="actionShow_tasks">
@@ -2468,7 +2436,7 @@
      <normaloff>:/oxygen/32x32/actions/view-process-system.png</normaloff>:/oxygen/32x32/actions/view-process-system.png</iconset>
    </property>
    <property name="text">
-    <string>Show Tasks...</string>
+    <string>S&amp;how Tasks...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -2480,7 +2448,7 @@
      <normaloff>:/images/explosion-hi.png</normaloff>:/images/explosion-hi.png</iconset>
    </property>
    <property name="text">
-    <string>Show Knock Spectrum...</string>
+    <string>Show &amp;Knock Spectrum...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+K</string>
@@ -2495,7 +2463,7 @@
      <normaloff>:/oxygen/32x32/actions/document-save.png</normaloff>:/oxygen/32x32/actions/document-save.png</iconset>
    </property>
    <property name="text">
-    <string>Auto save</string>
+    <string>&amp;Auto save</string>
    </property>
   </action>
   <action name="actionAuto_Send">
@@ -2507,7 +2475,7 @@
      <normaloff>:/oxygen/32x32/actions/quickopen.png</normaloff>:/oxygen/32x32/actions/quickopen.png</iconset>
    </property>
    <property name="text">
-    <string>Auto Update</string>
+    <string>Auto &amp;Update</string>
    </property>
   </action>
   <action name="actionShow_Logs">
@@ -2516,7 +2484,7 @@
      <normaloff>:/oxygen/32x32/actions/view-list-text.png</normaloff>:/oxygen/32x32/actions/view-list-text.png</iconset>
    </property>
    <property name="text">
-    <string>Show Logs...</string>
+    <string>Show &amp;Logs...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -2528,7 +2496,7 @@
      <normaloff>:/oxygen/32x32/apps/kig.png</normaloff>:/oxygen/32x32/apps/kig.png</iconset>
    </property>
    <property name="text">
-    <string>Show Serial Data...</string>
+    <string>Sh&amp;ow Serial Data...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
@@ -2561,8 +2529,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/oxygen.qrc"/>
   <include location="../res/images/images.qrc"/>
+  <include location="../res/oxygen.qrc"/>
  </resources>
  <connections/>
 </ui>

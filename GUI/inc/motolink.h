@@ -77,7 +77,8 @@ public:
                                                 mSettings.functions |= FUNC_AFR_AN ;}
     inline void setFunctionAFR_MTS(void) {      mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_AN);
                                                 mSettings.functions |= FUNC_AFR_MTS ;}
-    inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD; else mSettings.functions &= ~FUNC_RECORD ;}
+    inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
+                                                else mSettings.functions &= ~FUNC_RECORD ;}
 
 public slots:
     bool usbConnect(void);
