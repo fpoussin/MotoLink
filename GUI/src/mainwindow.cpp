@@ -650,9 +650,9 @@ void MainWindow::exportToMTLFile()
                       mMainUi->dsbTPS100->value());
 
     mFile.addProperty("AFR0V",
-                      mMainUi->tableSensorAFR->item(0, 0)->data(Qt::EditRole));
+                      mMainUi->dsbAFR0->value());
     mFile.addProperty("AFR5V",
-                      mMainUi->tableSensorAFR->item(1, 0)->data(Qt::EditRole));
+                      mMainUi->dsbAFR5->value());
 
 }
 
@@ -675,9 +675,9 @@ void MainWindow::importFromMTLFile()
     mMainUi->dsbTPS100->setValue(prop.toFloat());
 
     mFile.getProperty("AFR0V", &prop);
-    mMainUi->tableSensorAFR->item(0, 0)->setData(Qt::EditRole, prop);
+    mMainUi->dsbAFR0->setValue(prop.toFloat());
     mFile.getProperty("AFR5V", &prop);
-    mMainUi->tableSensorAFR->item(1, 0)->setData(Qt::EditRole, prop);
+    mMainUi->dsbAFR5->setValue(prop.toFloat());
 }
 
 void MainWindow::doFastPolling()

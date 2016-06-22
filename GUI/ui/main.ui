@@ -720,112 +720,7 @@
                  <property name="spacing">
                   <number>4</number>
                  </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="ltAFR">
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Analog Mapping</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QTableWidget" name="tableSensorAFR">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>90</width>
-                     <height>78</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>90</width>
-                     <height>78</height>
-                    </size>
-                   </property>
-                   <property name="verticalScrollBarPolicy">
-                    <enum>Qt::ScrollBarAlwaysOff</enum>
-                   </property>
-                   <property name="horizontalScrollBarPolicy">
-                    <enum>Qt::ScrollBarAlwaysOff</enum>
-                   </property>
-                   <property name="cornerButtonEnabled">
-                    <bool>false</bool>
-                   </property>
-                   <attribute name="horizontalHeaderDefaultSectionSize">
-                    <number>50</number>
-                   </attribute>
-                   <attribute name="horizontalHeaderMinimumSectionSize">
-                    <number>20</number>
-                   </attribute>
-                   <attribute name="horizontalHeaderStretchLastSection">
-                    <bool>true</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderDefaultSectionSize">
-                    <number>25</number>
-                   </attribute>
-                   <attribute name="verticalHeaderHighlightSections">
-                    <bool>true</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderMinimumSectionSize">
-                    <number>25</number>
-                   </attribute>
-                   <attribute name="verticalHeaderStretchLastSection">
-                    <bool>true</bool>
-                   </attribute>
-                   <row>
-                    <property name="text">
-                     <string notr="true">0V</string>
-                    </property>
-                   </row>
-                   <row>
-                    <property name="text">
-                     <string notr="true">5V</string>
-                    </property>
-                   </row>
-                   <column>
-                    <property name="text">
-                     <string>Value</string>
-                    </property>
-                   </column>
-                   <item row="0" column="0">
-                    <property name="text">
-                     <string notr="true">7.35</string>
-                    </property>
-                    <property name="textAlignment">
-                     <set>AlignCenter</set>
-                    </property>
-                    <property name="flags">
-                     <set>ItemIsEditable|ItemIsEnabled</set>
-                    </property>
-                   </item>
-                   <item row="1" column="0">
-                    <property name="text">
-                     <string notr="true">22.40</string>
-                    </property>
-                    <property name="textAlignment">
-                     <set>AlignCenter</set>
-                    </property>
-                    <property name="flags">
-                     <set>ItemIsEditable|ItemIsEnabled</set>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
+                 <item row="5" column="1">
                   <widget class="QDoubleSpinBox" name="dsbAFROffset">
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -844,7 +739,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
+                 <item row="4" column="1">
                   <widget class="QLabel" name="ltAFROffset">
                    <property name="font">
                     <font>
@@ -854,6 +749,74 @@
                    </property>
                    <property name="text">
                     <string>Offset</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="dsbAFR0">
+                   <property name="minimum">
+                    <double>5.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>25.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>7.350000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QDoubleSpinBox" name="dsbAFR5">
+                   <property name="value">
+                    <double>22.399999999999999</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_2">
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>0V</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_3">
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>5V</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="ltAFR">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Analog Mapping</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -1758,9 +1721,6 @@
           <property name="title">
            <string>Sensors Readings</string>
           </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
           <layout class="QGridLayout" name="gridLayout_11">
            <property name="leftMargin">
             <number>5</number>
@@ -1879,7 +1839,10 @@
               <item>
                <widget class="QLabel" name="lTpsPct">
                 <property name="text">
-                 <string notr="true">0.0%</string>
+                 <string notr="true">0.0 %</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -1887,6 +1850,9 @@
                <widget class="QLabel" name="lTpsVolts">
                 <property name="text">
                  <string notr="true">0.0 Volts</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -1944,12 +1910,18 @@
                 <property name="text">
                  <string notr="true">0 AFR</string>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lAfrVolts">
                 <property name="text">
                  <string notr="true">0.0 Volts</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -2007,12 +1979,18 @@
                 <property name="text">
                  <string notr="true">0 RPM</string>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lRpmHertz">
                 <property name="text">
                  <string notr="true">0 Hertz</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -2076,12 +2054,18 @@
                 <property name="text">
                  <string notr="true">0 KPH</string>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="lSpeedHertz">
                 <property name="text">
                  <string notr="true">0 Hertz</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -2556,8 +2540,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/images/images.qrc"/>
   <include location="../res/oxygen.qrc"/>
+  <include location="../res/images/images.qrc"/>
  </resources>
  <connections/>
 </ui>
