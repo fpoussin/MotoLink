@@ -625,6 +625,9 @@
           <property name="title">
            <string>Motolink Settings</string>
           </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
           <layout class="QGridLayout" name="gridLayout_17">
            <property name="leftMargin">
             <number>5</number>
@@ -975,6 +978,9 @@
              <property name="title">
               <string>Sensor Mappings</string>
              </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
              <layout class="QGridLayout" name="gridLayout">
               <item row="0" column="1">
                <widget class="QFrame" name="frame_14">
@@ -1280,6 +1286,9 @@
                      <height>0</height>
                     </size>
                    </property>
+                   <property name="suffix">
+                    <string>V</string>
+                   </property>
                    <property name="maximum">
                     <double>5.000000000000000</double>
                    </property>
@@ -1298,6 +1307,21 @@
                      <width>0</width>
                      <height>0</height>
                     </size>
+                   </property>
+                   <property name="wrapping">
+                    <bool>false</bool>
+                   </property>
+                   <property name="frame">
+                    <bool>true</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::UpDownArrows</enum>
+                   </property>
+                   <property name="showGroupSeparator" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                   <property name="suffix">
+                    <string>V</string>
                    </property>
                    <property name="maximum">
                     <double>5.000000000000000</double>
@@ -1626,7 +1650,7 @@
            <item row="1" column="0">
             <widget class="QFrame" name="frame_15">
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
@@ -1733,6 +1757,9 @@
           </property>
           <property name="title">
            <string>Sensors Readings</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_11">
            <property name="leftMargin">
