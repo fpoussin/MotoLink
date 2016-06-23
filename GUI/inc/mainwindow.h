@@ -91,7 +91,7 @@ private slots:
     void showSerialData(void);
 
     void showLogs(void);
-    void writeLogs(const QString & msg);
+    void log(const QString & msg);
 
     void doFastPolling(void);
     void doSlowPolling(void);

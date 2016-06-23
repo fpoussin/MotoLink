@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->uiDisable();
 
     emit signalStartupComplete();
+
+    this->log(tr("Ready"));
 }
 
 MainWindow::~MainWindow()
@@ -131,8 +133,6 @@ void MainWindow::openFile(const QString &filename)
     if (filename.isEmpty())
         return;
 
-    qWarning() << "Opening" << filename;
-
     QStringList files = mSettings.value(SETTINGS_RECENT_FILES).toStringList();
 
     mCurrentFile = filename;
@@ -148,13 +148,14 @@ void MainWindow::openFile(const QString &filename)
 
     if (!file.open(QFile::ReadOnly))
     {
-        mMainUi->statusBar->showMessage(
-                    tr("Failed to open file for reading!"));
+        this->log(tr("Failed to open file for reading!"));
         return;
     }
 
     mFile.read(&file);
     file.close();
+
+    this->log(tr("Opened ") + filename);
 
     this->importFromMTLFile();
 }
@@ -172,9 +173,8 @@ void MainWindow::saveFile(void)
     qWarning() << "Saving" << mCurrentFile;
     if (!file.open(QFile::WriteOnly))
     {
-        mMainUi->statusBar->showMessage(
-                    tr("Failed to open file for writing!"));
         qWarning() << tr("Failed to open file for writing!") << mCurrentFile;
+        this->log(tr("Failed to open file for writing!"));
         return;
     }
 
@@ -182,8 +182,7 @@ void MainWindow::saveFile(void)
     this->exportToMTLFile();
     mFile.write(&file);
     file.close();
-    mMainUi->statusBar->showMessage(
-                tr("File saved."));
+    this->log(tr("File saved."));
 
     mHasChanged = false;
 }
@@ -213,10 +212,10 @@ void MainWindow::connectMtl()
         mTablesTimer.start();
         mRedrawTimer.start();
         onReadMtlSettings();
-        mMainUi->statusBar->showMessage("Connected");
+        this->log(tr("Connected"));
     }
     else {
-        mMainUi->statusBar->showMessage(tr("Connection Failed"));
+        this->log(tr("Connection Failed"));
     }
 }
 
@@ -228,7 +227,7 @@ void MainWindow::disconnectMtl()
     mRedrawTimer.stop();
     mMtl->usbDisconnect();
     this->uiDisable();
-    mMainUi->statusBar->showMessage("Disconnected");
+    this->log(tr("Disconnected"));
 }
 
 void MainWindow::showAbout()
@@ -262,8 +261,6 @@ void MainWindow::exportHrc()
 
 void MainWindow::setupDefaults(void)
 {
-    mMainUi->statusBar->showMessage(tr("Disconnected"));
-
     mTablesModelList.append(&mFuelModel);
     mTablesModelList.append(&mStagingModel);
     mTablesModelList.append(&mAFRModel);
@@ -389,7 +386,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const*)), this, SLOT(onMonitoringReceived(TaskList const*)));
     QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
     QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
-    QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(writeLogs(QString)));
+    QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(log(QString)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), mMtl, SLOT(clearUsb()));
 
     QObject::connect(&mFile, SIGNAL(readFailed(QString)), this, SLOT(onSimpleError(QString)));
@@ -622,10 +619,11 @@ void MainWindow::showLogs()
     mLogsWidget->raise();
 }
 
-void MainWindow::writeLogs(const QString &msg)
+void MainWindow::log(const QString &msg)
 {
-    QString time("[%1] ");
-    mLogsUi->list->addItem(time.arg(QTime::currentTime().toString())+msg);
+    QString logMsg = QString("[%1] ").arg(QTime::currentTime().toString()) + msg;
+    mMainUi->statusBar->showMessage(msg);
+    mLogsUi->list->addItem(logMsg);
     mLogsUi->list->scrollToBottom();
 }
 
@@ -914,10 +912,10 @@ void MainWindow::onReadMtlSettings()
 
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
 
-        this->writeLogs("Read settings OK");
+        this->log("Read settings OK");
     }
     else
-        this->writeLogs("Read settings Fail");
+        this->log("Read settings Fail");
 }
 
 void MainWindow::onWriteMtlSettings()
@@ -948,8 +946,8 @@ void MainWindow::onWriteMtlSettings()
 
     if (mMtl->writeSettings())
     {
-        this->writeLogs("Write settings OK");
+        this->log("Write settings OK");
     }
     else
-        this->writeLogs("Write settings Fail");
+        this->log("Write settings Fail");
 }
