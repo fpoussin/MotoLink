@@ -79,14 +79,20 @@ public:
     inline float getTPSMinV(void) { return mSettings.tpsMinV / 1000.0 ;}
     inline float getTPSMaxV(void) { return mSettings.tpsMaxV / 1000.0 ;}
     inline float getFuelMinTh(void) { return mSettings.fuelMinTh / 1000.0 ;}
+    inline float getAFRMinVal(void) { return mSettings.AfrMinVal / 1000.0 ;}
+    inline float getAFRMaxVal(void) { return mSettings.AfrMaxVal / 1000.0 ;}
+    inline float getAFROffset(void) { return mSettings.AfrOffset / 1000.0 ;}
     inline bool getFunctionAFR_Disabled(void) { return mSettings.functions & FUNC_AFR_DISA ;}
     inline bool getFunctionAFR_Analog(void) { return mSettings.functions & FUNC_AFR_AN ;}
     inline bool getFunctionAFR_MTS(void) { return mSettings.functions & FUNC_AFR_MTS ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
 
     // Set
-    inline void setTPSMinV(float v) { mSettings.tpsMinV = (float)v * 1000.0 ;}
-    inline void setTPSMaxV(float v) { mSettings.tpsMaxV = (float)v * 1000.0 ;}
+    inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
+    inline void setTPSMaxV(float v) { mSettings.tpsMaxV = v * 1000.0 ;}
+    inline void setAFRMinVal(float v) { mSettings.AfrMinVal = v * 1000.0 ;}
+    inline void setAFRMaxVal(float v) { mSettings.AfrMaxVal = v * 1000.0 ;}
+    inline void setAFROffset(float v) { mSettings.AfrOffset = v * 1000.0 ;}
     inline void setFunctionAFR_Disabled(void) { mSettings.functions &= ~(FUNC_AFR_AN |FUNC_AFR_MTS);
                                                 mSettings.functions |= FUNC_AFR_DISA ;}
     inline void setFunctionAFR_Analog(void) {   mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_MTS);

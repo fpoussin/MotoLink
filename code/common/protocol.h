@@ -99,10 +99,10 @@ typedef struct {
   uint16_t tpsMaxV;
   uint16_t fuelMinTh;
   uint16_t fuelMaxChange;
-  uint16_t AfrMinV;
-  uint16_t AfrMaxV;
+  uint16_t AfrMinVal;
+  uint16_t AfrMaxVal;
+  uint16_t AfrOffset;
   uint16_t functions;
-  uint16_t padding1;
 } settings_t;
 
 #endif

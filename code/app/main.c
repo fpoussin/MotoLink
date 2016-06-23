@@ -289,7 +289,9 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     /* Todo: get params from memory */
     sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an8);
     sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
-    sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinV, settings.AfrMaxV, sensors_data.an9);
+
+    if (settings.functions & FUNC_AFR_AN)
+        sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an9);
 
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
     {

@@ -902,6 +902,9 @@ void MainWindow::onReadMtlSettings()
         // Unpack settings
         mMainUi->dsbTPS0->setValue(mMtl->getTPSMinV());
         mMainUi->dsbTPS100->setValue(mMtl->getTPSMaxV());
+        mMainUi->dsbAFR0->setValue(mMtl->getAFRMinVal());
+        mMainUi->dsbAFR5->setValue(mMtl->getAFRMaxVal());
+        mMainUi->dsbAFROffset->setValue(mMtl->getAFROffset());
 
         if (mMtl->getFunctionAFR_Disabled())
             mMainUi->cbAFRInput->setCurrentIndex(0);
@@ -922,6 +925,9 @@ void MainWindow::onWriteMtlSettings()
 {
     mMtl->setTPSMinV(mMainUi->dsbTPS0->value());
     mMtl->setTPSMaxV(mMainUi->dsbTPS100->value());
+    mMtl->setAFRMinVal(mMainUi->dsbAFR0->value());
+    mMtl->setAFRMaxVal(mMainUi->dsbAFR5->value());
+    mMtl->setAFROffset(mMainUi->dsbAFROffset->value());
 
     switch (mMainUi->cbAFRInput->currentIndex())
     {

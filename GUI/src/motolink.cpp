@@ -32,7 +32,7 @@ Motolink::Motolink(QObject *parent) :
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(false);
+    mUsb->setDebug(true);
 
     this->moveToThread(mThread);
     mThread->start();
@@ -180,8 +180,6 @@ bool Motolink::readSensors(void)
 
     if (this->sendCmd(&send, &recv, sizeof(sensors_t), CMD_GET_SENSORS))
     {
-        //memcpy((void*)&mSensors, (void*)data->constData(), sizeof(sensors_t));
-
         const sensors_t * sensors =  (sensors_t *)recv.constData();
 
         mSensors.vAn7 = sensors->an7/1000.0; /* VBAT */
