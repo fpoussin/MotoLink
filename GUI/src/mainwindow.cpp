@@ -812,12 +812,12 @@ void MainWindow::onSerialDataReceived(const QByteArray *data)
 
 void MainWindow::onSetTps0Pct(void)
 {
-    mMainUi->dsbTPS0->setValue(mMtl->getTPS());
+    mMainUi->dsbTPS0->setValue(mMtl->getVTPS());
 }
 
 void MainWindow::onSetTps100Pct(void)
 {
-    mMainUi->dsbTPS100->setValue(mMtl->getTPS());
+    mMainUi->dsbTPS100->setValue(mMtl->getVTPS());
 }
 
 void MainWindow::onDataChanged()
