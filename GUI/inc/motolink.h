@@ -53,12 +53,27 @@ public:
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     inline bool isConnected(void) { return mConnected; }
-    inline const sensors_data_t * getSensors(void) { return &mSensors; }
     inline const TaskList * getMonitoring(void) { return &mMonitoring; }
     inline const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
     inline const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
     inline const quint8 * getKnockTable(void) { return (quint8 *)&mKnockTable; }
 
+    // Sensors (Get)
+    inline float getTPS(void) { return mSensors.tps ;}
+    inline float getAFR(void) { return mSensors.afr ;}
+    inline quint16 getRPM(void) { return mSensors.rpm ;}
+    inline quint16 getRPMHz(void) { return mSensors.freq1 ;}
+    inline quint16 getSpeedHz(void) { return mSensors.freq2 ;}
+    inline quint16 getKnockPeakFreq(void) { return mSensors.knock_freq ;}
+    inline quint16 getKnockValue(void) { return mSensors.knock_value ;}
+    inline float getVBAT(void) { return mSensors.vAn7 ;}
+    inline float getVTPS(void) { return mSensors.vAn8 ;}
+    inline float getVAFR(void) { return mSensors.vAn9 ;}
+    inline quint8 getColumn(void) { return mSensors.col ;}
+    inline quint8 getRow(void) { return mSensors.row ;}
+
+    // Settings
+    // Get
     inline quint16 getKnockFreq(void) { return mSettings.knockFreq ;}
     inline quint16 getKnockRatio(void) { return mSettings.knockRatio ;}
     inline float getTPSMinV(void) { return mSettings.tpsMinV / 1000.0 ;}
@@ -69,6 +84,7 @@ public:
     inline bool getFunctionAFR_MTS(void) { return mSettings.functions & FUNC_AFR_MTS ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
 
+    // Set
     inline void setTPSMinV(float v) { mSettings.tpsMinV = (float)v * 1000.0 ;}
     inline void setTPSMaxV(float v) { mSettings.tpsMaxV = (float)v * 1000.0 ;}
     inline void setFunctionAFR_Disabled(void) { mSettings.functions &= ~(FUNC_AFR_AN |FUNC_AFR_MTS);
@@ -124,10 +140,10 @@ signals:
     void connectionResult(bool result);
     void timeElapsed(int time);
 
-    void receivedSensors(const sensors_data_t * sensors);
+    void receivedSensors();
+    void receivedSettings();
     void receivedMonitoring(const TaskList * monitoring);
     void receivedKockSpectrum(const QByteArray * data);
-    void receivedSettings(const settings_t * settings);
     void receivedTables(const quint8 * AFR, const quint8 * Knock);
     void receivedSerialData(QByteArray data);
 

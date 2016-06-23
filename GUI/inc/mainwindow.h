@@ -97,7 +97,6 @@ private slots:
     void doSlowPolling(void);
     void doTablesPolling(void);
     void doSensorsRedraw(void);
-    void onSensorsReceived(const sensors_data_t *data);
     void onMonitoringReceived(const TaskList *monitoring);
     void onKnockSpectrumReceived(const QByteArray * data);
     void onTablesReceived(const quint8 * afr, const quint8 * knock);
@@ -175,7 +174,6 @@ private:
     QByteArray mSensorsData;
     QByteArray mMonitoringData;
     QByteArray mKnockSpectrumData;
-    sensors_data_t mSensorsStruct;
 
     MTLFile mFile;
 };

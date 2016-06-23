@@ -196,7 +196,7 @@ bool Motolink::readSensors(void)
         mSensors.afr = sensors->afr/10.0;
         mSensors.row = sensors->cell.row;
         mSensors.col = sensors->cell.col;
-        emit receivedSensors(&mSensors);
+        emit receivedSensors();
         return true;
     }
 
@@ -342,7 +342,7 @@ bool Motolink::readSettings()
     if (this->sendCmd(&send, &recv, sizeof(settings_t), CMD_GET_SETTINGS))
     {
         memcpy(&mSettings, recv.constData(), recv.size());
-        emit receivedSettings(&mSettings);
+        emit receivedSettings();
         return true;
     }
 

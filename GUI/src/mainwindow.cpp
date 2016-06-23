@@ -340,6 +340,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canRedoChanged(bool)), mMainUi->actionRedo, SLOT(setEnabled(bool)));
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mMainUi->actionUndo, SLOT(setEnabled(bool)));
 
+    // Tables (color and cursor update)
     for (int i=0; i<mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
@@ -368,8 +369,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->bReadMtl, SIGNAL(clicked()), this, SLOT(onReadMtlSettings()));
     QObject::connect(mMainUi->bWriteMtl, SIGNAL(clicked()), this, SLOT(onWriteMtlSettings()));
 
-
-
+    // Recent files
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
              mRecentFilesActions[i] = new QAction(this);
              mRecentFilesActions[i]->setVisible(false);
@@ -379,14 +379,13 @@ void MainWindow::setupConnections(void)
              mMainUi->menuRecent_files->addAction(mRecentFilesActions[i]);
          }
 
-    /* Sensors UI update */
+    /* UI update */
 
     QObject::connect(&mFastPollingTimer, SIGNAL(timeout()), this, SLOT(doFastPolling()));
     QObject::connect(&mSlowPollingTimer, SIGNAL(timeout()), this, SLOT(doSlowPolling()));
     QObject::connect(&mTablesTimer, SIGNAL(timeout()), this, SLOT(doTablesPolling()));
     QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
-    QObject::connect(mMtl, SIGNAL(receivedSensors(sensors_data_t const*)), this, SLOT(onSensorsReceived(sensors_data_t const*)));
     QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const*)), this, SLOT(onMonitoringReceived(TaskList const*)));
     QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
     QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
@@ -718,26 +717,16 @@ void MainWindow::doTablesPolling()
 
 void MainWindow::doSensorsRedraw()
 {
-    mMainUi->lVbat->setText(QString::number(mSensorsStruct.vAn7)+tr(" Volts"));
+    mMainUi->lVbat->setText(QString::number(mMtl->getVBAT())+tr(" Volts"));
 
-    mMainUi->lTpsVolts->setText(QString::number(mSensorsStruct.vAn8)+tr(" Volts"));
-    mMainUi->lTpsPct->setText(QString::number(mSensorsStruct.tps)+tr("%"));
+    mMainUi->lTpsVolts->setText(QString::number(mMtl->getVTPS())+tr(" Volts"));
+    mMainUi->lTpsPct->setText(QString::number(mMtl->getTPS())+tr(" %"));
 
-    mMainUi->lAfrVal->setText(QString::number(mSensorsStruct.afr));
-    mMainUi->lAfrVolts->setText(QString::number(mSensorsStruct.vAn9)+tr(" Volts"));
-    mMainUi->lRpm->setText(QString::number(mSensorsStruct.rpm)+tr(" Rpm"));
-    mMainUi->lRpmHertz->setText(QString::number(mSensorsStruct.freq1)+tr(" Hertz"));
-    mMainUi->lSpeedHertz->setText(QString::number(mSensorsStruct.freq2)+tr(" Hertz"));
-}
-
-void MainWindow::onSensorsReceived(sensors_data_t const * data)
-{
-    mSensorsStruct = *data;
-
-    //this->setTablesCursorFromSensors(mSensorsStruct.tps, mSensorsStruct.rpm);
-    //this->setTablesCursor(mSensorsStruct.row, mSensorsStruct.col);
-    //mKnockModel.writeCellPeak(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.knock_value));
-    //mAFRModel.writeCellAverage(mSensorsStruct.tps, mSensorsStruct.rpm, QVariant(mSensorsStruct.afr*10.0));
+    mMainUi->lAfrVal->setText(QString::number(mMtl->getAFR()));
+    mMainUi->lAfrVolts->setText(QString::number(mMtl->getVAFR())+tr(" Volts"));
+    mMainUi->lRpm->setText(QString::number(mMtl->getRPM())+tr(" Rpm"));
+    mMainUi->lRpmHertz->setText(QString::number(mMtl->getRPMHz())+tr(" Hertz"));
+    mMainUi->lSpeedHertz->setText(QString::number(mMtl->getSpeedHz())+tr(" Hertz"));
 }
 
 void MainWindow::onMonitoringReceived(const TaskList *monitoring)
@@ -806,7 +795,7 @@ void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
 {
     mAFRModel.setDataFromArray(afr);
     mKnockModel.setDataFromArray(knock);
-    this->setTablesCursor(mSensorsStruct.row, mSensorsStruct.col);
+    this->setTablesCursor(mMtl->getRow(), mMtl->getColumn());
 }
 
 void MainWindow::onSerialDataReceived(const QByteArray *data)
@@ -825,14 +814,12 @@ void MainWindow::onSerialDataReceived(const QByteArray *data)
 
 void MainWindow::onSetTps0Pct(void)
 {
-    float tps = mMtl->getSensors()->vAn8;
-    mMainUi->dsbTPS0->setValue(tps);
+    mMainUi->dsbTPS0->setValue(mMtl->getTPS());
 }
 
 void MainWindow::onSetTps100Pct(void)
 {
-    float tps = mMtl->getSensors()->vAn8;
-    mMainUi->dsbTPS100->setValue(tps);
+    mMainUi->dsbTPS100->setValue(mMtl->getTPS());
 }
 
 void MainWindow::onDataChanged()
