@@ -22,7 +22,8 @@ UpdateWizard::~UpdateWizard()
 void UpdateWizard::showWizard()
 {
     this->loadDefaultFirmareData();
-    mUi->lCurVersion->setText(__MTL_VER__);
+    if (mMtl->usbConnect() && mMtl->getMode() != MODE_BL)
+        mUi->lCurVersion->setText(mMtl->getVersion());
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->restart();

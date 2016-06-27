@@ -170,7 +170,7 @@ QString Motolink::getVersion()
         mVersion = *((version_t*)recv.constData());
         return QString("%1.%2.%3").arg(mVersion.major).arg(mVersion.minor).arg(mVersion.bugfix);
     }
-    return 0;
+    return tr("Error");
 }
 
 bool Motolink::readSensors(void)

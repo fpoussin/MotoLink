@@ -18,7 +18,7 @@
     <item row="9" column="0">
      <widget class="QLabel" name="lCurVersion">
       <property name="text">
-       <string notr="true">0.0</string>
+       <string notr="true">Unknown</string>
       </property>
      </widget>
     </item>
@@ -59,21 +59,21 @@
     <item row="11" column="0">
      <widget class="QLabel" name="ltNewVersion">
       <property name="text">
-       <string>New version</string>
+       <string>New version:</string>
       </property>
      </widget>
     </item>
     <item row="12" column="0">
      <widget class="QLabel" name="lNewVersion">
       <property name="text">
-       <string notr="true">0.0</string>
+       <string notr="true">Unknown</string>
       </property>
      </widget>
     </item>
     <item row="8" column="0">
      <widget class="QLabel" name="ltCurVersion">
       <property name="text">
-       <string>Current version</string>
+       <string>Current version:</string>
       </property>
      </widget>
     </item>
@@ -94,7 +94,7 @@
     <item row="5" column="0">
      <widget class="QRadioButton" name="rbCustomFW">
       <property name="text">
-       <string>Use custom firmware...</string>
+       <string>Select custo&amp;m firmware...</string>
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
@@ -111,7 +111,7 @@
     <item row="4" column="0">
      <widget class="QRadioButton" name="rbBundledFW">
       <property name="text">
-       <string>Use bundled firmware (recommended)</string>
+       <string>&amp;Use bundled firmware (recommended)</string>
       </property>
       <property name="icon">
        <iconset resource="../res/oxygen.qrc">
