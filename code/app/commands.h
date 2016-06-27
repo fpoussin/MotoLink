@@ -25,5 +25,6 @@ uint8_t writeTables(BaseChannel * chn, uint8_t * buf, uint16_t len);
 uint8_t readTables(BaseChannel * chn);
 uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len);
 uint8_t clearTables(BaseChannel * chn);
+uint8_t sendVersion(BaseChannel * chn);
 
 #endif

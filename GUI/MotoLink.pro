@@ -14,7 +14,7 @@ TARGET = MotoLink
 TEMPLATE = app
 #win32:CONFIG += console
 
-VERSION = 0.0.3
+VERSION = 0.1.0
 message(Version $$VERSION)
 
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
@@ -107,4 +107,7 @@ unix:!macx {
     launcher.files = res/motolink.desktop
     INSTALLS += launcher
 }
+
+DISTFILES += \
+    res/makefw.py
 

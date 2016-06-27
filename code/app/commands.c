@@ -275,3 +275,11 @@ uint8_t clearTables(BaseChannel * chn)
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_CLEAR_TABLES, PUT_TIMEOUT);
   return 0;
 }
+
+uint8_t sendVersion(BaseChannel *chn)
+{
+    chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
+    chnPutTimeout(chn, VERSION_MAJOR, PUT_TIMEOUT);
+    chnPutTimeout(chn, VERSION_MINOR, PUT_TIMEOUT);
+    return 0;
+}

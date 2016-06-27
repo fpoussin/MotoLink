@@ -28,6 +28,9 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 3
+
 #include "vectors.h"
 #if defined(VECTORS_SECTION)
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)

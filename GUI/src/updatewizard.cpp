@@ -22,6 +22,7 @@ UpdateWizard::~UpdateWizard()
 void UpdateWizard::showWizard()
 {
     this->loadDefaultFirmareData();
+    mUi->lCurVersion->setText(__MTL_VER__);
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->restart();

@@ -1,6 +1,8 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#define PROTOCOL_VERSION 1
+
 #define MAGIC1 (uint8_t)0xAF
 #define MAGIC2 (uint8_t)0xEB
 
@@ -104,5 +106,12 @@ typedef struct {
   uint16_t AfrOffset;
   uint16_t functions;
 } settings_t;
+
+typedef struct {
+    uint8_t protocol;
+    uint8_t major;
+    uint8_t minor;
+    uint8_t bugfix;
+} version_t;
 
 #endif

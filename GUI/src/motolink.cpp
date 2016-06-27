@@ -32,7 +32,7 @@ Motolink::Motolink(QObject *parent) :
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(true);
+    mUsb->setDebug(false);
 
     this->moveToThread(mThread);
     mThread->start();
@@ -160,15 +160,16 @@ quint8 Motolink::getMode(void)
     return 0;
 }
 
-
-quint16 Motolink::getVersion()
+QString Motolink::getVersion()
 {
     QByteArray send, recv;
     this->prepareCmd(&send, CMD_GET_VERSION);
 
-    if (this->sendCmd(&send, &recv, 2, CMD_GET_VERSION))
-        return recv.at(0) + (recv.at(1)*256);
-
+    if (this->sendCmd(&send, &recv, sizeof(version_t), CMD_GET_VERSION))
+    {
+        mVersion = *((version_t*)recv.constData());
+        return QString("%1.%2.%3").arg(mVersion.major).arg(mVersion.minor).arg(mVersion.bugfix);
+    }
     return 0;
 }
 

@@ -110,7 +110,7 @@ public slots:
     bool bootAppIfNeeded(void);
 
     quint8 getMode(void);
-    quint16 getVersion(void);
+    QString getVersion(void);
     bool readSensors(void);
     bool readMonitoring(void);
     bool readKnockSpectrum(void);
@@ -175,6 +175,7 @@ private:
     bool mStopTranfer;
     sensors_data_t mSensors;
     settings_t mSettings;
+    version_t mVersion;
     TaskList mMonitoring;
     QStringList mNames;
     QByteArray mKnockData;
