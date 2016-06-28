@@ -57,6 +57,10 @@ CCM_FUNC uint8_t readCommand(BaseChannel *chn)
       status = sendMode(chn);
       break;
 
+    case MASK_CMD | CMD_GET_VERSION:
+      status = sendVersion(chn);
+      break;
+
     case MASK_CMD | CMD_GET_SENSORS:
       status = sendSensors(chn);
       break;
@@ -279,6 +283,6 @@ CCM_FUNC uint8_t clearTables(BaseChannel * chn)
 CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
 {
     chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version), PUT_TIMEOUT);
+    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version_t), PUT_TIMEOUT);
     return 0;
 }
