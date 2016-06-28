@@ -490,13 +490,15 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
     {
         return 0;
     }
-    mUsb->read(recv, len+1); // Add result byte
 
+    mUsb->read(recv, 1); // Read command result first
     result = recv->at(0) == (MASK_REPLY_OK | cmd);
     if (!result)
         this->printError(recv->at(0));
 
-    recv->remove(0, 1);
+    recv->clear();
+    if (len)
+        mUsb->read(recv, len); // Read actual command data
 
     return result && (uint)recv->size() == len;
 }
