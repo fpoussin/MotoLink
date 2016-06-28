@@ -15,5 +15,6 @@ uint8_t sendFlags(BaseChannel * chn, uint8_t flags);
 uint8_t sendMode(BaseChannel * chn);
 uint8_t wakeHandler(BaseChannel * chn);
 uint8_t bootHandler(BaseChannel * chn);
+uint8_t sendVersion(BaseChannel * chn);
 
 #endif

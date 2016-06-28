@@ -68,6 +68,10 @@ CCM_FUNC uint8_t readCommand(BaseChannel *chn, uint8_t flags)
       status = sendMode(chn);
       break;
 
+    case MASK_CMD | CMD_GET_VERSION:
+      status = sendVersion(chn);
+      break;
+
     case MASK_CMD | CMD_WAKE:
       status = wakeHandler(chn);
       break;
@@ -180,4 +184,11 @@ CCM_FUNC uint8_t bootHandler(BaseChannel * chn) {
   startUserApp();
 
   return 0;
+}
+
+CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
+{
+    chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, MS2ST(50));
+    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version), MS2ST(50));
+    return 0;
 }

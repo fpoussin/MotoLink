@@ -21,4 +21,6 @@ void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp);
 
 bool vbatDetect(void);
 
+extern version_t version;
+
 #endif

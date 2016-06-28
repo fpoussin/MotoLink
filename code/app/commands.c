@@ -109,21 +109,21 @@ CCM_FUNC uint8_t readCommand(BaseChannel *chn)
   return status;
 }
 
-uint8_t sendMode(BaseChannel * chn) {
+CCM_FUNC uint8_t sendMode(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MODE, PUT_TIMEOUT);
   chnPutTimeout(chn, MODE_APP, PUT_TIMEOUT);
   return 0;
 }
 
-uint8_t sendSensors(BaseChannel * chn) {
+CCM_FUNC uint8_t sendSensors(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_SENSORS, PUT_TIMEOUT);
   chnWriteTimeout(chn, (uint8_t*)&sensors_data, sizeof(sensors_t), PUT_TIMEOUT);
   return 0;
 }
 
-uint8_t resetHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t resetHandler(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, PUT_TIMEOUT);
 
@@ -135,14 +135,14 @@ uint8_t resetHandler(BaseChannel * chn) {
   return 0;
 }
 
-uint8_t wakeHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t wakeHandler(BaseChannel * chn) {
 
   /* Dummy command to check connection */
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, PUT_TIMEOUT);
   return 0;
 }
 
-uint8_t sendMonitoring(BaseChannel * chn) {
+CCM_FUNC uint8_t sendMonitoring(BaseChannel * chn) {
 
     chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
     thread_t *tp = chRegFirstThread();
@@ -171,14 +171,14 @@ uint8_t sendMonitoring(BaseChannel * chn) {
     return 0;
 }
 
-uint8_t sendFFT(BaseChannel * chn) {
+CCM_FUNC uint8_t sendFFT(BaseChannel * chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_FFT, PUT_TIMEOUT);
   chnWriteTimeout(chn, (uint8_t*)output_knock, sizeof(output_knock), PUT_TIMEOUT*2);
   return 0;
 }
 
-uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
+CCM_FUNC uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
 {
   if (len != sizeof(settings_t))
   {
@@ -196,14 +196,14 @@ uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
   return 1;
 }
 
-uint8_t readSettings(BaseChannel * chn)
+CCM_FUNC uint8_t readSettings(BaseChannel * chn)
 {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_SETTINGS, PUT_TIMEOUT);
   chnWriteTimeout(chn, (uint8_t*)&settings, sizeof(settings_t), PUT_TIMEOUT);
   return 0;
 }
 
-uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
+CCM_FUNC uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
 {
   if (len != sizeof(tableRows)+sizeof(tableColumns))
   {
@@ -221,7 +221,7 @@ uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
   return 0;
 }
 
-uint8_t readHeaders(BaseChannel * chn)
+CCM_FUNC uint8_t readHeaders(BaseChannel * chn)
 {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_TABLES_HEADERS, PUT_TIMEOUT);
   chnWriteTimeout(chn, tableColumns, sizeof(tableColumns), PUT_TIMEOUT);
@@ -229,7 +229,7 @@ uint8_t readHeaders(BaseChannel * chn)
   return 0;
 }
 
-uint8_t readTables(BaseChannel * chn)
+CCM_FUNC uint8_t readTables(BaseChannel * chn)
 {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_TABLES, PUT_TIMEOUT);
   chnWriteTimeout(chn, (uint8_t*)tableAFR, sizeof(tableAFR), PUT_TIMEOUT);
@@ -237,7 +237,7 @@ uint8_t readTables(BaseChannel * chn)
   return 0;
 }
 
-uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len)
+CCM_FUNC uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len)
 {
   if (len != 3)
   {
@@ -267,7 +267,7 @@ uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len)
   return 0;
 }
 
-uint8_t clearTables(BaseChannel * chn)
+CCM_FUNC uint8_t clearTables(BaseChannel * chn)
 {
   memset(tableAFR, 0, sizeof(tableAFR));
   memset(tableKnock, 0, sizeof(tableKnock));
@@ -276,10 +276,9 @@ uint8_t clearTables(BaseChannel * chn)
   return 0;
 }
 
-uint8_t sendVersion(BaseChannel *chn)
+CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
 {
     chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
-    chnPutTimeout(chn, VERSION_MAJOR, PUT_TIMEOUT);
-    chnPutTimeout(chn, VERSION_MINOR, PUT_TIMEOUT);
+    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version), PUT_TIMEOUT);
     return 0;
 }
