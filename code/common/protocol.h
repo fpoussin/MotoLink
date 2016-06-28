@@ -1,7 +1,7 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#define PROTOCOL_VERSION 1
+#define VERSION_PROTOCOL 1
 
 #define MAGIC1 (uint8_t)0xAF
 #define MAGIC2 (uint8_t)0xEB
