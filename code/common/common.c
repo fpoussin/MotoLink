@@ -2,7 +2,7 @@
 #include "string.h"
 #include "vectors.h"
 
-uint32_t leToInt(uint8_t *ptr) {
+inline uint32_t leToInt(uint8_t *ptr) {
 
   return ((uint32_t)ptr[3] << 24) |
       ((uint32_t)ptr[2] << 16) |
@@ -10,7 +10,7 @@ uint32_t leToInt(uint8_t *ptr) {
       (uint32_t)ptr[0];
 }
 
-uint32_t beToInt(uint8_t *ptr) {
+inline uint32_t beToInt(uint8_t *ptr) {
 
   return ((uint32_t)ptr[0] << 24) |
       ((uint32_t)ptr[1] << 16) |
@@ -29,12 +29,12 @@ uint8_t checksum(const uint8_t *data, uint8_t length)
     return sum;
 }
 
-bool getSwitch1(void)
+inline bool getSwitch1(void)
 {
     return palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW;
 }
 
-int map(int x, int in_min, int in_max, int out_min, int out_max)
+inline int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
@@ -67,7 +67,7 @@ void klineInit(void)
 
   // Set pin mode back to UART
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_ALTERNATE(7) | \
-		  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_PULLUP);
+          PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUPDR_PULLUP);
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OTYPE_OPENDRAIN);
 
@@ -97,7 +97,7 @@ bool fiveBaudInit(SerialDriver *sd)
 
   // Set pin mode back to UART
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_ALTERNATE(7) | \
-		  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_PULLUP);
+          PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUPDR_PULLUP);
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_ALTERNATE(7) | \
 		  PAL_STM32_OTYPE_OPENDRAIN);
 
@@ -171,7 +171,7 @@ void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp)
   sdStart(sdp, scp);
 }
 
-bool vbatDetect(void)
+inline bool vbatDetect(void)
 {
     return palReadPad(PORT_VCC_DETECT, PAD_VCC_DETECT) == PAL_LOW;
 }
