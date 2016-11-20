@@ -2102,3 +2102,4 @@ ChibiOS-Contrib/os/hal/src/nand.c
 ChibiOS-Contrib/os/hal/src/onewire.c
 ChibiOS-Contrib/os/hal/src/timcap.c
 ChibiOS-Contrib/os/hal/src/usbh.c
+app/dsp_lib/Makefile

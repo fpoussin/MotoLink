@@ -1,8 +1,8 @@
 ;/* ----------------------------------------------------------------------
-;* Copyright (C) 2010-2014 ARM Limited. All rights reserved.
+;* Copyright (C) 2010-2015 ARM Limited. All rights reserved.
 ;*
-;* $Date:       12. March 2014
-;* $Revision: 	V1.4.4
+;* $Date:       21. December 2015 
+;* $Revision: 	V.1.4.5 a
 ;*
 ;* Project: 	CMSIS DSP Library
 ;* Title:	    arm_bitreversal2.S
@@ -40,16 +40,16 @@
 ;* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;* POSSIBILITY OF SUCH DAMAGE.
 ;* -------------------------------------------------------------------- */
-#if defined(__CC_ARM)       // Keil
+#if   defined ( __CC_ARM )     /* Keil */
     #define CODESECT AREA     ||.text||, CODE, READONLY, ALIGN=2
     #define LABEL
-#elif defined(__IASMARM__)  // IAR
+#elif defined ( __IASMARM__ )  /* IAR */
     #define CODESECT SECTION `.text`:CODE
     #define PROC
     #define LABEL
     #define ENDP
     #define EXPORT PUBLIC
-#elif defined(__CSMC__)		/* Cosmic */
+#elif defined ( __CSMC__ )	   /* Cosmic */
 	#define	CODESECT	switch .text
 	#define THUMB
 	#define EXPORT	xdef
@@ -57,7 +57,15 @@
 	#define LABEL	:
 	#define ENDP
 	#define arm_bitreversal_32 _arm_bitreversal_32
-#elif defined (__GNUC__)    // GCC
+#elif defined ( __TI_ARM__ )   /* TI ARM */
+    #define THUMB    .thumb
+    #define CODESECT .text
+    #define EXPORT   .global
+    #define PROC     : .asmfunc
+    #define LABEL    :
+    #define ENDP     .endasmfunc
+    #define END
+#elif defined ( __GNUC__ )     /* GCC */
     #define THUMB .thumb
     #define CODESECT .section .text
     #define EXPORT .global
@@ -81,6 +89,15 @@
 ;*/
 	EXPORT arm_bitreversal_32
 	EXPORT arm_bitreversal_16
+
+#if   defined ( __CC_ARM )     /* Keil */
+#elif defined ( __IASMARM__ )  /* IAR */
+#elif defined ( __CSMC__ )	   /* Cosmic */
+#elif defined ( __TI_ARM__ )   /* TI ARM */
+#elif defined ( __GNUC__ )     /* GCC */
+	.type   arm_bitreversal_16, %function
+	.type   arm_bitreversal_32, %function
+#endif
 
 #if defined(ARM_MATH_CM0) || defined(ARM_MATH_CM0PLUS)
 

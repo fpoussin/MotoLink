@@ -21,7 +21,10 @@ RM := rm -f
 C_OBJ  := $(DSPSRC:%=%.o)
 ASM_OBJ  := $(DSPASM:%=%.o)
 
-CFLAGS := -mcpu=cortex-m4 -Os -ggdb -fomit-frame-pointer -falign-functions=16 -Iinc -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -ffunction-sections -fdata-sections -fno-common  -Wall -Wextra -Wstrict-prototypes  -DCORTEX_USE_FPU=TRUE -DARM_MATH_CM4 -D__FPU_PRESENT -DTHUMB_PRESENT -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb -DTHUMB -flto -ffat-lto-objects
+CFLAGS := -mcpu=cortex-m4 -Os -ggdb -fomit-frame-pointer -falign-functions=16 -Iinc -ffunction-sections -fdata-sections -fno-common -Wall -Wextra -Wstrict-prototypes -DARM_MATH_CM4 -DTHUMB_PRESENT -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb -DTHUMB
+CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -DCORTEX_USE_FPU=TRUE -D__FPU_PRESENT
+# FLAGS += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant -DCORTEX_USE_FPU=FALSE
+CFLAGS += -flto -ffat-lto-objects
 
 default: all
 all: libmath_cm4f.a

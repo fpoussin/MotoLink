@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------
 * Copyright (C) 2010-2014 ARM Limited. All rights reserved.
 *
-* $Date:        12. March 2014
-* $Revision: 	V1.4.4
+* $Date:        19. March 2015
+* $Revision: 	V.1.4.5
 *
 * Project: 	    CMSIS DSP Library
 * Title:	    arm_rfft_f32.c
@@ -219,62 +219,34 @@ float32_t * p, float32_t * pOut)
  * The algorithms for floating-point, Q15, and Q31 data are slightly different
  * and we describe each algorithm in turn.
  * \par Floating-point
- * The main functions are <code>arm_rfft_fast_f32()</code>
- * and <code>arm_rfft_fast_init_f32()</code>.  The older functions
- * <code>arm_rfft_f32()</code> and <code>arm_rfft_init_f32()</code> have been
- * deprecated but are still documented.
- * \par
- * The FFT of a real N-point sequence has even symmetry in the frequency
- * domain.  The second half of the data equals the conjugate of the first half
- * flipped in frequency:
- * <pre>
- *X[0] - real data
- *X[1] - complex data
- *X[2] - complex data
- *... 
- *X[fftLen/2-1] - complex data
- *X[fftLen/2] - real data
- *X[fftLen/2+1] - conjugate of X[fftLen/2-1]
- *X[fftLen/2+2] - conjugate of X[fftLen/2-2]
- *... 
- *X[fftLen-1] - conjugate of X[1]
- * </pre>
- * Looking at the data, we see that we can uniquely represent the FFT using only
- * <pre>
- *N/2+1 samples:
- *X[0] - real data
- *X[1] - complex data
- *X[2] - complex data
- *... 
- *X[fftLen/2-1] - complex data
- *X[fftLen/2] - real data
- * </pre>
- * Looking more closely we see that the first and last samples are real valued.
- * They can be packed together and we can thus represent the FFT of an N-point
- * real sequence by N/2 complex values:
- * <pre>
- *X[0],X[N/2] - packed real data: X[0] + jX[N/2]
- *X[1] - complex data
- *X[2] - complex data
- *... 
- *X[fftLen/2-1] - complex data
- * </pre>
- * The real FFT functions pack the frequency domain data in this fashion.  The
- * forward transform outputs the data in this form and the inverse transform
- * expects input data in this form.  The function always performs the needed
- * bitreversal so that the input and output data is always in normal order.  The 
- * functions support lengths of [32, 64, 128, ..., 4096] samples.
- * \par
- * The forward and inverse real FFT functions apply the standard FFT scaling; no
- * scaling on the forward transform and 1/fftLen scaling on the inverse
- * transform.
+ * The main functions are arm_rfft_fast_f32() and arm_rfft_fast_init_f32(). 
+ * The older functions arm_rfft_f32() and arm_rfft_init_f32() have been 
+ * deprecated but are still documented. 
+ * \par    
+ * The FFT of a real N-point sequence has even symmetry in the frequency 
+ * domain. The second half of the data equals the conjugate of the first 
+ * half flipped in frequency. Looking at the data, we see that we can 
+ * uniquely represent the FFT using only N/2 complex numbers. These are 
+ * packed into the output array in alternating real and imaginary 
+ * components: 
+ * \par    
+ * X = { real[0], imag[0], real[1], imag[1], real[2], imag[2] ... 
+ * real[(N/2)-1], imag[(N/2)-1 } 
+ * \par    
+ * It happens that the first complex number (real[0], imag[0]) is actually 
+ * all real. real[0] represents the DC offset, and imag[0] should be 0. 
+ * (real[1], imag[1]) is the fundamental frequency, (real[2], imag[2]) is 
+ * the first harmonic and so on. 
+ * \par    
+ * The real FFT functions pack the frequency domain data in this fashion. 
+ * The forward transform outputs the data in this form and the inverse 
+ * transform expects input data in this form. The function always performs 
+ * the needed bitreversal so that the input and output data is always in 
+ * normal order. The functions support lengths of [32, 64, 128, ..., 4096] 
+ * samples. 
  * \par Q15 and Q31
  * The real algorithms are defined in a similar manner and utilize N/2 complex
- * transforms behind the scenes.  In the case of fixed-point data, a radix-4
- * complex transform is performed and this limits the allows sequence lengths to
- * 128, 512, and 2048 samples.
- * \par
- * TBD.  We need to document input and output order of data.
+ * transforms behind the scenes.  
  * \par
  * The complex transforms used internally include scaling to prevent fixed-point
  * overflows.  The overall scaling equals 1/(fftLen/2).
