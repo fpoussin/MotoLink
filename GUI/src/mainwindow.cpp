@@ -725,6 +725,10 @@ void MainWindow::doSensorsRedraw()
     mMainUi->lRpm->setText(QString::number(mMtl->getRPM())+tr(" Rpm"));
     mMainUi->lRpmHertz->setText(QString::number(mMtl->getRPMHz())+tr(" Hertz"));
     mMainUi->lSpeedHertz->setText(QString::number(mMtl->getSpeedHz())+tr(" Hertz"));
+
+    // Bottom progress bars
+    mMainUi->pgbTps->setValue(mMtl->getTPS());
+    mMainUi->pgbRPM->setValue(mMtl->getRPM());
 }
 
 void MainWindow::onMonitoringReceived(const TaskList *monitoring)
