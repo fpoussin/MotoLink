@@ -22,8 +22,9 @@
 SerialUSBDriver SDU1;
 SerialUSBDriver SDU2;
 
-#define USB_DEVICE_VID                  0x0483  /* You MUST change this.*/
-#define USB_DEVICE_PID                  0xABCD  /* You MUST change this.*/
+#define USB_DEVICE_VID  0x0483
+#define USB_DEVICE_PID  0xABCD
+#define USB_DEVICE_GUID "{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}"
 
 /*
  * Endpoints.
@@ -41,16 +42,67 @@ SerialUSBDriver SDU2;
 /*
  * Interfaces
  */
-#define USB_NUM_INTERFACES              4
-#define USB_CDC_CIF_NUM0                0
-#define USB_CDC_DIF_NUM0                1
-#define USB_CDC_CIF_NUM1                2
-#define USB_CDC_DIF_NUM1                3
+#define USB_NUM_INTERFACES 4
+#define USB_CDC_CIF_NUM0   0
+#define USB_CDC_DIF_NUM0   1
+#define USB_CDC_CIF_NUM1   2
+#define USB_CDC_DIF_NUM1   3
+
+/*
+* Extra defines
+*/
+
+typedef struct
+{
+  uint8_t  bmRequestType;
+  uint8_t  bRequest;
+  uint16_t wValue;
+  uint16_t wIndex;
+  uint16_t wLength;
+} USBSetupPkt;
+
+typedef struct
+{
+  // Header
+  uint32_t dwLength;
+  uint16_t bcdVersion;
+  uint16_t wIndex;
+  uint8_t  bCount;
+  uint8_t  bReserved1[7];
+  // Function Section 1
+  uint8_t  bFirstInterfaceNumber;
+  uint8_t  bInterfaceCount;
+  uint8_t  bCompatibleID[8];
+  uint8_t  bSubCompatibleID[8];
+  uint8_t  bReserved3[6];
+} USBCompatIDDesc;
+
+typedef struct
+{
+  // Header
+  uint32_t dwLength;
+  uint16_t bcdVersion;
+  uint16_t wIndex;
+  uint16_t wCount;
+  // Custom Property Section 1
+  uint32_t dwSize;
+  uint32_t dwPropertyDataType;
+  uint16_t wPropertyNameLength;
+  uint8_t bPropertyName[20*2];
+  uint32_t dwPropertyDataLength;
+  uint8_t bPropertyData[39*2];
+} USBDExtPropertiesDesc;
+
+#define	USB_REQ_OS_FEATURE  0x20
+#define USB_FEATURE_PROPERTIES 0x04
+#define USB_FEATURE_COMPAT_ID  0x05
+#define USB_REQ_GET_FEATURE 0x04
+
 
 /*
  * USB Device Descriptor.
  */
-static const uint8_t vcom_device_descriptor_data[] = {
+static const uint8_t usb_device_descriptor_data[] = {
   USB_DESC_DEVICE(
     0x0200,                                 /* bcdUSB (1.1).                */
     0xEF,                                   /* bDeviceClass (misc).         */
@@ -69,13 +121,10 @@ static const uint8_t vcom_device_descriptor_data[] = {
 /*
  * Device Descriptor wrapper.
  */
-static const USBDescriptor vcom_device_descriptor = {
-  sizeof vcom_device_descriptor_data,
-  vcom_device_descriptor_data
+static const USBDescriptor usb_device_descriptor = {
+  sizeof usb_device_descriptor_data,
+  usb_device_descriptor_data
 };
-
-
-
 
 
 
@@ -231,7 +280,7 @@ static const USBDescriptor vcom_device_descriptor = {
 
 
 /* Configuration Descriptor tree for a CDC.*/
-static const uint8_t vcom_configuration_descriptor_data[] = {
+static const uint8_t usb_configuration_descriptor_data[] = {
   /* Configuration Descriptor.*/
   USB_DESC_CONFIGURATION(
     USB_DESC_CONFIGURATION_SIZE +
@@ -258,18 +307,70 @@ static const uint8_t vcom_configuration_descriptor_data[] = {
   ),
 };
 
+
+
+static const uint8_t usb_winusb_descriptor_data[] =
+{
+  USB_DESC_BYTE(18),                         /* bLength */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),      /* bDescriptorType */
+  'M',0,'S',0,'F',0,'T',0,'1',0,'0',0,'0',0, /* qwSignature */
+  0x04,                                      /* bMS_VendorCode */
+  0                                          /* bPad */
+};
+
+static const USBDescriptor usb_winusb_descriptor = {
+  sizeof usb_winusb_descriptor_data,  usb_winusb_descriptor_data
+};
+
+USBCompatIDDesc usb_compat_id_descriptor_data = {
+  sizeof(usb_compat_id_descriptor_data), /* dwLength */
+  0x0100,                    /* bcdVersion */
+  0x0004,                    /* wIndex */
+  0x01,                      /* bCount */
+  {0},                       /* bReserved1 */
+  0x02,                      /* bFirstInterfaceNumber */
+  0x01,                      /* bInterfaceCount */
+  "WINUSB",                  /* bCompatibleID */
+  {0},                       /* bSubCompatibleID */
+  {0}                        /* bReserved3 */
+};
+
+static const USBDescriptor usb_compat_id_descriptor = {
+  sizeof usb_compat_id_descriptor_data,
+  (uint8_t*)&usb_compat_id_descriptor_data
+};
+
+// Extended Properties OS Feature Descriptor
+USBDExtPropertiesDesc usb_guid_descriptor_data = {
+  sizeof(usb_guid_descriptor_data),          /* dwLength */
+  0x0100,                         /* bcdVersion */
+  0x0005,                         /* wIndex */
+  0x0001,                         /* wCount */
+  0x00000084,                     /* dwSize */
+  0x00000001,                     /* dwPropertyDataType */
+  0x0028,                         /* wPropertyNameLength */
+  "DeviceInterfaceGUID",          /* bPropertyName */
+  0x0000004E,                     /* dwPropertyDataLength */
+  USB_DEVICE_GUID                 /* bPropertyData */
+};
+
+static const USBDescriptor usb_guid_descriptor = {
+  sizeof usb_guid_descriptor_data,
+  (uint8_t*)&usb_guid_descriptor_data
+};
+
 /*
  * Configuration Descriptor wrapper.
  */
-static const USBDescriptor vcom_configuration_descriptor = {
-  sizeof vcom_configuration_descriptor_data,
-  vcom_configuration_descriptor_data
+static const USBDescriptor usb_configuration_descriptor = {
+  sizeof usb_configuration_descriptor_data,
+  usb_configuration_descriptor_data
 };
 
 /*
  * U.S. English language identifier.
  */
-static const uint8_t vcom_string0[] = {
+static const uint8_t usb_string0[] = {
   USB_DESC_BYTE(4),                     /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   USB_DESC_WORD(0x0409)                 /* wLANGID (U.S. English).          */
@@ -278,7 +379,7 @@ static const uint8_t vcom_string0[] = {
 /*
  * Vendor string.
  */
-static const uint8_t vcom_string1[] = {
+static const uint8_t usb_string1[] = {
   USB_DESC_BYTE(38),                    /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   'S', 0, 'T', 0, 'M', 0, 'i', 0, 'c', 0, 'r', 0, 'o', 0, 'e', 0,
@@ -289,7 +390,7 @@ static const uint8_t vcom_string1[] = {
 /*
  * Device Description string.
  */
-static const uint8_t vcom_string2[] = {
+static const uint8_t usb_string2[] = {
   USB_DESC_BYTE(18),                    /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0
@@ -299,7 +400,7 @@ static const uint8_t vcom_string2[] = {
 /*
  * Device Description string.
  */
-static const uint8_t vcom_string3[] = {
+static const uint8_t usb_string3[] = {
   USB_DESC_BYTE(52),                    /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0,
@@ -311,7 +412,7 @@ static const uint8_t vcom_string3[] = {
 /*
  * Device Description string.
  */
-static const uint8_t vcom_string4[] = {
+static const uint8_t usb_string4[] = {
   USB_DESC_BYTE(46),                    /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0,
@@ -322,7 +423,7 @@ static const uint8_t vcom_string4[] = {
 /*
  * Serial Number string.
  */
-static const uint8_t vcom_string5[] = {
+static const uint8_t usb_string5[] = {
   USB_DESC_BYTE(8),                     /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
   '0' + CH_KERNEL_MAJOR, 0,
@@ -333,13 +434,13 @@ static const uint8_t vcom_string5[] = {
 /*
  * Strings wrappers array.
  */
-static const USBDescriptor vcom_strings[] = {
-  {sizeof vcom_string0, vcom_string0},
-  {sizeof vcom_string1, vcom_string1},
-  {sizeof vcom_string2, vcom_string2},
-  {sizeof vcom_string3, vcom_string3},
-  {sizeof vcom_string3, vcom_string4},
-  {sizeof vcom_string3, vcom_string5}
+static const USBDescriptor usb_strings[] = {
+  {sizeof usb_string0, usb_string0},
+  {sizeof usb_string1, usb_string1},
+  {sizeof usb_string2, usb_string2},
+  {sizeof usb_string3, usb_string3},
+  {sizeof usb_string3, usb_string4},
+  {sizeof usb_string3, usb_string5},
 };
 
 /*
@@ -355,12 +456,14 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
   (void)lang;
   switch (dtype) {
   case USB_DESCRIPTOR_DEVICE:
-    return &vcom_device_descriptor;
+    return &usb_device_descriptor;
   case USB_DESCRIPTOR_CONFIGURATION:
-    return &vcom_configuration_descriptor;
+    return &usb_configuration_descriptor;
   case USB_DESCRIPTOR_STRING:
     if (dindex < 6)
-      return &vcom_strings[dindex];
+      return &usb_strings[dindex];
+    else if (dindex == 0xee) /* WinUSB */
+      return &usb_winusb_descriptor;
   }
   return NULL;
 }
@@ -516,9 +619,31 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
  */
 static bool requests_hook(USBDriver *usbp) {
 
-  if (((usbp->setup[0] & USB_RTYPE_RECIPIENT_MASK) == USB_RTYPE_RECIPIENT_INTERFACE) &&
-      (usbp->setup[1] == USB_REQ_SET_INTERFACE)) {
+  USBSetupPkt *setup = (USBSetupPkt*)usbp->setup;
+
+  if (((setup->bmRequestType & USB_RTYPE_RECIPIENT_MASK) == USB_RTYPE_RECIPIENT_INTERFACE) &&
+      (setup->bRequest == USB_REQ_SET_INTERFACE)) {
     usbSetupTransfer(usbp, NULL, 0, NULL);
+    return true;
+  }
+
+  if ((setup->bmRequestType & USB_RTYPE_RECIPIENT_MASK) == (USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_DEVICE) && /* 0x80 | 0x40 = 0xC0 */
+      (setup->bRequest == USB_REQ_GET_FEATURE) && setup->wIndex == USB_FEATURE_COMPAT_ID)
+  {
+    usbSetupTransfer(usbp,
+                     (uint8_t*)&usb_compat_id_descriptor,
+                     setup->wLength,
+                     NULL);
+    return true;
+  }
+
+  if ((setup->bmRequestType & USB_RTYPE_RECIPIENT_MASK) == (USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_INTERFACE) && /* 0x80 | 0x41 = 0xC1 */
+      (setup->bRequest == USB_REQ_GET_FEATURE && setup->wIndex == USB_FEATURE_PROPERTIES))
+  {
+    usbSetupTransfer(usbp,
+                     (uint8_t*)&usb_guid_descriptor,
+                     setup->wLength,
+                     NULL);
     return true;
   }
   return sduRequestsHook(usbp);
