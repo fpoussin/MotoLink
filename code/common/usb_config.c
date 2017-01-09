@@ -24,7 +24,7 @@ SerialUSBDriver SDU2;
 
 #define USB_DEVICE_VID  0x0483
 #define USB_DEVICE_PID  0xABCD
-#define USB_DEVICE_GUID "{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}"
+#define USB_DEVICE_GUID "{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}\0\0"
 
 /*
  * Endpoints.
