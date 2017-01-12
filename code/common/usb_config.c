@@ -96,7 +96,7 @@ typedef struct
 #define	USB_REQ_OS_FEATURE  0x20
 #define USB_FEATURE_PROPERTIES 0x04
 #define USB_FEATURE_COMPAT_ID  0x05
-#define USB_REQ_GET_FEATURE 0x04
+#define USB_REQ_MS_DESCRIPTOR 0x04
 
 
 /*
@@ -104,7 +104,7 @@ typedef struct
  */
 static const uint8_t usb_device_descriptor_data[] = {
   USB_DESC_DEVICE(
-    0x0200,                                 /* bcdUSB (1.1).                */
+    0x0200,                                 /* bcdUSB (2.0).                */
     0xEF,                                   /* bDeviceClass (misc).         */
     0x02,                                   /* bDeviceSubClass (common).    */
     0x01,                                   /* bDeviceProtocol (IAD).       */
@@ -298,7 +298,7 @@ static const uint8_t usb_configuration_descriptor_data[] = {
     USB_ENDPOINT_OUT(USB_DATA_AVAILABLE_EP_A),
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_A)
   ),
-  IAD_BASE_IF_DESC_SET(
+  IAD_CDC_IF_DESC_SET(
     USB_CDC_CIF_NUM1,
     USB_CDC_DIF_NUM1,
     USB_ENDPOINT_IN(USB_INTERRUPT_REQUEST_EP_B),
@@ -627,24 +627,31 @@ static bool requests_hook(USBDriver *usbp) {
     return true;
   }
 
-  if ((setup->bmRequestType & USB_RTYPE_RECIPIENT_MASK) == (USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_DEVICE) && /* 0x80 | 0x40 = 0xC0 */
-      (setup->bRequest == USB_REQ_GET_FEATURE) && setup->wIndex == USB_FEATURE_COMPAT_ID)
+  if (setup->bmRequestType & (USB_RTYPE_DIR_MASK | USB_RTYPE_TYPE_VENDOR))
   {
-    usbSetupTransfer(usbp,
-                     (uint8_t*)&usb_compat_id_descriptor,
-                     setup->wLength,
-                     NULL);
-    return true;
-  }
+      if (setup->bRequest == USB_REQ_MS_DESCRIPTOR)
+      {
+          if (setup->wIndex == USB_FEATURE_COMPAT_ID &&
+              setup->bmRequestType == (USB_RTYPE_DIR_MASK | USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_DEVICE))
+          {
+              usbSetupTransfer(usbp,
+                               (uint8_t*)&usb_compat_id_descriptor,
+                               setup->wLength,
+                               NULL);
+              return true;
+          }
 
-  if ((setup->bmRequestType & USB_RTYPE_RECIPIENT_MASK) == (USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_INTERFACE) && /* 0x80 | 0x41 = 0xC1 */
-      (setup->bRequest == USB_REQ_GET_FEATURE && setup->wIndex == USB_FEATURE_PROPERTIES))
-  {
-    usbSetupTransfer(usbp,
-                     (uint8_t*)&usb_guid_descriptor,
-                     setup->wLength,
-                     NULL);
-    return true;
+          else if (setup->wIndex == USB_FEATURE_PROPERTIES &&
+                  (setup->bmRequestType == (USB_RTYPE_DIR_MASK | USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_DEVICE) ||
+                   setup->bmRequestType == (USB_RTYPE_DIR_MASK | USB_RTYPE_TYPE_VENDOR | USB_RTYPE_RECIPIENT_INTERFACE)))
+          {
+              usbSetupTransfer(usbp,
+                               (uint8_t*)&usb_guid_descriptor,
+                               setup->wLength,
+                               NULL);
+              return true;
+          }
+      }
   }
   return sduRequestsHook(usbp);
 }
