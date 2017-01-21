@@ -16,17 +16,9 @@ This file is part of QSTLink2.
 */
 #ifndef COMPAT_H
 #define COMPAT_H
-#include <stdio.h>
-#include <qapplication.h>
 
-#if QT_VERSION >= 0x040700
-    #include <QElapsedTimer> // QElapsedTimer was introduced in QT 4.7
-    #ifdef __GNUC__
-        #include <unistd.h> //for usleep starting with GCC 4.7
-    #endif
-#else
-    #include <QTime>
-    #define QElapsedTimer QTime
+#if defined(_WIN32) || defined(_WIN64)
+    #define WINDOWS 1
 #endif
 
 #define PrintError() qCritical ("In %s, at %s:%d", Q_FUNC_INFO, __FILE__, __LINE__)

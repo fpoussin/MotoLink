@@ -6,7 +6,7 @@
 
 # Note: USB has trouble with MSVC 2015, stick to 2013.
 
-QT += core gui xml network script scripttools
+QT += core gui xml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 

@@ -1,4 +1,5 @@
 #include "update.h"
+#include <QTimer>
 
 Update::Update(QObject *parent) :
     QObject(parent)
@@ -11,53 +12,55 @@ Update::Update(QObject *parent) :
 
 void Update::getLatestVersion()
 {
+    qDebug("Checking version...");
     QNetworkRequest request;
     request.setUrl(mReleasesUrl);
-    mNetworkManager.get(request);
+    QNetworkReply *r = mNetworkManager.get(request);
+    QTimer t;
+    t.singleShot(3000, r, SLOT(abort()));
 }
-
 
 void Update::onResult(QNetworkReply *reply)
 {
-    if (reply->error() != QNetworkReply::NoError
-            || reply->size() < 1)
+    if (reply->error() != QNetworkReply::NoError || reply->size() < 1) {
+        qDebug("Unable to get latest version");
         return;
+    }
 
-    QString data = (QString) reply->readAll();
-
+    QJsonDocument doc(QJsonDocument::fromJson(reply->readAll()));
     delete reply;
 
-    QScriptEngine engine;
-    QScriptValue result = engine.evaluate(data);
-
-    if (!result.isArray())
+    if (!doc.isArray()) {
+        qDebug("Unable to get latest version");
         return;
-
-    QScriptValueIterator it(result);
-    while (it.hasNext())
-    {
-        it.next();
-        QScriptValue release = it.value();
-
-        QString version = release.property("tag_name").toString();
-        version.remove(QRegExp("[a-zA-Z]"));
-
-        if (version.isEmpty()) {
-            qDebug() << tr("Unable to get latest version") << version;
-            return;
-        }
-
-        mNewVersion = version;
-        if (mCurrentVersion.compare(mNewVersion) < 0)
-        {
-            qDebug() << QString(tr("New version available: ")) + version;
-            emit newVersionAvailable(version);
-        }
-        else
-        {
-            qDebug() << QString(tr("Using latest version: ")) + version;
-        }
-
-        break; // Only latest release
     }
+
+    QJsonArray array(doc.array());
+    QJsonValue val(array.at(0));
+    QJsonObject release(val.toObject());
+
+    if (release.isEmpty()) {
+        qDebug("Unable to get latest version");
+        return;
+    }
+
+    QString version = release["tag_name"].toString();
+    version.remove(QRegExp("[a-zA-Z]"));
+
+    if (version.isEmpty()) {
+        qDebug("Unable to get latest version");
+        return;
+    }
+
+    mNewVersion = version;
+    if (mCurrentVersion.compare(mNewVersion) < 0)
+    {
+        qDebug("New version available: %s", version.toStdString().c_str());
+        emit newVersionAvailable(version);
+    }
+    else
+    {
+        qDebug("Using latest version: %s", version.toStdString().c_str());
+    }
+
 }

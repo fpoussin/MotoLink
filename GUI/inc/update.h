@@ -6,9 +6,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
-#include <QScriptEngine>
-#include <QScriptValueIterator>
 #include <QDebug>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #ifdef WIN32
 // Linked libraries
