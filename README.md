@@ -3,9 +3,9 @@ MotoLink
 
 [![GitHub version](https://badge.fury.io/gh/fpoussin%2Fmotolink.svg)](https://badge.fury.io/gh/fpoussin%2Fmotolink)  
 GUI code:  
-[![Build Status](http://vps2.ntx.so/jenkins/buildStatus/icon?job=Motolink-GUI)](http://vps2.ntx.so/jenkins/job/Motolink-GUI)  
+[![Build Status](http://vps2.netyxia.net/jenkins/buildStatus/icon?job=Motolink-GUI)](http://vps2.netyxia.net/jenkins/job/Motolink-GUI)  
 MCU code:  
-[![Build Status](http://vps2.ntx.so/jenkins/buildStatus/icon?job=Motolink-ARM)](http://vps2.ntx.so/jenkins/job/Motolink-ARM)
+[![Build Status](http://vps2.netyxia.net/jenkins/buildStatus/icon?job=Motolink-ARM)](http://vps2.netyxia.net/jenkins/job/Motolink-ARM)
 
 CAN Bus, K-Line interface for motorcycles, with a fuel/ignition mapper function.  
 
