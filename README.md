@@ -17,6 +17,8 @@ Having a wideband exhaust sensor is mandatory. If your bike doesn't have one, yo
 
 Includes some digital (RPM, Speed), analog (TPS, ECT, Wideband), serial (Wideband), as well as a knock sensor input interface for tuning.
 
+![](http://i.imgur.com/Rat9Znd.jpg)
+
 ###File tree:###
 
 **├── Board**  *Eagle board files*  
