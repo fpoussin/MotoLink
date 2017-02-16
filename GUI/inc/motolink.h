@@ -86,6 +86,9 @@ public:
     inline bool getFunctionAFR_Analog(void) { return mSettings.functions & FUNC_AFR_AN ;}
     inline bool getFunctionAFR_MTS(void) { return mSettings.functions & FUNC_AFR_MTS ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
+    inline bool getFunctionInput_Direct(void) { return (mSettings.functions & FUNC_COM_MASK) == 0 ;}
+    inline bool getFunctionInput_OBD(void) { return mSettings.functions & FUNC_COM_ODB_CAN ;}
+    inline bool getFunctionInput_Yamaha(void) { return mSettings.functions & FUNC_COM_YAMAHA_CAN ;}
 
     // Set
     inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
@@ -101,6 +104,11 @@ public:
                                                 mSettings.functions |= FUNC_AFR_MTS ;}
     inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
                                                 else mSettings.functions &= ~FUNC_RECORD ;}
+    inline void setFunctionInput_Direct(void) { mSettings.functions &= ~(FUNC_COM_MASK);}
+    inline void setFunctionInput_OBD(void) {   mSettings.functions &= ~(FUNC_COM_MASK);
+                                                mSettings.functions |= FUNC_COM_ODB_CAN ;}
+    inline void setFunctionInput_Yamaha(void) { mSettings.functions &= ~(FUNC_COM_MASK);
+                                                mSettings.functions |= FUNC_COM_YAMAHA_CAN ;}
 
 public slots:
     bool usbConnect(void);

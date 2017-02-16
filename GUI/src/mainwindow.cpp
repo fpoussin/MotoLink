@@ -917,6 +917,13 @@ void MainWindow::onReadMtlSettings()
         else if (mMtl->getFunctionAFR_MTS())
             mMainUi->cbAFRInput->setCurrentIndex(2);
 
+        if (mMtl->getFunctionInput_Direct())
+            mMainUi->cbAFRInput->setCurrentIndex(0);
+        else if (mMtl->getFunctionInput_OBD())
+            mMainUi->cbAFRInput->setCurrentIndex(1);
+        else if (mMtl->getFunctionInput_Yamaha())
+            mMainUi->cbAFRInput->setCurrentIndex(2);
+
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
 
         this->log("Read settings OK");
@@ -949,6 +956,25 @@ void MainWindow::onWriteMtlSettings()
 
         default:
         mMtl->setFunctionAFR_Disabled();
+        break;
+    }
+
+    switch (mMainUi->cbInputType->currentIndex())
+    {
+        case 0:
+        mMtl->setFunctionInput_Direct();
+        break;
+
+        case 1:
+        mMtl->setFunctionInput_OBD();
+        break;
+
+        case 2:
+        mMtl->setFunctionInput_Yamaha();
+        break;
+
+        default:
+        mMtl->setFunctionInput_Direct();
         break;
     }
 

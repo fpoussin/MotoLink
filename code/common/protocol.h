@@ -61,6 +61,7 @@
 #define FUNC_SENSORS_DIRECT (uint16_t)0x0010
 #define FUNC_SENSORS_COM (uint16_t)0x0020
 
+#define FUNC_COM_MASK (uint16_t)0x0700
 #define FUNC_COM_ODB_KLINE (uint16_t)0x0100
 #define FUNC_COM_ODB_CAN (uint16_t)0x0200
 #define FUNC_COM_YAMAHA_CAN (uint16_t)0x0400
