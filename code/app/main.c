@@ -23,6 +23,7 @@
 #include "sensors.h"
 #include "innovate.h"
 #include "storage.h"
+#include "canbus.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -44,23 +45,26 @@ const char *irq_name = "Interrupts";
 /*===========================================================================*/
 
 static virtual_timer_t vt_freqin;
+/*
 static const uint8_t initMsg[] = {0xFE, 0x04, 0xFF, 0xFF}; // original HDS init msg
 
 static const uint8_t initHex1[] = {0x27, 0x0B, 0xE0, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x48, 0x6F, 0x43}; // HelloHo
 static const uint8_t initHex2[] = {0x07 , 0x08 , 0x49 , 0x7F , 0x61 , 0x6D , 0x7F, 0xDC}; // Iam
 static const uint8_t initHex3[] = {0x27 , 0x0B , 0xE0 , 0x77 , 0x41 , 0x72 , 0x65 , 0x59 , 0x6F , 0x75 , 0x22}; // AreYou
 static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7F , 0x27}; // in.
-
+*/
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
+/*
+ * Set from bootloader, here for reference.
 static const WDGConfig wdgcfg = {
   STM32_IWDG_PR_64,
   STM32_IWDG_RL(250), // 250ms
   STM32_IWDG_WIN_DISABLED
 };
-
+*/
 CCM_FUNC void freqinVTHandler(void *arg)
 {
   (void)arg;
@@ -75,12 +79,6 @@ CCM_FUNC void freqinVTHandler(void *arg)
 /*===========================================================================*/
 /* Configs                                                                   */
 /*===========================================================================*/
-
-const CANConfig cancfg = {
-  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
-  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
-  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
-};
 
 const DACConfig dac1cfg1 = {
   2047U,
@@ -117,6 +115,12 @@ PWMConfig pwmcfg = {
   0
 };
 
+const CANConfig cancfg = {
+  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
+  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
+  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
+};
+
 /*===========================================================================*/
 /* Threads                                                                   */
 /*===========================================================================*/
@@ -125,6 +129,7 @@ THD_WORKING_AREA(waThreadCAN, 256);
 CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 {
   event_listener_t el;
+  CANTxFrame txmsg;
   CANRxFrame rxmsg;
 
   (void)arg;
@@ -132,12 +137,37 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
   while(!chThdShouldTerminateX()) {
-    if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(50)) == 0) {
-      chThdSleepMilliseconds(2);
+
+    // Are we using coms for sensor data? If not just sleep.
+    if ((settings.functions & FUNC_SENSORS_COM) == 0) {
+
+      chThdSleepMilliseconds(100);
       continue;
     }
-    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, MS2ST(50)) == MSG_OK) {
+
+    checkCanFilters(&CAND1, &cancfg);
+
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(10)) == 0) {
+      continue;
+    }
+
+    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
+      if (settings.functions & FUNC_COM_ODB_CAN) {
+
+        readCanOBDPid(&rxmsg);
+      }
+      else if (settings.functions & FUNC_COM_YAMAHA_CAN) {
+
+        readCanYamahaPid(&rxmsg);
+      }
+    }
+
+    if (settings.functions & FUNC_COM_ODB_CAN) {
+
+      // Request PIDs
+      sendCanOBDFrames(&CAND1, &txmsg);
+      chThdSleepMilliseconds(100); // ~10Hz
     }
   }
   chEvtUnregister(&CAND1.rxfull_event, &el);

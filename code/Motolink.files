@@ -2103,3 +2103,7 @@ ChibiOS-Contrib/os/hal/src/onewire.c
 ChibiOS-Contrib/os/hal/src/timcap.c
 ChibiOS-Contrib/os/hal/src/usbh.c
 app/dsp_lib/Makefile
+app/canbus.h
+app/canbus.c
+app/prot_obd.h
+app/prot_yamaha.h

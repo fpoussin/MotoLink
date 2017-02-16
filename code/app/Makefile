@@ -119,7 +119,8 @@ CSRC = $(STARTUPSRC) \
        sensors.c debug.c \
        storage.c median.c \
        ipc.c innovate.c \
-       opamp.c tables.c settings.c
+       opamp.c tables.c \
+       settings.c canbus.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

@@ -54,10 +54,17 @@
 #define KNOCK_RATIO 4.66f
 #define KNOCK_MAX (3.3*KNOCK_RATIO)
 
-#define FUNC_RECORD (uint8_t)0x01
-#define FUNC_AFR_DISA (uint8_t)0x02
-#define FUNC_AFR_MTS (uint8_t)0x04
-#define FUNC_AFR_AN (uint8_t)0x08
+#define FUNC_RECORD (uint16_t)0x0001
+#define FUNC_AFR_DISA (uint16_t)0x0002
+#define FUNC_AFR_MTS (uint16_t)0x0004
+#define FUNC_AFR_AN (uint16_t)0x0008
+#define FUNC_SENSORS_DIRECT (uint16_t)0x0010
+#define FUNC_SENSORS_COM (uint16_t)0x0020
+
+#define FUNC_COM_ODB_KLINE (uint16_t)0x0100
+#define FUNC_COM_ODB_CAN (uint16_t)0x0200
+#define FUNC_COM_YAMAHA_CAN (uint16_t)0x0400
+
 
 typedef uint32_t crc_t;
 
