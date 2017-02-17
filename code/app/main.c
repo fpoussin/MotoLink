@@ -139,7 +139,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   while(!chThdShouldTerminateX()) {
 
     // Are we using coms for sensor data? If not just sleep.
-    if ((settings.functions & FUNC_SENSORS_COM) == 0) {
+    if (settings.sensorsInput != SENSORS_INPUT_COM) {
 
       chThdSleepMilliseconds(100);
       continue;
@@ -153,17 +153,17 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 
     while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
-      if (settings.functions & FUNC_COM_ODB_CAN) {
+      if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
 
         readCanOBDPid(&rxmsg);
       }
-      else if (settings.functions & FUNC_COM_YAMAHA_CAN) {
+      else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
 
         readCanYamahaPid(&rxmsg);
       }
     }
 
-    if (settings.functions & FUNC_COM_ODB_CAN) {
+    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
 
       // Request PIDs
       sendCanOBDFrames(&CAND1, &txmsg);
@@ -320,7 +320,7 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an8);
     sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
 
-    if (settings.functions & FUNC_AFR_AN)
+    if (settings.afrInput == AFR_INPUT_AN)
         sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an9);
 
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))

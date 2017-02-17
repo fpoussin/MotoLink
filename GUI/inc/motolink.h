@@ -82,13 +82,13 @@ public:
     inline float getAFRMinVal(void) { return mSettings.AfrMinVal / 1000.0 ;}
     inline float getAFRMaxVal(void) { return mSettings.AfrMaxVal / 1000.0 ;}
     inline float getAFROffset(void) { return mSettings.AfrOffset / 1000.0 ;}
-    inline bool getFunctionAFR_Disabled(void) { return mSettings.functions & FUNC_AFR_DISA ;}
-    inline bool getFunctionAFR_Analog(void) { return mSettings.functions & FUNC_AFR_AN ;}
-    inline bool getFunctionAFR_MTS(void) { return mSettings.functions & FUNC_AFR_MTS ;}
+    inline bool getFunctionAFR_Disabled(void) { return mSettings.afrInput == AFR_INPUT_DISABLED ;}
+    inline bool getFunctionAFR_Analog(void) { return mSettings.afrInput == AFR_INPUT_AN ;}
+    inline bool getFunctionAFR_MTS(void) { return mSettings.afrInput == AFR_INPUT_MTS ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
-    inline bool getFunctionInput_Direct(void) { return (mSettings.functions & FUNC_COM_MASK) == 0 ;}
-    inline bool getFunctionInput_OBD(void) { return mSettings.functions & FUNC_COM_ODB_CAN ;}
-    inline bool getFunctionInput_Yamaha(void) { return mSettings.functions & FUNC_COM_YAMAHA_CAN ;}
+    inline bool getFunctionInput_Direct(void) { return mSettings.sensorsInput == SENSORS_INPUT_DIRECT ;}
+    inline bool getFunctionInput_OBD(void) { return mSettings.sensorsInput == SENSORS_INPUT_OBD_CAN ;}
+    inline bool getFunctionInput_Yamaha(void) { return mSettings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN ;}
 
     // Set
     inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
@@ -96,19 +96,15 @@ public:
     inline void setAFRMinVal(float v) { mSettings.AfrMinVal = v * 1000.0 ;}
     inline void setAFRMaxVal(float v) { mSettings.AfrMaxVal = v * 1000.0 ;}
     inline void setAFROffset(float v) { mSettings.AfrOffset = v * 1000.0 ;}
-    inline void setFunctionAFR_Disabled(void) { mSettings.functions &= ~(FUNC_AFR_AN |FUNC_AFR_MTS);
-                                                mSettings.functions |= FUNC_AFR_DISA ;}
-    inline void setFunctionAFR_Analog(void) {   mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_MTS);
-                                                mSettings.functions |= FUNC_AFR_AN ;}
-    inline void setFunctionAFR_MTS(void) {      mSettings.functions &= ~(FUNC_AFR_DISA |FUNC_AFR_AN);
-                                                mSettings.functions |= FUNC_AFR_MTS ;}
+    inline void setFunctionAFR_Disabled(void) { mSettings.afrInput = 0 ;}
+    inline void setFunctionAFR_Analog(void) {   mSettings.afrInput =  AFR_INPUT_AN ;}
+    inline void setFunctionAFR_MTS(void) {      mSettings.afrInput =  AFR_INPUT_MTS ;}
     inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
                                                 else mSettings.functions &= ~FUNC_RECORD ;}
-    inline void setFunctionInput_Direct(void) { mSettings.functions &= ~(FUNC_COM_MASK);}
-    inline void setFunctionInput_OBD(void) {   mSettings.functions &= ~(FUNC_COM_MASK);
-                                                mSettings.functions |= FUNC_COM_ODB_CAN ;}
-    inline void setFunctionInput_Yamaha(void) { mSettings.functions &= ~(FUNC_COM_MASK);
-                                                mSettings.functions |= FUNC_COM_YAMAHA_CAN ;}
+
+    inline void setFunctionInput_Direct(void) { mSettings.sensorsInput = 0 ;}
+    inline void setFunctionInput_OBD(void) {    mSettings.sensorsInput = SENSORS_INPUT_OBD_CAN ;}
+    inline void setFunctionInput_Yamaha(void) { mSettings.sensorsInput = SENSORS_INPUT_YAMAHA_CAN ;}
 
 public slots:
     bool usbConnect(void);

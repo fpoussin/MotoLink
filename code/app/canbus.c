@@ -12,7 +12,7 @@ CCM_FUNC void checkCanFilters(CANDriver *canp, const CANConfig *config) {
 
   static uint8_t filter = 0;
 
-  if (settings.functions & FUNC_COM_ODB_CAN && filter != 1) {
+  if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN && filter != 1) {
 
     filter = 1;
     canStop(canp);
@@ -20,7 +20,7 @@ CCM_FUNC void checkCanFilters(CANDriver *canp, const CANConfig *config) {
     canStart(canp, config);
   }
 
-  else if (settings.functions & FUNC_COM_YAMAHA_CAN && filter != 2) {
+  else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN && filter != 2) {
 
     filter = 2;
     canStop(canp);
