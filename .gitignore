@@ -23,5 +23,7 @@ code/*/build
 code/*/.cproject
 code/*/.project
 code/*/*.user
-
+*.dll
+*.lib
+*.a
 *.o
