@@ -298,7 +298,7 @@ static const uint8_t usb_configuration_descriptor_data[] = {
     USB_ENDPOINT_OUT(USB_DATA_AVAILABLE_EP_A),
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_A)
   ),
-  IAD_CDC_IF_DESC_SET(
+  IAD_BASE_IF_DESC_SET(
     USB_CDC_CIF_NUM1,
     USB_CDC_DIF_NUM1,
     USB_ENDPOINT_IN(USB_INTERRUPT_REQUEST_EP_B),
@@ -455,15 +455,15 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
   (void)usbp;
   (void)lang;
   switch (dtype) {
-  case USB_DESCRIPTOR_DEVICE:
-    return &usb_device_descriptor;
-  case USB_DESCRIPTOR_CONFIGURATION:
-    return &usb_configuration_descriptor;
-  case USB_DESCRIPTOR_STRING:
-    if (dindex < 6)
-      return &usb_strings[dindex];
-    else if (dindex == 0xee) /* WinUSB */
-      return &usb_winusb_descriptor;
+      case USB_DESCRIPTOR_DEVICE:
+        return &usb_device_descriptor;
+      case USB_DESCRIPTOR_CONFIGURATION:
+        return &usb_configuration_descriptor;
+      case USB_DESCRIPTOR_STRING:
+        if (dindex < 6)
+          return &usb_strings[dindex];
+        else if (dindex == 0xee) /* WinUSB */
+          return &usb_winusb_descriptor;
   }
   return NULL;
 }
