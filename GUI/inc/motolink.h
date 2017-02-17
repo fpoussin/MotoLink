@@ -85,6 +85,7 @@ public:
     inline bool getFunctionAFR_Disabled(void) { return mSettings.afrInput == AFR_INPUT_DISABLED ;}
     inline bool getFunctionAFR_Analog(void) { return mSettings.afrInput == AFR_INPUT_AN ;}
     inline bool getFunctionAFR_MTS(void) { return mSettings.afrInput == AFR_INPUT_MTS ;}
+    inline bool getFunctionAFR_OBD(void) { return mSettings.afrInput == AFR_INPUT_OBD ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
     inline bool getFunctionInput_Direct(void) { return mSettings.sensorsInput == SENSORS_INPUT_DIRECT ;}
     inline bool getFunctionInput_OBD(void) { return mSettings.sensorsInput == SENSORS_INPUT_OBD_CAN ;}
@@ -99,6 +100,7 @@ public:
     inline void setFunctionAFR_Disabled(void) { mSettings.afrInput = 0 ;}
     inline void setFunctionAFR_Analog(void) {   mSettings.afrInput =  AFR_INPUT_AN ;}
     inline void setFunctionAFR_MTS(void) {      mSettings.afrInput =  AFR_INPUT_MTS ;}
+    inline void setFunctionAFR_OBD(void) {      mSettings.afrInput =  AFR_INPUT_OBD ;}
     inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
                                                 else mSettings.functions &= ~FUNC_RECORD ;}
 

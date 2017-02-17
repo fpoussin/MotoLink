@@ -916,6 +916,8 @@ void MainWindow::onReadMtlSettings()
             mMainUi->cbAFRInput->setCurrentIndex(1);
         else if (mMtl->getFunctionAFR_MTS())
             mMainUi->cbAFRInput->setCurrentIndex(2);
+        else if (mMtl->getFunctionAFR_OBD())
+            mMainUi->cbAFRInput->setCurrentIndex(3);
 
         if (mMtl->getFunctionInput_Direct())
             mMainUi->cbAFRInput->setCurrentIndex(0);
@@ -952,6 +954,10 @@ void MainWindow::onWriteMtlSettings()
 
         case 2:
         mMtl->setFunctionAFR_MTS();
+        break;
+
+        case 3:
+        mMtl->setFunctionAFR_OBD();
         break;
 
         default:

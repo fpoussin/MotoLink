@@ -921,6 +921,15 @@
                       <normaloff>:/oxygen/32x32/apps/kig.png</normaloff>:/oxygen/32x32/apps/kig.png</iconset>
                     </property>
                    </item>
+                   <item>
+                    <property name="text">
+                     <string>OBD</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../res/oxygen.qrc">
+                      <normaloff>:/oxygen/32x32/apps/utilities-log-viewer.png</normaloff>:/oxygen/32x32/apps/utilities-log-viewer.png</iconset>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                  <item row="0" column="0">
@@ -1725,15 +1734,27 @@
                  <property name="text">
                   <string>Direct</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
+                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>CAN Bus (OBD)</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/devices/modem.png</normaloff>:/oxygen/32x32/devices/modem.png</iconset>
+                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>CAN Bus (Yamaha)</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/devices/modem.png</normaloff>:/oxygen/32x32/devices/modem.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -2634,8 +2655,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/oxygen.qrc"/>
   <include location="../res/images/images.qrc"/>
+  <include location="../res/oxygen.qrc"/>
  </resources>
  <connections/>
 </ui>
