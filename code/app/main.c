@@ -316,13 +316,13 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     sensors_data.an8 = an[1];
     sensors_data.an9 = an[2];
 
-    /* Todo: get params from memory */
-    sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an8);
-    sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
-
-    if (settings.afrInput == AFR_INPUT_AN)
+    if (settings.sensorsInput == SENSORS_INPUT_DIRECT) {
+        sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an8);
+        sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
+    }
+    if (settings.afrInput == AFR_INPUT_AN) {
         sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an9);
-
+    }
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
     {
       sensors_data.cell.row = row;
@@ -461,7 +461,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
   size_t read;
-  chRegSetThreadName("SER2");
+  chRegSetThreadName("MTS");
 
   while(SD2.state != SD_READY) chThdSleepMilliseconds(10);
 

@@ -920,11 +920,11 @@ void MainWindow::onReadMtlSettings()
             mMainUi->cbAFRInput->setCurrentIndex(3);
 
         if (mMtl->getFunctionInput_Direct())
-            mMainUi->cbAFRInput->setCurrentIndex(0);
+            mMainUi->cbInputType->setCurrentIndex(0);
         else if (mMtl->getFunctionInput_OBD())
-            mMainUi->cbAFRInput->setCurrentIndex(1);
+            mMainUi->cbInputType->setCurrentIndex(1);
         else if (mMtl->getFunctionInput_Yamaha())
-            mMainUi->cbAFRInput->setCurrentIndex(2);
+            mMainUi->cbInputType->setCurrentIndex(2);
 
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
 

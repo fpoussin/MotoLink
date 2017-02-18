@@ -56,6 +56,9 @@ void readCanOBDPid(CANRxFrame *rxmsg) {
     case OBD_PID_RPM:
       sensors_data.rpm = ((uint16_t)rxmsg->data8[3] << 8) + rxmsg->data8[4];
       break;
+    case OBD_PID_SPEED:
+      sensors_data.spd = rxmsg->data8[3];
+      break;
     default:
       break;
     }
@@ -84,5 +87,8 @@ void sendCanOBDFrames(CANDriver *canp, CANTxFrame *txmsg)
   canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
 
   makeCanOBDFrame(txmsg, OBD_PID_RPM);
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
+
+  makeCanOBDFrame(txmsg, OBD_PID_SPEED);
   canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
 }

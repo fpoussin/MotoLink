@@ -57,15 +57,15 @@
 #define FUNC_RECORD (uint16_t)0x0001
 
 #define AFR_INPUT_DISABLED (uint16_t)0x0000
-#define AFR_INPUT_MTS (uint16_t)0x0001
-#define AFR_INPUT_AN (uint16_t)0x0002
-#define AFR_INPUT_OBD (uint16_t)0x0003
+#define AFR_INPUT_MTS (uint8_t)0x01
+#define AFR_INPUT_AN (uint8_t)0x02
+#define AFR_INPUT_OBD (uint8_t)0x03
 
-#define SENSORS_INPUT_DIRECT (uint16_t)0x0000
-#define SENSORS_INPUT_COM (uint16_t)0x0001
-#define SENSORS_INPUT_OBD_KLINE (uint16_t)0x0002
-#define SENSORS_INPUT_OBD_CAN (uint16_t)0x0003
-#define SENSORS_INPUT_YAMAHA_CAN (uint16_t)0x0004
+#define SENSORS_INPUT_DIRECT (uint8_t)0x00
+#define SENSORS_INPUT_COM (uint8_t)0x01
+#define SENSORS_INPUT_OBD_KLINE (uint8_t)0x02
+#define SENSORS_INPUT_OBD_CAN (uint8_t)0x03
+#define SENSORS_INPUT_YAMAHA_CAN (uint8_t)0x04
 
 
 typedef uint32_t crc_t;
@@ -97,9 +97,13 @@ typedef struct {
   uint8_t knock_value;
   uint8_t knock_freq;
   uint8_t rpm;
+  uint8_t spd;
   uint8_t afr;
   uint8_t afr_status;
   uint8_t tps;
+  uint8_t reserved1;
+  uint8_t reserved2;
+  uint8_t reserved3;
   cell_t cell;
 } sensors_t;
 
@@ -114,10 +118,10 @@ typedef struct {
   uint16_t AfrMaxVal;
   uint16_t AfrOffset;
   uint16_t functions;
-  uint16_t sensorsInput;
-  uint16_t afrInput;
-  uint16_t reserved1;
-  uint16_t reserved2;
+  uint8_t sensorsInput;
+  uint8_t afrInput;
+  uint8_t reserved1;
+  uint8_t reserved2;
 } settings_t;
 
 typedef struct {
