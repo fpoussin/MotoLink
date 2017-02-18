@@ -24,7 +24,7 @@ SerialUSBDriver SDU2;
 
 #define USB_DEVICE_VID  0x0483
 #define USB_DEVICE_PID  0xABCD
-#define USB_DEVICE_GUID "{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}\0\0"
+#define USB_DEVICE_GUID L"{656d69a0-4f42-45c4-b92c-bffa3b9e6bd1}\0"
 
 /*
  * Endpoints.
@@ -61,37 +61,37 @@ typedef struct
   uint16_t wLength;
 } USBSetupPkt;
 
-typedef struct
-{
-  // Header
-  uint32_t dwLength;
-  uint16_t bcdVersion;
-  uint16_t wIndex;
-  uint8_t  bCount;
-  uint8_t  bReserved1[7];
-  // Function Section 1
-  uint8_t  bFirstInterfaceNumber;
-  uint8_t  bInterfaceCount;
-  uint8_t  bCompatibleID[8];
-  uint8_t  bSubCompatibleID[8];
-  uint8_t  bReserved3[6];
-} USBCompatIDDesc;
+/// Microsoft WCID descriptor
+typedef struct {
+    uint8_t bFirstInterfaceNumber;
+    uint8_t reserved1;
+    uint8_t compatibleID[8];
+    uint8_t subCompatibleID[8];
+    uint8_t reserved2[6];
+} __attribute__((packed)) USBCompatIDDescIf;
 
-typedef struct
-{
-  // Header
-  uint32_t dwLength;
-  uint16_t bcdVersion;
-  uint16_t wIndex;
-  uint16_t wCount;
-  // Custom Property Section 1
-  uint32_t dwSize;
-  uint32_t dwPropertyDataType;
-  uint16_t wPropertyNameLength;
-  uint8_t bPropertyName[20*2];
-  uint32_t dwPropertyDataLength;
-  uint8_t bPropertyData[39*2];
-} USBDExtPropertiesDesc;
+typedef struct {
+    uint32_t dwLength;
+    uint16_t bcdVersion;
+    uint16_t wIndex;
+    uint8_t bCount;
+    uint8_t reserved[7];
+    USBCompatIDDescIf interfaces[];
+} __attribute__((packed)) USBCompatIDDesc;
+
+typedef struct {
+    uint32_t	dwLength;
+    uint16_t	bcdVersion;
+    uint16_t	wIndex;
+    uint16_t	bCount;
+    uint32_t	dwPropertySize;
+    uint32_t	dwPropertyDataType;
+    uint16_t	wPropertyNameLength;
+    wchar_t		PropertyName[21];
+    uint32_t	dwPropertyDataLength;
+    wchar_t		PropertyData[40];
+} __attribute__((packed)) USBDExtPropertiesDesc;
+
 
 #define	USB_REQ_OS_FEATURE  0x20
 #define USB_FEATURE_PROPERTIES 0x04
@@ -307,6 +307,44 @@ static const uint8_t usb_configuration_descriptor_data[] = {
   ),
 };
 
+//
+
+static const USBCompatIDDesc usb_compat_id_descriptor_data = {
+    .dwLength = sizeof(USBCompatIDDesc) +
+                1*sizeof(USBCompatIDDescIf),
+    .bcdVersion = 0x0100,
+    .wIndex = 0x0004,
+    .bCount = 1,
+    .reserved = {0, 0, 0, 0, 0, 0, 0},
+    .interfaces = {
+        {
+            .bFirstInterfaceNumber = 0x04,
+            .reserved1 = 1,
+            .compatibleID = "WINUSB\0\0",
+            .subCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0},
+            .reserved2 = {0, 0, 0, 0, 0, 0},
+        }
+    }
+};
+
+
+static const USBDExtPropertiesDesc usb_guid_descriptor_data = {
+    .dwLength = sizeof(USBDExtPropertiesDesc),
+    .bcdVersion = 0x0100,
+    .wIndex = 0x0005,
+    .bCount = 2,
+
+    .dwPropertySize = 136,
+    .dwPropertyDataType = 7,
+    .wPropertyNameLength = 21*2,
+    .PropertyName = L"DeviceInterfaceGUIDs",
+    .dwPropertyDataLength = 40*2,
+    .PropertyData = USB_DEVICE_GUID,
+};
+
+
+//
+
 
 
 static const uint8_t usb_winusb_descriptor_data[] =
@@ -314,7 +352,7 @@ static const uint8_t usb_winusb_descriptor_data[] =
   USB_DESC_BYTE(18),                         /* bLength */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING),      /* bDescriptorType */
   'M',0,'S',0,'F',0,'T',0,'1',0,'0',0,'0',0, /* qwSignature */
-  0x04,                                      /* bMS_VendorCode */
+  0x22,                                      /* bMS_VendorCode */
   0                                          /* bPad */
 };
 
@@ -322,36 +360,9 @@ static const USBDescriptor usb_winusb_descriptor = {
   sizeof usb_winusb_descriptor_data,  usb_winusb_descriptor_data
 };
 
-USBCompatIDDesc usb_compat_id_descriptor_data = {
-  sizeof(usb_compat_id_descriptor_data), /* dwLength */
-  0x0100,                    /* bcdVersion */
-  0x0004,                    /* wIndex */
-  0x01,                      /* bCount */
-  {0},                       /* bReserved1 */
-  0x02,                      /* bFirstInterfaceNumber */
-  0x01,                      /* bInterfaceCount */
-  "WINUSB",                  /* bCompatibleID */
-  {0},                       /* bSubCompatibleID */
-  {0}                        /* bReserved3 */
-};
-
 static const USBDescriptor usb_compat_id_descriptor = {
   sizeof usb_compat_id_descriptor_data,
   (uint8_t*)&usb_compat_id_descriptor_data
-};
-
-// Extended Properties OS Feature Descriptor
-USBDExtPropertiesDesc usb_guid_descriptor_data = {
-  sizeof(usb_guid_descriptor_data),          /* dwLength */
-  0x0100,                         /* bcdVersion */
-  0x0005,                         /* wIndex */
-  0x0001,                         /* wCount */
-  0x00000084,                     /* dwSize */
-  0x00000001,                     /* dwPropertyDataType */
-  0x0028,                         /* wPropertyNameLength */
-  "DeviceInterfaceGUID",          /* bPropertyName */
-  0x0000004E,                     /* dwPropertyDataLength */
-  USB_DEVICE_GUID                 /* bPropertyData */
 };
 
 static const USBDescriptor usb_guid_descriptor = {
