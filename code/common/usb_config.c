@@ -326,10 +326,10 @@ static const uint8_t usb_configuration_descriptor_data[] = {
 
 static const USBCompatIDDesc usb_compat_id_descriptor_data = {
     .dwLength = sizeof(USBCompatIDDesc) +
-                1 * sizeof(USBCompatIDIfDesc),
+                2 * sizeof(USBCompatIDIfDesc),
     .bcdVersion = 0x0100,
     .wIndex = 0x0004,
-    .bCount = 1,
+    .bCount = 2,
     .reserved = {0, 0, 0, 0, 0, 0, 0},
     .interfaces = {
         {
