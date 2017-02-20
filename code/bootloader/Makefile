@@ -87,13 +87,15 @@ PROJECT = bootloader
 
 # Imported source files and paths
 CHIBIOS = ../ChibiOS-RT
+CHIBIOS_CONTRIB = ../ChibiOS-Contrib
 # Startup files.
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
+include $(CHIBIOS_CONTRIB)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # Custom Drivers
+include $(CHIBIOS_CONTRIB)/os/hal/hal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
@@ -144,7 +146,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(STM32DRIVERINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various $(CHIBIOS_CONTRIB)/os/various
 
 #
 # Project, sources and paths
@@ -194,7 +196,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = # -DVECTORS_SECTION=\".ram4_init.vectors\"
+UDEFS = -DMTL_BOOTLOADER # -DVECTORS_SECTION=\".ram4_init.vectors\"
 # UDEFS =
 
 # Define ASM defines here

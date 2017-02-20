@@ -1,8 +1,5 @@
 
-#include "ch.h"
-#include "hal.h"
 #include "common.h"
-#include <string.h>
 
 /*===========================================================================*/
 /* USB related stuff.                                                        */

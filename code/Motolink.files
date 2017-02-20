@@ -1882,8 +1882,6 @@ ChibiOS-Contrib/os/hal/include/nand.h
 ChibiOS-Contrib/os/hal/include/onewire.h
 ChibiOS-Contrib/os/hal/include/timcap.h
 ChibiOS-Contrib/os/hal/include/usbh.h
-app/settings.c
-app/settings.h
 ChibiOS-RT/os/ext/CMSIS/include/arm_common_tables.h
 ChibiOS-RT/os/ext/CMSIS/include/arm_const_structs.h
 ChibiOS-RT/os/ext/CMSIS/include/arm_math.h
@@ -2107,3 +2105,9 @@ app/canbus.h
 app/canbus.c
 app/prot_obd.h
 app/prot_yamaha.h
+common/common.c
+common/common.h
+common/storage.c
+common/storage.h
+bootloader/mcuconf_community.h
+bootloader/halconf_community.h

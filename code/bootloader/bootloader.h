@@ -2,9 +2,6 @@
 #define BOOTLOADER_H
 
 #include "common.h"
-#include "protocol.h"
-
-#include "stm32f30x_flash.h"
 #include "usb_config.h"
 
 /* From linker script */

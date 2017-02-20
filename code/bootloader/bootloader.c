@@ -1,4 +1,7 @@
 #include "bootloader.h"
+#include "protocol.h"
+#include "stm32f30x_flash.h"
+#include "usb_config.h"
 
 uint8_t bl_wake = 0;
 typedef volatile uint32_t vu32;

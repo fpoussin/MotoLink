@@ -1,3 +1,9 @@
+
+#include "common.h"
+#include "protocol.h"
+#include "arm_math.h"
+#include "median.h"
+#include "ipc.h"
 #include "sensors.h"
 #include "limits.h"
 

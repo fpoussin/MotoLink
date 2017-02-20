@@ -9,6 +9,17 @@ const SPIConfig EEPROM_SPIDCONFIG = {
   SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
+static SPIEepromFileConfig eeVersionsCfg = {
+  EEPROM_VERSIONS_START,
+  EEPROM_VERSIONS_END,
+  EEPROM_SIZE,
+  EEPROM_PAGE_SIZE,
+  MS2ST(EEPROM_WRITE_TIME_MS),
+  &EEPROM_SPID,
+  &EEPROM_SPIDCONFIG,
+};
+
+#ifdef MTL_APP
 static SPIEepromFileConfig eeSettingsCfg = {
   EEPROM_SETTINGS_START,
   EEPROM_SETTINGS_END,
@@ -28,7 +39,12 @@ static SPIEepromFileConfig eeTablesCfg = {
   &EEPROM_SPID,
   &EEPROM_SPIDCONFIG,
 };
+#endif
 
+static SPIEepromFileStream versionsFile;
+static EepromFileStream *versionsFS;
+static version_t version_buf = {0};
+#ifdef MTL_APP
 static SPIEepromFileStream settingsFile, tablesFile;
 static EepromFileStream *settingsFS, *tablesFS;
 
@@ -39,6 +55,33 @@ static uint32_t counters[EEPROM_TABLES_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
 #define openSettingsFS SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX)
 #define openTablesFS SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX))
+#endif
+
+#ifdef MTL_APP
+version_t versions[2] = {{0, 0, 0, 0},
+                         {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_BUGFIX}};
+
+// Default settings
+settings_t settings = {
+    8500, // knockFreq
+    3000, // knockRatio
+    500,  // tpsMinV
+    4500, // tpsMaxV
+    3,    // fuelMinTh
+    3,    // fuelMaxChange
+    70,   // AfrMinVal*10
+    220,  // AfrMaxVal*10
+    0,    // AfrOffset
+    0,    // sensorsInput
+    0,    // afrInput
+    0,    // reserved1
+    0,    // reserved2
+    0     // reserved3
+};
+#else
+version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_BUGFIX},
+                         {0, 0, 0, 0}};
+#endif
 
 #if CRC_USE_DMA
 
@@ -107,6 +150,7 @@ void eeInit(void)
     spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
 }
 
+#ifdef MTL_APP
 CCM_FUNC uint32_t eeFindCurrentPageAddr(void)
 {
     uint32_t addr, magic, max_counter = 0;
@@ -349,5 +393,69 @@ CCM_FUNC uint8_t writeSettingsToEE()
     }
 
     fileStreamClose(settingsFS);
+    return 0;
+}
+#endif
+
+CCM_FUNC uint8_t readVersionFromEE(uint8_t idx, version_t* dst)
+{
+    crc_t crc1 = 0, crc2 = 0;
+    const size_t len = sizeof(version_t);
+    versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
+
+    fileStreamSeek(versionsFS, len * idx);
+    if (fileStreamRead(versionsFS, (uint8_t*)&version_buf, len) != len)
+    {
+        fileStreamClose(versionsFS);
+        return 1;
+    }
+
+    // Fetch CRC from EE
+    if (fileStreamRead(versionsFS, (uint8_t*)&crc1, sizeof crc1) != sizeof crc1)
+    {
+        fileStreamClose(versionsFS);
+        return 2;
+    }
+
+    // Calculate CRC from EE data
+    crc2 = getCrc(&crc32_config, (uint8_t*)&version_buf, len);
+
+    if (crc1 != crc2)
+    {
+        fileStreamClose(versionsFS);
+        return 3;
+    }
+
+    fileStreamClose(versionsFS);
+    memcpy(dst, &version_buf, len);
+
+    return 0;
+}
+
+CCM_FUNC uint8_t writeVersionToEE(uint8_t idx, const version_t* src)
+{
+    const size_t len = sizeof(version_t);
+    crc_t crc = 0;
+    memcpy(&version_buf, src, len);
+    crc = getCrc(&crc32_config, (uint8_t*)&version_buf, len);
+
+    versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
+
+    fileStreamSeek(versionsFS, len * idx);
+    // Copy data to EE
+    if (fileStreamWrite(versionsFS, (uint8_t*)&version_buf, len) != len)
+    {
+        fileStreamClose(versionsFS);
+        return 1;
+    }
+
+    // Copy CRC to EE
+    if (fileStreamWrite(versionsFS, (uint8_t*)&crc, sizeof crc) != sizeof crc)
+    {
+        fileStreamClose(versionsFS);
+        return 2;
+    }
+
+    fileStreamClose(versionsFS);
     return 0;
 }

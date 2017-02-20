@@ -1,13 +1,10 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 
-#include "ch.h"
-#include "hal.h"
+#include "common.h"
 #include "protocol.h"
-#include "arm_math.h"
 #include "median.h"
 #include "ipc.h"
-#include "common.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
 #define ADC_GRP1_BUF_DEPTH      128

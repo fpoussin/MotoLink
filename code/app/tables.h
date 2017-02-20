@@ -8,7 +8,6 @@
 #ifndef TABLES_H_
 #define TABLES_H_
 
-#include "ch.h"
 #include "common.h"
 
 typedef uint8_t cell_table_t[11][16];

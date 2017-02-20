@@ -1,12 +1,7 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-#include "ch.h"
 #include "hal.h"
-#include "protocol.h"
-#include "sensors.h"
-#include "tables.h"
-#include <string.h>
 
 extern uint8_t bl_wake;
 

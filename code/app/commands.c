@@ -1,7 +1,12 @@
+#include "ch.h"
+#include "protocol.h"
+#include "sensors.h"
+#include "tables.h"
 #include "commands.h"
 #include "common.h"
 #include "usb_config.h"
 #include "storage.h"
+#include <string.h>
 
 #define PUT_TIMEOUT MS2ST(25)
 
@@ -283,6 +288,6 @@ CCM_FUNC uint8_t clearTables(BaseChannel * chn)
 CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
 {
     chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version_t), PUT_TIMEOUT);
+    chnWriteTimeout(chn, (uint8_t*)versions, sizeof(version_t)*2, PUT_TIMEOUT);
     return 0;
 }

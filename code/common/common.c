@@ -1,3 +1,4 @@
+
 #include "common.h"
 #include "string.h"
 #include "vectors.h"
@@ -175,5 +176,3 @@ inline bool vbatDetect(void)
 {
     return palReadPad(PORT_VCC_DETECT, PAD_VCC_DETECT) == PAL_LOW;
 }
-
-version_t version = {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_BUGFIX};

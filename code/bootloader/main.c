@@ -21,6 +21,7 @@
 #include "hal.h"
 #include "common.h"
 #include "communication.h"
+#include "storage.h"
 
 /*===========================================================================*/
 /* Config                                                                    */
@@ -235,6 +236,15 @@ int main(void)
 
   sduStart(&SDU1, &serusbcfg1);
   sduStart(&SDU2, &serusbcfg2);
+
+  eeInit();
+
+  // Compare and update versions in EEprom if needed.
+  version_t v;
+  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 && memcmp(&versions, &v, sizeof(version_t)) != 0) {
+
+    writeVersionToEE(VERSION_IDX_BL, &versions[VERSION_IDX_BL]);
+  }
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
   chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);

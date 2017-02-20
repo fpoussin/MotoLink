@@ -24,6 +24,7 @@
 #include "innovate.h"
 #include "storage.h"
 #include "canbus.h"
+#include "arm_math.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -617,6 +618,12 @@ int main(void)
   pwmStart(&PWMD_LED2, &pwmcfg);
 
   eeInit();
+  // Compare and update versions in EEprom if needed.
+  version_t v;
+  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0 && memcmp(&versions, &v, sizeof(version_t)) != 0) {
+
+    writeVersionToEE(VERSION_IDX_APP, &versions[VERSION_IDX_APP]);
+  }
 
   adcSTM32EnableTS(&ADCD1);
   adcSTM32EnableVBAT(&ADCD1);

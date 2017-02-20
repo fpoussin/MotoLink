@@ -1,8 +1,8 @@
 #include "canbus.h"
 #include "sensors.h"
+#include "storage.h"
 #include "prot_obd.h"
 #include "prot_yamaha.h"
-#include "settings.h"
 
 const CANFilter canfilter_obd = {1, 0, 0, 0, 0x07E8, 0x07E8};
 const CANFilter canfilter_yam[] = {{1, 0, 0, 0, YAMAHA_SID_MAIN, YAMAHA_SID_MAIN},

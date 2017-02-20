@@ -7,6 +7,7 @@
 
 #include "innovate.h"
 #include "sensors.h"
+#include "storage.h"
 
 void readMtsHeader(BaseChannel *chn, uint8_t *buf)
 {

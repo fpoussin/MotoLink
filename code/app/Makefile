@@ -95,7 +95,7 @@ include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS_CONTRIB)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # Custom Drivers
-include $(CHIBIOS)/../ChibiOS-Contrib/os/hal/hal.mk
+include $(CHIBIOS_CONTRIB)/os/hal/hal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
@@ -115,12 +115,16 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(CHIBIOS_CONTRIB)/os/various/crcsw.c \
-       main.c commands.c \
-       sensors.c debug.c \
-       storage.c median.c \
-       ipc.c innovate.c \
-       opamp.c tables.c \
-       settings.c canbus.c
+       main.c \
+       commands.c \
+       sensors.c \
+       debug.c \
+       median.c \
+       ipc.c \
+       innovate.c \
+       opamp.c \
+       tables.c \
+       canbus.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -201,7 +205,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DARM_MATH_CM4 # -DVECTORS_SECTION=\".ram4_init.vectors\"
+UDEFS = -DMTL_APP -DARM_MATH_CM4 # -DVECTORS_SECTION=\".ram4_init.vectors\"
 
 # Define ASM defines here
 UADEFS =

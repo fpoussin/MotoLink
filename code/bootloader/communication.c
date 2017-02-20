@@ -1,5 +1,6 @@
 #include "communication.h"
 #include "common.h"
+#include "storage.h"
 
 CCM_FUNC uint8_t readCommand(BaseChannel *chn, uint8_t flags)
 {
@@ -189,6 +190,6 @@ CCM_FUNC uint8_t bootHandler(BaseChannel * chn) {
 CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
 {
     chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, MS2ST(50));
-    chnWriteTimeout(chn, (uint8_t*)&version, sizeof(version), MS2ST(50));
+    chnWriteTimeout(chn, (uint8_t*)versions, sizeof(version_t)*2, MS2ST(50));
     return 0;
 }

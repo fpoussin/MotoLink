@@ -6,7 +6,6 @@
 #include "protocol.h"
 
 #define CCM_FUNC __attribute__((section(".ram4_init.code")))
-//#define CCM_FUNC
 
 uint32_t leToInt(uint8_t *ptr);
 uint32_t beToInt(uint8_t *ptr);
@@ -20,7 +19,5 @@ bool fiveBaudInit(SerialDriver *sd);
 void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp);
 
 bool vbatDetect(void);
-
-extern version_t version;
 
 #endif
