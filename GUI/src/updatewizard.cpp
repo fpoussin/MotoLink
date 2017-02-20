@@ -22,8 +22,10 @@ UpdateWizard::~UpdateWizard()
 void UpdateWizard::showWizard()
 {
     this->loadDefaultFirmareData();
-    if (mMtl->usbConnect() && mMtl->getMode() != MODE_BL)
-        mUi->lCurVersion->setText(mMtl->getAppVersion());
+    QString ver("Versions: [Bootloader %1] [App %2]");
+    if (mMtl->usbConnect()) {
+        mUi->lVersions->setText(ver.arg(mMtl->getVersion(0)).arg(mMtl->getVersion(1)));
+    }
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->restart();

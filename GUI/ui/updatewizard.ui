@@ -15,10 +15,10 @@
   </property>
   <widget class="QWizardPage" name="wizardPage1">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="9" column="0">
-     <widget class="QLabel" name="lCurVersion">
+    <item row="8" column="0">
+     <widget class="QLabel" name="lVersions">
       <property name="text">
-       <string notr="true">Unknown</string>
+       <string>Versions:</string>
       </property>
      </widget>
     </item>
@@ -29,17 +29,24 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="lWarn">
-      <property name="text">
-       <string>Please do not unplug Motolink during the update.</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="lIntro">
       <property name="text">
        <string>This Wizard will update Motolink's firmware.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="lNewVersion">
+      <property name="text">
+       <string notr="true">Unknown</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="lWarn">
+      <property name="text">
+       <string>Please do not unplug Motolink during the update.</string>
       </property>
      </widget>
     </item>
@@ -56,38 +63,10 @@
       </property>
      </spacer>
     </item>
-    <item row="11" column="0">
+    <item row="10" column="0">
      <widget class="QLabel" name="ltNewVersion">
       <property name="text">
-       <string>New version:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="12" column="0">
-     <widget class="QLabel" name="lNewVersion">
-      <property name="text">
-       <string notr="true">Unknown</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="ltCurVersion">
-      <property name="text">
-       <string>Current version:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="Line" name="line_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <string>New app version:</string>
       </property>
      </widget>
     </item>
@@ -140,6 +119,20 @@
        </size>
       </property>
      </spacer>
+    </item>
+    <item row="7" column="0">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="Line" name="line_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

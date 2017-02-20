@@ -116,8 +116,7 @@ public slots:
     bool bootAppIfNeeded(void);
 
     quint8 getMode(void);
-    QString getBlVersion(void);
-    QString getAppVersion(void);
+    QString getVersion(quint8 idx);
     bool readSensors(void);
     bool readMonitoring(void);
     bool readKnockSpectrum(void);

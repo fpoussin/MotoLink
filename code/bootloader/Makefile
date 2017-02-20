@@ -196,7 +196,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DMTL_BOOTLOADER # -DVECTORS_SECTION=\".ram4_init.vectors\"
+UDEFS = -DMTL_BOOTLOADER -DVECTORS_SECTION=\".ram4_init.vectors\"
 # UDEFS =
 
 # Define ASM defines here

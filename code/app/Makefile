@@ -205,7 +205,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DMTL_APP -DARM_MATH_CM4 # -DVECTORS_SECTION=\".ram4_init.vectors\"
+UDEFS = -DMTL_APP -DARM_MATH_CM4 -DVECTORS_SECTION=\".ram4_init.vectors\"
 
 # Define ASM defines here
 UADEFS =

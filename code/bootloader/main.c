@@ -242,8 +242,10 @@ int main(void)
   // Compare and update versions in EEprom if needed.
   version_t v;
   if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 && memcmp(&versions, &v, sizeof(version_t)) != 0) {
-
     writeVersionToEE(VERSION_IDX_BL, &versions[VERSION_IDX_BL]);
+  }
+  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0 ) {
+    memcpy(&versions[VERSION_IDX_APP], &v, sizeof(version_t));
   }
 
   chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);

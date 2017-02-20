@@ -624,6 +624,9 @@ int main(void)
 
     writeVersionToEE(VERSION_IDX_APP, &versions[VERSION_IDX_APP]);
   }
+  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 ) {
+    memcpy(&versions[VERSION_IDX_BL], &v, sizeof(version_t));
+  }
 
   adcSTM32EnableTS(&ADCD1);
   adcSTM32EnableVBAT(&ADCD1);

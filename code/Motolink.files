@@ -1,3 +1,4 @@
+ChibiOS-RT/os/common/ports/ARMCMx/compilers/GCC/crt0_v7m.s
 ChibiOS-RT/os/hal/lib/streams/memstreams.h
 ChibiOS-RT/os/hal/ports/KINETIS/LLD/ext_lld.c
 ChibiOS-RT/os/ext/CMSIS/include/core_cm4_simd.h

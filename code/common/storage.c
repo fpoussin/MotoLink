@@ -403,7 +403,7 @@ CCM_FUNC uint8_t readVersionFromEE(uint8_t idx, version_t* dst)
     const size_t len = sizeof(version_t);
     versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(versionsFS, len * idx);
+    fileStreamSeek(versionsFS, (len + sizeof(crc_t)) * idx);
     if (fileStreamRead(versionsFS, (uint8_t*)&version_buf, len) != len)
     {
         fileStreamClose(versionsFS);
@@ -441,7 +441,7 @@ CCM_FUNC uint8_t writeVersionToEE(uint8_t idx, const version_t* src)
 
     versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(versionsFS, len * idx);
+    fileStreamSeek(versionsFS, (len + sizeof(crc_t)) * idx);
     // Copy data to EE
     if (fileStreamWrite(versionsFS, (uint8_t*)&version_buf, len) != len)
     {

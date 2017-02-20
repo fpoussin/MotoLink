@@ -160,7 +160,7 @@ quint8 Motolink::getMode(void)
     return 0;
 }
 
-QString Motolink::getBlVersion()
+QString Motolink::getVersion(quint8 idx)
 {
     QByteArray send, recv;
     this->prepareCmd(&send, CMD_GET_VERSION);
@@ -168,22 +168,9 @@ QString Motolink::getBlVersion()
     if (this->sendCmd(&send, &recv, sizeof(version_t) * 2, CMD_GET_VERSION))
     {
         memcpy(mVersion, recv.constData(), sizeof(version_t) * 2);
-        return QString("%1.%2.%3").arg(mVersion[0].major).arg(mVersion[0].minor).arg(mVersion[0].patch);
+        return QString("%1.%2.%3").arg(mVersion[idx].major).arg(mVersion[idx].minor).arg(mVersion[idx].patch);
     }
     return tr("Error");
-}
-
-QString Motolink::getAppVersion()
-{
-  QByteArray send, recv;
-  this->prepareCmd(&send, CMD_GET_VERSION);
-
-  if (this->sendCmd(&send, &recv, sizeof(version_t) * 2, CMD_GET_VERSION))
-  {
-      memcpy(mVersion, recv.constData(), sizeof(version_t) * 2);
-      return QString("%1.%2.%3").arg(mVersion[1].major).arg(mVersion[1].minor).arg(mVersion[1].patch);
-  }
-  return tr("Error");
 }
 
 bool Motolink::readSensors(void)
