@@ -59,7 +59,7 @@ static uint32_t counters[EEPROM_TABLES_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
 #ifdef MTL_APP
 version_t versions[2] = {{0, 0, 0, 0},
-                         {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_BUGFIX}};
+                         {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH}};
 
 // Default settings
 settings_t settings = {
@@ -79,7 +79,7 @@ settings_t settings = {
     0     // reserved3
 };
 #else
-version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_BUGFIX},
+version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH},
                          {0, 0, 0, 0}};
 #endif
 

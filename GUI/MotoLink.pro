@@ -82,7 +82,7 @@ TRANSLATIONS = res/motolink_fr.ts
 CODECFORTR = UTF-8
 
 buildscripts.target = .buildscripts
-buildscripts.commands = cd $$_PRO_FILE_PWD_/res && python makefw.py -v $$VERSION
+buildscripts.commands = cd $$_PRO_FILE_PWD_/res && python makefw.py
 
 QMAKE_EXTRA_TARGETS += buildscripts
 PRE_TARGETDEPS += .buildscripts

@@ -30,7 +30,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 6
-#define VERSION_BUGFIX 0
+#define VERSION_PATCH 0
 
 #include "vectors.h"
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)

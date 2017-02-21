@@ -26,6 +26,9 @@ void UpdateWizard::showWizard()
     if (mMtl->usbConnect()) {
         mUi->lVersions->setText(ver.arg(mMtl->getVersion(0)).arg(mMtl->getVersion(1)));
     }
+    else {
+         mUi->lVersions->setText(ver.arg(tr("Unknown")).arg(("Unknown")));
+      }
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->restart();
