@@ -16,11 +16,9 @@ DEFINES *= QT_USE_QSTRINGBUILDER
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
 DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the version string
 
-INCLUDEPATH += inc ../code/common/ qjsonrpc/src/ qjsonrpc/src/json/
+INCLUDEPATH += inc ../code/common qjsonrpc/src
 
-QJSONRPC_LIBRARY_TYPE = staticlib
 include(QtUsb/src/QtUsb.pri)
-include(qjsonrpc/qjsonrpc.pri)
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
@@ -38,7 +36,8 @@ SOURCES += src/main.cpp \
     src/qenhancedtableview.cpp \
     src/mhtabbar.cpp \
     src/mhtabwidget.cpp \
-    src/mtlrpc.cpp
+    src/mtlrpc.cpp \
+    qjsonrpc/src/qjsonrpcmessage.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -59,7 +58,10 @@ HEADERS  += \
     inc/mhtabbar.h \
     inc/mhtabwidget.h \
     ../code/common/protocol.h \
-    inc/mtlrpc.h
+    inc/mtlrpc.h \
+    qjsonrpc/src/qjsonrpcmessage.h \
+    qjsonrpc/src/qjsonrpcmetatype.h \
+    qjsonrpc/src/qjsonrpcglobal.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \
