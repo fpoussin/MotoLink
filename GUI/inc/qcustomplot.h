@@ -738,7 +738,7 @@ public:
 protected:
   // non-property members:
   QCustomPlot *mParentPlot;
-  QHash<QCP::MarginSide, QList<QCPLayoutElement *>> mChildren;
+  QHash<QCP::MarginSide, QList<QCPLayoutElement *> > mChildren;
 
   // non-virtual methods:
   int commonMargin(QCP::MarginSide side) const;
@@ -944,7 +944,7 @@ public:
 
 protected:
   // property members:
-  QList<QList<QCPLayoutElement *>> mElements;
+  QList<QList<QCPLayoutElement *> > mElements;
   QList<double> mColumnStretchFactors;
   QList<double> mRowStretchFactors;
   int mColumnSpacing, mRowSpacing;
@@ -2382,7 +2382,7 @@ protected:
   QCP::AntialiasedElements mAADragBackup, mNotAADragBackup;
   QPoint mDragStart;
   bool mDragging;
-  QHash<QCPAxis::AxisType, QList<QCPAxis *>> mAxes;
+  QHash<QCPAxis::AxisType, QList<QCPAxis *> > mAxes;
 
   // reimplemented virtual methods:
   virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const;

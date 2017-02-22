@@ -12,6 +12,8 @@ enum MAP_TYPE { MAP_UNKNOWN = 0, MAP_CBR600RR07 = 10, MAP_CBR1000RR08 = 11 };
 #define CBR1000RR08_SIGN_HEX "3038434252314B454C4E41524B4F"
 #define CBR1000RR08_SIGN_STRING "08CBR1KELNARKO"
 
+typedef unsigned char uchar;
+
 struct cbr600rr07_map_t {
 
   /* All RPM values are divided by 100 to fit in 8 bits */
