@@ -84,3 +84,5 @@ ChibiOS-RT/os/hal/ports/STM32/LLD/SDIOv1
 ChibiOS-RT/os/hal/src
 ChibiOS-Contrib/os/hal/src/usbh
 app/dsp_lib
+common/proto
+nanopb

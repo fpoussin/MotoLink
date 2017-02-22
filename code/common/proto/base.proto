@@ -1,0 +1,23 @@
+// Base structs
+
+syntax = "proto2";
+import "nanopb.proto";
+
+message BaseHeader {
+
+    required string magic = 1 [(nanopb).max_size = 3];
+    required string cmd   = 2 [(nanopb).max_size = 20];
+    required uint32 len   = 3 [default = 0];
+}
+
+message Crc {
+
+    required uint32 crc = 1 [default = 0];
+}
+
+message BaseRequest {
+
+    required BaseHeader header = 1;
+    optional bytes data = 2 [(nanopb).max_size = 200];
+    required Crc crc    = 3;
+}

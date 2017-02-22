@@ -1,0 +1,20 @@
+
+syntax = "proto2";
+import "base.proto";
+import "nanopb.proto";
+
+message FlashWriteRequest {
+
+    required BaseHeader header = 1;
+    required uint32 addr   = 2 [default = 0];
+    required bytes data = 3 [(nanopb).max_size = 200];
+    required Crc crc = 4;
+}
+
+message FlashReadRequest {
+
+    required BaseHeader header = 1;
+    required uint32 addr   = 2 [default = 0];
+    required bytes data = 3 [(nanopb).max_size = 200];
+    required Crc crc = 4;
+}
