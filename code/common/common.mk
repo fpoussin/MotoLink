@@ -12,5 +12,5 @@ BOARDSRC += ../common/proto/bootloader.pb.c
 BOARDSRC += ../common/proto/app.pb.c
 
 # Required include directories
-BOARDINC = ../common
-BOARDINC = ../nanopb
+BOARDINC += ../common
+BOARDINC += ../nanopb
