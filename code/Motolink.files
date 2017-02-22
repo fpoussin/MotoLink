@@ -2112,3 +2112,9 @@ common/storage.c
 common/storage.h
 bootloader/mcuconf_community.h
 bootloader/halconf_community.h
+common/base64.c
+common/base64.h
+common/rpc.c
+common/rpc.h
+common/jsmn.c
+common/jsmn.h

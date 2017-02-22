@@ -4,15 +4,10 @@
 #
 #-------------------------------------------------
 
-# Note: USB has trouble with MSVC 2015, stick to 2013.
-
-QT += core gui xml network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+QT += core gui xml network widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
-#win32:CONFIG += console
 
 VERSION = 0.1.0
 message(Version $$VERSION)
@@ -21,9 +16,11 @@ DEFINES *= QT_USE_QSTRINGBUILDER
 VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
 DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the version string
 
-INCLUDEPATH += inc ../code/common/
+INCLUDEPATH += inc ../code/common/ qjsonrpc/src/ qjsonrpc/src/json/
 
+QJSONRPC_LIBRARY_TYPE = staticlib
 include(QtUsb/src/QtUsb.pri)
+include(qjsonrpc/qjsonrpc.pri)
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
@@ -40,7 +37,8 @@ SOURCES += src/main.cpp \
     src/mtlfile.cpp \
     src/qenhancedtableview.cpp \
     src/mhtabbar.cpp \
-    src/mhtabwidget.cpp
+    src/mhtabwidget.cpp \
+    src/mtlrpc.cpp
 
 HEADERS  += \
     inc/compat.h \
@@ -60,7 +58,8 @@ HEADERS  += \
     inc/qenhancedtableview.h \
     inc/mhtabbar.h \
     inc/mhtabwidget.h \
-    ../code/common/protocol.h
+    ../code/common/protocol.h \
+    inc/mtlrpc.h
 
 FORMS    += ui/main.ui \
     ui/updatewizard.ui \

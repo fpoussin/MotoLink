@@ -1,139 +1,130 @@
 #include "bootloader.h"
 
-Bootloader::Bootloader(QUsbDevice *usb, QObject *parent) :
-    QObject(parent)
-{
-    mUsb = usb;
+Bootloader::Bootloader(QUsbDevice *usb, QObject *parent) : QObject(parent) {
+  mUsb = usb;
 }
 
-Bootloader::~Bootloader()
-{
+Bootloader::~Bootloader() {}
 
+quint8 Bootloader::getFlags() {
+  _WAIT_USB_
+  QByteArray send, recv;
+
+  this->prepareCmd(&send, CMD_GET_FLAGS);
+
+  mUsb->write(&send, send.size());
+  mUsb->read(&recv, 2);
+
+  if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FLAGS))
+    return recv.at(1);
+
+  return 0;
 }
 
-quint8 Bootloader::getFlags()
-{
-    _WAIT_USB_
-    QByteArray send, recv;
+bool Bootloader::boot() {
+  _WAIT_USB_
+  QByteArray send, recv;
+  this->prepareCmd(&send, CMD_BOOT);
 
-    this->prepareCmd(&send, CMD_GET_FLAGS);
+  mUsb->write(&send, send.size());
+  mUsb->read(&recv, 1);
 
-    mUsb->write(&send, send.size());
-    mUsb->read(&recv, 2);
+  if (recv.size() > 0 && recv.at(0) == (MASK_REPLY_OK | CMD_BOOT))
+    return true;
 
-    if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FLAGS))
-        return recv.at(1);
-
-    return 0;
+  return false;
 }
 
-bool Bootloader::boot()
-{
-    _WAIT_USB_
-    QByteArray send, recv;
-    this->prepareCmd(&send, CMD_BOOT);
+qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data,
+                              quint32 len) {
+  // WAIT_USB
+  QByteArray send, recv;
+  quint8 buf_len[4];
+  qToLittleEndian(len, buf_len);
+  quint8 buf_addr[4];
+  qToLittleEndian(addr, buf_addr);
 
-    mUsb->write(&send, send.size());
-    mUsb->read(&recv, 1);
+  send.append((char *)buf_addr, 4);
+  send.append(data->constData(), data->size());
+  this->prepareCmd(&send, CMD_WRITE);
 
-    if (recv.size() > 0 && recv.at(0) == (MASK_REPLY_OK | CMD_BOOT))
-        return true;
+  if (mUsb->write(&send, send.size()) != send.size())
+    return -1;
 
-    return false;
+  QThread::msleep(10);
+  mUsb->read(&recv, 1);
+
+  if (recv.size() < 1)
+    return -2;
+
+  if (!(recv.at(0) == (MASK_REPLY_OK | CMD_WRITE)))
+    return -3;
+
+  return send.size();
 }
 
-qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
-{
-    //WAIT_USB
-    QByteArray send, recv;
-    quint8 buf_len[4];
-    qToLittleEndian(len, buf_len);
-    quint8 buf_addr[4];
-    qToLittleEndian(addr, buf_addr);
+qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len) {
+  // WAIT_USB
+  QByteArray send, recv;
+  quint8 buf_len[4];
+  qToLittleEndian(len, buf_len);
+  quint8 buf_addr[4];
+  qToLittleEndian(addr, buf_addr);
 
-    send.append((char*)buf_addr, 4);
-    send.append(data->constData(), data->size());
-    this->prepareCmd(&send, CMD_WRITE);
+  send.append((char *)buf_addr, 4);
+  send.append((char *)buf_len, 4);
+  this->prepareCmd(&send, CMD_READ);
 
-    if (mUsb->write(&send, send.size()) != send.size())
-        return -1;
+  mUsb->write(&send, send.size());
+  qint32 cnt = mUsb->read(&recv, len + 1);
 
-    QThread::msleep(10);
-    mUsb->read(&recv, 1);
+  if (!(recv.at(0) == (MASK_REPLY_OK | CMD_READ)))
+    return -1;
 
-    if (recv.size() < 1)
-        return -2;
+  recv.remove(0, 1);
+  *data = recv;
 
-    if (!(recv.at(0) == (MASK_REPLY_OK | CMD_WRITE)))
-        return -3;
-
-    return send.size();
+  return cnt - 1;
 }
 
-qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
-{
-    //WAIT_USB
-    QByteArray send, recv;
-    quint8 buf_len[4];
-    qToLittleEndian(len, buf_len);
-    quint8 buf_addr[4];
-    qToLittleEndian(addr, buf_addr);
+bool Bootloader::eraseFlash(quint32 len) {
+  _WAIT_USB_
+  QByteArray send, recv;
+  quint8 buf_len[4];
 
-    send.append((char*)buf_addr, 4);
-    send.append((char*)buf_len, 4);
-    this->prepareCmd(&send, CMD_READ);
+  qToLittleEndian(len, buf_len);
 
-    mUsb->write(&send, send.size());
-    qint32 cnt = mUsb->read(&recv, len+1);
+  send.append((char *)buf_len, 4);
+  this->prepareCmd(&send, CMD_ERASE);
 
-    if (!(recv.at(0) == (MASK_REPLY_OK | CMD_READ)))
-        return -1;
+  mUsb->write(&send, send.size());
 
-    recv.remove(0, 1);
-    *data = recv;
+  QThread::usleep(13 * len);
 
-    return cnt-1;
+  mUsb->read(&recv, 1);
+
+  if (recv.size() > 0)
+    return ((recv.at(0) == (MASK_REPLY_OK | CMD_ERASE)));
+
+  return false;
 }
 
-bool Bootloader::eraseFlash(quint32 len)
-{
-    _WAIT_USB_
-    QByteArray send, recv;
-    quint8 buf_len[4];
+quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const {
+  quint8 i;
+  quint8 sum = 0;
 
-    qToLittleEndian(len, buf_len);
+  for (i = 0; i < length; i++)
+    sum += data[i];
 
-    send.append((char*)buf_len, 4);
-    this->prepareCmd(&send, CMD_ERASE);
-
-    mUsb->write(&send, send.size());
-
-     QThread::usleep(13*len);
-
-    mUsb->read(&recv, 1);
-
-    if (recv.size() > 0)
-        return ((recv.at(0) == (MASK_REPLY_OK | CMD_ERASE)));
-
-    return false;
+  return sum;
 }
 
-quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
-{
-    quint8 i;
-    quint8 sum = 0;
-
-    for (i = 0; i < length; i++)
-      sum += data[i];
-
-    return sum;
-}
-
-void Bootloader::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const
-{
-    cmdBuf->insert(0, MAGIC1);
-    cmdBuf->insert(1, MAGIC2);
-    cmdBuf->insert(2, MASK_CMD | cmd);
-    cmdBuf->insert(3, cmdBuf->size()+2); // +2 = The byte we are adding now, and the checksum.
-    cmdBuf->append(checkSum((quint8*)cmdBuf->constData(), cmdBuf->size()));
+void Bootloader::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const {
+  cmdBuf->insert(0, MAGIC1);
+  cmdBuf->insert(1, MAGIC2);
+  cmdBuf->insert(2, MASK_CMD | cmd);
+  cmdBuf->insert(3,
+                 cmdBuf->size() +
+                     2); // +2 = The byte we are adding now, and the checksum.
+  cmdBuf->append(checkSum((quint8 *)cmdBuf->constData(), cmdBuf->size()));
 }

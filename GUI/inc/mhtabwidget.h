@@ -20,35 +20,32 @@ class MHTabBar;
 //    MHTabWidget implements the a Tab Widget with detach and attach
 //    functionality.
 //////////////////////////////////////////////////////////////////////////////
-class MHTabWidget: public QTabWidget
-{
+class MHTabWidget : public QTabWidget {
   Q_OBJECT
 
 public:
-  void Initialize (QMainWindow* mainWindow);
-  void ShutDown   (void);
-  
+  void Initialize(QMainWindow *mainWindow);
+  void ShutDown(void);
+
   // Construction.
-  MHTabWidget (QWidget *parent);
+  MHTabWidget(QWidget *parent);
 
   // Destruction.
-  virtual ~MHTabWidget (void);
+  virtual ~MHTabWidget(void);
 
 public slots:
   // Move Tab
   void MoveTab(int fromIndex, int toIndex);
 
   // Detach Tab
-  void DetachTab (int index, QPoint& dropPoint);
+  void DetachTab(int index, QPoint &dropPoint);
 
   // Attach Tab
-  void AttachTab (QWidget *parent);
+  void AttachTab(QWidget *parent);
 
 protected:
-  
-
 private:
-  MHTabBar* m_tabBar;
+  MHTabBar *m_tabBar;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,8 +56,7 @@ private:
 //    Header : MHTabWidget.h
 //    Library: MassHybridGui.dll
 //////////////////////////////////////////////////////////////////////////////
-class MHWorkflowWidget : public QWidget
-{
+class MHWorkflowWidget : public QWidget {
 public:
   // Default constructor
   MHWorkflowWidget(QWidget *parent = 0);
@@ -76,8 +72,7 @@ public:
 //    Header : MHTabWidget.h
 //    Library: MassHybridGui.dll
 //////////////////////////////////////////////////////////////////////////////
-class MHDetachedWindow : public QDialog
-{
+class MHDetachedWindow : public QDialog {
   Q_OBJECT
 public:
   // Default constructor
@@ -91,10 +86,7 @@ protected:
   void closeEvent(QCloseEvent *event);
   QIcon m_tabIcon;
 signals:
-  void OnClose (QWidget* widget);
-
+  void OnClose(QWidget *widget);
 };
 
-
 #endif // __MHTABWIDGET_H__
-

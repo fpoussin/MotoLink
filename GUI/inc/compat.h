@@ -18,10 +18,11 @@ This file is part of QSTLink2.
 #define COMPAT_H
 
 #if defined(_WIN32) || defined(_WIN64)
-    #define WINDOWS 1
+#define WINDOWS 1
 #endif
 
-#define PrintError() qCritical ("In %s, at %s:%d", Q_FUNC_INFO, __FILE__, __LINE__)
+#define PrintError()                                                           \
+  qCritical("In %s, at %s:%d", Q_FUNC_INFO, __FILE__, __LINE__)
 #define PrintFuncName() qDebug() << "***[" << Q_FUNC_INFO << "]***"
 
 #endif // COMPAT_H

@@ -1,35 +1,32 @@
 // Qt includes
+#include "mhtabwidget.h"
+#include "mhtabbar.h"
+#include <QBoxLayout>
 #include <QDialog>
 #include <QEvent>
 #include <QLabel>
 #include <QLayout>
+#include <QPixmap>
 #include <QTabBar>
 #include <QTableWidget>
-#include <QBoxLayout>
-#include <QPixmap>
-#include "mhtabbar.h"
-#include "mhtabwidget.h"
 
 //////////////////////////////////////////////////////////////
-void MHTabWidget::Initialize (QMainWindow* mainWindow)
-{
-    m_tabBar->Initialize(mainWindow);
+void MHTabWidget::Initialize(QMainWindow *mainWindow) {
+  m_tabBar->Initialize(mainWindow);
 }
 
 //////////////////////////////////////////////////////////////
-void MHTabWidget::ShutDown (void)
-{
-}
+void MHTabWidget::ShutDown(void) {}
 
 //////////////////////////////////////////////////////////////
 // Default Constructor
 //////////////////////////////////////////////////////////////
-MHTabWidget::MHTabWidget (QWidget *parent) : QTabWidget (parent)
-{
-  m_tabBar = new MHTabBar (this);
-  connect(m_tabBar, SIGNAL(OnDetachTab(int, QPoint&)), this, SLOT(DetachTab(int, QPoint&)));
-  connect(m_tabBar, SIGNAL(OnMoveTab(int,int)), this, SLOT(MoveTab(int,int)));
-  
+MHTabWidget::MHTabWidget(QWidget *parent) : QTabWidget(parent) {
+  m_tabBar = new MHTabBar(this);
+  connect(m_tabBar, SIGNAL(OnDetachTab(int, QPoint &)), this,
+          SLOT(DetachTab(int, QPoint &)));
+  connect(m_tabBar, SIGNAL(OnMoveTab(int, int)), this, SLOT(MoveTab(int, int)));
+
   setTabBar(m_tabBar);
   setMovable(true);
 }
@@ -37,16 +34,16 @@ MHTabWidget::MHTabWidget (QWidget *parent) : QTabWidget (parent)
 //////////////////////////////////////////////////////////////
 // Default Destructor
 //////////////////////////////////////////////////////////////
-MHTabWidget::~MHTabWidget (void)
-{
-  disconnect(m_tabBar, SIGNAL(OnMoveTab(int,int)), this, SLOT(MoveTab(int,int)));
-  disconnect(m_tabBar, SIGNAL(OnDetachTab(int, QPoint&)), this, SLOT(DetachTab(int, QPoint&)));
+MHTabWidget::~MHTabWidget(void) {
+  disconnect(m_tabBar, SIGNAL(OnMoveTab(int, int)), this,
+             SLOT(MoveTab(int, int)));
+  disconnect(m_tabBar, SIGNAL(OnDetachTab(int, QPoint &)), this,
+             SLOT(DetachTab(int, QPoint &)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MHTabWidget::MoveTab(int fromIndex, int toIndex)
-{
-  QWidget* w = widget(fromIndex);
+void MHTabWidget::MoveTab(int fromIndex, int toIndex) {
+  QWidget *w = widget(fromIndex);
   QIcon icon = tabIcon(fromIndex);
   QString text = tabText(fromIndex);
 
@@ -56,62 +53,62 @@ void MHTabWidget::MoveTab(int fromIndex, int toIndex)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MHTabWidget::DetachTab (int index, QPoint& dropPoint)
-{
-  (void) dropPoint;
+void MHTabWidget::DetachTab(int index, QPoint &dropPoint) {
+  (void)dropPoint;
   // Create Window
-  MHDetachedWindow* detachedWidget = new MHDetachedWindow (parentWidget ());
-  detachedWidget->setWindowModality (Qt::NonModal);
+  MHDetachedWindow *detachedWidget = new MHDetachedWindow(parentWidget());
+  detachedWidget->setWindowModality(Qt::NonModal);
   // With layouter
   QVBoxLayout *mainLayout = new QVBoxLayout(detachedWidget);
   mainLayout->setContentsMargins(0, 0, 0, 0);
 
   // Find Widget and connect
-  MHWorkflowWidget* tearOffWidget = dynamic_cast <MHWorkflowWidget*> (widget (index));
-  QObject::connect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
+  MHWorkflowWidget *tearOffWidget =
+      dynamic_cast<MHWorkflowWidget *>(widget(index));
+  QObject::connect(detachedWidget, SIGNAL(OnClose(QWidget *)), this,
+                   SLOT(AttachTab(QWidget *)));
   detachedWidget->setWindowTitle(tabText(index));
   detachedWidget->setTabIcon(this->tabIcon(index));
   // Remove from tab bar
   tearOffWidget->setParent(detachedWidget);
 
   // Make first active
-  if (0 < count ())
-  {
-    this->setCurrentIndex (0);
+  if (0 < count()) {
+    this->setCurrentIndex(0);
   }
 
   // Create and show
   mainLayout->addWidget(tearOffWidget);
   // Needs to be done explicit
   tearOffWidget->show();
-  //detachedWidget->move (dropPoint);
+  // detachedWidget->move (dropPoint);
   detachedWidget->setFixedSize(tearOffWidget->size());
   detachedWidget->setSizeGripEnabled(false);
   detachedWidget->show();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MHTabWidget::AttachTab (QWidget *parent)
-{
+void MHTabWidget::AttachTab(QWidget *parent) {
   // Retrieve widget
-  MHDetachedWindow* detachedWidget = dynamic_cast <MHDetachedWindow*> (parent);
-  MHWorkflowWidget* tearOffWidget = dynamic_cast <MHWorkflowWidget*> (detachedWidget->layout()->takeAt(0)->widget());
-  
+  MHDetachedWindow *detachedWidget = dynamic_cast<MHDetachedWindow *>(parent);
+  MHWorkflowWidget *tearOffWidget = dynamic_cast<MHWorkflowWidget *>(
+      detachedWidget->layout()->takeAt(0)->widget());
+
   // Change parent
-  tearOffWidget->setParent (this);
+  tearOffWidget->setParent(this);
 
   // Attach
   int newIndex = addTab(tearOffWidget, detachedWidget->windowTitle());
 
   // Make Active
-  if (-1 != newIndex)
-  {
+  if (-1 != newIndex) {
     this->setCurrentIndex(newIndex);
   }
 
   this->setTabIcon(this->currentIndex(), detachedWidget->tabIcon());
   // Cleanup Window
-  QObject::disconnect(detachedWidget, SIGNAL(OnClose(QWidget*)), this, SLOT(AttachTab(QWidget*)));
+  QObject::disconnect(detachedWidget, SIGNAL(OnClose(QWidget *)), this,
+                      SLOT(AttachTab(QWidget *)));
   delete detachedWidget;
 }
 
@@ -120,49 +117,27 @@ void MHTabWidget::AttachTab (QWidget *parent)
 //////////////////////////////////////////////////////////////////////////////
 // Default constructor
 //////////////////////////////////////////////////////////////////////////////
-MHWorkflowWidget::MHWorkflowWidget(QWidget *parent)
-: QWidget (parent)
-{
-
-}
+MHWorkflowWidget::MHWorkflowWidget(QWidget *parent) : QWidget(parent) {}
 
 //////////////////////////////////////////////////////////////////////////////
 // Default destructor
 //////////////////////////////////////////////////////////////////////////////
-MHWorkflowWidget::~MHWorkflowWidget (void)
-{
-
-}
+MHWorkflowWidget::~MHWorkflowWidget(void) {}
 
 //----------------------------------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////////
-MHDetachedWindow::MHDetachedWindow(QWidget *parent)
-: QDialog (parent)
-{
-
-}
+MHDetachedWindow::MHDetachedWindow(QWidget *parent) : QDialog(parent) {}
 
 //////////////////////////////////////////////////////////////////////////////
-MHDetachedWindow::~MHDetachedWindow(void)
-{
+MHDetachedWindow::~MHDetachedWindow(void) {}
 
-}
-
-void MHDetachedWindow::setTabIcon(const QIcon& icon)
-{
-    m_tabIcon = icon;
-}
+void MHDetachedWindow::setTabIcon(const QIcon &icon) { m_tabIcon = icon; }
 
 //////////////////////////////////////////////////////////////////////////////
-QIcon MHDetachedWindow::tabIcon()
-{
-    return m_tabIcon;
-}
+QIcon MHDetachedWindow::tabIcon() { return m_tabIcon; }
 
 //////////////////////////////////////////////////////////////////////////////
-void MHDetachedWindow::closeEvent (QCloseEvent* /*event*/)
-{
+void MHDetachedWindow::closeEvent(QCloseEvent * /*event*/) {
   emit OnClose(this);
 }
-

@@ -1,41 +1,39 @@
 #ifndef MTLFILE_H
 #define MTLFILE_H
 
-#include <QObject>
+#include "tablemodel.h"
+#include <QFile>
 #include <QMap>
+#include <QObject>
 #include <QString>
 #include <QVariant>
-#include <QFile>
-#include "tablemodel.h"
 
-class MTLFile : public QObject
-{
-    Q_OBJECT
+class MTLFile : public QObject {
+  Q_OBJECT
 public:
-    explicit MTLFile(QObject *parent = 0);
-    bool addTable(TableModel *table);
-    bool getTable(const QString &name, TableModel* table);
-    bool rmTable(const QString &name);
-    bool rmTable(TableModel * const table);
+  explicit MTLFile(QObject *parent = 0);
+  bool addTable(TableModel *table);
+  bool getTable(const QString &name, TableModel *table);
+  bool rmTable(const QString &name);
+  bool rmTable(TableModel *const table);
 
-    bool addProperty(const QString &name, QVariant value);
-    bool getProperty(const QString &name, QVariant* value);
-    bool rmProperty(const QString &name);
+  bool addProperty(const QString &name, QVariant value);
+  bool getProperty(const QString &name, QVariant *value);
+  bool rmProperty(const QString &name);
 
-    bool isLoading(void);
+  bool isLoading(void);
 
 public slots:
-    bool write(QFile *file);
-    bool read(QFile *file);
+  bool write(QFile *file);
+  bool read(QFile *file);
 
 signals:
-    void readFailed(QString);
+  void readFailed(QString);
 
 private:
-    QMap<QString, TableModel*> mTableList;
-    QMap<QString, QVariant> mPropList;
-    bool mLoading;
-
+  QMap<QString, TableModel *> mTableList;
+  QMap<QString, QVariant> mPropList;
+  bool mLoading;
 };
 
 #endif // MTLFILE_H
