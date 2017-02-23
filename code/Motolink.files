@@ -2145,3 +2145,5 @@ nanopb/pb_decode.h
 nanopb/pb_encode.c
 nanopb/pb_encode.h
 nanopb/pb.h
+common/rpc.c
+common/rpc.h

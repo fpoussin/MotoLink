@@ -1,6 +1,8 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+/* You need to include hal.h before this file for typedefs */
+
 #define VERSION_PROTOCOL 1
 
 #define MAGIC1 (uint8_t)0xAF

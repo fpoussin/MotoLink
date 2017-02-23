@@ -10,6 +10,7 @@ BOARDSRC += ../nanopb/pb_decode.c
 BOARDSRC += ../common/proto/base.pb.c
 BOARDSRC += ../common/proto/bootloader.pb.c
 BOARDSRC += ../common/proto/app.pb.c
+BOARDSRC += ../common/proto/rpc.c
 
 # Required include directories
 BOARDINC += ../common
