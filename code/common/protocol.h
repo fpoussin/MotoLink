@@ -7,6 +7,7 @@
 
 #define MAGIC1 (uint8_t)0xAF
 #define MAGIC2 (uint8_t)0xEB
+#define MAGICSTR "MTL-V1"
 
 /* First 3 bits */
 #define MASK_CMD (uint8_t)0x80

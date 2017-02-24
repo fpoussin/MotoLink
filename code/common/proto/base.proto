@@ -5,19 +5,25 @@ import "nanopb.proto";
 
 message BaseHeader {
 
-    required string magic = 1 [(nanopb).max_size = 3];
-    required string cmd   = 2 [(nanopb).max_size = 20];
-    required uint32 len   = 3 [default = 0];
+    required string magic = 1 [(nanopb).max_size = 6];
+    required uint32 cmd   = 2 [default = 0];
 }
 
 message Crc {
 
-    required uint32 crc = 1 [default = 0];
+    required uint32 poly = 1 [default = 0x04C11DB7];
+    required uint32 val = 2 [default = 0];
 }
 
 message BaseRequest {
 
     required BaseHeader header = 1;
-    optional bytes data = 2 [(nanopb).max_size = 200];
-    required Crc crc    = 3;
+    required Crc crc           = 2;
+}
+
+message BaseResponse {
+
+    required BaseHeader header = 1;
+    required uint32 code       = 2;
+    required Crc crc           = 3;
 }
