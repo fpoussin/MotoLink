@@ -83,68 +83,6 @@ version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSIO
                          {0, 0, 0, 0}};
 #endif
 
-#if CRC_USE_DMA
-
-static uint32_t gCrc = 0;
-
-CCM_FUNC void crc_callback(CRCDriver *crcp, uint32_t crc) {
-  (void)crcp;
-  gCrc = crc;
-}
-
-static const CRCConfig crc32_config = {
-  .poly_size         = 32,
-  .poly              = 0x04C11DB7,
-  .initial_val       = 0xFFFFFFFF,
-  .final_val         = 0xFFFFFFFF,
-  .reflect_data      = 1,
-  .reflect_remainder = 1,
-  .end_cb = crc_callback
-};
-
-CCM_FUNC static crc_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
-{
-  gCrc = 0;
-
-  crcAcquireUnit(&CRCD1);             /* Acquire ownership of the bus.    */
-  crcStart(&CRCD1, config);           /* Activate CRC driver              */
-  crcReset(&CRCD1);
-  crcStartCalc(&CRCD1, len, &data);
-  while (gCrc == 0)
-      chThdSleepMilliseconds(10);                  /* Wait for callback to verify      */
-  crcStop(&CRCD1);                    /* Deactive CRC driver);            */
-  crcReleaseUnit(&CRCD1);             /* Acquire ownership of the bus.    */
-
-  return gCrc;
-}
-
-#else
-
-static const CRCConfig crc32_config = {
-  .poly_size         = 32,
-  .poly              = 0x04C11DB7,
-  .initial_val       = 0xFFFFFFFF,
-  .final_val         = 0xFFFFFFFF,
-  .reflect_data      = 1,
-  .reflect_remainder = 1
-};
-
-CCM_FUNC static crc_t getCrc(const CRCConfig *config, uint8_t *data, uint16_t len)
-{
-  uint32_t crc;
-
-  crcAcquireUnit(&CRCD1);             /* Acquire ownership of the bus.    */
-  crcStart(&CRCD1, config);           /* Activate CRC driver              */
-  crcReset(&CRCD1);
-  crc = crcCalc(&CRCD1, len, data);
-  crcStop(&CRCD1);                    /* Deactive CRC driver);            */
-  crcReleaseUnit(&CRCD1);             /* Acquire ownership of the bus.    */
-
-  return crc;
-}
-
-#endif
-
 void eeInit(void)
 {
     spiStart(&EEPROM_SPID, &EEPROM_SPIDCONFIG);
@@ -238,7 +176,7 @@ CCM_FUNC uint8_t eePushPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t 
         return 1;
 
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
-    *crc = getCrc(&crc32_config, buffer, len);
+    *crc = getCrc(buffer, len);
 
     fileStreamSeek(tablesFS, addr);
     if (fileStreamWrite(tablesFS, buffer, len) != len)
@@ -294,14 +232,14 @@ CCM_FUNC uint8_t readTablesFromEE(void)
     if (eePullPage(eeFindCurrentPageAddr(), (uint8_t*)&tables_buf, &crc1, len) != 0)
         return 1;
 
-    crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, len);
+    crc2 = getCrc((uint8_t*)&tables_buf, len);
 
     if (crc1 != crc2)
     {
         // Try previous page
         if (eePullPage(eeFindPrevPageAddr(), (uint8_t*)&tables_buf, &crc1, len) != 0)
             return 2;
-        crc2 = getCrc(&crc32_config, (uint8_t*)&tables_buf, len);
+        crc2 = getCrc((uint8_t*)&tables_buf, len);
         if (crc1 != crc2)
             return 3;
     }
@@ -354,7 +292,7 @@ CCM_FUNC uint8_t readSettingsFromEE()
     }
 
     // Calculate CRC from EE data
-    crc2 = getCrc(&crc32_config, (uint8_t*)&settings_buf, len);
+    crc2 = getCrc((uint8_t*)&settings_buf, len);
 
     if (crc1 != crc2)
     {
@@ -373,7 +311,7 @@ CCM_FUNC uint8_t writeSettingsToEE()
     const size_t len = sizeof settings;
     crc_t crc = 0;
     memcpy(&settings_buf, &settings, len);
-    crc = getCrc(&crc32_config, (uint8_t*)&settings_buf, len);
+    crc = getCrc((uint8_t*)&settings_buf, len);
 
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
@@ -418,7 +356,7 @@ CCM_FUNC uint8_t readVersionFromEE(uint8_t idx, version_t* dst)
     }
 
     // Calculate CRC from EE data
-    crc2 = getCrc(&crc32_config, (uint8_t*)&version_buf, len);
+    crc2 = getCrc((uint8_t*)&version_buf, len);
 
     if (crc1 != crc2)
     {
@@ -437,7 +375,7 @@ CCM_FUNC uint8_t writeVersionToEE(uint8_t idx, const version_t* src)
     const size_t len = sizeof(version_t);
     crc_t crc = 0;
     memcpy(&version_buf, src, len);
-    crc = getCrc(&crc32_config, (uint8_t*)&version_buf, len);
+    crc = getCrc((uint8_t*)&version_buf, len);
 
     versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 

@@ -36,7 +36,6 @@ uint8_t writeVersionToEE(uint8_t idx, const version_t* src);
 
 #define VERSION_IDX_BL  0
 #define VERSION_IDX_APP 1
-extern version_t versions[2];
 
 #ifdef MTL_APP
 extern settings_t settings;

@@ -1,25 +1,26 @@
 
-å
+ã
 	app.proto
-base.protonanopb.proto"o
-TaskMessage
-header (2.BaseHeader
-name_len (
-pct (
-name (	B’?
-is_last ("-
-SensorsMessage
-header (2.BaseHeader"+
-KnockMessage
-header (2.BaseHeader".
-SettingsMessage
-header (2.BaseHeader"T
-TableMessage
-header (2.BaseHeader
-id (B’?
-data (B’?°"k
-CellMessage
-header (2.BaseHeader
-row (B’?
-column (B’?
-value (B’?
+base.protonanopb.proto"“
+TaskMessage#
+header (2.BaseHeaderRheader
+name_len (RnameLen
+pct (Rpct
+name (	B’?Rname
+is_last (RisLast"5
+SensorsMessage#
+header (2.BaseHeaderRheader"3
+KnockMessage#
+header (2.BaseHeaderRheader"6
+SettingsMessage#
+header (2.BaseHeaderRheader"x
+TableMessage#
+header (2.BaseHeaderRheader
+id (B’?Rid
+len (Rlen
+data (B’?°Rdata"‡
+CellMessage#
+header (2.BaseHeaderRheader
+row (B’?Rrow
+column (B’?Rcolumn
+value (B’?Rvalue

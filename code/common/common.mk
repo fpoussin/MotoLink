@@ -11,6 +11,7 @@ BOARDSRC += ../common/proto/base.pb.c
 BOARDSRC += ../common/proto/bootloader.pb.c
 BOARDSRC += ../common/proto/app.pb.c
 BOARDSRC += ../common/proto/rpc.c
+BOARDSRC += ../common/proto/rpc_commands.c
 
 # Required include directories
 BOARDINC += ../common

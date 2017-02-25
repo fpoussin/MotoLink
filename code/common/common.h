@@ -10,6 +10,7 @@
 uint32_t leToInt(uint8_t *ptr);
 uint32_t beToInt(uint8_t *ptr);
 uint8_t checksum(const uint8_t *data, uint8_t length);
+crc_t getCrc(uint8_t *data, uint16_t len);
 
 bool getSwitch1(void);
 int map(int x, int in_min, int in_max, int out_min, int out_max);
@@ -19,5 +20,7 @@ bool fiveBaudInit(SerialDriver *sd);
 void setLineCoding(cdc_linecoding_t *lcp, SerialDriver *sdp, SerialConfig *scp);
 
 bool vbatDetect(void);
+
+extern version_t versions[2];
 
 #endif

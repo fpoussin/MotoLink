@@ -163,3 +163,65 @@ void setLineCoding(cdc_linecoding_t *lcp, SerialDriver *sdp,
 inline bool vbatDetect(void) {
   return palReadPad(PORT_VCC_DETECT, PAD_VCC_DETECT) == PAL_LOW;
 }
+
+#if CRC_USE_DMA
+
+static uint32_t gCrc = 0;
+
+CCM_FUNC void crc_callback(CRCDriver *crcp, uint32_t crc) {
+  (void)crcp;
+  gCrc = crc;
+}
+
+static const CRCConfig crc32_config = {
+  .poly_size         = 32,
+  .poly              = 0x04C11DB7,
+  .initial_val       = 0xFFFFFFFF,
+  .final_val         = 0xFFFFFFFF,
+  .reflect_data      = 1,
+  .reflect_remainder = 1,
+  .end_cb = crc_callback
+};
+
+CCM_FUNC static crc_t getCrc(uint8_t *data, uint16_t len)
+{
+  gCrc = 0;
+
+  crcAcquireUnit(&CRCD1);             /* Acquire ownership of the bus.    */
+  crcStart(&CRCD1, &crc32_config);           /* Activate CRC driver              */
+  crcReset(&CRCD1);
+  crcStartCalc(&CRCD1, len, &data);
+  while (gCrc == 0)
+      chThdSleepMilliseconds(10);                  /* Wait for callback to verify      */
+  crcStop(&CRCD1);                    /* Deactive CRC driver);            */
+  crcReleaseUnit(&CRCD1);             /* Acquire ownership of the bus.    */
+
+  return gCrc;
+}
+
+#else
+
+static const CRCConfig crc32_config = {
+  .poly_size         = 32,
+  .poly              = 0x04C11DB7,
+  .initial_val       = 0xFFFFFFFF,
+  .final_val         = 0xFFFFFFFF,
+  .reflect_data      = 1,
+  .reflect_remainder = 1
+};
+
+CCM_FUNC crc_t getCrc(uint8_t *data, uint16_t len)
+{
+  uint32_t crc;
+
+  crcAcquireUnit(&CRCD1);             /* Acquire ownership of the bus.    */
+  crcStart(&CRCD1, &crc32_config);           /* Activate CRC driver              */
+  crcReset(&CRCD1);
+  crc = crcCalc(&CRCD1, len, data);
+  crcStop(&CRCD1);                    /* Deactive CRC driver);            */
+  crcReleaseUnit(&CRCD1);             /* Acquire ownership of the bus.    */
+
+  return crc;
+}
+
+#endif

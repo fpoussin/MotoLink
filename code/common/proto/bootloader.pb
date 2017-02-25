@@ -1,14 +1,12 @@
 
-ƒ
+…
 bootloader.proto
-base.protonanopb.proto"j
-FlashWriteRequest
-header (2.BaseHeader
-addr (:0
-data (B’?È
-crc (2.Crc"i
-FlashReadRequest
-header (2.BaseHeader
-addr (:0
-data (B’?È
-crc (2.Crc
+base.protonanopb.proto"k
+FlashWriteRequest#
+header (2.BaseHeaderRheader
+addr (:0Raddr
+data (B’?ÈRdata"j
+FlashReadRequest#
+header (2.BaseHeaderRheader
+addr (:0Raddr
+data (B’?ÈRdata

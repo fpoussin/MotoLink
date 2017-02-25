@@ -1,18 +1,14 @@
 
-Š
+ò
 
-base.protonanopb.proto"2
+base.protonanopb.proto">
 
-BaseHeader
-magic (	B’?
-cmd (:0"-
-Crc
-poly (:79764919
-val (:0"=
-BaseRequest
-header (2.BaseHeader
-crc (2.Crc"L
-BaseResponse
-header (2.BaseHeader
-code (
-crc (2.Crc
+BaseHeader
+magic (	B’?Rmagic
+cmd (:0Rcmd"2
+BaseRequest#
+header (2.BaseHeaderRheader"b
+BaseResponse#
+header (2.BaseHeaderRheader
+code (Rcode
+data (B’?Rdata

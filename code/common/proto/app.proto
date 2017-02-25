@@ -31,7 +31,8 @@ message TableMessage {
 
     required BaseHeader header = 1;
     required bytes id = 2 [(nanopb).max_size = 1];
-    required bytes data = 3 [(nanopb).max_size = 176];
+    required uint32 len = 3;
+    required bytes data = 4 [(nanopb).max_size = 176];
 }
 
 message CellMessage {
@@ -39,5 +40,5 @@ message CellMessage {
     required BaseHeader header = 1;
     required bytes row = 2 [(nanopb).max_size = 1];
     required bytes column = 3 [(nanopb).max_size = 1];
-    required bytes value = 4 [(nanopb).max_size = 1];
+    required bytes value = 4 [(nanopb).max_size = 2];
 }

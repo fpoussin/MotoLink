@@ -13,10 +13,10 @@ typedef void (*pCommand)(uint8_t *data, uint16_t *data_len);
 
 
 /* RPC */
-uint8_t readRequest(BaseChannel * chn);
-uint8_t sendResponse(BaseChannel * chn, uint8_t code);
-uint8_t ReadData(BaseChannel * chn, uint8_t * data, uint8_t data_len);
-uint8_t sendData(BaseChannel * chn, uint8_t * data, uint8_t data_len);
+uint8_t rpcReadRequest(BaseChannel * chn);
+uint8_t rpcSendResponse(BaseChannel * chn, uint32_t cmd, uint32_t code, const uint8_t *data);
+uint8_t rpcReadData(BaseChannel * chn, uint8_t * data, uint8_t data_len);
+uint8_t rpcSendData(BaseChannel * chn, uint8_t * data, uint8_t data_len);
 
 
 #endif
