@@ -927,6 +927,7 @@ void MainWindow::onReadMtlSettings()
             mMainUi->cbInputType->setCurrentIndex(2);
 
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
+        mMainUi->cbOBDEmulator->setChecked(mMtl->getFunctionOBDEmulator());
 
         this->log("Read settings OK");
     }
@@ -985,6 +986,7 @@ void MainWindow::onWriteMtlSettings()
     }
 
     mMtl->setFunctionRecord(mMainUi->cbRecording->isChecked());
+    mMtl->setFunctionOBDEmulator(mMainUi->cbOBDEmulator->isChecked());
 
     if (mMtl->writeSettings())
     {

@@ -87,6 +87,7 @@ public:
     inline bool getFunctionAFR_MTS(void) { return mSettings.afrInput == AFR_INPUT_MTS ;}
     inline bool getFunctionAFR_OBD(void) { return mSettings.afrInput == AFR_INPUT_OBD ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
+    inline bool getFunctionOBDEmulator(void) {return mSettings.functions & FUNC_OBD; }
     inline bool getFunctionInput_Direct(void) { return mSettings.sensorsInput == SENSORS_INPUT_DIRECT ;}
     inline bool getFunctionInput_OBD(void) { return mSettings.sensorsInput == SENSORS_INPUT_OBD_CAN ;}
     inline bool getFunctionInput_Yamaha(void) { return mSettings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN ;}
@@ -103,6 +104,8 @@ public:
     inline void setFunctionAFR_OBD(void) {      mSettings.afrInput =  AFR_INPUT_OBD ;}
     inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
                                                 else mSettings.functions &= ~FUNC_RECORD ;}
+    inline void setFunctionOBDEmulator(bool on) {if (on) mSettings.functions |= FUNC_OBD;
+                                                else mSettings.functions &= ~FUNC_OBD ;}
 
     inline void setFunctionInput_Direct(void) { mSettings.sensorsInput = 0 ;}
     inline void setFunctionInput_OBD(void) {    mSettings.sensorsInput = SENSORS_INPUT_OBD_CAN ;}

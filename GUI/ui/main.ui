@@ -1261,10 +1261,17 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="0" alignment="Qt::AlignHCenter">
+              <item row="10" column="0" alignment="Qt::AlignHCenter">
                <widget class="QCheckBox" name="cbRecording">
                 <property name="text">
                  <string>Recording</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QCheckBox" name="cbOBDEmulator">
+                <property name="text">
+                 <string>OBD Emulator (CanBus)</string>
                 </property>
                </widget>
               </item>
