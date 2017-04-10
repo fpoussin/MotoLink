@@ -21,6 +21,8 @@ void HardFault_Handler(void)
    volatile uint32_t cfsr = SCB->CFSR;
    volatile uint8_t fault = 0;
    volatile uint8_t reason = 0;
+   (void) fault;
+   (void) reason;
 
    if (hfsr & SCB_HFSR_FORCED_Msk)
    {

@@ -46,14 +46,7 @@ const char *irq_name = "Interrupts";
 /*===========================================================================*/
 
 static virtual_timer_t vt_freqin;
-/*
-static const uint8_t initMsg[] = {0xFE, 0x04, 0xFF, 0xFF}; // original HDS init msg
 
-static const uint8_t initHex1[] = {0x27, 0x0B, 0xE0, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x48, 0x6F, 0x43}; // HelloHo
-static const uint8_t initHex2[] = {0x07 , 0x08 , 0x49 , 0x7F , 0x61 , 0x6D , 0x7F, 0xDC}; // Iam
-static const uint8_t initHex3[] = {0x27 , 0x0B , 0xE0 , 0x77 , 0x41 , 0x72 , 0x65 , 0x59 , 0x6F , 0x75 , 0x22}; // AreYou
-static const uint8_t initHex4[] = {0x07 , 0x08 , 0x46 , 0x69 , 0x6E , 0x2E , 0x7F , 0x27}; // in.
-*/
 /*===========================================================================*/
 /* CallBacks                                                                 */
 /*===========================================================================*/
@@ -154,9 +147,15 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 
     while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
+
+      if (settings.functions == FUNC_OBD) {
+
+        serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
+      }
+
       if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
 
-        readCanOBDPid(&rxmsg);
+        readCanOBDPidResponse(&rxmsg);
       }
       else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
 
@@ -243,7 +242,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
       fiveBaudInit(&SD1);
       sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
       doKLineInit = false;
-	}
+    }
 */
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
@@ -480,7 +479,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
 }
 
 THD_WORKING_AREA(waThreadButton, 128);
-CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
+static THD_FUNCTION(ThreadButton, arg)
 {
     (void)arg;
     chRegSetThreadName("Button");
@@ -522,7 +521,7 @@ CCM_FUNC static THD_FUNCTION(ThreadButton, arg)
 }
 
 THD_WORKING_AREA(waThreadRecord, 256);
-CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
+static THD_FUNCTION(ThreadRecord, arg)
 {
     (void)arg;
     chRegSetThreadName("Recording");
@@ -566,7 +565,7 @@ CCM_FUNC static THD_FUNCTION(ThreadRecord, arg)
 }
 
 THD_WORKING_AREA(waThreadWdg, 64);
-CCM_FUNC static THD_FUNCTION(ThreadWdg, arg)
+static THD_FUNCTION(ThreadWdg, arg)
 {
     (void)arg;
     chRegSetThreadName("Watchdog");
@@ -630,9 +629,6 @@ int main(void)
 
   adcSTM32EnableTS(&ADCD1);
   adcSTM32EnableVBAT(&ADCD1);
-
-  adcSTM32EnableTS(&ADCD3);
-  adcSTM32EnableVBAT(&ADCD3);
 
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
