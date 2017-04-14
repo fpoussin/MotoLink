@@ -76,7 +76,8 @@ CCM_FUNC void freqinVTHandler(void *arg)
 
 const DACConfig dac1cfg1 = {
   2047U,
-  DAC_DHRM_12BIT_RIGHT
+  DAC_DHRM_12BIT_RIGHT,
+  0
 };
 
 SerialConfig uart1Cfg =
