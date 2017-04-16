@@ -45,12 +45,18 @@ SerialUSBDriver SDU2;
 #define USB_NUM_INTERFACES 4
 #define USB_CDC_CIF_NUM0   0
 #define USB_CDC_DIF_NUM0   1
-#define USB_CDC_CIF_NUM1   2
-#define USB_CDC_DIF_NUM1   3
+#define USB_BASE_CIF_NUM1   2
+#define USB_BASE_DIF_NUM1   3
 
 /*
 * Extra defines
 */
+
+typedef struct  {
+    const uint8_t bLength;
+    const uint8_t bDescriptorType;
+    const uint16_t bString[30]; // Unicode String
+} __attribute__((packed)) USBStringDesc;
 
 typedef struct
 {
@@ -59,16 +65,16 @@ typedef struct
   uint16_t wValue;
   uint16_t wIndex;
   uint16_t wLength;
-} USBSetupPkt;
+} __attribute__((packed)) USBSetupPkt;
 
 /// Microsoft WCID descriptor
 typedef struct {
     uint8_t bFirstInterfaceNumber;
-    uint8_t reserved1;
+    uint8_t bInterfaceCount;
     uint8_t compatibleID[8];
     uint8_t subCompatibleID[8];
-    uint8_t reserved2[6];
-} __attribute__((packed)) USBCompatIDIfDesc;
+    uint8_t reserved[6];
+} __attribute__((packed)) USBCompatIDFunctionDesc;
 
 typedef struct {
     uint32_t dwLength;
@@ -76,7 +82,11 @@ typedef struct {
     uint16_t wIndex;
     uint8_t bCount;
     uint8_t reserved[7];
-    USBCompatIDIfDesc interfaces[];
+} __attribute__((packed)) USBCompatIDHeaderDesc;
+
+typedef struct {
+    USBCompatIDHeaderDesc header;
+    USBCompatIDFunctionDesc sections[];
 } __attribute__((packed)) USBCompatIDDesc;
 
 typedef struct {
@@ -107,7 +117,7 @@ typedef struct {
   uint8_t  bMaxPacketSize0;
   uint8_t  bNumConfigurations;
   uint8_t  bReserved;
-} USB_DEVICE_QUALIFIER_DESCRIPTOR;
+} __attribute__((packed)) USB_DEVICE_QUALIFIER_DESCRIPTOR;
 
 
 #define	USB_REQ_OS_FEATURE  0x20
@@ -316,8 +326,8 @@ static const uint8_t usb_configuration_descriptor_data[] = {
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_A)
   ),
   IAD_BASE_IF_DESC_SET(
-    USB_CDC_CIF_NUM1,
-    USB_CDC_DIF_NUM1,
+    USB_BASE_CIF_NUM1,
+    USB_BASE_DIF_NUM1,
     USB_ENDPOINT_IN(USB_INTERRUPT_REQUEST_EP_B),
     USB_ENDPOINT_OUT(USB_DATA_AVAILABLE_EP_B),
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_B)
@@ -325,26 +335,28 @@ static const uint8_t usb_configuration_descriptor_data[] = {
 };
 
 static const USBCompatIDDesc usb_compat_id_descriptor_data = {
-    .dwLength = sizeof(USBCompatIDDesc) +
-                2 * sizeof(USBCompatIDIfDesc),
-    .bcdVersion = 0x0100,
-    .wIndex = 0x0004,
-    .bCount = 2,
-    .reserved = {0, 0, 0, 0, 0, 0, 0},
-    .interfaces = {
+    .header = {
+        .dwLength = sizeof(USBCompatIDHeaderDesc) +
+                    (1 * sizeof(USBCompatIDFunctionDesc)),
+        .bcdVersion = 0x0100,
+        .wIndex = 0x0004,
+        .bCount = 1,
+        .reserved = {0, 0, 0, 0, 0, 0, 0},
+    },
+    .sections = {
         {
             .bFirstInterfaceNumber = 0x02,
-            .reserved1 = 1,
+            .bInterfaceCount = 1,
             .compatibleID = "WINUSB\0\0",
             .subCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0},
-            .reserved2 = {0, 0, 0, 0, 0, 0},
+            .reserved = {0, 0, 0, 0, 0, 0},
         },
         {
             .bFirstInterfaceNumber = 0x03,
-            .reserved1 = 1,
+            .bInterfaceCount = 1,
             .compatibleID = "WINUSB\0\0",
             .subCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0},
-            .reserved2 = {0, 0, 0, 0, 0, 0},
+            .reserved = {0, 0, 0, 0, 0, 0},
         }
     }
 };
@@ -391,77 +403,71 @@ static const USBDescriptor usb_configuration_descriptor = {
 /*
  * U.S. English language identifier.
  */
-static const uint8_t usb_string0[] = {
-  USB_DESC_BYTE(4),                     /* bLength.                         */
-  USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  USB_DESC_WORD(0x0409)                 /* wLANGID (U.S. English).          */
+
+static const USBStringDesc usb_string0 = {
+  USB_DESC_BYTE(4),                      /* bLength.                         */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),  /* bDescriptorType.                 */
+  {0x0409}                               /* wLANGID (U.S. English).          */
 };
 
 /*
  * Vendor string.
  */
-static const uint8_t usb_string1[] = {
-  USB_DESC_BYTE(38),                    /* bLength.                         */
-  USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  'S', 0, 'T', 0, 'M', 0, 'i', 0, 'c', 0, 'r', 0, 'o', 0, 'e', 0,
-  'l', 0, 'e', 0, 'c', 0, 't', 0, 'r', 0, 'o', 0, 'n', 0, 'i', 0,
-  'c', 0, 's', 0
+static const USBStringDesc usb_string1 = {
+  USB_DESC_BYTE(sizeof(USBStringDesc)),  /* bLength.                         */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),  /* bDescriptorType.                 */
+  u"STMicroelectronics"
 };
 
 /*
  * Device Description string.
  */
-static const uint8_t usb_string2[] = {
-  USB_DESC_BYTE(18),                    /* bLength.                         */
-  USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0
+static const USBStringDesc usb_string2 = {
+  USB_DESC_BYTE(sizeof(USBStringDesc)),  /* bLength.                         */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),  /* bDescriptorType.                 */
+  u"Motolink"
 };
 
 
 /*
  * Device Description string.
  */
-static const uint8_t usb_string3[] = {
-  USB_DESC_BYTE(52),                    /* bLength.                         */
-  USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0,
-  ' ', 0, 'S', 0, 'e', 0, 'r', 0, 'i', 0, 'a', 0, 'l', 0, ' ', 0,
-  'i', 0, 'n', 0, 't', 0, 'e', 0, 'r', 0, 'f', 0, 'a', 0, 'c', 0,
-  'e', 0
+static const USBStringDesc usb_string3 = {
+  USB_DESC_BYTE(sizeof(USBStringDesc)),  /* bLength.                         */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),  /* bDescriptorType.                 */
+  u"Motolink Serial Interface"
 };
 
 /*
  * Device Description string.
  */
-static const uint8_t usb_string4[] = {
-  USB_DESC_BYTE(46),                    /* bLength.                         */
-  USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  'M', 0, 'o', 0, 't', 0, 'o', 0, 'l', 0, 'i', 0, 'n', 0, 'k', 0,
-  ' ', 0, 'U', 0, 'S', 0, 'B', 0, ' ', 0, 'I', 0, 'n', 0, 't', 0,
-  'e', 0, 'r', 0, 'f', 0, 'a', 0, 'c', 0, 'e', 0
+static const USBStringDesc usb_string4 = {
+  USB_DESC_BYTE(sizeof(USBStringDesc)),  /* bLength.                         */
+  USB_DESC_BYTE(USB_DESCRIPTOR_STRING),  /* bDescriptorType.                 */
+  u"Motolink WINUSB Interface"
 };
 
 /*
  * Serial Number string.
  */
-static const uint8_t usb_string5[] = {
+static const USBStringDesc usb_string5 = {
   USB_DESC_BYTE(8),                     /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  '0' + CH_KERNEL_MAJOR, 0,
-  '0' + CH_KERNEL_MINOR, 0,
-  '0' + CH_KERNEL_PATCH, 0
+  {u'0' + CH_KERNEL_MAJOR,
+   u'0' + CH_KERNEL_MINOR,
+   u'0' + CH_KERNEL_PATCH}
 };
 
 /*
  * Strings wrappers array.
  */
 static const USBDescriptor usb_strings[] = {
-  {sizeof usb_string0, usb_string0},
-  {sizeof usb_string1, usb_string1},
-  {sizeof usb_string2, usb_string2},
-  {sizeof usb_string3, usb_string3},
-  {sizeof usb_string3, usb_string4},
-  {sizeof usb_string3, usb_string5},
+  {4, (uint8_t*)&usb_string0},
+  {sizeof usb_string1, (uint8_t*)&usb_string1},
+  {sizeof usb_string2, (uint8_t*)&usb_string2},
+  {sizeof usb_string3, (uint8_t*)&usb_string3},
+  {sizeof usb_string3, (uint8_t*)&usb_string4},
+  {sizeof usb_string3, (uint8_t*)&usb_string5},
 };
 
 /*

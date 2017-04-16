@@ -134,7 +134,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   while(!chThdShouldTerminateX()) {
 
     // Are we using coms for sensor data? If not just sleep.
-    if (settings.sensorsInput != SENSORS_INPUT_COM) {
+    if (settings.sensorsInput != SENSORS_INPUT_COM && (settings.functions & FUNC_OBD) == 0) {
 
       chThdSleepMilliseconds(100);
       continue;

@@ -13,9 +13,9 @@ Motolink::Motolink(QObject *parent) :
     QtUsb::DeviceFilter filter;
     QtUsb::DeviceConfig config;
 
-    filter.guid = mGuid;
     filter.pid = mPid;
     filter.vid = mVid;
+    filter.guid = "1EE57D96-67C5-4E84-9CB7-DEEC7929B8A3";
 
     config.readEp = 0x84;
     config.writeEp = 0x04;
