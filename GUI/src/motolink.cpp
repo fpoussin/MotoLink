@@ -15,7 +15,7 @@ Motolink::Motolink(QObject *parent) :
 
     filter.pid = mPid;
     filter.vid = mVid;
-    filter.guid = "1EE57D96-67C5-4E84-9CB7-DEEC7929B8A3";
+    filter.guid = mGuid;
 
     config.readEp = 0x84;
     config.writeEp = 0x04;
@@ -187,7 +187,7 @@ bool Motolink::readSensors(void)
         mSensors.vAn8 = sensors->an8/1000.0; /* TPS */
         mSensors.vAn9 = sensors->an9/1000.0; /* AFR */
         mSensors.tps = sensors->tps/2.0;
-        mSensors.rpm = sensors->rpm*100;
+        mSensors.rpm = sensors->rpm;
         mSensors.freq1  = sensors->freq1;
         mSensors.freq2  = sensors->freq2;
         mSensors.knock_value = sensors->knock_value;

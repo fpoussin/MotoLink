@@ -97,14 +97,13 @@ typedef struct {
   uint16_t freq2;
   uint8_t knock_value;
   uint8_t knock_freq;
-  uint8_t rpm;
+  uint16_t rpm;
   uint8_t spd;
   uint8_t afr;
   uint8_t afr_status;
   uint8_t tps;
   uint8_t reserved1;
   uint8_t reserved2;
-  uint8_t reserved3;
   cell_t cell;
 } sensors_t;
 
@@ -121,8 +120,8 @@ typedef struct {
   uint16_t functions;
   uint8_t sensorsInput;
   uint8_t afrInput;
-  uint8_t reserved1;
-  uint8_t reserved2;
+  uint16_t rpmMult;
+  uint16_t spdMult;
 } settings_t;
 
 typedef struct {

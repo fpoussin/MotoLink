@@ -15,7 +15,7 @@ adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 uint8_t output_knock[SPECTRUM_SIZE];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,{0x0F,0x0F}};
+sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F,0x0F,0x0F0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,{0x0F,0x0F}};
 static uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 static uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 static uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
@@ -240,10 +240,9 @@ uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnV
   return map(AnVal, 0, 5000, afrMin, afrMax);
 }
 
-/* Hundreds of RPM */
-uint8_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
+uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
 {
-  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/10000.0))*60.0;
+  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/100.0))*60.0;
 
   return flRatio;
 }

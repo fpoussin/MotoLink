@@ -185,31 +185,26 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
   eventmask_t flags;
   (void)arg;
   chRegSetThreadName("BDU");
-  uint16_t idle_duty = 0;
 
   chEvtRegisterMask(chnGetEventSource(&SDU2), &el1, ALL_EVENTS);
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
 
-  pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 500));
-
   while (TRUE)
   {
     chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     flags = chEvtGetAndClearFlags(&el1);
 
-    idle_duty = usbConnected() ? 500 : 0;
-
-    pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, idle_duty));
+    pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
 
     if (flags & CHN_INPUT_AVAILABLE)
     {
-      pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
+      pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 1000));
       readCommand((BaseChannel *)&SDU2);
     }
     else
-     chThdSleepMilliseconds(2);
+      chThdSleepMilliseconds(2);
   }
   return;
 }
@@ -217,7 +212,7 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 /*
  * USB Serial thread.
  */
-THD_WORKING_AREA(waThreadSDU, 1024);
+THD_WORKING_AREA(waThreadSDU, 256);
 CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
@@ -230,7 +225,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
   while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
-  // Enable K-line
+  // Enable K-line transceiver
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
 
   while (TRUE) {
@@ -431,7 +426,7 @@ CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
     run_offset = DWT->CYCCNT;
 
 	/* Populate load data */
-	chThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(1000);
 
 	/* Convert to systick time base */
 	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
@@ -479,48 +474,6 @@ CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
   return;
 }
 
-THD_WORKING_AREA(waThreadButton, 128);
-static THD_FUNCTION(ThreadButton, arg)
-{
-    (void)arg;
-    chRegSetThreadName("Button");
-    uint8_t count = 0;
-    while (true)
-    {
-        if (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW)
-        {
-            count++;
-        }
-        else
-        {
-            count = 0;
-        }
-
-        if (count > 9)
-        {
-            /* Toggle Record mode */
-            settings.functions ^= FUNC_RECORD;
-            writeSettingsToEE();
-            readSettingsFromEE();
-
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(200);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-
-            while (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
-                chThdSleepMilliseconds(100);
-            };
-        }
-
-        chThdSleepMilliseconds(100);
-    }
-   return;
-}
-
 THD_WORKING_AREA(waThreadRecord, 256);
 static THD_FUNCTION(ThreadRecord, arg)
 {
@@ -528,6 +481,9 @@ static THD_FUNCTION(ThreadRecord, arg)
     chRegSetThreadName("Recording");
     uint16_t duty = 0;
     uint8_t result = 0;
+    uint8_t count = 0;
+    bool debounce = false;
+    bool indicator = false;
 
     /* Load tables from EE first */
     readTablesFromEE();
@@ -541,6 +497,45 @@ static THD_FUNCTION(ThreadRecord, arg)
 
     while (true)
     {
+        if (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW)
+        {
+            if (!debounce)
+            {
+                pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+                count++;
+                indicator = true;
+            }
+            else {
+                count = 0;
+                indicator = false;
+            }
+        }
+        else
+        {
+            count = 0;
+            debounce = false;
+            indicator = false;
+        }
+
+        if (count >= 2 && !debounce)
+        {
+            /* Toggle Record mode */
+            settings.functions ^= FUNC_RECORD;
+            writeSettingsToEE();
+            readSettingsFromEE();
+            debounce = true;
+
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(150);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+            chThdSleepMilliseconds(150);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+            chThdSleepMilliseconds(150);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+            chThdSleepMilliseconds(150);
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+        }
+
         if (settings.functions & FUNC_RECORD)
         {
             /* Record tables */
@@ -559,7 +554,8 @@ static THD_FUNCTION(ThreadRecord, arg)
             duty = 0;
         }
 
-        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
+        if (!indicator)
+            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
         chThdSleepMilliseconds(500);
     }
    return;
@@ -649,8 +645,7 @@ int main(void)
   chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
   chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
   chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
-  chThdCreateStatic(waThreadButton, sizeof(waThreadButton), NORMALPRIO+1, ThreadButton, NULL);
-  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO, ThreadRecord, NULL);
+  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+1, ThreadRecord, NULL);
   chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
 
   /* Create last as it uses pointers from above */

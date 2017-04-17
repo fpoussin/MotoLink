@@ -88,15 +88,15 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     // Main PIDs
     case OBD_PID_LOAD:
     case OBD_PID_TPS:
-      txmsg->data8[3] = (uint8_t)(sensors_data.tps * 2.55f);
+      txmsg->data8[3] = ((uint16_t)sensors_data.tps * 255) / 100;
       break;
     case OBD_PID_AFR_CNT:
       txmsg->data8[3] = 0x01; // How many oxygen sensors we have
       break;
     case OBD_PID_RPM:
       txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & ((uint16_t)sensors_data.rpm * 100) >> 8; // RPM MSB
-      txmsg->data8[4] = 0xFF & ((uint16_t)sensors_data.rpm * 100); // RPM LSB
+      txmsg->data8[3] = 0xFF & (sensors_data.rpm >> 8); // RPM MSB
+      txmsg->data8[4] = 0xFF & sensors_data.rpm; // RPM LSB
       break;
     case OBD_PID_SPEED:
       txmsg->data8[3] = sensors_data.spd;
