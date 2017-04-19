@@ -5,6 +5,7 @@
 #include "protocol.h"
 #include "median.h"
 #include "ipc.h"
+#include "arm_math.h"
 
 #define ADC_GRP1_NUM_CHANNELS   3
 #define ADC_GRP1_BUF_DEPTH      128
@@ -35,7 +36,7 @@ void reEnableInputCapture(TIMCAPDriver *timcapp);
 
 uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal);
 uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal);
-uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio);
+uint16_t calculateFreqWithRatio(uint16_t freq, float32_t ratio);
 uint8_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size);
 
 #endif

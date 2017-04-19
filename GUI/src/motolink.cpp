@@ -183,9 +183,9 @@ bool Motolink::readSensors(void)
     {
         const sensors_t * sensors =  (sensors_t *)recv.constData();
 
-        mSensors.vAn7 = sensors->an7/1000.0; /* VBAT */
-        mSensors.vAn8 = sensors->an8/1000.0; /* TPS */
-        mSensors.vAn9 = sensors->an9/1000.0; /* AFR */
+        mSensors.vAn1 = sensors->an1/1000.0; /* VBAT */
+        mSensors.vAn2 = sensors->an2/1000.0; /* TPS */
+        mSensors.vAn3 = sensors->an3/1000.0; /* AFR */
         mSensors.tps = sensors->tps/2.0;
         mSensors.rpm = sensors->rpm;
         mSensors.freq1  = sensors->freq1;

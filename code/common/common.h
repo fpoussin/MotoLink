@@ -14,7 +14,7 @@ uint8_t checksum(const uint8_t *data, uint8_t length);
 bool getSwitch1(void);
 int map(int x, int in_min, int in_max, int out_min, int out_max);
 
-void klineInit(void);
+void klineInit(bool honda);
 bool fiveBaudInit(SerialDriver *sd);
 void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp);
 

@@ -240,9 +240,9 @@ uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnV
   return map(AnVal, 0, 5000, afrMin, afrMax);
 }
 
-uint16_t calculateRpmFromHertz(uint16_t freq, uint16_t ratio)
+uint16_t calculateFreqWithRatio(uint16_t freq, float32_t ratio)
 {
-  float32_t flRatio = ((float32_t)freq*((float32_t)ratio/100.0))*60.0;
+  float32_t flRatio = ((float32_t)freq*(ratio/100.0))*60.0;
 
   return flRatio;
 }

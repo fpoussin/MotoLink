@@ -909,6 +909,8 @@ void MainWindow::onReadMtlSettings()
         mMainUi->dsbAFR0->setValue(mMtl->getAFRMinVal());
         mMainUi->dsbAFR5->setValue(mMtl->getAFRMaxVal());
         mMainUi->dsbAFROffset->setValue(mMtl->getAFROffset());
+        mMainUi->dsbRpmDiv->setValue(mMtl->getRpmMultiplier());
+        mMainUi->dsbSpeedDiv->setValue(mMtl->getSpdMultiplier());
 
         if (mMtl->getFunctionAFR_Disabled())
             mMainUi->cbAFRInput->setCurrentIndex(0);
@@ -942,6 +944,8 @@ void MainWindow::onWriteMtlSettings()
     mMtl->setAFRMinVal(mMainUi->dsbAFR0->value());
     mMtl->setAFRMaxVal(mMainUi->dsbAFR5->value());
     mMtl->setAFROffset(mMainUi->dsbAFROffset->value());
+    mMtl->setRpmMultiplier(mMainUi->dsbRpmDiv->value());
+    mMtl->setSpdMultiplier(mMainUi->dsbSpeedDiv->value());
 
     switch (mMainUi->cbAFRInput->currentIndex())
     {

@@ -43,34 +43,29 @@ inline int map(int x, int in_min, int in_max, int out_min, int out_max)
 #define K_LOW(time) palClearPad(PORT_KLINE_TX, PAD_KLINE_TX); chThdSleepMilliseconds(time);
 #define K_HIGH(time) palSetPad(PORT_KLINE_TX, PAD_KLINE_TX); chThdSleepMilliseconds(time);
 
-void klineInit(void)
+void klineInit(bool honda)
 {
-/*
-  palClearPad(KL_CS_PORT, KL_CS_PAD);
-  chThdSleepMilliseconds(5);
-
-  palSetPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
-  chThdSleepMilliseconds(70); // Low for 70ms
-  palClearPad(RELAY_DRV_PORT, RELAY_DRV_PAD);
-  chThdSleepMilliseconds(130); // High for 130ms
-
-  palSetPad(KL_CS_PORT, KL_CS_PAD);
-  chThdSleepMilliseconds(5);
-*/
-
   // Set pin mode to GPIO
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_INPUT_ANALOG);
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
   // Toggle K-line bus
-  K_LOW(70); // Low for 70ms
-  K_HIGH(130); // High for 130ms
+  if (honda) {
+    // Honda HDS specific init
+    K_LOW(70); // Low for 70ms
+    K_HIGH(130); // High for 130ms
+  }
+  else {
+    // KWP2000 Fast init (Kawasaki KDS)
+    K_LOW(25); // Low for 25ms
+    K_HIGH(25); // High for 25ms
+  }
 
   // Set pin mode back to UART
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_TX, PAL_MODE_ALTERNATE(7) | \
           PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUPDR_PULLUP);
   palSetPadMode(PORT_KLINE_TX, PAD_KLINE_RX, PAL_MODE_ALTERNATE(7) | \
-		  PAL_STM32_OTYPE_OPENDRAIN);
+                  PAL_STM32_OTYPE_OPENDRAIN);
 
 }
 

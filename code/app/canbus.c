@@ -108,16 +108,16 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txmsg->data8[0] = 0x06;
       txmsg->data8[3] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
       txmsg->data8[4] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
-      txmsg->data8[5] = 0xFF & (sensors_data.an9 >> 8); // Volts MSB
-      txmsg->data8[6] = 0xFF & (sensors_data.an9); // Volts LSB
+      txmsg->data8[5] = 0xFF & (sensors_data.an3 >> 8); // Volts MSB
+      txmsg->data8[6] = 0xFF & (sensors_data.an3); // Volts LSB
       break;
 
 
     // 0x40+
     case OBD_PID_VBAT:
       txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & (sensors_data.an7 >> 8); // VBAT MSB
-      txmsg->data8[3] = 0xFF & (sensors_data.an7); // VBAT LSB
+      txmsg->data8[3] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
+      txmsg->data8[3] = 0xFF & (sensors_data.an1); // VBAT LSB
       break;
     case OBD_PID_ABS_LOAD:
       txmsg->data8[0] = 0x04;

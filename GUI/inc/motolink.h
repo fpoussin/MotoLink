@@ -15,9 +15,9 @@
 #define _UNLOCK_ locker.unlock();
 
 typedef struct {
-    float vAn7; /* VBAT */
-    float vAn8; /* TPS */
-    float vAn9; /* AFR */
+    float vAn1; /* VBAT */
+    float vAn2; /* TPS */
+    float vAn3; /* AFR */
     float tps;
     float afr;
     quint16 knock_value;
@@ -66,9 +66,9 @@ public:
     inline quint16 getSpeedHz(void) { return mSensors.freq2 ;}
     inline quint16 getKnockPeakFreq(void) { return mSensors.knock_freq ;}
     inline quint16 getKnockValue(void) { return mSensors.knock_value ;}
-    inline float getVBAT(void) { return mSensors.vAn7 ;}
-    inline float getVTPS(void) { return mSensors.vAn8 ;}
-    inline float getVAFR(void) { return mSensors.vAn9 ;}
+    inline float getVBAT(void) { return mSensors.vAn1 ;}
+    inline float getVTPS(void) { return mSensors.vAn2 ;}
+    inline float getVAFR(void) { return mSensors.vAn3 ;}
     inline quint8 getColumn(void) { return mSensors.col ;}
     inline quint8 getRow(void) { return mSensors.row ;}
 
@@ -82,6 +82,8 @@ public:
     inline float getAFRMinVal(void) { return mSettings.AfrMinVal / 1000.0 ;}
     inline float getAFRMaxVal(void) { return mSettings.AfrMaxVal / 1000.0 ;}
     inline float getAFROffset(void) { return mSettings.AfrOffset / 1000.0 ;}
+    inline float getRpmMultiplier(void) { return mSettings.rpmMult ;}
+    inline float getSpdMultiplier(void) { return mSettings.spdMult ;}
     inline bool getFunctionAFR_Disabled(void) { return mSettings.afrInput == AFR_INPUT_DISABLED ;}
     inline bool getFunctionAFR_Analog(void) { return mSettings.afrInput == AFR_INPUT_AN ;}
     inline bool getFunctionAFR_MTS(void) { return mSettings.afrInput == AFR_INPUT_MTS ;}
@@ -98,6 +100,8 @@ public:
     inline void setAFRMinVal(float v) { mSettings.AfrMinVal = v * 1000.0 ;}
     inline void setAFRMaxVal(float v) { mSettings.AfrMaxVal = v * 1000.0 ;}
     inline void setAFROffset(float v) { mSettings.AfrOffset = v * 1000.0 ;}
+    inline void setRpmMultiplier(float v) { mSettings.rpmMult = v ;}
+    inline void setSpdMultiplier(float v) { mSettings.spdMult = v ;}
     inline void setFunctionAFR_Disabled(void) { mSettings.afrInput = 0 ;}
     inline void setFunctionAFR_Analog(void) {   mSettings.afrInput =  AFR_INPUT_AN ;}
     inline void setFunctionAFR_MTS(void) {      mSettings.afrInput =  AFR_INPUT_MTS ;}

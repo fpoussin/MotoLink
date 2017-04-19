@@ -51,6 +51,7 @@ ChibiOS-RT/os/rt/src/chmtx.c
 ChibiOS-RT/os/ext/CMSIS/ST/stm32l0xx.h
 ChibiOS-RT/os/hal/ports/STM32/LLD/TIMv1/pwm_lld.c
 app/dsp_lib/ComplexMathFunctions/arm_cmplx_mag_q15.c
+app/prot_kawasaki.h
 common/stm32f30x_flash.h
 ChibiOS-RT/os/ext/CMSIS/KINETIS/mk20d5.h
 ChibiOS-RT/os/hal/boards/OLIMEX_STM32_P107/board.c

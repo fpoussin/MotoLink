@@ -90,9 +90,9 @@ typedef struct {
 } value_t;
 
 typedef struct {
-  uint16_t an7;
-  uint16_t an8;
-  uint16_t an9;
+  uint16_t an1;
+  uint16_t an2;
+  uint16_t an3;
   uint16_t freq1;
   uint16_t freq2;
   uint8_t knock_value;
@@ -120,8 +120,8 @@ typedef struct {
   uint16_t functions;
   uint8_t sensorsInput;
   uint8_t afrInput;
-  uint16_t rpmMult;
-  uint16_t spdMult;
+  float rpmMult;
+  float spdMult;
 } settings_t;
 
 typedef struct {

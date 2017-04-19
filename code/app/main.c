@@ -231,15 +231,17 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
   while (TRUE) {
 
     while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
-/*
+
     if (doKLineInit && 0)
     {
-      //klineInit();
-      fiveBaudInit(&SD1);
-      sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
+      sdStop(&SD1);
+      klineInit(false);
+      //fiveBaudInit(&SD1);
+      //sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
       doKLineInit = false;
+      sdStart(&SD1, &uart1Cfg);
     }
-*/
+
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
@@ -308,16 +310,17 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     an[1] *= AN_RATIO;
     an[2] *= AN_RATIO;
 
-    sensors_data.an7 = an[0];
-    sensors_data.an8 = an[1];
-    sensors_data.an9 = an[2];
+    sensors_data.an1 = an[0];
+    sensors_data.an2 = an[1];
+    sensors_data.an3 = an[2];
 
     if (settings.sensorsInput == SENSORS_INPUT_DIRECT) {
-        sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an8);
-        sensors_data.rpm = calculateRpmFromHertz(sensors_data.freq1, 100);
+        sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
+        sensors_data.rpm = calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
+        sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
     }
     if (settings.afrInput == AFR_INPUT_AN) {
-        sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an9);
+        sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an3);
     }
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
     {
