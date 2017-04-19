@@ -129,6 +129,7 @@ public slots:
     bool readKnockSpectrum(void);
     bool readTables(void);
     bool writeTablesHeaders(void);
+    bool readTablesHeaders(void);
     bool readSerialData(void);
 
     bool sendWake();
@@ -142,6 +143,7 @@ public slots:
     bool readSettings();
 
     bool writeTablesHeaders(const quint8 *rows, const quint8 *cols);
+    bool readTablesHeaders(quint8 *rows, quint8 *cols);
 
     bool clearCell(uint tableId, int row, int col);
     bool clearTables(void);
@@ -164,6 +166,7 @@ signals:
     void receivedMonitoring(const TaskList * monitoring);
     void receivedKockSpectrum(const QByteArray * data);
     void receivedTables(const quint8 * AFR, const quint8 * Knock);
+    void receivedTablesHeaders(const quint8 * rows, const quint8 * cols);
     void receivedSerialData(QByteArray data);
 
 private slots:

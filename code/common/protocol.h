@@ -90,6 +90,11 @@ typedef struct {
 } value_t;
 
 typedef struct {
+  uint8_t columns[16];
+  uint8_t rows[11];
+} table_header_t;
+
+typedef struct {
   uint16_t an1;
   uint16_t an2;
   uint16_t an3;
@@ -108,6 +113,7 @@ typedef struct {
 } sensors_t;
 
 typedef struct {
+  table_header_t tableHeaders;
   uint16_t knockFreq;
   uint16_t knockRatio;
   uint16_t tpsMinV;

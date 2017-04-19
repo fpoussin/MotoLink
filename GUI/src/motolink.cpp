@@ -312,6 +312,24 @@ bool Motolink::writeTablesHeaders()
     return this->sendCmd(&send, &recv, 0, CMD_SET_TABLES_HEADERS);
 }
 
+bool Motolink::readTablesHeaders()
+{
+    if (!mConnected)
+        return false;
+
+    QByteArray send, recv;
+    this->prepareCmd(&send, CMD_GET_TABLES_HEADERS);
+    int size = sizeof(mTablesRows)+sizeof(mTablesColumns);
+    if (this->sendCmd(&send, &recv, size, CMD_SET_TABLES_HEADERS))
+    {
+        memcpy((void*)mTablesColumns, (void*)recv.constData(), sizeof(mTablesColumns));
+        memcpy((void*)mTablesRows, (void*)(recv.constData()+sizeof(mTablesColumns)), sizeof(mTablesRows));
+        emit receivedTables((quint8*)mTablesColumns, (quint8*)mTablesRows);
+        return true;
+    }
+    return false;
+}
+
 bool Motolink::readSerialData()
 {
     if (!mConnected)
@@ -371,6 +389,12 @@ bool Motolink::writeTablesHeaders(const quint8 *rows, const quint8 *cols)
     memcpy(mTablesColumns, cols, sizeof(mTablesColumns));
 
     return this->writeTablesHeaders();
+}
+
+bool Motolink::readTablesHeaders(quint8 *rows, quint8 *cols)
+{
+
+    return false;
 }
 
 bool Motolink::clearCell(uint tableId, int row, int col)

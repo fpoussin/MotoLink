@@ -37,7 +37,9 @@ public:
     void setId(uint id);
     uint id(void) { return mId; }
     void rowsToArray(quint8 * data, int maxLen);
+    void arrayToRows(const quint8 * data, int maxLen);
     void columnsToArray(quint8 * data, int maxLen);
+    void arrayToColumns(const quint8 * data, int maxLen);
 
 signals:
     void headerDataNeedSync(int, Qt::Orientation, const QVariant);

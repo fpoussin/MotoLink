@@ -407,7 +407,7 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
  * CPU Load Monitoring thread.
  */
 THD_WORKING_AREA(waThreadMonitor, 128);
-CCM_FUNC static THD_FUNCTION(ThreadMonitor, arg)
+static THD_FUNCTION(ThreadMonitor, arg)
 {
   (void)arg;
   chRegSetThreadName("Monitor");

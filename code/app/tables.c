@@ -8,10 +8,10 @@
 #include "tables.h"
 
 /* Columns are divided by 100 */
-cell_cols_t tableColumns = {0, 10, 20, 30, 40, 50, 60, 70,
-                            80, 90, 100, 110, 120, 130,
-                            140, 180};
-cell_rows_t tableRows = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+cell_cols_t tableColumns = {0, 20, 40, 55, 70, 80, 90, 100,
+                            110, 120, 130, 140, 150, 160,
+                            165, 180};
+cell_rows_t tableRows = {0, 2, 5, 7, 12, 25, 35, 50, 70, 85, 100};
 
 cell_table_t tableAFR;
 cell_table_t tableKnock;

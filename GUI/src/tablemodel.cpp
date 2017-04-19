@@ -307,6 +307,15 @@ void TableModel::rowsToArray(quint8 *data, int maxLen)
     }
 }
 
+void TableModel::arrayToRows(const quint8 *data, int maxLen)
+{
+    Q_CHECK_PTR(data);
+    for (int i=0; i < this->rowCount() && i < maxLen; i++)
+    {
+        this->setHeaderData(i, Qt::Vertical, data[i], Qt::EditRole);
+    }
+}
+
 void TableModel::columnsToArray(quint8 *data, int maxLen)
 {
     bool ok;
@@ -317,6 +326,15 @@ void TableModel::columnsToArray(quint8 *data, int maxLen)
         value = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt(&ok)/100;
         if (ok)
             data[i] = value & 0xFF;
+    }
+}
+
+void TableModel::arrayToColumns(const quint8 *data, int maxLen)
+{
+    Q_CHECK_PTR(data);
+    for (int i=0; i < this->columnCount() && i < maxLen; i++)
+    {
+        this->setHeaderData(i, Qt::Horizontal, data[i]*100, Qt::EditRole);
     }
 }
 
