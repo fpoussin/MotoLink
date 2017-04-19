@@ -14,11 +14,8 @@
 #define ADC_GRP2_BUF_DEPTH      2048
 
 #define VREF 3300
-#define AN_RATIO 1.5f /* 6600mV/4096 voltage divider ratio is 1.5 (100K/(100K+100k)) */
-#define VBAT_RATIO 9.0f /* 29700mV/4096 voltage divider ratio is 9 (1M/(100K+1M)) */
-
-//#define FFT_SIZE 512 // 4096-2048-1024-512-256-64-16 lengths supported by DSP library
-//#define FFT_FREQ 117263
+#define AN_RATIO 1.22f /* 5000mV/4096 voltage divider ratio is 1.22 (10K/2k=1.5) */
+#define VBAT_RATIO 13.42f /* 55000mV/4096 voltage divider ratio is 13.42 (100K/10K=11)+(1K/2K=1.5) */
 
 extern adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 extern adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
