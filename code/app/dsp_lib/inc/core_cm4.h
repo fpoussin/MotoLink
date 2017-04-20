@@ -2,7 +2,7 @@
  * @file     core_cm4.h
  * @brief    CMSIS Cortex-M4 Core Peripheral Access Layer Header File
  * @version  V5.0.1
- * @date     17. November 2016
+ * @date     30. January 2017
  ******************************************************************************/
 /*
  * Copyright (c) 2009-2016 ARM Limited. All rights reserved.
@@ -13,7 +13,7 @@
  * not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
@@ -1540,7 +1540,7 @@ typedef struct
   @{
  */
 
-/* Memory mapping of Cortex-M4 Hardware */
+/* Memory mapping of Core Hardware */
 #define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Base Address */
 #define ITM_BASE            (0xE0000000UL)                            /*!< ITM Base Address */
 #define DWT_BASE            (0xE0001000UL)                            /*!< DWT Base Address */
@@ -1593,7 +1593,12 @@ typedef struct
   @{
  */
 
-#ifndef CMSIS_NVIC_VIRTUAL
+#ifdef CMSIS_NVIC_VIRTUAL
+  #ifndef CMSIS_NVIC_VIRTUAL_HEADER_FILE
+    #define CMSIS_NVIC_VIRTUAL_HEADER_FILE "cmsis_nvic_virtual.h"
+  #endif
+  #include CMSIS_NVIC_VIRTUAL_HEADER_FILE
+#else
   #define NVIC_SetPriorityGrouping    __NVIC_SetPriorityGrouping
   #define NVIC_GetPriorityGrouping    __NVIC_GetPriorityGrouping
   #define NVIC_EnableIRQ              __NVIC_EnableIRQ
@@ -1605,9 +1610,15 @@ typedef struct
   #define NVIC_GetActive              __NVIC_GetActive
   #define NVIC_SetPriority            __NVIC_SetPriority
   #define NVIC_GetPriority            __NVIC_GetPriority
+  #define NVIC_SystemReset            __NVIC_SystemReset
 #endif /* CMSIS_NVIC_VIRTUAL */
 
-#ifndef CMSIS_VECTAB_VIRTUAL
+#ifdef CMSIS_VECTAB_VIRTUAL
+  #ifndef CMSIS_VECTAB_VIRTUAL_HEADER_FILE
+   #define CMSIS_VECTAB_VIRTUAL_HEADER_FILE "cmsis_vectab_virtual.h"
+  #endif
+  #include CMSIS_VECTAB_VIRTUAL_HEADER_FILE
+#else
   #define NVIC_SetVector              __NVIC_SetVector
   #define NVIC_GetVector              __NVIC_GetVector
 #endif  /* (CMSIS_VECTAB_VIRTUAL) */
@@ -1883,8 +1894,8 @@ __STATIC_INLINE void NVIC_DecodePriority (uint32_t Priority, uint32_t PriorityGr
  */
 __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 {
-    uint32_t *vectors = (uint32_t *)SCB->VTOR;
-    vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET] = vector;
+  uint32_t *vectors = (uint32_t *)SCB->VTOR;
+  vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET] = vector;
 }
 
 
@@ -1898,8 +1909,8 @@ __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
  */
 __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
 {
-    uint32_t *vectors = (uint32_t *)SCB->VTOR;
-    return vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET];
+  uint32_t *vectors = (uint32_t *)SCB->VTOR;
+  return vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET];
 }
 
 
@@ -1907,7 +1918,7 @@ __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
   \brief   System Reset
   \details Initiates a system reset request to reset the MCU.
  */
-__STATIC_INLINE void NVIC_SystemReset(void)
+__STATIC_INLINE void __NVIC_SystemReset(void)
 {
   __DSB();                                                          /* Ensure all outstanding memory accesses included
                                                                        buffered write are completed before reset */
