@@ -63,6 +63,7 @@ version_t versions[2] = {{0, 0, 0, 0},
 
 // Default settings
 settings_t settings = {
+    {},   // TableHeaders
     8500, // knockFreq
     3000, // knockRatio
     500,  // tpsMinV
@@ -72,11 +73,11 @@ settings_t settings = {
     70,   // AfrMinVal*10
     220,  // AfrMaxVal*10
     0,    // AfrOffset
+    0,    // functions
     0,    // sensorsInput
     0,    // afrInput
-    0,    // reserved1
-    0,    // reserved2
-    0     // reserved3
+    0.0,    // rpmMult
+    0.0     // spdMult
 };
 #else
 version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH},

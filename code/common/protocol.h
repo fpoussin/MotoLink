@@ -92,6 +92,7 @@ typedef struct {
 typedef struct {
   uint8_t columns[16];
   uint8_t rows[11];
+  uint8_t padding;
 } table_header_t;
 
 typedef struct {
