@@ -4,8 +4,15 @@
 #include "ch.h"
 #include "hal.h"
 #include "protocol.h"
+#include <stdio.h>
 
 #define CCM_FUNC __attribute__((section(".ram4_init.code")))
+
+#ifdef SEMIHOSTING
+  #define DEBUGEN(x) if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) { x; }
+#else
+  #define DEBUGEN(x)
+#endif
 
 uint32_t leToInt(uint8_t *ptr);
 uint32_t beToInt(uint8_t *ptr);

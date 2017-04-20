@@ -23,8 +23,8 @@
  */
 MEMORY
 {
-    bflash : org = 0x08000000, len = 20k
-    flash  : org = 0x08005000, len = 238k
+    bflash : org = 0x08000000, len = 40k
+    flash  : org = 0x0800A000, len = 216k
     ram0   : org = 0x20000000, len = 40k
     ram1   : org = 0x00000000, len = 0
     ram2   : org = 0x00000000, len = 0

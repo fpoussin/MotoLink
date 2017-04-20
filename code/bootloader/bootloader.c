@@ -2,6 +2,7 @@
 #include "protocol.h"
 #include "stm32f30x_flash.h"
 #include "usb_config.h"
+#include <stdio.h>
 
 uint8_t bl_wake = 0;
 typedef volatile uint32_t vu32;
@@ -19,10 +20,16 @@ CCM_FUNC void startIWDG(void) {
     wdgStart(&WDGD1, &wdgcfg);
 }
 
+extern volatile uint8_t reset_flags;
 CCM_FUNC void startUserApp(void) {
 
   /* Setup IWDG in case the target application does not load */
-  startIWDG();
+  /* Disabled during debug */
+  if ((reset_flags & FLAG_DBG) == 0) {
+    startIWDG();
+  } else {
+    DEBUGEN(printf("IWDG Disabled for debug\n"));
+  }
 
   chSysDisable();
   jumpToUser(USER_APP_ADDR);

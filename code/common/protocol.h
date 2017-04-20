@@ -36,7 +36,8 @@
 #define CMD_CLEAR_TABLES (uint8_t)0x15
 #define CMD_GET_SERIAL_DATA (uint8_t)0x16
 
-#define FLAG_OK (uint8_t)0x01
+#define FLAG_OK (uint8_t)0x00
+#define FLAG_DBG (uint8_t)0x01
 #define FLAG_IWDRST (uint8_t)0x02
 #define FLAG_SFTRST (uint8_t)0x04
 #define FLAG_NOAPP (uint8_t)0x08

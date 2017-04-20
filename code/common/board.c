@@ -17,6 +17,10 @@
 #include "ch.h"
 #include "hal.h"
 #include "vectors.h"
+#include "common.h"
+
+
+extern void initialise_monitor_handles(void);
 
 #if defined(VECTORS_SECTION)
 typedef struct {
@@ -116,7 +120,7 @@ bool usb_lld_connect_bus(USBDriver *usbp) {
 
   (void)usbp;
   palSetPad(PORT_USB_CTRL, PAD_USB_CTRL);
-  return TRUE;
+  return true;
 }
 
 /**
@@ -126,7 +130,7 @@ bool usb_lld_disconnect_bus(USBDriver *usbp) {
 
   (void)usbp;
   palClearPad(PORT_USB_CTRL, PAD_USB_CTRL);
-  return FALSE;
+  return true;
 }
 #endif
 
@@ -135,5 +139,18 @@ bool usb_lld_disconnect_bus(USBDriver *usbp) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-	
+
+  DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM2_STOP;
+  DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM3_STOP;
+  DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_CAN_STOP;
+  DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM1_STOP;
+
+  DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_IWDG_STOP;
+  DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_WWDG_STOP;
+
+  DEBUGEN(
+      initialise_monitor_handles();
+      setbuf(stdout, NULL);
+  )
+
 }

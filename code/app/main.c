@@ -178,7 +178,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 /*
  * USB Bulk thread.
  */
-THD_WORKING_AREA(waThreadBDU, 700);
+THD_WORKING_AREA(waThreadBDU, 1024);
 CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 {
   event_listener_t el1;
@@ -265,7 +265,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 static pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 static pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 static pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
-THD_WORKING_AREA(waThreadADC, 128);
+THD_WORKING_AREA(waThreadADC, 192);
 CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 {
   (void)arg;
@@ -592,6 +592,8 @@ int main(void)
   halInit();
   chSysInit();
   setupIPC();
+
+  DEBUGEN(printf("App Mode\n"));
 
   usbDisconnectBus(&USBD1);
 

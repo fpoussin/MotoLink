@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Os -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -Os -ggdb3 -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -25,12 +25,12 @@ endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = 
+  USE_LDOPT = #-flto=8
 endif
 
 # Enable this if you want link time optimizations (LTO)
 ifeq ($(USE_LTO),)
-  USE_LTO = yes
+  USE_LTO = no
 endif
 
 # If enabled, this option allows to compile the application in THUMB mode.
@@ -205,7 +205,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DMTL_APP -DARM_MATH_CM4 -DVECTORS_SECTION=\".ram4_init.vectors\"
+UDEFS = -DMTL_APP -DARM_MATH_CM4 -DVECTORS_SECTION=\".ram4_init.vectors\" #-DSEMIHOSTING
 
 # Define ASM defines here
 UADEFS =
@@ -217,7 +217,7 @@ UINCDIR =
 ULIBDIR = dsp_lib
 
 # List all user libraries here
-ULIBS = -lmath_cm4f -lm
+ULIBS = -lmath_cm4f -lm --specs=rdimon.specs -lc -lrdimon
 
 #
 # End of user defines

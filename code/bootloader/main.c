@@ -176,13 +176,15 @@ int main(void)
   /* Begin charging switch cap */
   halInit();
   chSysInit();
-  //palInit(&pal_default_config);
+
+  DEBUGEN(printf("Bootloader Started\n"));
 
   /*!< Independent Watchdog reset flag */
   if (RCC->CSR & RCC_CSR_IWDGRSTF) {
     /* User App did not start properly */
 
     reset_flags |= FLAG_IWDRST;
+    DEBUGEN(printf("FLAG_IWDRST\n"));
   }
 
   /*!< Software Reset flag */
@@ -190,17 +192,21 @@ int main(void)
     /* Bootloader called by user app */
 
     reset_flags |= FLAG_SFTRST;
+    DEBUGEN(printf("FLAG_SFTRST\n"));
   }
 
   if (RCC->CSR & RCC_CSR_PINRSTF) {
     /* Bootloader called by reset pin */
 
-    //reset_flags |= FLAG_PINRST;
+    reset_flags |= FLAG_PINRST;
+    DEBUGEN(printf("FLAG_PINRST\n"));
   }
 
   /* Check user app */
   if (checkUserCode(USER_APP_ADDR) != 1) {
+
     reset_flags |= FLAG_NOAPP;
+    DEBUGEN(printf("FLAG_NOAPP\n"));
   }
 
   /* Give enough time for the switch's debounce cap to charge
@@ -214,7 +220,15 @@ int main(void)
 
   /* Check boot switch */
   if (getSwitch1()) {
+
     reset_flags |= FLAG_SWITCH;
+    DEBUGEN(printf("FLAG_SWITCH\n"));
+  }
+
+  /* Check debugger if is attached */
+  if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {
+    reset_flags |= FLAG_DBG;
+    DEBUGEN(printf("FLAG_DBG\n"));
   }
 
   /*!< Remove hardware reset flags */
@@ -222,11 +236,15 @@ int main(void)
 
   usbDisconnectBus(serusbcfg1.usbp);
 
-  if (reset_flags == FLAG_OK)
+  /* Ignore debug and reset pin (pulled down by debugger) */
+  if ((reset_flags & ~(FLAG_DBG | FLAG_PINRST)) == FLAG_OK)
   {
+    DEBUGEN(printf("Booting...\n"));
     startUserApp();
     while (1);
   }
+
+  DEBUGEN(printf("DFU Mode\n"));
 
   pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
