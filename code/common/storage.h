@@ -5,10 +5,6 @@
 #include "ch.h"
 #include "common.h"
 
-#ifdef MTL_APP
-#include "tables.h"
-#endif
-
 // EEPROM is M95640 (ST)
 #define EEPROM_SIZE 8192 // 64Kb, 8KB
 #define EEPROM_PAGE_SIZE 32
@@ -38,13 +34,11 @@ uint8_t writeVersionToEE(uint8_t idx, const version_t* src);
 #define VERSION_IDX_APP 1
 extern version_t versions[2];
 
-#ifdef MTL_APP
 extern settings_t settings;
 uint8_t readTablesFromEE(void);
 uint8_t writeTablesToEE(void);
 
 uint8_t readSettingsFromEE(void);
 uint8_t writeSettingsToEE(void);
-#endif
 
 #endif

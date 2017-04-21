@@ -1,6 +1,10 @@
 #include "storage.h"
 #include <string.h>
 
+#ifdef MTL_APP
+#include "tables.h"
+#endif
+
 const SPIConfig EEPROM_SPIDCONFIG = {
   NULL,
   PORT_SPI2_NSS,
@@ -44,22 +48,19 @@ static SPIEepromFileConfig eeTablesCfg = {
 static SPIEepromFileStream versionsFile;
 static EepromFileStream *versionsFS;
 static version_t version_buf = {0};
+
+
 #ifdef MTL_APP
 static SPIEepromFileStream settingsFile, tablesFile;
 static EepromFileStream *settingsFS, *tablesFS;
 
 static const uint32_t magic_key = 0xABEF1289;
-static tables_t tables_buf = {0xABEF1289, 0, {}, {}};
-static settings_t settings_buf = {0};
+tables_t tables_buf = {0xABEF1289, 0, {}, {}};
+settings_t settings_buf = {0};
 static uint32_t counters[EEPROM_TABLES_SIZE / EEPROM_TABLES_PAGE_SIZE];
 
 #define openSettingsFS SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX)
 #define openTablesFS SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX))
-#endif
-
-#ifdef MTL_APP
-version_t versions[2] = {{0, 0, 0, 0},
-                         {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH}};
 
 // Default settings
 settings_t settings = {
@@ -79,6 +80,10 @@ settings_t settings = {
     0.0,    // rpmMult
     0.0     // spdMult
 };
+
+version_t versions[2] = {{0, 0, 0, 0},
+                         {VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH}};
+
 #else
 version_t versions[2] = {{VERSION_PROTOCOL, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH},
                          {0, 0, 0, 0}};
@@ -307,8 +312,11 @@ CCM_FUNC uint8_t readTablesFromEE(void)
             return 3;
     }
 
-    memcpy(tables_buf.afr, tableAFR, sizeof tableAFR);
-    memcpy(tables_buf.knock, tableKnock, sizeof tableKnock);
+    if (tables_buf.magic != magic_key)
+        return 4;
+
+    memcpy(tableAFR, tables_buf.afr, sizeof(tableAFR));
+    memcpy(tableKnock, tables_buf.knock, sizeof(tableKnock));
 
     return 0;
 }
@@ -318,8 +326,8 @@ CCM_FUNC uint8_t writeTablesToEE(void)
     crc_t crc1 = 0, crc2 = 0;
     uint8_t res1, res2;
     size_t len =  sizeof(tables_buf);
-    memcpy(tableAFR, tables_buf.afr, sizeof tableAFR);
-    memcpy(tableKnock, tables_buf.knock, sizeof tableKnock);
+    memcpy(tables_buf.afr, tableAFR, sizeof(tableAFR));
+    memcpy(tables_buf.knock, tableKnock, sizeof(tableKnock));
 
     tables_buf.magic = magic_key;
     tables_buf.cnt++;

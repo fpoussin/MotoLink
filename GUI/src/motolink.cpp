@@ -404,7 +404,7 @@ bool Motolink::clearCell(uint tableId, int row, int col)
 
     QByteArray send, recv;
     cell_t cell = {(uint8_t)row, (uint8_t)col};
-    send.append(tableId&0xFF);
+    send.append(tableId & 0xFF);
     send.append((char*)&cell, sizeof(cell));
     this->prepareCmd(&send, CMD_CLEAR_CELL);
 

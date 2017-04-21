@@ -25,6 +25,7 @@
 #include "storage.h"
 #include "canbus.h"
 #include "arm_math.h"
+#include "tables.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -216,9 +217,10 @@ THD_WORKING_AREA(waThreadSDU, 256);
 CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
-  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  uint8_t in_buffer[SERIAL_BUFFERS_SIZE];
+  uint8_t out_buffer[SERIAL_BUFFERS_SIZE];
   //uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
-  size_t read;
+  size_t in, out;
   chRegSetThreadName("SDU");
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
@@ -242,19 +244,27 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
       sdStart(&SD1, &uart1Cfg);
     }
 
-    read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
-    if (read > 0)
-    {
-      sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
+    in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
+    out = sdReadTimeout(&SD1, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
+
+    while (in == 0 && out == 0) {
+
+        chThdSleepMilliseconds(1);
+        in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
+        out = sdReadTimeout(&SD1, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
     }
 
-    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
-    if (read > 0)
+    if (in > 0)
     {
-      chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
+      sdWriteTimeout(&SD1, in_buffer, in, MS2ST(10));
     }
 
-    chThdSleepMilliseconds(1);
+    if (out > 0)
+    {
+      chnWriteTimeout(&SDU1, out_buffer, out, MS2ST(10));
+    }
+
+
   }
   return;
 }
@@ -277,6 +287,9 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
   uint32_t an[3] = {0, 0, 0};
   median_t an1, an2, an3;
   uint8_t row, col;
+
+  chThdSleepMilliseconds(250);
+  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
 
   median_init(&an1, 0 , an1_buffer, ADC_GRP1_BUF_DEPTH/2);
   median_init(&an2, 0 , an2_buffer, ADC_GRP1_BUF_DEPTH/2);
@@ -327,10 +340,13 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
       sensors_data.cell.row = row;
       sensors_data.cell.col = col;
 
-      /* Average */
-      tableAFR[row][col] = tableAFR[row][col] == 0 ? sensors_data.afr : ((uint16_t)sensors_data.afr+(uint16_t)tableAFR[row][col])/2;
-      /* Peaks */
-      tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col] ? sensors_data.knock_value : tableKnock[row][col];
+      if (settings.functions & FUNC_RECORD)
+      {
+          /* Average */
+          tableAFR[row][col] = tableAFR[row][col] == 0 ? sensors_data.afr : ((uint16_t)sensors_data.afr+(uint16_t)tableAFR[row][col])/2;
+          /* Peaks */
+          tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col] ? sensors_data.knock_value : tableKnock[row][col];
+      }
     }
   }
   return;
@@ -354,6 +370,9 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
   float32_t maxValue = 0;
   uint32_t maxIndex = 0;
   uint16_t i;
+
+  chThdSleepMilliseconds(200);
+  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
 
   /* Initialize the CFFT/CIFFT module */
   arm_rfft_fast_instance_f32 S1;
@@ -488,13 +507,19 @@ static THD_FUNCTION(ThreadRecord, arg)
     bool debounce = false;
     bool indicator = false;
 
-    /* Load tables from EE first */
-    readTablesFromEE();
-
+    /* Load settings from EE first */
     if (readSettingsFromEE() != 0)
     {
         pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
         writeSettingsToEE();
+        chThdSleepMilliseconds(3000);
+    }
+
+    if (readTablesFromEE() != 0)
+    {
+        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+        chThdSleepMilliseconds(1000);
+        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
         chThdSleepMilliseconds(3000);
     }
 
@@ -559,6 +584,7 @@ static THD_FUNCTION(ThreadRecord, arg)
 
         if (!indicator)
             pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
+
         chThdSleepMilliseconds(500);
     }
    return;
@@ -629,14 +655,9 @@ int main(void)
     memcpy(&versions[VERSION_IDX_BL], &v, sizeof(version_t));
   }
 
-  adcSTM32EnableTS(&ADCD1);
-  adcSTM32EnableVBAT(&ADCD1);
-
   /* ADC 3 Ch1 Offset. -2048 */
   ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
   dacPutChannelX(&DACD1, 0, 2048); // This sets the offset for the knock ADC opamp.
-  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
-  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
   timcapEnable(&TIMCAPD3);
 
   chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
