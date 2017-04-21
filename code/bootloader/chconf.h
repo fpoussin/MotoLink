@@ -36,6 +36,7 @@
 #if defined(VECTORS_SECTION)
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
 #endif
+#define CORTEX_ENABLE_WFI_IDLE TRUE
 
 /*===========================================================================*/
 /**

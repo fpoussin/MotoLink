@@ -148,6 +148,9 @@ void boardInit(void) {
   DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_IWDG_STOP;
   DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_WWDG_STOP;
 
+  DBGMCU->CR |= DBGMCU_CR_DBG_SLEEP;
+  DBGMCU->CR |= DBGMCU_CR_DBG_STOP;
+
   DEBUGEN(
       initialise_monitor_handles();
       setbuf(stdout, NULL);

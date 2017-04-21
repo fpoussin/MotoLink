@@ -44,6 +44,7 @@ void HardFault_Handler(void)
    volatile uint8_t reason = 0;
    (void) fault;
    (void) reason;
+   (void) stack_pointer;
 
    thread_t *tp = tp = chThdGetSelfX();
 

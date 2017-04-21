@@ -34,6 +34,7 @@
 
 #include "vectors.h"
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
+#define CORTEX_ENABLE_WFI_IDLE TRUE
 
 /*===========================================================================*/
 /**
