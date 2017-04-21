@@ -21,7 +21,7 @@ Motolink::Motolink(QObject *parent) :
     config.writeEp = 0x04;
     config.alternate = 0;
     config.config = 1;
-    config.interface = 1;
+    config.interface = 3;
 
     mUsb->setFilter(filter);
     mUsb->setConfig(config);
@@ -32,9 +32,10 @@ Motolink::Motolink(QObject *parent) :
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(false);
+    mUsb->setDebug(true);
 
     this->moveToThread(mThread);
+    mThread->setObjectName("MotoLink USB");
     mThread->start();
 }
 
@@ -74,7 +75,7 @@ bool Motolink::usbConnect()
         return false;
     }
 
-    mUsb->flush();
+    //mUsb->flush();
     return true;
 }
 
@@ -118,7 +119,6 @@ bool Motolink::usbProbeConnect()
     }
 
     /* Clean buffer */
-    //mUsb->read(&tmp, 256);
     mUsb->flush();
 
     _UNLOCK_
