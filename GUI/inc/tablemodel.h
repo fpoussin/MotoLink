@@ -8,7 +8,6 @@
 #include <QValidator>
 #include "qenhancedtableview.h"
 #include "commands.h"
-#include "hrc.h"
 
 
 class TableModel : public QStandardItemModel
@@ -40,6 +39,8 @@ public:
     void arrayToRows(const quint8 * data, int maxLen);
     void columnsToArray(quint8 * data, int maxLen);
     void arrayToColumns(const quint8 * data, int maxLen);
+    int getDefaultRpmAt(int index);
+    int getDefaultTpsAt(int index);
 
 signals:
     void headerDataNeedSync(int, Qt::Orientation, const QVariant);
@@ -66,11 +67,12 @@ private:
     int mDefaultValue;
     quint8 mNumCol;
     quint8 mNumRow;
-    Hrc mHrc;
     QStandardItem* mLastItem;
     bool mPermanent;
     bool mSinglerow;
     uint mId;
+    QVector<int> mDefaultRpm;
+    QVector<int> mDefaultTps;
 };
 
 class NumberFormatDelegate : public QStyledItemDelegate

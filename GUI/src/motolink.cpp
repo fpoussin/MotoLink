@@ -15,13 +15,18 @@ Motolink::Motolink(QObject *parent) :
 
     filter.pid = mPid;
     filter.vid = mVid;
-    filter.guid = mGuid;
+
 
     config.readEp = 0x84;
     config.writeEp = 0x04;
     config.alternate = 0;
     config.config = 1;
     config.interface = 3;
+
+#ifdef WINDOWS
+    filter.guid = mGuid;
+    config.interface = 1;
+#endif
 
     mUsb->setFilter(filter);
     mUsb->setConfig(config);

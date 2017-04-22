@@ -15,11 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
-    mFuelModel(&mUndoStack, -30, 30, 0),
-    mStagingModel(&mUndoStack, -15, 15, 0, true),
     mAFRModel(&mUndoStack, 70, 240, 130, false, false),
     mAFRTgtModel(&mUndoStack, 80, 200, 130),
-    mIgnModel(&mUndoStack, -20, 3, 0),
     mKnockModel(&mUndoStack, 0, 800, 0, false, false)
 {
     mMainUi = new Ui::MainWindow();
@@ -40,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mSerialLogsUi->setupUi(mSerialLogsWidget);
 
     mMtl = new Motolink();
-    mHrc = new Hrc();
     mUpdateWizard = new UpdateWizard(mMtl);
 
     mUndoStack.setUndoLimit(100);
@@ -82,7 +78,6 @@ MainWindow::~MainWindow()
     delete mLogsUi;
     delete mLogsWidget;
     delete mMtl;
-    delete mHrc;
 
     for (int i = 0; i < MAX_RECENT_FILES; ++i)
     {
@@ -245,63 +240,32 @@ void MainWindow::showUpdateDialog()
     mUpdateWizard->showWizard();
 }
 
-void MainWindow::importHrc()
-{
-    QString fileName(QFileDialog::getOpenFileName(this,
-                       tr("Import HRC File"), "", tr("HRC File (*.E2P)")));
-    mHrc->openFile(fileName);
-}
-
-void MainWindow::exportHrc()
-{
-    QString fileName(QFileDialog::getSaveFileName(this,
-                       tr("Export HRC File"), "", tr("HRC File (*.E2P)")));
-    mHrc->saveFile(fileName);
-}
-
 void MainWindow::setupDefaults(void)
 {
-    mTablesModelList.append(&mFuelModel);
-    mTablesModelList.append(&mStagingModel);
     mTablesModelList.append(&mAFRModel);
     mTablesModelList.append(&mAFRTgtModel);
-    mTablesModelList.append(&mIgnModel);
     mTablesModelList.append(&mKnockModel);
 
     mTablesViewList.append(mMainUi->tableAfrMap);
     mTablesViewList.append(mMainUi->tableAfrTgt);
-    mTablesViewList.append(mMainUi->tableFuel);
-    mTablesViewList.append(mMainUi->tableStaging);
-    mTablesViewList.append(mMainUi->tableIgnMap);
     mTablesViewList.append(mMainUi->tableKnk);
 
     mSpinBoxList.append(mMainUi->sbThresholdMax);
     mSpinBoxList.append(mMainUi->sbThresholdMin);
 
-    mFuelModel.setName(tr("Fuel"));
-    mStagingModel.setName(tr("Staging"));
     mAFRModel.setName(tr("AFR"));
     mAFRTgtModel.setName(tr("AFR Target"));
-    mIgnModel.setName(tr("Ignition"));
     mKnockModel.setName(tr("Knock"));
 
     mAFRModel.setId(1);
     mKnockModel.setId(2);
 
-    mStagingModel.setSingleRow(true);
-
     mDegreeSuffix.setSuffix(QString::fromUtf8("°"));
     mPercentSuffix.setSuffix("%");
 
-    mMainUi->tableFuel->setItemDelegate(&mPercentSuffix);
-    mMainUi->tableStaging->setItemDelegate(&mPercentSuffix);
-    mMainUi->tableIgnMap->setItemDelegate(&mDegreeSuffix);
     mMainUi->tableAfrMap->setItemDelegate(&mAfrDisplay);
     mMainUi->tableAfrTgt->setItemDelegate(&mAfrDisplay);
 
-    mMainUi->tableFuel->setModel(&mFuelModel);
-    mMainUi->tableStaging->setModel(&mStagingModel);
-    mMainUi->tableIgnMap->setModel(&mIgnModel);
     mMainUi->tableAfrMap->setModel(&mAFRModel);
     mMainUi->tableAfrTgt->setModel(&mAFRTgtModel);
     mMainUi->tableKnk->setModel(&mKnockModel);
@@ -454,11 +418,8 @@ void MainWindow::retranslate()
     mKnockGraphUi->retranslateUi(mKnockGraphWidget);
     mTasksUi->retranslateUi(mTasksWidget);
 
-    mMainUi->tableFuel->retranslate();
-    mMainUi->tableStaging->retranslate();
     mMainUi->tableAfrMap->retranslate();
     mMainUi->tableAfrTgt->retranslate();
-    mMainUi->tableIgnMap->retranslate();
     mMainUi->tableKnk->retranslate();
 }
 
@@ -539,14 +500,6 @@ void MainWindow::openRecenFile()
         this->openFile(action->data().toString());
 }
 
-void MainWindow::showFuelTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabFuel);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
-}
-
 void MainWindow::showAFRTab()
 {
     const int index = mMainUi->tabMain->indexOf(mMainUi->tabAfrMap);
@@ -555,25 +508,9 @@ void MainWindow::showAFRTab()
         mMainUi->tabMain->setCurrentIndex(index);
 }
 
-void MainWindow::showStagingTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabStaging);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
-}
-
 void MainWindow::showAFRTgtTab()
 {
     const int index = mMainUi->tabMain->indexOf(mMainUi->tabAfrTarget);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
-}
-
-void MainWindow::showIgnTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabIgnMap);
 
     if (index >= 0)
         mMainUi->tabMain->setCurrentIndex(index);
@@ -629,11 +566,8 @@ void MainWindow::log(const QString &msg)
 
 void MainWindow::exportToMTLFile()
 {
-    mFile.addTable(&mFuelModel);
-    mFile.addTable(&mStagingModel);
     mFile.addTable(&mAFRModel);
     mFile.addTable(&mAFRTgtModel);
-    mFile.addTable(&mIgnModel);
     mFile.addTable(&mKnockModel);
 
     mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
@@ -844,17 +778,14 @@ void MainWindow::onDataChanged()
 void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, const QVariant value)
 {
     const int role = Qt::UserRole;
-    mFuelModel.setHeaderData(section, orientation, value, role);
-    mStagingModel.setHeaderData(section, orientation, value, role);
     mAFRModel.setHeaderData(section, orientation, value, role);
     mAFRTgtModel.setHeaderData(section, orientation, value, role);
-    mIgnModel.setHeaderData(section, orientation, value, role);
     mKnockModel.setHeaderData(section, orientation, value, role);
 
     quint8 rows[11];
     quint8 cols[16];
-    mFuelModel.rowsToArray(rows, sizeof(rows));
-    mFuelModel.columnsToArray(cols, sizeof(cols));
+    mAFRModel.rowsToArray(rows, sizeof(rows));
+    mAFRModel.columnsToArray(cols, sizeof(cols));
 
     mMtl->writeTablesHeaders(rows, cols);
 }

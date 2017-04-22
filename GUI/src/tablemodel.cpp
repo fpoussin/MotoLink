@@ -15,6 +15,22 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool single
     mSinglerow = singlerow;
     this->mId = 0;
     this->fill(false);
+
+    const int defaultRpm[] = {0, 2000, 4000, 5500, 7000, 8000, 9000,
+                  10000, 11000, 12000, 13000, 14000, 15000, 16000,
+                  16500, 18000};
+
+    const int defaultTps[] = {0, 2, 5, 7, 12, 25, 35, 50, 70, 85, 100};
+
+    for (uint i=0; i< sizeof(defaultRpm)/sizeof(int); i++)
+    {
+        mDefaultRpm.append(defaultRpm[i]);
+    }
+
+    for (uint i=0; i< sizeof(defaultTps)/sizeof(int); i++)
+    {
+        mDefaultTps.append(defaultTps[i]);
+    }
 }
 
 TableModel::~TableModel()
@@ -390,6 +406,16 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative, bool darkCol
     return color;
 }
 
+int TableModel::getDefaultRpmAt(int index)
+{
+    return mDefaultRpm.at(index);
+}
+
+int TableModel::getDefaultTpsAt(int index)
+{
+    return mDefaultTps.at(index);
+}
+
 void TableModel::fill(bool random)
 {
     mNumRow = 11;
@@ -405,8 +431,8 @@ void TableModel::fill(bool random)
         {
             QStandardItem *item = new QStandardItem(0);
             this->setItem(row, column, item);
-            this->setHeaderData(column, Qt::Horizontal, mHrc.getDefaultRpmAt(column));
-            this->setHeaderData(row, Qt::Vertical, mHrc.getDefaultTpsAt(row));
+            this->setHeaderData(column, Qt::Horizontal, getDefaultRpmAt(column));
+            this->setHeaderData(row, Qt::Vertical, getDefaultTpsAt(row));
 
             if (random)
                 value = mMin + (rand() % (int)(mMax - mMin + 1));

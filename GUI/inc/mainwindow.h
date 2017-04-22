@@ -21,7 +21,6 @@
 #include <QXmlStreamReader>
 #include <QVector>
 
-#include "hrc.h"
 #include "updatewizard.h"
 #include "helpviewer.h"
 #include "motolink.h"
@@ -64,8 +63,6 @@ public slots:
     void disconnectMtl(void);
     void showAbout(void);
     void showUpdateDialog(void);
-    void importHrc(void);
-    void exportHrc(void);
 
 signals:
     void signalStartupComplete(void);
@@ -79,11 +76,8 @@ private slots:
     void updateRecentFilesActions(void);
     void openRecenFile(void);
 
-    void showFuelTab(void);
     void showAFRTab(void);
-    void showStagingTab(void);
     void showAFRTgtTab(void);
-    void showIgnTab(void);
     void showKnockTab(void);
     void showSettingsTab(void);
     void showTasks(void);
@@ -144,7 +138,6 @@ private:
     QSettings mSettings;
     QString mCurrentFile;
     bool mHasChanged;
-    Hrc *mHrc;
     Motolink *mMtl;
     UpdateWizard *mUpdateWizard;
     HelpViewer mHelpViewer;
@@ -152,11 +145,8 @@ private:
     QUndoView mUndoView;
     QStringList mRecentFiles;
     QAction *mRecentFilesActions[MAX_RECENT_FILES];
-    TableModel mFuelModel;
-    TableModel mStagingModel;
     TableModel mAFRModel;
     TableModel mAFRTgtModel;
-    TableModel mIgnModel;
     TableModel mKnockModel;
     QVector<TableModel*> mTablesModelList;
     QVector<QEnhancedTableView*> mTablesViewList;

@@ -28,7 +28,6 @@ include(QtUsb/src/QtUsb.pri)
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/bootloader.cpp \
-    src/hrc.cpp \
     src/updatewizard.cpp \
     src/motolink.cpp \
     src/helpviewer.cpp \
@@ -47,7 +46,6 @@ HEADERS  += \
     inc/mainwindow.h \
     inc/bootloader.h \
     inc/datastructures.h \
-    inc/hrc.h \
     inc/updatewizard.h \
     inc/motolink.h \
     inc/helpviewer.h \
