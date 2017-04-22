@@ -25,6 +25,7 @@ public slots:
     void startUpdate(void);
     void retranslate(void);
     void openCustomFw(void);
+    QString getFwVersion(void);
 
 signals:
     void sendDisconnect(void);

@@ -74,6 +74,12 @@ void UpdateWizard::openCustomFw()
     fwFile.close();
 }
 
+QString UpdateWizard::getFwVersion()
+{
+    this->loadDefaultFirmareData();
+    return mNewVersion;
+}
+
 void UpdateWizard::pageUpdated(int page)
 {
     switch (page)

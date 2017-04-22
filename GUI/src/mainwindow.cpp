@@ -227,10 +227,12 @@ void MainWindow::disconnectMtl()
 
 void MainWindow::showAbout()
 {
+    QString Fwv = mUpdateWizard->getFwVersion();
     QMessageBox::information(this,tr("About Motolink"),
-       tr("<strong>Version: ") + __MTL_VER__ + "</strong><br/>"+
+       tr("<strong>App Version: ") + __MTL_VER__ + "</strong><br/>"+
+       tr("<strong>Bundled firmware Version: ") + Fwv + "</strong><br/>"+
        tr("Built on: ") + QString(__DATE__)+" "+QString(__TIME__) + "<br/><br/>"+
-       tr("Motolink is a smart interface designed for Honda HRC ECUs.<br/><br/>"
+       tr("Motolink is a smart interface designed mapping ECUs.<br/><br/>"
        "You can find more information "
        "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
 }
