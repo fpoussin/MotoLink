@@ -94,6 +94,7 @@ private slots:
     void onMonitoringReceived(const TaskList *monitoring);
     void onKnockSpectrumReceived(const QByteArray * data);
     void onTablesReceived(const quint8 * afr, const quint8 * knock);
+    void onTablesHeadersReceived(const quint8 * columns, const quint8 * rows);
     void onSerialDataReceived(const QByteArray * data);
 
     void onSetTps0Pct(void);
@@ -164,6 +165,8 @@ private:
     QByteArray mSensorsData;
     QByteArray mMonitoringData;
     QByteArray mKnockSpectrumData;
+
+    bool mHeadersUpdating;
 
     MTLFile mFile;
 };

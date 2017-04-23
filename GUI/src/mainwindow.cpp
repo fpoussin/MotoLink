@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->exportToMTLFile();
     this->uiDisable();
+    mHeadersUpdating = false;
 
     emit signalStartupComplete();
 
@@ -201,6 +202,7 @@ void MainWindow::connectMtl()
     if (mMtl->usbConnect())
     {
         mMtl->bootAppIfNeeded();
+        mMtl->readTablesHeaders();
         this->uiEnable();
         mFastPollingTimer.start();
         mSlowPollingTimer.start();
@@ -350,6 +352,7 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const*)), this, SLOT(onMonitoringReceived(TaskList const*)));
     QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
     QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
+    QObject::connect(mMtl, SIGNAL(receivedTablesHeaders(const quint8*,const quint8*)), this, SLOT(onTablesHeadersReceived(const quint8*,const quint8*)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(log(QString)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), mMtl, SLOT(clearUsb()));
 
@@ -734,6 +737,14 @@ void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
     this->setTablesCursor(mMtl->getRow(), mMtl->getColumn());
 }
 
+void MainWindow::onTablesHeadersReceived(const quint8 *columns, const quint8 *rows)
+{
+    mHeadersUpdating = true;
+    mAFRModel.arrayToRows(rows, 11);
+    mAFRModel.arrayToColumns(columns, 16);
+    mHeadersUpdating = false;
+}
+
 void MainWindow::onSerialDataReceived(const QByteArray *data)
 {
     QString str;
@@ -787,7 +798,8 @@ void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, con
     mAFRModel.rowsToArray(rows, sizeof(rows));
     mAFRModel.columnsToArray(cols, sizeof(cols));
 
-    mMtl->writeTablesHeaders(rows, cols);
+    if (!mHeadersUpdating)
+        mMtl->writeTablesHeaders(rows, cols);
 }
 
 void MainWindow::onSimpleError(QString error)

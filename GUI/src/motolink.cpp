@@ -37,7 +37,7 @@ Motolink::Motolink(QObject *parent) :
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(true);
+    mUsb->setDebug(false);
 
     this->moveToThread(mThread);
     mThread->setObjectName("MotoLink USB");
@@ -325,11 +325,11 @@ bool Motolink::readTablesHeaders()
     QByteArray send, recv;
     this->prepareCmd(&send, CMD_GET_TABLES_HEADERS);
     int size = sizeof(mTablesRows)+sizeof(mTablesColumns);
-    if (this->sendCmd(&send, &recv, size, CMD_SET_TABLES_HEADERS))
+    if (this->sendCmd(&send, &recv, size, CMD_GET_TABLES_HEADERS))
     {
         memcpy((void*)mTablesColumns, (void*)recv.constData(), sizeof(mTablesColumns));
         memcpy((void*)mTablesRows, (void*)(recv.constData()+sizeof(mTablesColumns)), sizeof(mTablesRows));
-        emit receivedTables((quint8*)mTablesColumns, (quint8*)mTablesRows);
+        emit receivedTablesHeaders((quint8*)mTablesColumns, (quint8*)mTablesRows);
         return true;
     }
     return false;
@@ -394,12 +394,6 @@ bool Motolink::writeTablesHeaders(const quint8 *rows, const quint8 *cols)
     memcpy(mTablesColumns, cols, sizeof(mTablesColumns));
 
     return this->writeTablesHeaders();
-}
-
-bool Motolink::readTablesHeaders(quint8 *rows, quint8 *cols)
-{
-
-    return false;
 }
 
 bool Motolink::clearCell(uint tableId, int row, int col)

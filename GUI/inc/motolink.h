@@ -143,7 +143,6 @@ public slots:
     bool readSettings();
 
     bool writeTablesHeaders(const quint8 *rows, const quint8 *cols);
-    bool readTablesHeaders(quint8 *rows, quint8 *cols);
 
     bool clearCell(uint tableId, int row, int col);
     bool clearTables(void);
