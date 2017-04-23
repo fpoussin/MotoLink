@@ -19,12 +19,12 @@ bool MTLFile::addTable(TableModel* table)
     return false;
 }
 
-bool MTLFile::getTable(const QString &name, TableModel *table)
+bool MTLFile::getTable(const QString &name, TableModel **table)
 {
     if (!mTableList.contains(name))
         return false;
 
-    table = mTableList.value(name);
+    *table = mTableList.value(name);
     return true;
 }
 

@@ -14,7 +14,7 @@ class MTLFile : public QObject
 public:
     explicit MTLFile(QObject *parent = 0);
     bool addTable(TableModel *table);
-    bool getTable(const QString &name, TableModel* table);
+    bool getTable(const QString &name, TableModel **table);
     bool rmTable(const QString &name);
     bool rmTable(TableModel * const table);
 
