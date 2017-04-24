@@ -177,6 +177,9 @@
        <attribute name="title">
         <string>AFR Target</string>
        </attribute>
+       <attribute name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your AFR target.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <property name="spacing">
          <number>4</number>
@@ -245,6 +248,9 @@
        </attribute>
        <attribute name="title">
         <string>Target Offset</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These are the values you need to apply in your EFI software to compensate the AFR values and reach the target.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
@@ -327,6 +333,9 @@
        <attribute name="title">
         <string>AFR Map</string>
        </attribute>
+       <attribute name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;AFR values from the sensors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <property name="spacing">
          <number>4</number>
@@ -398,6 +407,9 @@
        </attribute>
        <attribute name="title">
         <string>Knock Map</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Knock sensor values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <property name="spacing">
@@ -924,7 +936,7 @@
               </font>
              </property>
              <property name="title">
-              <string>Self Mapping</string>
+              <string>General Settings</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>

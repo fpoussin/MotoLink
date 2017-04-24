@@ -938,6 +938,7 @@ void MainWindow::calculateFuelOffset(int row, int column)
 {
   float target, value, offset;
   QStandardItem* itm;
+  QModelIndex idx;
 
   itm = mAFRTgtModel.item(row, column);
   if (!itm->data(Qt::EditRole).isValid()) return;
@@ -947,8 +948,8 @@ void MainWindow::calculateFuelOffset(int row, int column)
   if (!itm->data(Qt::EditRole).isValid()) return;
   value = itm->data(Qt::EditRole).toFloat()/10.0;
 
-  offset = (target - value) / ((target + value) / 2.0) * 100.0;
+  offset = (value - target) / ((value + target) / 2.0) * 100.0;
 
-  itm = mFuelOffsetModel.item(row, column);
-  itm->setData(offset, Qt::EditRole);
+  idx = mFuelOffsetModel.index(row, column);
+  mFuelOffsetModel.setData(idx, offset);
 }
