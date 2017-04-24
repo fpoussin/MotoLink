@@ -151,9 +151,21 @@ void boardInit(void) {
   DBGMCU->CR |= DBGMCU_CR_DBG_SLEEP;
   DBGMCU->CR |= DBGMCU_CR_DBG_STOP;
 
+  /* Generate IRQ (PVD_IRQn) if VDD goes below 2.9v */
+  PWR->CR |= PWR_CR_PLS_LEV7;
+  PWR->CR |= PWR_CR_PVDE;
+
   DEBUGEN(
       initialise_monitor_handles();
       setbuf(stdout, NULL);
   )
+
+  nvicEnableVector(PVD_IRQn, 0); /* Max priority */
+}
+
+/* hang forever */
+OSAL_IRQ_HANDLER(Vector44) {
+
+    while(true) {};
 
 }
