@@ -168,14 +168,14 @@ CCM_FUNC uint32_t eeFindCurrentPageAddr(void)
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
     for (addr=from; addr < to; addr += EEPROM_TABLES_PAGE_SIZE)
-	{
+    {
         fileStreamSeek(tablesFS, addr);
 
         status = fileStreamRead(tablesFS, (uint8_t*)&magic, sizeof magic);
         if (status != sizeof magic || magic != magic_key)
-		{
+        {
             continue;
-		}
+        }
 
         status = fileStreamRead(tablesFS, (uint8_t*)&counters[i], sizeof counters[0]);
         if (status != sizeof counters[0])
@@ -185,7 +185,7 @@ CCM_FUNC uint32_t eeFindCurrentPageAddr(void)
         }
 
         i++;
-	}
+    }
 
     // Find highest counter
     addr = from;
@@ -207,17 +207,17 @@ CCM_FUNC uint32_t eeFindNextPageAddr(void)
 {
     uint32_t addr = eeFindCurrentPageAddr();
 
-	/* Check if at last page */
+    /* Check if at last page */
     if(addr >= EEPROM_TABLES_LAST)
-	{
+    {
         addr = EEPROM_TABLES_FIRST;
-	}
+    }
     else
     {
-        addr += EEPROM_TABLES_PAGE_SIZE;
+       addr += EEPROM_TABLES_PAGE_SIZE;
     }
 
-	return addr;
+    return addr;
 }
 
 CCM_FUNC uint32_t eeFindPrevPageAddr(void)

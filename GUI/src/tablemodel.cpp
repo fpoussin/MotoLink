@@ -19,7 +19,7 @@ TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool single
                   10000, 11000, 12000, 13000, 14000, 15000, 16000,
                   16500, 18000};
 
-    const int defaultTps[] = {0, 2, 5, 7, 12, 25, 35, 50, 70, 85, 100};
+    const int defaultTps[] = {0, 4, 8, 15, 20, 27, 35, 50, 70, 85, 100};
 
     for (uint i=0; i< sizeof(defaultRpm)/sizeof(int); i++)
     {
