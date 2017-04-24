@@ -15,9 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettings("Motolink", "Motolink"),
     mHelpViewer(NULL),
     mUndoStack(NULL),
-    mAFRModel(&mUndoStack, 70, 240, 130, false, false),
-    mAFRTgtModel(&mUndoStack, 80, 200, 130),
-    mKnockModel(&mUndoStack, 0, 800, 0, false, false)
+    mAFRModel(&mUndoStack, 7.0, 24.0, 13.0, false, false),
+    mAFRTgtModel(&mUndoStack, 8.0, 24.0, 13.0),
+    mKnockModel(&mUndoStack, 0, 800, 0, false, false),
+    mFuelOffsetModel(&mUndoStack, -30, 30, 0, false, false)
 {
     mMainUi = new Ui::MainWindow();
     mTasksUi = new Ui::Tasks();
@@ -249,10 +250,12 @@ void MainWindow::setupDefaults(void)
     mTablesModelList.append(&mAFRModel);
     mTablesModelList.append(&mAFRTgtModel);
     mTablesModelList.append(&mKnockModel);
+    mTablesModelList.append(&mFuelOffsetModel);
 
     mTablesViewList.append(mMainUi->tableAfrMap);
     mTablesViewList.append(mMainUi->tableAfrTgt);
     mTablesViewList.append(mMainUi->tableKnk);
+    mTablesViewList.append(mMainUi->tableFuelOffset);
 
     mSpinBoxList.append(mMainUi->sbThresholdMax);
     mSpinBoxList.append(mMainUi->sbThresholdMin);
@@ -269,13 +272,16 @@ void MainWindow::setupDefaults(void)
 
     mMainUi->tableAfrMap->setItemDelegate(&mAfrDisplay);
     mMainUi->tableAfrTgt->setItemDelegate(&mAfrDisplay);
+    mMainUi->tableFuelOffset->setItemDelegate(&mPercentSuffix);
 
     mMainUi->tableAfrMap->setModel(&mAFRModel);
     mMainUi->tableAfrTgt->setModel(&mAFRTgtModel);
     mMainUi->tableKnk->setModel(&mKnockModel);
+    mMainUi->tableFuelOffset->setModel(&mFuelOffsetModel);
 
     mMainUi->tableAfrMap->setMenuReadOnly(true);
     mMainUi->tableKnk->setMenuReadOnly(true);
+    mMainUi->tableFuelOffset->setMenuReadOnly(true);
 }
 
 void MainWindow::setupConnections(void)
@@ -304,18 +310,20 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mMainUi->actionUndo, SLOT(setEnabled(bool)));
 
     // Tables (color and cursor update)
-    for (int i=0; i<mTablesModelList.size(); i++)
+    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(onDataChanged()));
+    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(calculateFuelOffset(int,int)));
+    QObject::connect(&mAFRModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(calculateFuelOffset(int,int)));
+    for (int i = 0; i < mTablesModelList.size(); i++)
     {
         TableModel* tbl = mTablesModelList.at(i);
-        QObject::connect(tbl, SIGNAL(cellValueChanged(int,int)), this, SLOT(onDataChanged()));
         QObject::connect(tbl, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
                          this, SLOT(onHeadersNeedSync(int,Qt::Orientation,QVariant)));
-        QObject::connect(tbl->view(), SIGNAL(modelUpdated(QWidget*)), mMainUi->tabMain, SLOT(setCurrentWidget(QWidget*)));
-        if (tbl->id() > 0)
+        //QObject::connect(tbl->view(), SIGNAL(modelUpdated(QWidget*)), mMainUi->tabMain, SLOT(setCurrentWidget(QWidget*)));
+        if (tbl->id() > 1)
             QObject::connect(tbl->view(), SIGNAL(cellCleared(uint,int,int)), mMtl, SLOT(clearCell(uint,int,int)));
     }
 
-    for (int i=0; i<mSpinBoxList.size(); i++)
+    for (int i = 0; i < mSpinBoxList.size(); i++)
     {
         QSpinBox * sb = mSpinBoxList.at(i);
         QObject::connect(sb, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
@@ -424,6 +432,7 @@ void MainWindow::retranslate()
     mMainUi->tableAfrMap->retranslate();
     mMainUi->tableAfrTgt->retranslate();
     mMainUi->tableKnk->retranslate();
+    mMainUi->tableFuelOffset->retranslate();
 }
 
 void MainWindow::setLanguageEnglish()
@@ -501,30 +510,6 @@ void MainWindow::openRecenFile()
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
         this->openFile(action->data().toString());
-}
-
-void MainWindow::showAFRTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabAfrMap);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
-}
-
-void MainWindow::showAFRTgtTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabAfrTarget);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
-}
-
-void MainWindow::showKnockTab()
-{
-    const int index = mMainUi->tabMain->indexOf(mMainUi->tabKnock);
-
-    if (index >= 0)
-        mMainUi->tabMain->setCurrentIndex(index);
 }
 
 void MainWindow::showSettingsTab()
@@ -732,8 +717,8 @@ void MainWindow::onKnockSpectrumReceived(const QByteArray *data)
 
 void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
 {
-    mAFRModel.setDataFromArray(afr);
-    mKnockModel.setDataFromArray(knock);
+    mAFRModel.setDataFromArray(afr, 0.1);
+    mKnockModel.setDataFromArray(knock, 1.0);
     this->setTablesCursor(mMtl->getRow(), mMtl->getColumn());
 }
 
@@ -789,9 +774,15 @@ void MainWindow::onDataChanged()
 void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, const QVariant value)
 {
     const int role = Qt::UserRole;
-    mAFRModel.setHeaderData(section, orientation, value, role);
-    mAFRTgtModel.setHeaderData(section, orientation, value, role);
-    mKnockModel.setHeaderData(section, orientation, value, role);
+
+    for (int i = 0; i < mTablesModelList.size(); i++)
+    {
+        TableModel* tbl = mTablesModelList.at(i);
+        if (tbl)
+        {
+            tbl->setHeaderData(section, orientation, value, role);
+        }
+    }
 
     quint8 rows[11];
     quint8 cols[16];
@@ -799,7 +790,7 @@ void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, con
     mAFRModel.columnsToArray(cols, sizeof(cols));
 
     if (!mHeadersUpdating)
-        mMtl->writeTablesHeaders(rows, cols);
+      mMtl->writeTablesHeaders(rows, cols);
 }
 
 void MainWindow::onSimpleError(QString error)
@@ -941,4 +932,23 @@ void MainWindow::onWriteMtlSettings()
     }
     else
         this->log("Write settings Fail");
+}
+
+void MainWindow::calculateFuelOffset(int row, int column)
+{
+  float target, value, offset;
+  QStandardItem* itm;
+
+  itm = mAFRTgtModel.item(row, column);
+  if (!itm->data(Qt::EditRole).isValid()) return;
+  target = (float)itm->data(Qt::EditRole).toFloat()/10.0;
+
+  itm = mAFRModel.item(row, column);
+  if (!itm->data(Qt::EditRole).isValid()) return;
+  value = itm->data(Qt::EditRole).toFloat()/10.0;
+
+  offset = (target - value) / ((target + value) / 2.0) * 100.0;
+
+  itm = mFuelOffsetModel.item(row, column);
+  itm->setData(offset, Qt::EditRole);
 }

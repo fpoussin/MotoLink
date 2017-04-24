@@ -2,7 +2,7 @@
 #include <QLineEdit>
 #include <QDebug>
 
-TableModel::TableModel(QUndoStack *stack, int min, int max, int def, bool singlerow, bool permanent, QObject *parent) :
+TableModel::TableModel(QUndoStack *stack, float min, float max, float def, bool singlerow, bool permanent, QObject *parent) :
     QStandardItemModel(parent),
     mStack(stack)
 {
@@ -38,15 +38,10 @@ TableModel::~TableModel()
 {
 }
 
-bool TableModel::isPermanent()
-{
-    return mPermanent;
-}
-
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    int val = value.toInt();
-    int newvalue = val;
+    float val = value.toFloat();
+    float newvalue = val;
     QStandardItem * item = this->itemFromIndex(index);
 
     if (item == NULL)
@@ -78,20 +73,21 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return QStandardItemModel::setData(index, newvalue, role);
 }
 
-void TableModel::setDataFromArray(const quint8 *array)
+void TableModel::setDataFromArray(const quint8 *array, float multiplier)
 {
     QModelIndex idx;
-    quint8 data;
+    float data;
 
     for (int i=0; i<this->rowCount(); i++)
     {
         for (int j=0; j<this->columnCount(); j++)
         {
             idx = this->index(i, j);
-            data = array[(i*this->columnCount())+j];
+            data = (float)array[(i*this->columnCount())+j] * multiplier;
             if (idx.isValid() && data > 0)
             {
                 this->setData(idx, QVariant(data), Qt::UserRole+1);
+                emit cellValueChanged(i, j);
             }
             else
             {
@@ -421,7 +417,7 @@ void TableModel::fill(bool random)
 {
     mNumRow = 11;
     mNumCol = 16;
-    int value = mDefaultValue;
+    float value = mDefaultValue;
 
     if (mSinglerow)
         mNumRow = 1;
@@ -474,10 +470,10 @@ AfrFormatDelegate::AfrFormatDelegate(QObject *parent) :
 QString AfrFormatDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
     bool ok;
-    const float display = value.toFloat(&ok)/10;
+    const float display = value.toFloat(&ok);
 
     if (ok)
-        return locale.toString(display, 'f', 1);
+        return locale.toString(display, 'f', 2);
 
     return QString();
 }

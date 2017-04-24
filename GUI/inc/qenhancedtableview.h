@@ -32,8 +32,9 @@ public slots:
 private slots:
     void clickedVerticalHeader(int section);
     void clickedHorizontalHeader(int section);
-    void applyChanges(void);
+    void applyHeaderChanges(void);
     void setTabFocus(void);
+    void applyCellChanges(void);
 
 private:
     void setupConnections(void);

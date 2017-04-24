@@ -140,7 +140,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QSpinBox" name="sbValue">
+       <widget class="QDoubleSpinBox" name="sbValue">
         <property name="minimumSize">
          <size>
           <width>80</width>
@@ -157,13 +157,13 @@
          <set>Qt::AlignCenter</set>
         </property>
         <property name="minimum">
-         <number>-30</number>
+         <double>-30.000000000000000</double>
         </property>
         <property name="maximum">
-         <number>30</number>
+         <double>30.000000000000000</double>
         </property>
-        <property name="value">
-         <number>0</number>
+        <property name="singleStep">
+         <double>0.250000000000000</double>
         </property>
        </widget>
       </item>

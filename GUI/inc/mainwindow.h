@@ -76,9 +76,6 @@ private slots:
     void updateRecentFilesActions(void);
     void openRecenFile(void);
 
-    void showAFRTab(void);
-    void showAFRTgtTab(void);
-    void showKnockTab(void);
     void showSettingsTab(void);
     void showTasks(void);
     void showKnockGraph(void);
@@ -96,16 +93,14 @@ private slots:
     void onTablesReceived(const quint8 * afr, const quint8 * knock);
     void onTablesHeadersReceived(const quint8 * columns, const quint8 * rows);
     void onSerialDataReceived(const QByteArray * data);
-
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
-
     void onDataChanged(void);
     void onHeadersNeedSync(int section, Qt::Orientation orientation, const QVariant value);
-
     void onSimpleError(QString error);
 
     void showNewVersionPopup(QString version);
+    void calculateFuelOffset(int row, int column);
 
     void setTablesCursorFromSensors(uint tps, uint rpm);
     void setTablesCursor(uint row, uint col);
@@ -149,6 +144,7 @@ private:
     TableModel mAFRModel;
     TableModel mAFRTgtModel;
     TableModel mKnockModel;
+    TableModel mFuelOffsetModel;
     QVector<TableModel*> mTablesModelList;
     QVector<QEnhancedTableView*> mTablesViewList;
     QVector<QSpinBox*> mSpinBoxList;

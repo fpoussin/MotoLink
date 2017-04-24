@@ -14,11 +14,11 @@ class TableModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit TableModel(QUndoStack *stack, int min = -30, int max = 30, int def = 0, bool singlerow = false, bool permanent = true, QObject *parent = 0);
+    explicit TableModel(QUndoStack *stack, float min = -30, float max = 30, float def = 0, bool singlerow = false, bool permanent = true, QObject *parent = 0);
     ~TableModel(void);
-    bool isPermanent(void);
+    bool isPermanent(void) { return mPermanent; }
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    void setDataFromArray(const quint8 * array);
+    void setDataFromArray(const quint8 * array, float multiplier);
     void emptyData(const QModelIndex &index);
     QEnhancedTableView * view();
     void setSingleRow(bool val);
@@ -62,9 +62,9 @@ private:
     QUndoStack* mStack;
     QString mName;
     QString mSuffix;
-    int mMin;
-    int mMax;
-    int mDefaultValue;
+    float mMin;
+    float mMax;
+    float mDefaultValue;
     quint8 mNumCol;
     quint8 mNumRow;
     QStandardItem* mLastItem;

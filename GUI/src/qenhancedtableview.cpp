@@ -30,6 +30,15 @@ QEnhancedTableView::QEnhancedTableView(QWidget *parent) :
     this->setupConnections();
 }
 
+void QEnhancedTableView::setupConnections()
+{
+    QObject::connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    QObject::connect(this->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedHorizontalHeader(int)));
+    QObject::connect(this->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedVerticalHeader(int)));
+    QObject::connect(mHeaderEditUi->buttonBox, SIGNAL(accepted()), this, SLOT(applyHeaderChanges()));
+    QObject::connect(mCellEditDialog, SIGNAL(accepted()), this, SLOT(applyCellChanges()));
+}
+
 void QEnhancedTableView::setModel(QAbstractItemModel *model)
 {
      QTableView::setModel(model);
@@ -53,17 +62,11 @@ void QEnhancedTableView::retranslate()
 void QEnhancedTableView::showContextMenu(const QPoint &pos)
 {
     QAction* actions[3];
-    int increment = 1;
+    float increment = 1.0;
     QMenu myMenu;
 
     QPoint globalPos = this->viewport()->mapToGlobal(pos);
     TableModel *model = (TableModel*)this->model();
-
-    // Dirty hack
-    if (model->getName().contains("AFR"))
-    {
-        increment = 10;
-    }
 
     if (mMenuReadOnly)
     {
@@ -103,7 +106,7 @@ void QEnhancedTableView::showContextMenu(const QPoint &pos)
             {
                 const QModelIndex current = selection.at(i);
                 QVariant data(current.data(Qt::EditRole));
-                QVariant newdata(data.toInt() + increment);
+                QVariant newdata(data.toFloat() + increment);
                 model->setData(current, newdata);
             }
         }
@@ -114,7 +117,7 @@ void QEnhancedTableView::showContextMenu(const QPoint &pos)
             {
                 const QModelIndex current = selection.at(i);
                 QVariant data(current.data(Qt::EditRole));
-                QVariant newdata(data.toInt() - increment);
+                QVariant newdata(data.toFloat() - increment);
                 model->setData(current, newdata);
             }
         }
@@ -176,26 +179,36 @@ void QEnhancedTableView::clickedHorizontalHeader(int section)
     mHeaderEditDialog->showNormal();
 }
 
-void QEnhancedTableView::applyChanges()
+void QEnhancedTableView::applyHeaderChanges()
 {
     mHeaderEditDialog->hide();
-
     QVariant value = mHeaderEditUi->sbValue->value();
-
     this->model()->setHeaderData(mLastSection, mLastOrientation, value);
 }
 
 void QEnhancedTableView::setTabFocus()
 {
-    emit modelUpdated(this->parentWidget());
+  emit modelUpdated(this->parentWidget());
 }
 
-void QEnhancedTableView::setupConnections()
+void QEnhancedTableView::applyCellChanges()
 {
-    QObject::connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-    QObject::connect(this->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedHorizontalHeader(int)));
-    QObject::connect(this->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(clickedVerticalHeader(int)));
-    QObject::connect(mHeaderEditUi->buttonBox, SIGNAL(accepted()), this, SLOT(applyChanges()));
+  QModelIndexList selection = this->selectionModel()->selection().indexes();
+  TableModel *model = (TableModel*)this->model();
+  float value = mCellEditUi->sbValue->value();
+  QVariant newdata;
+
+  for (int i = 0; i < selection.size(); i++)
+  {
+      const QModelIndex current = selection.at(i);
+      QVariant data(current.data(Qt::EditRole));
+      if (mCellEditUi->rSet->isChecked())
+        newdata = QVariant(value);
+      else if (mCellEditUi->rChange->isChecked())
+        newdata = QVariant(data.toFloat() + value);
+      model->setData(current, newdata);
+  }
+
 }
 
 void QEnhancedTableView::setEditBoundaries(int section, Qt::Orientation orientation)
