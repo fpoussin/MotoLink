@@ -237,7 +237,7 @@ uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnV
   else if (AnVal >= 5000)
     return afrMax;
 
-  return map(AnVal, 0, 5000, afrMin, afrMax);
+  return map(AnVal, 0, 5000, afrMin, afrMax) / 100;
 }
 
 uint16_t calculateFreqWithRatio(uint16_t freq, float32_t ratio)
