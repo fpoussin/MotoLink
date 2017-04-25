@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mUndoStack(NULL),
     mAFRModel(&mUndoStack, 7.0, 24.0, 13.0, false, false),
     mAFRTgtModel(&mUndoStack, 8.0, 24.0, 13.0),
-    mKnockModel(&mUndoStack, 0, 800, 0, false, false),
+    mKnockModel(&mUndoStack, 0, 512, 0, false, false),
     mFuelOffsetModel(&mUndoStack, -30, 30, 0, false, false)
 {
     mMainUi = new Ui::MainWindow();

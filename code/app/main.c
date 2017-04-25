@@ -423,9 +423,10 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
 
+    sensors_data.knock_freq = settings.knockFreq;
+
     if (settings.sensorsInput == SENSORS_INPUT_TEST) {
-        sensors_data.knock_value = rand16(0, 800);
-        sensors_data.knock_freq = rand16(4000, 10000);
+        sensors_data.knock_value = rand16(0, 255);
         continue;
       }
 
@@ -435,7 +436,6 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
                 FFT_FREQ,
                 output_knock,
                 sizeof(output_knock));
-    sensors_data.knock_freq = settings.knockFreq;
   }
   return;
 }
