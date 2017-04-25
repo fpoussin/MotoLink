@@ -974,7 +974,7 @@ Sauvegarder avant la fermeture ?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="237"/>
         <source>Built on: </source>
-        <translation type="unfinished">Compilé le: </translation>
+        <translation>Compilé le: </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="238"/>
