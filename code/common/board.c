@@ -18,7 +18,7 @@
 #include "hal.h"
 #include "vectors.h"
 #include "common.h"
-
+#include <stdlib.h>
 
 extern void initialise_monitor_handles(void);
 
@@ -161,6 +161,8 @@ void boardInit(void) {
   )
 
   nvicEnableVector(PVD_IRQn, 0); /* Max priority */
+
+  srand(ch.tm.offset);
 }
 
 /* hang forever */

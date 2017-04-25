@@ -327,14 +327,26 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     sensors_data.an2 = an[1];
     sensors_data.an3 = an[2];
 
+    /* Analog/Digital Sensors */
     if (settings.sensorsInput == SENSORS_INPUT_DIRECT) {
         sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
         sensors_data.rpm = calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
         sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
     }
+    else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
+        sensors_data.tps = rand16(0, 25500) / 100;
+        sensors_data.rpm = rand16(10, 18000);
+        sensors_data.spd = rand16(5, 10000);
+    }
+
+    /* AFR */
     if (settings.afrInput == AFR_INPUT_AN) {
         sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an3);
     }
+    else if (settings.afrInput == AFR_INPUT_TEST) {
+        sensors_data.afr = rand16(11000, 16000) / 100;
+    }
+
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
     {
       sensors_data.cell.row = row;
@@ -410,6 +422,12 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
         tmp = 0xFF;
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
     }
+
+    if (settings.sensorsInput == SENSORS_INPUT_TEST) {
+        sensors_data.knock_value = rand16(0, 800);
+        sensors_data.knock_freq = rand16(4000, 10000);
+        continue;
+      }
 
     sensors_data.knock_value = calculateKnockIntensity(
                 settings.knockFreq,

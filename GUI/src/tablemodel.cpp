@@ -43,34 +43,47 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     float val = value.toFloat();
     float newvalue = val;
     QStandardItem * item = this->itemFromIndex(index);
+    bool notify = false;
+    bool result;
 
     if (item == NULL)
         return false;
+
+    if (val == item->data(Qt::EditRole))
+      return false;
 
     if (val > mMax)
         newvalue = mMax;
     else if (val < mMin)
         newvalue = mMin;
 
+    /* Manual cell edit, add action to undo/redo log */
     if (role == Qt::EditRole)
     {
         mStack->push(new ModelEditCommand(item, QVariant(newvalue), mName, this));
-        emit cellValueChanged(index.row(), index.column());
+        notify = true;
     }
+    /* Read only cell edit - No extra action */
     else if (role == Qt::UserRole)
     {
         role = Qt::EditRole;
-        emit cellValueChanged(index.row(), index.column());
+        notify = true;
     }
-    else if (role == Qt::UserRole+1)
+    /* Silent edit, for full tables update */
+    else
     {
-        role = Qt::EditRole;
+        qWarning("Unknown cell value edit role: %d", role);
     }
     item->setData(this->NumberToColor(newvalue, true), Qt::BackgroundRole);
     item->setData(QColor(Qt::white), Qt::ForegroundRole);
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
 
-    return QStandardItemModel::setData(index, newvalue, role);
+    result = QStandardItemModel::setData(index, newvalue, role);
+
+    if (notify)
+      emit cellValueChanged(index.row(), index.column());
+
+    return result;
 }
 
 void TableModel::setDataFromArray(const quint8 *array, float multiplier)
@@ -84,17 +97,20 @@ void TableModel::setDataFromArray(const quint8 *array, float multiplier)
         {
             idx = this->index(i, j);
             data = (float)array[(i*this->columnCount())+j] * multiplier;
+
+            /* Skip if data unchanged */
+            if (data == this->data(idx, Qt::EditRole)) continue;
+
             if (idx.isValid() && data > 0)
             {
-                this->setData(idx, QVariant(data), Qt::UserRole+1);
-                emit cellValueChanged(i, j);
+                this->setData(idx, QVariant(data), Qt::UserRole);
             }
             else
             {
                 QStandardItem * item = this->itemFromIndex(idx);
                 if (item == NULL)
                     continue;
-                item->setData(QColor(Qt::white), Qt::BackgroundRole);
+                item->setData(QColor(Qt::gray), Qt::BackgroundRole);
                 QStandardItemModel::setData(idx, QVariant(), Qt::EditRole);
             }
         }

@@ -812,6 +812,15 @@
                       <normaloff>:/oxygen/32x32/apps/utilities-log-viewer.png</normaloff>:/oxygen/32x32/apps/utilities-log-viewer.png</iconset>
                     </property>
                    </item>
+                   <item>
+                    <property name="text">
+                     <string>Test</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../res/oxygen.qrc">
+                      <normaloff>:/oxygen/32x32/actions/view-media-equalizer.png</normaloff>:/oxygen/32x32/actions/view-media-equalizer.png</iconset>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                  <item row="0" column="0">
@@ -1644,6 +1653,15 @@
                  <property name="icon">
                   <iconset resource="../res/oxygen.qrc">
                    <normaloff>:/oxygen/32x32/devices/modem.png</normaloff>:/oxygen/32x32/devices/modem.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Test</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/actions/view-media-equalizer.png</normaloff>:/oxygen/32x32/actions/view-media-equalizer.png</iconset>
                  </property>
                 </item>
                </widget>

@@ -14,6 +14,8 @@
   #define DEBUGEN(x)
 #endif
 
+uint16_t rand16(uint16_t min, uint16_t max);
+uint32_t rand32(uint32_t min, uint32_t max);
 uint32_t leToInt(uint8_t *ptr);
 uint32_t beToInt(uint8_t *ptr);
 uint8_t checksum(const uint8_t *data, uint8_t length);

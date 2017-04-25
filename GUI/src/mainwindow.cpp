@@ -854,6 +854,8 @@ void MainWindow::onReadMtlSettings()
             mMainUi->cbAFRInput->setCurrentIndex(2);
         else if (mMtl->getFunctionAFR_OBD())
             mMainUi->cbAFRInput->setCurrentIndex(3);
+        else if (mMtl->getFunctionAFR_Test())
+            mMainUi->cbAFRInput->setCurrentIndex(4);
 
         if (mMtl->getFunctionInput_Direct())
             mMainUi->cbInputType->setCurrentIndex(0);
@@ -861,6 +863,8 @@ void MainWindow::onReadMtlSettings()
             mMainUi->cbInputType->setCurrentIndex(1);
         else if (mMtl->getFunctionInput_Yamaha())
             mMainUi->cbInputType->setCurrentIndex(2);
+        else if (mMtl->getFunctionInput_Test())
+            mMainUi->cbInputType->setCurrentIndex(3);
 
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
         mMainUi->cbOBDEmulator->setChecked(mMtl->getFunctionOBDEmulator());
@@ -899,6 +903,10 @@ void MainWindow::onWriteMtlSettings()
         mMtl->setFunctionAFR_OBD();
         break;
 
+        case 4:
+        mMtl->setFunctionAFR_Test();
+        break;
+
         default:
         mMtl->setFunctionAFR_Disabled();
         break;
@@ -916,6 +924,10 @@ void MainWindow::onWriteMtlSettings()
 
         case 2:
         mMtl->setFunctionInput_Yamaha();
+        break;
+
+        case 3:
+        mMtl->setFunctionInput_Test();
         break;
 
         default:
@@ -951,5 +963,5 @@ void MainWindow::calculateFuelOffset(int row, int column)
   offset = (value - target) / ((value + target) / 2.0) * 100.0;
 
   idx = mFuelOffsetModel.index(row, column);
-  mFuelOffsetModel.setData(idx, offset);
+  mFuelOffsetModel.setData(idx, offset, Qt::UserRole);
 }

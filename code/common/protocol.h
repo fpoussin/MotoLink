@@ -62,12 +62,14 @@
 #define AFR_INPUT_MTS (uint8_t)0x01
 #define AFR_INPUT_AN (uint8_t)0x02
 #define AFR_INPUT_OBD (uint8_t)0x03
+#define AFR_INPUT_TEST (uint8_t)0x04
 
 #define SENSORS_INPUT_DIRECT (uint8_t)0x00
 #define SENSORS_INPUT_COM (uint8_t)0x01
 #define SENSORS_INPUT_OBD_KLINE (uint8_t)0x02
 #define SENSORS_INPUT_OBD_CAN (uint8_t)0x03
 #define SENSORS_INPUT_YAMAHA_CAN (uint8_t)0x04
+#define SENSORS_INPUT_TEST (uint8_t)0x05
 
 
 typedef uint32_t crc_t;

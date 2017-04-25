@@ -2,6 +2,43 @@
 #include "common.h"
 #include "string.h"
 #include "vectors.h"
+#include <stdlib.h>
+
+uint16_t rand16(uint16_t min, uint16_t max)
+{
+    uint16_t r;
+    const uint16_t range = 1 + max - min;
+    const uint16_t buckets = (RAND_MAX & 0xFFFF) / range;
+    const uint16_t limit = buckets * range;
+
+    /* Create equal size buckets all in a row, then fire randomly towards
+     * the buckets until you land in one of them. All buckets are equally
+     * likely. If you land off the end of the line of buckets, try again. */
+    do
+    {
+        r = (rand() & 0xFFFF);
+    } while (r >= limit);
+
+    return min + (r / buckets);
+}
+
+uint32_t rand32(uint32_t min, uint32_t max)
+{
+    uint32_t r;
+    const uint32_t range = 1 + max - min;
+    const uint32_t buckets = RAND_MAX / range;
+    const uint32_t limit = buckets * range;
+
+    /* Create equal size buckets all in a row, then fire randomly towards
+     * the buckets until you land in one of them. All buckets are equally
+     * likely. If you land off the end of the line of buckets, try again. */
+    do
+    {
+        r = rand();
+    } while (r >= limit);
+
+    return min + (r / buckets);
+}
 
 inline uint32_t leToInt(uint8_t *ptr) {
 

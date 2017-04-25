@@ -88,11 +88,13 @@ public:
     inline bool getFunctionAFR_Analog(void) { return mSettings.afrInput == AFR_INPUT_AN ;}
     inline bool getFunctionAFR_MTS(void) { return mSettings.afrInput == AFR_INPUT_MTS ;}
     inline bool getFunctionAFR_OBD(void) { return mSettings.afrInput == AFR_INPUT_OBD ;}
+    inline bool getFunctionAFR_Test(void) { return mSettings.afrInput == AFR_INPUT_TEST ;}
     inline bool getFunctionRecording(void) { return mSettings.functions & FUNC_RECORD ;}
     inline bool getFunctionOBDEmulator(void) {return mSettings.functions & FUNC_OBD; }
     inline bool getFunctionInput_Direct(void) { return mSettings.sensorsInput == SENSORS_INPUT_DIRECT ;}
     inline bool getFunctionInput_OBD(void) { return mSettings.sensorsInput == SENSORS_INPUT_OBD_CAN ;}
     inline bool getFunctionInput_Yamaha(void) { return mSettings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN ;}
+    inline bool getFunctionInput_Test(void) { return mSettings.sensorsInput == SENSORS_INPUT_TEST ;}
 
     // Set
     inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
@@ -106,6 +108,7 @@ public:
     inline void setFunctionAFR_Analog(void) {   mSettings.afrInput =  AFR_INPUT_AN ;}
     inline void setFunctionAFR_MTS(void) {      mSettings.afrInput =  AFR_INPUT_MTS ;}
     inline void setFunctionAFR_OBD(void) {      mSettings.afrInput =  AFR_INPUT_OBD ;}
+    inline void setFunctionAFR_Test(void) {      mSettings.afrInput =  AFR_INPUT_TEST ;}
     inline void setFunctionRecord(bool on) {    if (on) mSettings.functions |= FUNC_RECORD;
                                                 else mSettings.functions &= ~FUNC_RECORD ;}
     inline void setFunctionOBDEmulator(bool on) {if (on) mSettings.functions |= FUNC_OBD;
@@ -114,6 +117,7 @@ public:
     inline void setFunctionInput_Direct(void) { mSettings.sensorsInput = 0 ;}
     inline void setFunctionInput_OBD(void) {    mSettings.sensorsInput = SENSORS_INPUT_OBD_CAN ;}
     inline void setFunctionInput_Yamaha(void) { mSettings.sensorsInput = SENSORS_INPUT_YAMAHA_CAN ;}
+    inline void setFunctionInput_Test(void) { mSettings.sensorsInput = SENSORS_INPUT_TEST ;}
 
 public slots:
     bool usbConnect(void);
