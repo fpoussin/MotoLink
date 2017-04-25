@@ -235,7 +235,7 @@ void MainWindow::showAbout()
        tr("<strong>App Version: ") + __MTL_VER__ + "</strong><br/>"+
        tr("<strong>Bundled firmware Version: ") + Fwv + "</strong><br/>"+
        tr("Built on: ") + QString(__DATE__)+" "+QString(__TIME__) + "<br/><br/>"+
-       tr("Motolink is a smart interface designed mapping ECUs.<br/><br/>"
+       tr("Motolink is a smart ECU mapping interface.<br/><br/>"
        "You can find more information "
        "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
 }
@@ -717,8 +717,8 @@ void MainWindow::onKnockSpectrumReceived(const QByteArray *data)
 
 void MainWindow::onTablesReceived(const quint8 *afr, const quint8 *knock)
 {
-    mAFRModel.setDataFromArray(afr, 0.1);
-    mKnockModel.setDataFromArray(knock, 1.0);
+    mAFRModel.setDataFromArray(afr, 0.1f);
+    mKnockModel.setDataFromArray(knock, 1.0f);
     this->setTablesCursor(mMtl->getRow(), mMtl->getColumn());
 }
 
