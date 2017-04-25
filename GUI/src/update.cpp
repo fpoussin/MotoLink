@@ -55,12 +55,12 @@ void Update::onResult(QNetworkReply *reply)
     mNewVersion = version;
     if (mCurrentVersion.compare(mNewVersion) < 0)
     {
-        qDebug("New version available: %s", version.toStdString().c_str());
+        qInfo("New version available: %s", version.toStdString().c_str());
         emit newVersionAvailable(version);
     }
     else
     {
-        qDebug("Using latest version: %s", version.toStdString().c_str());
+        qInfo("Using latest version: %s", __MTL_VER__);
     }
 
 }
