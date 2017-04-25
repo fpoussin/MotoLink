@@ -334,7 +334,7 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
         sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
     }
     else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
-        sensors_data.tps = rand16(0, 25500) / 100;
+        sensors_data.tps = rand16(0, 200);
         sensors_data.rpm = rand16(10, 18000);
         sensors_data.spd = rand16(5, 10000);
     }
