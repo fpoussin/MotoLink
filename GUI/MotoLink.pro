@@ -14,7 +14,7 @@ TARGET = MotoLink
 TEMPLATE = app
 #win32:CONFIG += console
 
-VERSION = 0.8.0
+VERSION = 0.8.1
 message(Version $$VERSION)
 
 DEFINES *= QT_USE_QSTRINGBUILDER
