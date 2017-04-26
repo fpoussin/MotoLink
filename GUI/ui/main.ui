@@ -96,7 +96,7 @@
          <bool>false</bool>
         </property>
         <property name="format">
-         <string>%p RPM</string>
+         <string>%v RPM</string>
         </property>
        </widget>
       </item>
