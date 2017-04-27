@@ -1,6 +1,20 @@
 #!/usr/bin/python
 
+__author__ = 'Fabien Poussin'
+__version__ = '0.2'
+
+
 import re
+from xml.etree import ElementTree as etree
+import argparse
+from jinja2 import Template
+import pprint
+
+pretty_print = pprint.PrettyPrinter(indent=2)
+
+
+def pprint(*kwargs):
+    pretty_print.pprint(kwargs)
 
 PIN_MODE_INPUT = "PIN_MODE_INPUT({0})"
 PIN_MODE_OUTPUT = "PIN_MODE_OUTPUT({0})"
@@ -10,439 +24,239 @@ PIN_ODR_LOW = "PIN_ODR_LOW({0})"
 PIN_ODR_HIGH = "PIN_ODR_HIGH({0})"
 PIN_OTYPE_PUSHPULL = "PIN_OTYPE_PUSHPULL({0})"
 PIN_OTYPE_OPENDRAIN = "PIN_OTYPE_OPENDRAIN({0})"
-PIN_OSPEED_2M = "PIN_OSPEED_2M({0})"
-PIN_OSPEED_25M = "PIN_OSPEED_25M({0})"
-PIN_OSPEED_50M = "PIN_OSPEED_50M({0})"
-PIN_OSPEED_100M = "PIN_OSPEED_100M({0})"
+PIN_OSPEED_VERYLOW = "PIN_OSPEED_VERYLOW({0})"
+PIN_OSPEED_LOW = "PIN_OSPEED_LOW({0})"
+PIN_OSPEED_MEDIUM = "PIN_OSPEED_MEDIUM({0})"
+PIN_OSPEED_HIGH = "PIN_OSPEED_HIGH({0})"
 PIN_PUPDR_FLOATING = "PIN_PUPDR_FLOATING({0})"
 PIN_PUPDR_PULLUP = "PIN_PUPDR_PULLUP({0})"
 PIN_PUPDR_PULLDOWN = "PIN_PUPDR_PULLDOWN({0})"
 PIN_AFIO_AF = "PIN_AFIO_AF({0}, {1})"
 
-PIN_MODER = "VAL_GPIO{0}_MODER"
-PIN_OTYPER = "VAL_GPIO{0}_OTYPER"
-PIN_OSPEEDR = "VAL_GPIO{0}_OSPEEDR"
-PIN_PUPDR = "VAL_GPIO{0}_PUPDR"
-PIN_ODR = "VAL_GPIO{0}_ODR"
-PIN_AFRL = "VAL_GPIO{0}_AFRL"
-PIN_AFRH = "VAL_GPIO{0}_AFRH"
+FMT = '{0}'
+FMT_DEF = '({0})'
 
-FMT = "{0}"
+PIN_CONF_LIST = ['MODER', 'OTYPER', 'OSPEEDR', 'PUPDR', 'ODR']
+PIN_CONF_LIST_AF = ['AFRL', 'AFRH']
 
-PIN_CONF_LIST = [PIN_MODER, PIN_OTYPER, PIN_OSPEEDR, PIN_PUPDR, PIN_ODR]
-PIN_CONF_LIST_AF = [PIN_AFRL, PIN_AFRH]
-PIN_SEP = "| \\"
+DEFAULT_PAD = {"SIGNAL": "UNUSED",
+               "LABEL": "",
+               "MODER": PIN_MODE_ANALOG,
+               "OTYPER": PIN_OTYPE_PUSHPULL,
+               "OSPEEDR": PIN_OSPEED_VERYLOW,
+               "PUPDR": PIN_PUPDR_FLOATING,
+               "ODR": PIN_ODR_HIGH}
 
-# Default values for all ports
-PIN_FUNC_MAPPING_DEFAULT = {
+PIN_MODE_TRANSLATE = {"GPIO_MODE_AF_PP": PIN_MODE_ALTERNATE,
+                      "GPIO_MODE_ANALOG": PIN_MODE_ANALOG,
+                      "GPIO_MODE_INPUT": PIN_MODE_INPUT,
+                      "GPIO_MODE_OUTPUT": PIN_MODE_OUTPUT,
+                      "GPIO_MODE_OUTPUT_PP": PIN_MODE_OUTPUT,
+                      "GPIO_MODE_OUTPUT_OD": PIN_MODE_OUTPUT}
 
-        "GPIO_Input": (PIN_MODE_INPUT,
-                       PIN_OTYPE_PUSHPULL,
-                       PIN_OSPEED_2M,
-                       PIN_PUPDR_PULLUP,
-                       PIN_ODR_HIGH,
-                       PIN_AFIO_AF.format("{0}", 0)),
+PIN_OTYPE_TRANSLATE = {"GPIO_MODE_OUTPUT_PP": PIN_OTYPE_PUSHPULL,
+                        "GPIO_MODE_OUTPUT_OD": PIN_OTYPE_OPENDRAIN}
 
-        "GPIO_Output": (PIN_MODE_OUTPUT,
-                        PIN_OTYPE_PUSHPULL,
-                        PIN_OSPEED_50M,
-                        PIN_PUPDR_FLOATING,
-                        PIN_ODR_HIGH,
-                        PIN_AFIO_AF.format("{0}", 0)),
+PIN_OSPEED_TRANSLATE = {"GPIO_SPEED_FREQ_LOW": PIN_OSPEED_VERYLOW,
+                        "GPIO_SPEED_FREQ_MEDIUM": PIN_OSPEED_LOW,
+                        "GPIO_SPEED_FREQ_HIGH": PIN_OSPEED_MEDIUM,
+                        "GPIO_SPEED_FREQ_VERY_HIGH": PIN_OSPEED_HIGH
+                        }
 
-        "GPIO_Analog": (PIN_MODE_ANALOG,
-                        PIN_OTYPE_PUSHPULL,
-                        PIN_OSPEED_2M,
-                        PIN_PUPDR_FLOATING,
-                        PIN_ODR_HIGH,
-                        PIN_AFIO_AF.format("{0}", 0)),
+PIN_PUPDR_TRANSLATE = {"GPIO_NOPULL": PIN_PUPDR_FLOATING,
+                       "GPIO_PULLUP": PIN_PUPDR_PULLUP,
+                       "GPIO_PULLDOWN": PIN_PUPDR_PULLDOWN}
 
-        "SWDIO": (PIN_MODE_ALTERNATE,
-                  PIN_OTYPE_PUSHPULL,
-                  PIN_OSPEED_2M,
-                  PIN_PUPDR_FLOATING,
-                  PIN_ODR_HIGH,
-                  PIN_AFIO_AF.format("{0}", 0)),
+parser = argparse.ArgumentParser(description='Generate GPIO header file from STM32CubeMX file.')
+parser.add_argument('-g', '--gpio', default='GPIO-STM32F303_gpio_v1_0_Modes.xml', type=str)
+parser.add_argument('-b', '--project', default='../../board/board.ioc', type=str)
+parser.add_argument('-o', '--output', default='board_gpio.h', type=str)
 
-        "SWCLK": (PIN_MODE_ALTERNATE,
-                  PIN_OTYPE_PUSHPULL,
-                  PIN_OSPEED_2M,
-                  PIN_PUPDR_FLOATING,
-                  PIN_ODR_HIGH,
-                  PIN_AFIO_AF.format("{0}", 0)),
 
-        "(RCC|SYS)_OSC": (PIN_MODE_INPUT,
-                          PIN_OTYPE_PUSHPULL,
-                          PIN_OSPEED_2M,
-                          PIN_PUPDR_FLOATING,
-                          PIN_ODR_HIGH,
-                          PIN_AFIO_AF.format("{0}", 0)),
+def open_xml(filename):
+    #  Remove namespace
+    with open(filename, 'r') as xmlfile:
+        xml = re.sub(' xmlns="[^"]+"', '', xmlfile.read(), count=1)
+    return etree.fromstring(xml)
 
-        "ADC[x1-4]": (PIN_MODE_ANALOG,
-                      PIN_OTYPE_PUSHPULL,
-                      PIN_OSPEED_2M,
-                      PIN_PUPDR_FLOATING,
-                      PIN_ODR_HIGH,
-                      PIN_AFIO_AF.format("{0}", 0)),
 
-        "DAC": (PIN_MODE_ANALOG,
-                PIN_OTYPE_PUSHPULL,
-                PIN_OSPEED_2M,
-                PIN_PUPDR_FLOATING,
-                PIN_ODR_HIGH,
-                PIN_AFIO_AF.format("{0}", 0)),
+def char_range(c1, c2):
+    """Generates the characters from `c1` to `c2`, inclusive."""
+    for c in range(ord(c1), ord(c2)+1):
+        yield chr(c)
 
-        "CAN_TX": (PIN_MODE_ALTERNATE,
-                   PIN_OTYPE_PUSHPULL,
-                   PIN_OSPEED_50M,
-                   PIN_PUPDR_FLOATING,
-                   PIN_ODR_HIGH,
-                   PIN_AFIO_AF.format("{0}", 9)),
 
-        "CAN_RX": (PIN_MODE_ALTERNATE,
-                   PIN_OTYPE_PUSHPULL,
-                   PIN_OSPEED_50M,
-                   PIN_PUPDR_FLOATING,
-                   PIN_ODR_HIGH,
-                   PIN_AFIO_AF.format("{0}", 9)),
+def read_gpio(filename):
+    gpio = {'ports': {}, 'defaults': {}, 'modes': {}}
+    root = open_xml(filename)
 
-        "TIM2_CH[34]": (PIN_MODE_ALTERNATE,
-                        PIN_OTYPE_PUSHPULL,
-                        PIN_OSPEED_50M,
-                        PIN_PUPDR_FLOATING,
-                        PIN_ODR_HIGH,
-                        PIN_AFIO_AF.format("{0}", 1)),
+    gpio['defaults']['GPIO_Mode'] = 'GPIO_MODE_ANALOG'
 
-        "TIM3_CH[1-4]": (PIN_MODE_ALTERNATE,
-                         PIN_OTYPE_PUSHPULL,
-                         PIN_OSPEED_50M,
-                         PIN_PUPDR_FLOATING,
-                         PIN_ODR_HIGH,
-                         PIN_AFIO_AF.format("{0}", 2)),
+    for modes in root.findall("RefParameter"):
+        try:
+            name = modes.attrib['Name']
+            gpio['defaults'][name] = modes.attrib['DefaultValue']
+            gpio['modes'][name] = []
+        except KeyError as e:
+            continue
 
-        "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
-                         PIN_OTYPE_PUSHPULL,
-                         PIN_OSPEED_50M,
-                         PIN_PUPDR_FLOATING,
-                         PIN_ODR_HIGH,
-                         PIN_AFIO_AF.format("{0}", 10)),
+        if 'GPIO_' not in name:
+            continue
 
-        "USART[1-3]_TX": (PIN_MODE_ALTERNATE,
-                          PIN_OTYPE_OPENDRAIN,
-                          PIN_OSPEED_50M,
-                          PIN_PUPDR_FLOATING,
-                          PIN_ODR_HIGH,
-                          PIN_AFIO_AF.format("{0}", 7)),
+        for m in modes.findall("PossibleValue"):
+            prop_val = m.attrib['Value']
+            gpio['modes'][name].append(prop_val)
 
-        "USART[1-3]_RX": (PIN_MODE_ALTERNATE,
-                          PIN_OTYPE_OPENDRAIN,
-                          PIN_OSPEED_50M,
-                          PIN_PUPDR_FLOATING,
-                          PIN_ODR_HIGH,
-                          PIN_AFIO_AF.format("{0}", 7)),
+    for pin in root.findall('GPIO_Pin'):
+        try:
+            port = pin.attrib['Name'][1]
+            num = int(pin.attrib['Name'][2:])
+            if port not in gpio['ports']:
+                gpio['ports'][port] = {}
+            if num not in gpio['ports'][port]:
+                gpio['ports'][port][num] = {}
+        except ValueError as e:
+            continue
 
-        "USB": (PIN_MODE_ALTERNATE,
-                PIN_OTYPE_PUSHPULL,
-                PIN_OSPEED_100M,
-                PIN_PUPDR_FLOATING,
-                PIN_ODR_HIGH,
-                PIN_AFIO_AF.format("{0}", 14)),
+        for s in pin.findall('PinSignal'):
+            try:
+                af = s.find('SpecificParameter/PossibleValue').text
+                af = int(''.join(af.split('_')[1])[2:])
+                gpio['ports'][port][num][s.attrib['Name']] = af
+            except ValueError as e:
+                print(e)
+            except AttributeError as e:
+                print(e)
 
-        "SPI[12]_(MOSI|SCK)": (PIN_MODE_ALTERNATE,
-                     PIN_OTYPE_PUSHPULL,
-                     PIN_OSPEED_100M,
-                     PIN_PUPDR_FLOATING,
-                     PIN_ODR_HIGH,
-                     PIN_AFIO_AF.format("{0}", 5)),
+    return gpio
 
-        "SPI[12]_NSS": (PIN_MODE_OUTPUT,
-                     PIN_OTYPE_PUSHPULL,
-                     PIN_OSPEED_100M,
-                     PIN_PUPDR_FLOATING,
-                     PIN_ODR_HIGH,
-                     PIN_AFIO_AF.format("{0}", 0)),
-
-        "SPI[12]_MISO": (PIN_MODE_ALTERNATE,
-                     PIN_OTYPE_OPENDRAIN,
-                     PIN_OSPEED_100M,
-                     PIN_PUPDR_FLOATING,
-                     PIN_ODR_HIGH,
-                     PIN_AFIO_AF.format("{0}", 5)),
-
-        "(RCC|SYS)_MCO": (PIN_MODE_ALTERNATE,
-                          PIN_OTYPE_PUSHPULL,
-                          PIN_OSPEED_100M,
-                          PIN_PUPDR_FLOATING,
-                          PIN_ODR_HIGH,
-                          PIN_AFIO_AF.format("{0}", 0)),
-}
-
-PIN_FUNC_MAPPING = {
-        "A": {  # Values for Port A
-            "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
-                             PIN_OTYPE_PUSHPULL,
-                             PIN_OSPEED_50M,
-                             PIN_PUPDR_FLOATING,
-                             PIN_ODR_HIGH,
-                             PIN_AFIO_AF.format("{0}", 2)),
-
-            "SPI[12]_": (PIN_MODE_ALTERNATE,
-                         PIN_OTYPE_PUSHPULL,
-                         PIN_OSPEED_100M,
-                         PIN_PUPDR_FLOATING,
-                         PIN_ODR_HIGH,
-                         PIN_AFIO_AF.format("{0}", 5)),
-        },
-
-        "B": {  # Values for Port B
-            "TIM4_CH[1-4]": (PIN_MODE_ALTERNATE,
-                             PIN_OTYPE_PUSHPULL,
-                             PIN_OSPEED_50M,
-                             PIN_PUPDR_FLOATING,
-                             PIN_ODR_HIGH,
-                             PIN_AFIO_AF.format("{0}", 2))
-        },
-}
-
-GPIO_SPEED = {"GPIO_SPEED_LOW": PIN_OSPEED_2M,
-              "GPIO_SPEED_MEDIUM": PIN_OSPEED_50M,
-              "GPIO_SPEED_HIGH": PIN_OSPEED_100M}
-
-GPIO_MODE = {"GPIO_MODE_INPUT": PIN_MODE_INPUT,
-             "GPIO_MODE_ANALOG": PIN_MODE_ANALOG,
-             "GPIO_MODE_AF_PP": PIN_MODE_ALTERNATE,
-             "GPIO_MODE_OUTPUT_PP": PIN_OTYPE_PUSHPULL,
-             "GPIO_MODE_OUTPUT_OD": PIN_OTYPE_OPENDRAIN}
-
-GPIO_PUPD = {"GPIO_PULLUP": PIN_PUPDR_PULLUP,
-             "GPIO_PULLDOWN": PIN_PUPDR_PULLDOWN,
-             "GPIO_NOPULL": PIN_PUPDR_FLOATING}
-
-DEFAULT_PAD = {"signal": "GPIO_Analog",
-               "label": None,
-               "pupd": None,
-               "otype": None,
-               "speed": None}
-
-MX_FILE_PATH = "../../board/board.ioc"
-
-error = False
-
-# Sort ports and pads
-signals = {}
-all_pads = {}
-
-# Default all pads to analog
-for p in ["A", "B", "C", "D", "E", "F"]:
-    all_pads[p] = {}
-    for i in range(16):
-        all_pads[p][i] = DEFAULT_PAD.copy()
-
-mx_file = open(MX_FILE_PATH, 'r')
-tmp = mx_file.readlines()
-mx_file.close()
 
 # Extract signals from IOC
-lines = []
+def read_project(gpio, filename):
+    with open(filename, 'r') as mx_file:
+        tmp = mx_file.readlines()
+    pads = {}
 
-for t in tmp:
-    if re.search(r"^P[A-L]\d{1,2}(-OSC.+)?\.", t, re.M):
-        split = t.split('=')
-        pad_name = split[0].split(".")[0]
-        pad_port = pad_name[1:2]
-        pad_num = int(pad_name[2:4].replace('.', '').replace('-', ''))
-        pad_prop = split[0].split(".")[-1]
-        prop_value = split[-1].rstrip('\r\n')
+    # Default all pads to analog
+    for p in gpio['ports'].keys():
+        pads[p] = {}
+        for i in range(0, 16):
+            pads[p][i] = DEFAULT_PAD.copy()
+            pads[p][i]['PUPDR'] = PIN_PUPDR_TRANSLATE[gpio['defaults']['GPIO_PuPdOD']]
+            pads[p][i]['OTYPER'] = PIN_OTYPE_TRANSLATE[gpio['defaults']['GPIO_ModeDefaultOutputPP']]
+            pads[p][i]['OSPEEDR'] = PIN_OSPEED_TRANSLATE[gpio['defaults']['GPIO_Speed']]
 
-        if pad_prop == "Signal":
-            all_pads[pad_port][pad_num]["signal"] = prop_value
-        if pad_prop == "GPIO_Label":
-            all_pads[pad_port][pad_num]["label"] = prop_value
-        if pad_prop == "GPIO_PuPd":
-            all_pads[pad_port][pad_num]["pupd"] = prop_value
-        if pad_prop == "GPIO_ModeDefaultOutputPP":
-            all_pads[pad_port][pad_num]["otype"] = prop_value
-        if pad_prop == "GPIO_Speed":
-            all_pads[pad_port][pad_num]["speed"] = prop_value
+    for t in tmp:
+        if re.search(r"^P[A-Z]\d{1,2}(-OSC.+)?\.", t, re.M):
+            split = t.split('=')
+            pad_name = split[0].split(".")[0]
+            pad_port = pad_name[1:2]
+            pad_num = int(pad_name[2:4].replace('.', '').replace('-', ''))
+            pad_prop = split[0].split(".")[-1]
+            prop_value = split[-1].rstrip('\r\n')
 
-    if "Signal" in t:
-        lines.append(t.rstrip('\n'))
+            if pad_prop == "Signal":
+                pads[pad_port][pad_num]["SIGNAL"] = prop_value
+                pads[pad_port][pad_num]["MODER"] = PIN_MODE_ALTERNATE
+                pads[pad_port][pad_num]["OSPEEDR"] = PIN_OSPEED_MEDIUM
+            elif pad_prop == "GPIO_Mode":
+                pads[pad_port][pad_num]["MODER"] = PIN_MODE_TRANSLATE[prop_value]
+            elif pad_prop == "GPIO_Label":
+                pads[pad_port][pad_num]["LABEL"] = prop_value
+            elif pad_prop == "GPIO_PuPd":
+                pads[pad_port][pad_num]["PUPDR"] = PIN_PUPDR_TRANSLATE[prop_value]
+            elif pad_prop == "GPIO_ModeDefaultOutputPP":
+                pads[pad_port][pad_num]["OTYPER"] = PIN_OTYPE_TRANSLATE[prop_value]
+                pads[pad_port][pad_num]["MODER"] = PIN_MODE_OUTPUT
+            elif pad_prop == "GPIO_Speed":
+                pads[pad_port][pad_num]["OSPEEDR"] = PIN_OSPEED_TRANSLATE[prop_value]
 
-output = "#ifndef _BOARD_GPIO_H_\n#define _BOARD_GPIO_H_\n\n"
-sorted_signals = sorted(signals.keys())
+    return pads
+
 
 # Add defines for all pins with labels
-for port_key in sorted(all_pads.keys()):
-    for pad_key in sorted(all_pads[port_key].keys()):
-        pad_data = all_pads[port_key][pad_key]
-        print "P{0}{1} - {2}".format(port_key, pad_key, pad_data)
-        if pad_data['signal'] != "GPIO_Analog":
-            if not pad_data['label']:
-                pad_data['label'] = pad_data['signal']
-            pad_data['label'] = pad_data['label'].replace('-', '_')
-            output += "#define PORT_{0} GPIO{1}\n".format(
-                    pad_data['label'],
-                    port_key)
-            output += "#define PAD_{0} {1}\n".format(
-                    pad_data['label'],
-                    pad_key)
-            if "TIM" in pad_data['signal'] and "CH" in pad_data['signal']:
-                timer = pad_data['signal'].replace('S_TIM', '').replace('_CH', '')[:-1]
-                output += "#define TIM_{0} TIM{1}\n".format(
-                        pad_data['label'],
-                        timer)
-                output += "#define CCR_{0} CCR{1}\n".format(
-                        pad_data['label'],
-                        int(pad_data['signal'][-1:]))
-                output += "#define PWMD_{0} PWMD{1}\n".format(
-                        pad_data['label'],
-                        timer)
-                output += "#define ICUD_{0} ICUD{1}\n".format(
-                        pad_data['label'],
-                        timer)
-                output += "#define CHN_{0} {1}\n\n".format(
-                        pad_data['label'],
-                        int(pad_data['signal'][-1:])-1)
-            else:
-                output += "\n"
+def gen_defines(project):
+    defines = {}
 
-# Each Port (A...L)
-for port_key in sorted(all_pads.keys()):
+    for port_key in sorted(project.keys()):
+        for pad_key in sorted(project[port_key].keys()):
 
-    output += "/* PORT "+port_key+" */\n"
+            pad_data = project[port_key][pad_key]
+            if pad_data['SIGNAL'] != 'UNUSED' and not pad_data['LABEL']:
+                pad_data['LABEL'] = pad_data['SIGNAL']
+            pad_data['LABEL'] = pad_data['LABEL'].replace('-', '_')
+            label = pad_data['LABEL']
+            signal = pad_data['SIGNAL']
+            if not label:
+                continue
 
-    # Each property (mode, output/input...)
-    for i in range(len(PIN_CONF_LIST)):
-        output += "#define "
-        output += PIN_CONF_LIST[i].format(port_key) + " ( \\\n"
+            defines['PORT_'+label] = 'GPIO' + port_key
+            defines['PAD_'+label] = pad_key
 
-        # Each pin (0...15)
-        for pad_key in sorted(all_pads[port_key].keys()):
-            pad_data = all_pads[port_key][pad_key]
-            signal = pad_data["signal"]
-            match = False
+            if re.search(r"TIM\d_CH\d", signal, re.M):
+                timer = signal.replace('S_TIM', '').replace('_CH', '')[:-1]
+                timer_num = int(signal[-1:])
 
-            # Check per port config
-            if port_key in PIN_FUNC_MAPPING:
-                for p in PIN_FUNC_MAPPING[port_key]:
-                    if re.search(p, signal, re.M):
-                        match = True
-                        type_str = PIN_FUNC_MAPPING[port_key][p][i].format(pad_key)
-                        if "GPIO" in signal:
-                            if "OTYPE" in type_str:
-                                if pad_data["otype"]:
-                                    type_str = GPIO_MODE[pad_data["otype"]].format(pad_key)
-                            if "PUPD" in type_str:
-                                if pad_data["pupd"]:
-                                    type_str = GPIO_PUPD[pad_data["pupd"]].format(pad_key)
-                            if "SPEED" in type_str:
-                                if pad_data["speed"]:
-                                    type_str = GPIO_SPEED[pad_data["speed"]].format(pad_key)
+                defines['TIM_' + label] = 'TIM' + timer
+                defines['CCR_' + label] = timer_num
+                defines['PWMD_' + label] = 'PWMD' + timer
+                defines['ICUD_' + label] = 'ICUD' + timer
+                defines['CHN_' + label] = timer_num - 1
+                print(label)
 
-                        output += "    " + type_str + " | \\\n"
-                        break
-
-            # Check default config
-            if not match:
-                for p in PIN_FUNC_MAPPING_DEFAULT:
-                    if re.search(p, signal, re.M):
-                        match = True
-                        type_str = PIN_FUNC_MAPPING_DEFAULT[p][i].format(pad_key)
-                        if "GPIO" in signal:
-                            if "OTYPE" in type_str:
-                                if pad_data["otype"]:
-                                    type_str = GPIO_MODE[pad_data["otype"]].format(pad_key)
-                            if "PUPD" in type_str:
-                                if pad_data["pupd"]:
-                                    type_str = GPIO_PUPD[pad_data["pupd"]].format(pad_key)
-                            if "SPEED" in type_str:
-                                if pad_data["speed"]:
-                                    type_str = GPIO_SPEED[pad_data["speed"]].format(pad_key)
-
-                        output += "    " + type_str + " | \\\n"
-                        break
-
-            if not match:
-                print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
-                error = True
-                break
-        output = output[:-6]
-        output += "))\n"
-        output += "\n"
-
-    # AF Low bytes 0-7
-    output += "#define "
-    output += PIN_CONF_LIST_AF[0].format(port_key) + " ( \\\n"
-    for pad_key in range(8):
-        pad_data = all_pads[port_key][pad_key]
-        signal = pad_data["signal"]
-        match = False
-
-        # Check per port config
-        if port_key in PIN_FUNC_MAPPING:
-            for p in PIN_FUNC_MAPPING[port_key]:
-                if re.search(p, signal, re.M):
-                    match = True
-                    type_str = PIN_FUNC_MAPPING[port_key][p][-1].format(pad_key)
-                    output += "    " + type_str + " | \\\n"
-                    break
-
-        if not match:
-            for p in PIN_FUNC_MAPPING_DEFAULT:
-                if re.search(p, signal, re.M):
-                    match = True
-                    type_str = PIN_FUNC_MAPPING_DEFAULT[p][-1].format(pad_key)
-                    output += "    " + type_str + " | \\\n"
-                    break
-
-        if not match:
-            print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
-            error = True
-            break
-
-    output = output[:-6]
-    output += "))\n"
-    output += "\n"
-
-    # AF High bits 8-15
-    output += "#define "
-    output += PIN_CONF_LIST_AF[1].format(port_key) + " ( \\\n"
-    for pad_key in range(8):
-        pad_key += 8
-        pad_data = all_pads[port_key][pad_key]
-        signal = pad_data["signal"]
-        match = False
-
-        # Check per port config
-        if port_key in PIN_FUNC_MAPPING:
-            for p in PIN_FUNC_MAPPING[port_key]:
-                if re.search(p, signal, re.M):
-                    match = True
-                    type_str = PIN_FUNC_MAPPING[port_key][p][-1].format(pad_key)
-                    output += "    " + type_str + " | \\\n"
-                    break
-
-        if not match:
-            for p in PIN_FUNC_MAPPING_DEFAULT:
-                if re.search(p, signal, re.M):
-                    match = True
-                    type_str = PIN_FUNC_MAPPING_DEFAULT[p][-1].format(pad_key)
-                    output += "    " + type_str + " | \\\n"
-                    break
-
-        if not match:
-            print "Missing Peripheral:", signal, "at", "P" + str(port_key) + str(pad_key)
-            error = True
-            break
-
-    output = output[:-6]
-    output += "))\n"
-    output += "\n"
+    return defines
 
 
-output += "#endif\n"
+# Each Port (A.B.C...)
+def gen_ports(gpio, project):
+    ports = {}
+    for port_key in sorted(project.keys()):
 
-if not error:
-    with open("board_gpio.h", "w") as text_file:
-        text_file.write(output)
-    print "Success!"
+        ports[port_key] = {}
+        # Each property (mode, output/input...)
+        for conf in PIN_CONF_LIST:
+            ports[port_key][conf] = []
+            for pin in project[port_key]:
+                out = project[port_key][pin][conf]
+                out = out.format(pin)
+                ports[port_key][conf].append(out)
+
+        conf = PIN_CONF_LIST_AF[0]
+        ports[port_key][conf] = []
+        for pin in range(0, 8):
+            try:
+                af = project[port_key][pin]['SIGNAL']
+                out = PIN_AFIO_AF.format(pin, gpio['ports'][port_key][pin][af])
+            except KeyError:
+                out = PIN_AFIO_AF.format(pin, 0)
+            ports[port_key][conf].append(out)
+
+        conf = PIN_CONF_LIST_AF[1]
+        ports[port_key][conf] = []
+        for pin in range(8, 16):
+            try:
+                af = project[port_key][pin]['SIGNAL']
+                out = PIN_AFIO_AF.format(pin, gpio['ports'][port_key][pin][af])
+            except KeyError:
+                out = PIN_AFIO_AF.format(pin, 0)
+            ports[port_key][conf].append(out)
+
+    return ports
+
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    gpio = read_gpio(args.gpio)
+    proj = read_project(gpio, args.project)
+    defines = gen_defines(proj)
+    ports = gen_ports(gpio, proj)
+
+    with open('board_gpio.tpl', 'r') as tpl_file:
+        tpl = tpl_file.read()
+    template = Template(tpl)
+
+    defines_sorted = []
+    for d in sorted(defines.keys()):
+        defines_sorted.append((d, defines[d]))
+
+    template.stream(defines=defines_sorted, ports=ports.items()).dump(args.output)

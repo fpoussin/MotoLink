@@ -60,14 +60,15 @@
 #define PIN_ODR_HIGH(n)             (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
-#define PIN_OSPEED_2M(n)            (0U << ((n) * 2))
-#define PIN_OSPEED_25M(n)           (1U << ((n) * 2))
-#define PIN_OSPEED_50M(n)           (2U << ((n) * 2))
-#define PIN_OSPEED_100M(n)          (3U << ((n) * 2))
+#define PIN_OSPEED_VERYLOW(n)       (0U << ((n) * 2))
+#define PIN_OSPEED_LOW(n)           (1U << ((n) * 2))
+#define PIN_OSPEED_MEDIUM(n)        (2U << ((n) * 2))
+#define PIN_OSPEED_HIGH(n)          (3U << ((n) * 2))
 #define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
 #define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
+
 
 /*
  * IO pins assignments.
