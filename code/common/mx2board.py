@@ -156,9 +156,19 @@ def read_project(gpio, filename):
             prop_value = split[-1].rstrip('\r\n')
 
             if pad_prop == "Signal":
-                pads[pad_port][pad_num]["SIGNAL"] = prop_value
-                pads[pad_port][pad_num]["MODER"] = PIN_MODE_ALTERNATE
-                pads[pad_port][pad_num]["OSPEEDR"] = PIN_OSPEED_MEDIUM
+                if 'S_TIM' in prop_value:
+                    prop_value = prop_value[2:]
+
+                if 'ADC' in prop_value or 'DAC' in prop_value:
+                    pads[pad_port][pad_num]["MODER"] = PIN_MODE_ANALOG
+                elif 'GPIO_Output' == prop_value:
+                    pads[pad_port][pad_num]["MODER"] = PIN_MODE_OUTPUT
+                elif 'GPIO_Input' == prop_value:
+                    pads[pad_port][pad_num]["MODER"] = PIN_MODE_INPUT
+                else:
+                    pads[pad_port][pad_num]["SIGNAL"] = prop_value
+                    pads[pad_port][pad_num]["MODER"] = PIN_MODE_ALTERNATE
+                    pads[pad_port][pad_num]["OSPEEDR"] = PIN_OSPEED_MEDIUM
             elif pad_prop == "GPIO_Mode":
                 pads[pad_port][pad_num]["MODER"] = PIN_MODE_TRANSLATE[prop_value]
             elif pad_prop == "GPIO_Label":
@@ -195,14 +205,13 @@ def gen_defines(project):
 
             if re.search(r"TIM\d_CH\d", signal, re.M):
                 timer = signal.replace('S_TIM', '').replace('_CH', '')[:-1]
-                timer_num = int(signal[-1:])
+                ch_num = int(signal[-1:])
 
-                defines['TIM_' + label] = 'TIM' + timer
-                defines['CCR_' + label] = timer_num
-                defines['PWMD_' + label] = 'PWMD' + timer
-                defines['ICUD_' + label] = 'ICUD' + timer
-                defines['CHN_' + label] = timer_num - 1
-                print(label)
+                defines['TIM_' + label] = timer
+                defines['CCR_' + label] = 'CCR' + timer[-1]
+                defines['PWMD_' + label] = 'PWMD' + timer[-1]
+                defines['ICUD_' + label] = 'ICUD' + timer[-1]
+                defines['CHN_' + label] = ch_num - 1
 
     return defines
 
@@ -227,7 +236,8 @@ def gen_ports(gpio, project):
             try:
                 af = project[port_key][pin]['SIGNAL']
                 out = PIN_AFIO_AF.format(pin, gpio['ports'][port_key][pin][af])
-            except KeyError:
+            except KeyError as e:
+                print(e)
                 out = PIN_AFIO_AF.format(pin, 0)
             ports[port_key][conf].append(out)
 
@@ -259,4 +269,8 @@ if __name__ == '__main__':
     for d in sorted(defines.keys()):
         defines_sorted.append((d, defines[d]))
 
-    template.stream(defines=defines_sorted, ports=ports.items()).dump(args.output)
+    ports_sorted = []
+    for p in sorted(ports.keys()):
+        ports_sorted.append((p, ports[p]))
+
+    template.stream(defines=defines_sorted, ports=ports_sorted).dump(args.output)

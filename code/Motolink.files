@@ -607,6 +607,7 @@ bootloader/link.ld
 bootloader/main.c
 bootloader/mcuconf.h
 bootloader/mcuconf_community.h
+common/GPIO-STM32F303_gpio_v1_0_Modes.xml
 common/board.c
 common/board.h
 common/board_gpio.h
