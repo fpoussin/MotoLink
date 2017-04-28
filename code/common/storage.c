@@ -10,7 +10,7 @@ const SPIConfig EEPROM_SPIDCONFIG = {
   PORT_SPI2_NSS,
   PAD_SPI2_NSS,
   0, // Up to 20Mhz
-  SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+  SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0 | SPI_CR2_NSSP
 };
 
 static SPIEepromFileConfig eeVersionsCfg = {

@@ -163,6 +163,8 @@ void boardInit(void) {
   nvicEnableVector(PVD_IRQn, 0); /* Max priority */
 
   srand(ch.tm.offset);
+
+  palSetPadMode(PORT_SPI2_NSS, PAD_SPI2_NSS, PAL_MODE_OUTPUT_PUSHPULL);
 }
 
 /* hang forever */

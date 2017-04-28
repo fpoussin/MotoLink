@@ -159,7 +159,7 @@ def read_project(gpio, filename):
                 if 'S_TIM' in prop_value:
                     prop_value = prop_value[2:]
 
-                if 'ADC' in prop_value or 'DAC' in prop_value:
+                if 'ADC' in prop_value or 'DAC' in prop_value or 'OSC' in prop_value:
                     pads[pad_port][pad_num]["MODER"] = PIN_MODE_ANALOG
                 elif 'GPIO_Output' == prop_value:
                     pads[pad_port][pad_num]["MODER"] = PIN_MODE_OUTPUT
@@ -237,7 +237,6 @@ def gen_ports(gpio, project):
                 af = project[port_key][pin]['SIGNAL']
                 out = PIN_AFIO_AF.format(pin, gpio['ports'][port_key][pin][af])
             except KeyError as e:
-                print(e)
                 out = PIN_AFIO_AF.format(pin, 0)
             ports[port_key][conf].append(out)
 

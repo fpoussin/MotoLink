@@ -29,8 +29,6 @@
 #define PAD_KNOCK_OFFSET 4
 #define PAD_LED1 6
 #define PAD_LED2 7
-#define PAD_RCC_OSC_IN 0
-#define PAD_RCC_OSC_OUT 1
 #define PAD_SCS_TRIG 0
 #define PAD_SPI1_MISO 6
 #define PAD_SPI1_MOSI 7
@@ -66,8 +64,6 @@
 #define PORT_KNOCK_OFFSET GPIOA
 #define PORT_LED1 GPIOB
 #define PORT_LED2 GPIOB
-#define PORT_RCC_OSC_IN GPIOF
-#define PORT_RCC_OSC_OUT GPIOF
 #define PORT_SCS_TRIG GPIOB
 #define PORT_SPI1_MISO GPIOA
 #define PORT_SPI1_MOSI GPIOA
@@ -690,8 +686,8 @@
 
 /* PORT F */
 #define VAL_GPIOF_MODER ( \
-    PIN_MODE_ALTERNATE(0) | \
-    PIN_MODE_ALTERNATE(1) | \
+    PIN_MODE_ANALOG(0) | \
+    PIN_MODE_ANALOG(1) | \
     PIN_MODE_ANALOG(2) | \
     PIN_MODE_ANALOG(3) | \
     PIN_MODE_INPUT(4) | \
@@ -728,8 +724,8 @@
     0)
 
 #define VAL_GPIOF_OSPEEDR ( \
-    PIN_OSPEED_MEDIUM(0) | \
-    PIN_OSPEED_MEDIUM(1) | \
+    PIN_OSPEED_VERYLOW(0) | \
+    PIN_OSPEED_VERYLOW(1) | \
     PIN_OSPEED_VERYLOW(2) | \
     PIN_OSPEED_VERYLOW(3) | \
     PIN_OSPEED_VERYLOW(4) | \
