@@ -27,19 +27,27 @@ void checkCanFilters(CANDriver *canp, const CANConfig *config) {
     canSTM32SetFilters(1, 2, canfilter_yam);
     canStart(canp, config);
   }
+
+  else {
+      canStop(canp);
+      canSTM32SetFilters(1, 0, NULL);
+      canStart(canp, config);
+  }
 }
 
 void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame *rxmsg)
 {
   uint8_t i;
   float ftmp;
-  bool pass = false;
-  // Check address and Mode 1
-  if (rxmsg->data8[0] != 0x01 || rxmsg->RTR != CAN_RTR_DATA)
+  bool pass = true;
+
+  // Check Mode 1
+  if (rxmsg->data8[1] != 0x01)
     return;
 
-  // Test addresses 0x7DF 0x7D0-0x7D7
+  // Test addresses 0x7DF then 0x7D0-0x7D7
   if (rxmsg->SID != 0x7DF) {
+    pass = false;
 
     for (i = 0; i <= 7; i++) {
       if (rxmsg->SID == 0x7D0 + i)
@@ -88,15 +96,15 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     // Main PIDs
     case OBD_PID_LOAD:
     case OBD_PID_TPS:
-      txmsg->data8[3] = ((uint16_t)sensors_data.tps * 255) / 100;
+      txmsg->data8[3] = 0xFF & ((uint16_t)sensors_data.tps * 128) / 100;
       break;
     case OBD_PID_AFR_CNT:
       txmsg->data8[3] = 0x01; // How many oxygen sensors we have
       break;
     case OBD_PID_RPM:
       txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & (sensors_data.rpm >> 8); // RPM MSB
-      txmsg->data8[4] = 0xFF & sensors_data.rpm; // RPM LSB
+      txmsg->data8[3] = 0xFF & sensors_data.rpm; // RPM LSB
+      txmsg->data8[4] = 0xFF & (sensors_data.rpm >> 8); // RPM MSB
       break;
     case OBD_PID_SPEED:
       txmsg->data8[3] = sensors_data.spd;

@@ -115,6 +115,8 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(CHIBIOS_CONTRIB)/os/various/crcsw.c \
+       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        main.c \
        commands.c \
        sensors.c \
@@ -155,7 +157,8 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(STM32DRIVERINC) \
-         $(CHIBIOS)/os/various $(CHIBIOS_CONTRIB)/os/various
+         $(CHIBIOS)/os/various $(CHIBIOS_CONTRIB)/os/various \
+         $(CHIBIOS)/os/hal/lib/streams
 
 #
 # Project, sources and paths

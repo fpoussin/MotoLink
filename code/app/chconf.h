@@ -36,6 +36,7 @@
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
 #define CORTEX_ENABLE_WFI_IDLE TRUE
 #define STM32_DISABLE_EXTI16_HANDLER TRUE
+#define CHPRINT_USE_FLOAT TRUE
 
 /*===========================================================================*/
 /**
@@ -318,7 +319,7 @@
  * @note    Requires @p CH_CFG_USE_WAITEXIT.
  * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#define CH_CFG_USE_DYNAMIC                  FALSE
+#define CH_CFG_USE_DYNAMIC                  TRUE
 
 /** @} */
 

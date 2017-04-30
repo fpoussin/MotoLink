@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.0">
+<eagle version="7.7.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.005" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -152,7 +152,7 @@
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="255" name="routoute" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
-<schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
+<schematic xreflabel="%F%N/%S" xrefpart="/%S.%C%R">
 <libraries>
 <library name="misc">
 <packages>
@@ -8323,7 +8323,7 @@ Source: http://www.jst.com .. eZH.pdf</description>
 <part name="GND34" library="supply1" deviceset="GND" device=""/>
 <part name="R32" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="100K"/>
 <part name="IC_CAN" library="SparkFun-DigitalIC" deviceset="MCP2551" device="" value="MAX3051"/>
-<part name="R3" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="100K"/>
+<part name="R3" library="SparkFun-Resistors" deviceset="RESISTOR" device="0603-RES" value="22K"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>

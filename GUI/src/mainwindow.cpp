@@ -52,9 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mUndoView.setWindowTitle(tr("Actions History - ")+this->windowTitle());
     mHasChanged = false;
 
-    mMainUi->sbThresholdMin->setUndoStack(&mUndoStack);
-    mMainUi->sbThresholdMax->setUndoStack(&mUndoStack);
-
     mFastPollingTimer.setInterval(50);
     mSlowPollingTimer.setInterval(500);
     mTablesTimer.setInterval(200);
@@ -256,9 +253,6 @@ void MainWindow::setupDefaults(void)
     mTablesViewList.append(mMainUi->tableAfrTgt);
     mTablesViewList.append(mMainUi->tableKnk);
     mTablesViewList.append(mMainUi->tableFuelOffset);
-
-    mSpinBoxList.append(mMainUi->sbThresholdMax);
-    mSpinBoxList.append(mMainUi->sbThresholdMin);
 
     mAFRModel.setName(tr("AFR"));
     mAFRTgtModel.setName(tr("AFR Target"));
@@ -866,6 +860,13 @@ void MainWindow::onReadMtlSettings()
         else if (mMtl->getFunctionInput_Test())
             mMainUi->cbInputType->setCurrentIndex(3);
 
+        if (mMtl->getSerialMode_Shell())
+            mMainUi->cbSerialMode->setCurrentIndex(0);
+        else if (mMtl->getSerialMode_Kline())
+            mMainUi->cbSerialMode->setCurrentIndex(1);
+        else if (mMtl->getSerialMode_CanBus())
+            mMainUi->cbSerialMode->setCurrentIndex(2);
+
         mMainUi->cbRecording->setChecked(mMtl->getFunctionRecording());
         mMainUi->cbOBDEmulator->setChecked(mMtl->getFunctionOBDEmulator());
 
@@ -932,6 +933,25 @@ void MainWindow::onWriteMtlSettings()
 
         default:
         mMtl->setFunctionInput_Direct();
+        break;
+    }
+
+    switch (mMainUi->cbSerialMode->currentIndex())
+    {
+        case 0:
+        mMtl->setSerialMode_Shell();
+        break;
+
+        case 1:
+        mMtl->setSerialMode_Kline();
+        break;
+
+        case 2:
+        mMtl->setSerialMode_CanBus();
+        break;
+
+        default:
+        mMtl->setSerialMode_Shell();
         break;
     }
 

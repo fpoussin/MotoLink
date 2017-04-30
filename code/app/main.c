@@ -26,10 +26,16 @@
 #include "canbus.h"
 #include "arm_math.h"
 #include "tables.h"
+#include "chprintf.h"
+#include "shell.h"
 
 /*===========================================================================*/
 /* Macros                                                                    */
 /*===========================================================================*/
+
+#define SHELL_SD        SDU1
+#define STDOUT_SD       SHELL_SD
+#define STDIN_SD        SHELL_SD
 
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->p_next) << 15)
@@ -40,7 +46,9 @@
 /*===========================================================================*/
 
 uint16_t irq_pct = 0;
+static bool dbg_can = false;
 const char *irq_name = "Interrupts";
+thread_t *shelltp = NULL;
 
 /*===========================================================================*/
 /* Structs / Vars                                                            */
@@ -70,6 +78,36 @@ CCM_FUNC void freqinVTHandler(void *arg)
   chVTSetI(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
   chSysUnlockFromISR();
 }
+
+static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
+  static const char *states[] = {CH_STATE_NAMES};
+  thread_t *tp;
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: threads\r\n");
+    return;
+  }
+  chprintf(chp, "    addr    stack prio refs     state\r\n");
+  tp = chRegFirstThread();
+  do {
+    chprintf(chp, "%08lx %08lx %4lu %4lu %9s %lu\r\n",
+             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+             states[tp->p_state]);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+}
+
+static const ShellCommand commands[] = {
+  {"threads", cmd_threads},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SDU1,
+  commands
+};
 
 /*===========================================================================*/
 /* Configs                                                                   */
@@ -112,9 +150,9 @@ PWMConfig pwmcfg = {
 };
 
 const CANConfig cancfg = {
-  CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
-  CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
-  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
+  CAN_MCR_ABOM   | CAN_MCR_AWUM   | CAN_MCR_TXFP,
+  CAN_BTR_SJW(1) | CAN_BTR_TS2(4) |
+  CAN_BTR_TS1(5) | CAN_BTR_BRP(5)
 };
 
 /*===========================================================================*/
@@ -127,12 +165,17 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   event_listener_t el;
   CANTxFrame txmsg;
   CANRxFrame rxmsg;
+  uint16_t i;
 
   (void)arg;
   chRegSetThreadName("CAN Bus");
+
+  while(CAND1.state != CAN_READY) chThdSleepMilliseconds(10);
+  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
+
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
-  while(!chThdShouldTerminateX()) {
+  while(TRUE) {
 
     // Are we using coms for sensor data? If not just sleep.
     if (settings.sensorsInput != SENSORS_INPUT_COM && (settings.functions & FUNC_OBD) == 0) {
@@ -141,7 +184,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
       continue;
     }
 
-    checkCanFilters(&CAND1, &cancfg);
+    //checkCanFilters(&CAND1, &cancfg);
 
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(10)) == 0) {
       continue;
@@ -150,22 +193,38 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
     while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
 
-      if (settings.functions == FUNC_OBD) {
-
-        serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
+      if (dbg_can) {
+          chprintf((BaseSequentialStream *)&SDU1, "->[%08x][%02x]", rxmsg.SID, rxmsg.RTR);
+          for(i = 0; i < 8; i++) {
+              chprintf((BaseSequentialStream *)&SDU1, ":%02x", rxmsg.data8[i]);
+          }
+          chprintf((BaseSequentialStream *)&SDU1, "\n");
       }
 
-      if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
+      if (settings.functions & FUNC_OBD) {
+
+        serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
+
+        if (dbg_can) {
+            chprintf((BaseSequentialStream *)&SDU1, "<-[%08x][%02x]", txmsg.SID, txmsg.RTR);
+            for(i = 0; i < 8; i++) {
+                chprintf((BaseSequentialStream *)&SDU1, ":%02x", txmsg.data8[i]);
+            }
+            chprintf((BaseSequentialStream *)&SDU1, "\n");
+        }
+      }
+
+      if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN && 0) {
 
         readCanOBDPidResponse(&rxmsg);
       }
-      else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
+      else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN && 0) {
 
         readCanYamahaPid(&rxmsg);
       }
     }
 
-    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
+    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN && 0) {
 
       // Request PIDs
       sendCanOBDFrames(&CAND1, &txmsg);
@@ -229,10 +288,21 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
   // Enable K-line transceiver
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
+  shellInit();
 
   while (TRUE) {
 
-    while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+    while (settings.serialMode == SERIAL_MODE_SHELL && shelltp != NULL)  {
+        chThdWait(shelltp);
+    }
+
+    if (settings.serialMode != SERIAL_MODE_KLINE) {
+        chThdSleepMilliseconds(10);
+        continue;
+    }
+
+    /* In case we stop it to change baudrate */
+    while (SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
     if (doKLineInit && 0)
     {
@@ -289,6 +359,8 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
   uint8_t row, col;
 
   chThdSleepMilliseconds(250);
+  timcapEnable(&TIMCAPD3);
+  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
   adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
 
   median_init(&an1, 0 , an1_buffer, ADC_GRP1_BUF_DEPTH/2);
@@ -382,6 +454,10 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
   float32_t maxValue = 0;
   uint32_t maxIndex = 0;
   uint16_t i;
+
+  /* ADC 3 Ch1 Offset. -2048 */
+  ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
+  dacPutChannelX(&DACD1, 0, 2048); // This sets the offset for the knock ADC opamp.
 
   chThdSleepMilliseconds(200);
   adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
@@ -626,7 +702,7 @@ static THD_FUNCTION(ThreadWdg, arg)
 /*===========================================================================*/
 /* Main Thread                                                               */
 /*===========================================================================*/
-
+THD_WORKING_AREA(waThreadShell, 512);
 int main(void)
 {
   /*
@@ -673,13 +749,6 @@ int main(void)
     memcpy(&versions[VERSION_IDX_BL], &v, sizeof(version_t));
   }
 
-  /* ADC 3 Ch1 Offset. -2048 */
-  ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-  dacPutChannelX(&DACD1, 0, 2048); // This sets the offset for the knock ADC opamp.
-  timcapEnable(&TIMCAPD3);
-
-  chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
-
   /*
    * Creates the threads.
    */
@@ -691,6 +760,7 @@ int main(void)
   chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+1, ThreadRecord, NULL);
   chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
+  //shelltp = shellCreateStatic(&shell_cfg1, waThreadShell, sizeof(waThreadShell), NORMALPRIO + 1);
 
   /* Create last as it uses pointers from above */
   chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+10, ThreadMonitor, NULL);

@@ -78,7 +78,6 @@ public:
     inline quint16 getKnockRatio(void) { return mSettings.knockRatio ;}
     inline float getTPSMinV(void) { return mSettings.tpsMinV / 1000.0 ;}
     inline float getTPSMaxV(void) { return mSettings.tpsMaxV / 1000.0 ;}
-    inline float getFuelMinTh(void) { return mSettings.fuelMinTh / 1000.0 ;}
     inline float getAFRMinVal(void) { return mSettings.AfrMinVal / 1000.0 ;}
     inline float getAFRMaxVal(void) { return mSettings.AfrMaxVal / 1000.0 ;}
     inline float getAFROffset(void) { return mSettings.AfrOffset / 1000.0 ;}
@@ -95,6 +94,9 @@ public:
     inline bool getFunctionInput_OBD(void) { return mSettings.sensorsInput == SENSORS_INPUT_OBD_CAN ;}
     inline bool getFunctionInput_Yamaha(void) { return mSettings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN ;}
     inline bool getFunctionInput_Test(void) { return mSettings.sensorsInput == SENSORS_INPUT_TEST ;}
+    inline bool getSerialMode_Shell(void) { return mSettings.serialMode == SERIAL_MODE_SHELL ;}
+    inline bool getSerialMode_Kline(void) { return mSettings.serialMode == SERIAL_MODE_KLINE ;}
+    inline bool getSerialMode_CanBus(void) { return mSettings.serialMode == SERIAL_MODE_CANBUS ;}
 
     // Set
     inline void setTPSMinV(float v) { mSettings.tpsMinV = v * 1000.0 ;}
@@ -118,6 +120,10 @@ public:
     inline void setFunctionInput_OBD(void) {    mSettings.sensorsInput = SENSORS_INPUT_OBD_CAN ;}
     inline void setFunctionInput_Yamaha(void) { mSettings.sensorsInput = SENSORS_INPUT_YAMAHA_CAN ;}
     inline void setFunctionInput_Test(void) { mSettings.sensorsInput = SENSORS_INPUT_TEST ;}
+
+    inline void setSerialMode_Shell(void) { mSettings.serialMode = SERIAL_MODE_SHELL ;}
+    inline void setSerialMode_Kline(void) { mSettings.serialMode = SERIAL_MODE_KLINE ;}
+    inline void setSerialMode_CanBus(void) { mSettings.serialMode = SERIAL_MODE_CANBUS ;}
 
 public slots:
     bool usbConnect(void);

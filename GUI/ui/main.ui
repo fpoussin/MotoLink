@@ -516,6 +516,9 @@
           <property name="title">
            <string>Motolink Settings</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="flat">
            <bool>true</bool>
           </property>
@@ -551,6 +554,9 @@
              </property>
              <property name="title">
               <string>AFR settings</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
              <layout class="QGridLayout" name="gridLayout_12">
               <property name="leftMargin">
@@ -966,173 +972,59 @@
               <property name="spacing">
                <number>4</number>
               </property>
-              <item row="7" column="0">
-               <widget class="QFrame" name="frame_8">
-                <property name="font">
-                 <font>
-                  <weight>50</weight>
-                  <bold>false</bold>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Plain</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_5">
-                 <property name="spacing">
-                  <number>4</number>
+              <item row="5" column="0">
+               <widget class="QComboBox" name="cbSerialMode">
+                <item>
+                 <property name="text">
+                  <string>Shell (Debug)</string>
                  </property>
-                 <property name="leftMargin">
-                  <number>5</number>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/apps/utilities-terminal.png</normaloff>:/oxygen/32x32/apps/utilities-terminal.png</iconset>
                  </property>
-                 <property name="topMargin">
-                  <number>5</number>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>K-Line (HRC)</string>
                  </property>
-                 <property name="rightMargin">
-                  <number>5</number>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
                  </property>
-                 <property name="bottomMargin">
-                  <number>5</number>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CAN-BUS</string>
                  </property>
-                 <item>
-                  <widget class="QLabel" name="ltThresholdMax">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Maximum Fuel Change</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="wordWrap">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="SpinBox" name="sbThresholdMax">
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum amount of fuel added/removed by self mapping.&lt;/p&gt;&lt;p&gt;Keep a low value to be safe, but takes mores passes to get the correct amount.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="suffix">
-                    <string> %</string>
-                   </property>
-                   <property name="maximum">
-                    <number>20</number>
-                   </property>
-                   <property name="value">
-                    <number>5</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                 <property name="icon">
+                  <iconset resource="../res/oxygen.qrc">
+                   <normaloff>:/oxygen/32x32/devices/media-flash.png</normaloff>:/oxygen/32x32/devices/media-flash.png</iconset>
+                 </property>
+                </item>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QFrame" name="frame_9">
-                <property name="font">
-                 <font>
-                  <weight>50</weight>
-                  <bold>false</bold>
-                 </font>
+              <item row="3" column="0">
+               <widget class="Line" name="line_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+               </widget>
+              </item>
+              <item row="9" column="0" alignment="Qt::AlignHCenter">
+               <widget class="QCheckBox" name="cbRecording">
+                <property name="text">
+                 <string>Recording</string>
                 </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Plain</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_6">
-                 <property name="spacing">
-                  <number>4</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>5</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>5</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>5</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>5</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="ltThresholdMin">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="text">
-                    <string>Minimum Fuel Change</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="wordWrap">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="SpinBox" name="sbThresholdMin">
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum amount of fuel added/removed required for self mapping to do any changes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="buttonSymbols">
-                    <enum>QAbstractSpinBox::UpDownArrows</enum>
-                   </property>
-                   <property name="accelerated">
-                    <bool>false</bool>
-                   </property>
-                   <property name="suffix">
-                    <string> %</string>
-                   </property>
-                   <property name="prefix">
-                    <string/>
-                   </property>
-                   <property name="maximum">
-                    <number>20</number>
-                   </property>
-                   <property name="value">
-                    <number>2</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
                </widget>
               </item>
               <item row="8" column="0">
+               <widget class="QCheckBox" name="cbOBDEmulator">
+                <property name="text">
+                 <string>OBD Emulator (CanBus)</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -1146,23 +1038,12 @@
                </spacer>
               </item>
               <item row="4" column="0">
-               <widget class="Line" name="line_7">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0" alignment="Qt::AlignHCenter">
-               <widget class="QCheckBox" name="cbRecording">
+               <widget class="QLabel" name="ltSerialMode">
                 <property name="text">
-                 <string>Recording</string>
+                 <string>Serial mode</string>
                 </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QCheckBox" name="cbOBDEmulator">
-                <property name="text">
-                 <string>OBD Emulator (CanBus)</string>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
@@ -1191,6 +1072,9 @@
              </property>
              <property name="title">
               <string>Sensor Mappings</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
              <property name="flat">
               <bool>false</bool>
@@ -1695,6 +1579,9 @@
           <property name="title">
            <string>Sensors Readings</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <layout class="QGridLayout" name="gridLayout_11">
            <property name="leftMargin">
             <number>5</number>
@@ -2074,7 +1961,7 @@
      <x>0</x>
      <y>0</y>
      <width>902</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
@@ -2487,11 +2374,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>SpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>spinbox.h</header>
-  </customwidget>
   <customwidget>
    <class>QEnhancedTableView</class>
    <extends>QTableView</extends>
