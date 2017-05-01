@@ -126,7 +126,8 @@ CSRC = $(STARTUPSRC) \
        innovate.c \
        opamp.c \
        tables.c \
-       canbus.c
+       canbus.c \
+       shell_cmds.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

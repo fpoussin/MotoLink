@@ -33,9 +33,7 @@
 /* Macros                                                                    */
 /*===========================================================================*/
 
-#define SHELL_SD        SDU1
-#define STDOUT_SD       SHELL_SD
-#define STDIN_SD        SHELL_SD
+#define SHELL_SD SDU1
 
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->p_next) << 15)
@@ -45,16 +43,16 @@
 /* Thread pointers.                                                          */
 /*===========================================================================*/
 
-uint16_t irq_pct = 0;
-static bool dbg_can = false;
-const char *irq_name = "Interrupts";
-thread_t *shelltp = NULL;
 
 /*===========================================================================*/
 /* Structs / Vars                                                            */
 /*===========================================================================*/
 
+uint16_t irq_pct = 0;
+const char *irq_name = "Interrupts";
 static virtual_timer_t vt_freqin;
+extern bool dbg_can;
+extern const ShellCommand sh_commands[];
 
 /*===========================================================================*/
 /* CallBacks                                                                 */
@@ -79,34 +77,9 @@ CCM_FUNC void freqinVTHandler(void *arg)
   chSysUnlockFromISR();
 }
 
-static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {CH_STATE_NAMES};
-  thread_t *tp;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: threads\r\n");
-    return;
-  }
-  chprintf(chp, "    addr    stack prio refs     state\r\n");
-  tp = chRegFirstThread();
-  do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s %lu\r\n",
-             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-             states[tp->p_state]);
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
-}
-
-static const ShellCommand commands[] = {
-  {"threads", cmd_threads},
-  {NULL, NULL}
-};
-
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  commands
+  (BaseSequentialStream *)&SHELL_SD,
+  sh_commands
 };
 
 /*===========================================================================*/
@@ -273,6 +246,7 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
  * USB Serial thread.
  */
 THD_WORKING_AREA(waThreadSDU, 256);
+THD_WORKING_AREA(waThreadShell, 512);
 CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 {
   (void)arg;
@@ -280,6 +254,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
   uint8_t out_buffer[SERIAL_BUFFERS_SIZE];
   //uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
   size_t in, out;
+  thread_t* th_shell = NULL;
   chRegSetThreadName("SDU");
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
@@ -288,12 +263,17 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
   // Enable K-line transceiver
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
+
   shellInit();
 
   while (TRUE) {
 
-    while (settings.serialMode == SERIAL_MODE_SHELL && shelltp != NULL)  {
-        chThdWait(shelltp);
+    if (settings.serialMode == SERIAL_MODE_SHELL)  {
+        if (th_shell == NULL || chThdTerminatedX(th_shell)) {
+            th_shell = shellCreateStatic(&shell_cfg1, waThreadShell, sizeof(waThreadShell), NORMALPRIO +1);
+        }
+        chThdSleepMilliseconds(10);
+        continue;
     }
 
     if (settings.serialMode != SERIAL_MODE_KLINE) {
@@ -333,7 +313,6 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
     {
       chnWriteTimeout(&SDU1, out_buffer, out, MS2ST(10));
     }
-
 
   }
   return;
@@ -702,7 +681,7 @@ static THD_FUNCTION(ThreadWdg, arg)
 /*===========================================================================*/
 /* Main Thread                                                               */
 /*===========================================================================*/
-THD_WORKING_AREA(waThreadShell, 512);
+
 int main(void)
 {
   /*
@@ -760,7 +739,6 @@ int main(void)
   chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
   chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+1, ThreadRecord, NULL);
   chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
-  //shelltp = shellCreateStatic(&shell_cfg1, waThreadShell, sizeof(waThreadShell), NORMALPRIO + 1);
 
   /* Create last as it uses pointers from above */
   chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+10, ThreadMonitor, NULL);

@@ -594,6 +594,7 @@ app/prot_obd.h
 app/prot_yamaha.h
 app/sensors.c
 app/sensors.h
+app/shell_cmds.c
 app/tables.c
 app/tables.h
 binsize.py
