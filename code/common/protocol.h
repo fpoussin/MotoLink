@@ -55,8 +55,8 @@
 #define KNOCK_RATIO 4.66f
 #define KNOCK_MAX (3.3*KNOCK_RATIO)
 
-#define FUNC_RECORD (uint16_t)0x0001
-#define FUNC_OBD    (uint16_t)0x0002
+#define FUNC_RECORD     (uint16_t)0x0001
+#define FUNC_OBD_SERVER (uint16_t)0x0002
 
 #define AFR_INPUT_DISABLED (uint16_t)0x0000
 #define AFR_INPUT_MTS      (uint8_t)0x01

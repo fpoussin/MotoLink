@@ -4,6 +4,7 @@
 #include "chprintf.h"
 
 bool dbg_can = false;
+extern uint16_t irq_pct;
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *states[] = {CH_STATE_NAMES};
@@ -14,30 +15,17 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: threads\r\n");
     return;
   }
-#if CH_CFG_USE_DYNAMIC
-  chprintf(chp, "    addr    stack prio refs     state\r\n");
+  chprintf(chp, "PRIO    STATE   PCT         NAME\r\n");
   tp = chRegFirstThread();
   do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s %lu\r\n",
-             (uint32_t)tp,
-             (uint32_t)tp->p_ctx.r13,
+    chprintf(chp, "%4u %8s %05u %12s\r\n",
              (uint32_t)tp->p_prio,
-             (uint32_t)(tp->p_refs - 1),
-             states[tp->p_state]);
+             states[tp->p_state],
+             tp->pct & 0x3FFF,
+             tp->p_name);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
-#else
-  chprintf(chp, "    addr    stack prio     state\r\n");
-  tp = chRegFirstThread();
-  do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %lu\r\n",
-             (uint32_t)tp,
-             (uint32_t)tp->p_ctx.r13,
-             (uint32_t)tp->p_prio,
-             states[tp->p_state]);
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
-#endif
+  chprintf(chp, "IRQ Pct: %05u\r\n", irq_pct);
 }
 
 static void cmd_candbg(BaseSequentialStream *chp, int argc, char *argv[]) {
@@ -46,7 +34,7 @@ static void cmd_candbg(BaseSequentialStream *chp, int argc, char *argv[]) {
     (void)argv;
     uint8_t in, buf;
 
-    chprintf(chp, "Press any key to quit\n");
+    chprintf(chp, "CanBus debug active. Press any key to quit.\r\n");
     chThdSleepMilliseconds(1000);
     dbg_can = true;
     in = chSequentialStreamRead(chp, &buf, 1);
@@ -54,6 +42,7 @@ static void cmd_candbg(BaseSequentialStream *chp, int argc, char *argv[]) {
         chThdSleepMilliseconds(10);
     }
     dbg_can = false;
+    chprintf(chp, "Closed CanBus debug.\r\n");
 }
 
 const ShellCommand sh_commands[] = {

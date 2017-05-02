@@ -151,7 +151,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   while(TRUE) {
 
     // Are we using coms for sensor data? If not just sleep.
-    if (settings.sensorsInput != SENSORS_INPUT_COM && (settings.functions & FUNC_OBD) == 0) {
+    if (settings.sensorsInput != SENSORS_INPUT_COM && (settings.functions & FUNC_OBD_SERVER) == 0) {
 
       chThdSleepMilliseconds(100);
       continue;
@@ -167,39 +167,42 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
       /* Process message.*/
 
       if (dbg_can) {
-          chprintf((BaseSequentialStream *)&SDU1, "->[%08x][%02x]", rxmsg.SID, rxmsg.RTR);
+          chprintf((BaseSequentialStream *)&SDU1, "->[SID:%08x][RTR:%01x]", rxmsg.SID, rxmsg.RTR);
           for(i = 0; i < 8; i++) {
               chprintf((BaseSequentialStream *)&SDU1, ":%02x", rxmsg.data8[i]);
           }
-          chprintf((BaseSequentialStream *)&SDU1, "\n");
+          chprintf((BaseSequentialStream *)&SDU1, "\r\n");
       }
 
-      if (settings.functions & FUNC_OBD) {
+      if (settings.functions & FUNC_OBD_SERVER) {
 
         serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
 
         if (dbg_can) {
-            chprintf((BaseSequentialStream *)&SDU1, "<-[%08x][%02x]", txmsg.SID, txmsg.RTR);
+            chprintf((BaseSequentialStream *)&SDU1, "<-[%08x][%01x]", txmsg.SID, txmsg.RTR);
             for(i = 0; i < 8; i++) {
                 chprintf((BaseSequentialStream *)&SDU1, ":%02x", txmsg.data8[i]);
             }
-            chprintf((BaseSequentialStream *)&SDU1, "\n");
+            chprintf((BaseSequentialStream *)&SDU1, "\r\n");
         }
       }
 
-      if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN && 0) {
+      if ((settings.functions & FUNC_OBD_SERVER) == 0)  {
+          if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
 
-        readCanOBDPidResponse(&rxmsg);
-      }
-      else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN && 0) {
+            readCanOBDPidResponse(&rxmsg);
+          }
+          else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
 
-        readCanYamahaPid(&rxmsg);
+            readCanYamahaPid(&rxmsg);
+          }
       }
     }
 
-    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN && 0) {
+    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN
+            && (settings.functions & FUNC_OBD_SERVER) == 0) {
 
-      // Request PIDs
+      // Request OBD PIDs
       sendCanOBDFrames(&CAND1, &txmsg);
       chThdSleepMilliseconds(100); // ~10Hz
     }
