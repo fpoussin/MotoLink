@@ -14,10 +14,14 @@
   #define DEBUGEN(x)
 #endif
 
+#define DBG_STREAM ((BaseSequentialStream *)&SDU1)
+
 uint16_t rand16(uint16_t min, uint16_t max);
 uint32_t rand32(uint32_t min, uint32_t max);
-uint32_t leToInt(uint8_t *ptr);
-uint32_t beToInt(uint8_t *ptr);
+uint32_t leToUInt32(uint8_t *ptr);
+uint16_t leToUInt16(uint8_t *ptr);
+uint32_t beToUInt32(uint8_t *ptr);
+uint16_t beToUInt16(uint8_t *ptr);
 uint8_t checksum(const uint8_t *data, uint8_t length);
 
 bool getSwitch1(void);

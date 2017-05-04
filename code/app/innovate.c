@@ -8,58 +8,72 @@
 #include "innovate.h"
 #include "sensors.h"
 #include "storage.h"
+#include "usb_config.h"
+#include "chprintf.h"
 
-void readMtsHeader(BaseChannel *chn, uint8_t *buf)
+extern bool dbg_mts;
+
+void readMtsPackets(uint8_t *buf)
 {
-  size_t read;
-  uint8_t header = buf[0];
-  uint8_t len, status, afr_multiplier;
-  uint16_t lambda;
-  // First, check header
-  if ((header & MTS_HEADER_MASK) == MTS_HEADER_MASK)
+  const uint16_t pkt_header = beToUInt16(&buf[0]);
+  const uint16_t pkt_status_afr_mult = beToUInt16(&buf[2]);
+  const uint16_t pkt_lambda = beToUInt16(&buf[4]);
+  uint16_t len, status, afr_multiplier;
+  uint16_t lambda, len_raw;
+  uint8_t afr;
+
+  // First, check header - packets are big endian so we had to convert them to little endian.
+  if ((pkt_header & MTS_HEADER_MASK) == MTS_HEADER_MASK)
   {
+    len_raw = ((pkt_header & MTS_LENGTH_HI) >> 1) | (pkt_header & MTS_LENGTH_LO);
+    len = (len_raw * 2) + 2; // 2 bytes per packet + 2 bytes header
 
-    // Get Packet length
-    read = chnReadTimeout(chn, buf, 1, MS2ST(50));
-    if (read < 1)
-      return;
-
-    len = ((header & MTS_LENGTH_MASK1) << 7)
-        & (buf[0] & MTS_LENGTH_MASK2);
-
-    // LC-1/2 messages are 2 words long
-    if (len == 2)
+    // LC-1/2 messages are 2 words long, so 6 bytes total for 3 packets
+    if (len == 6)
     {
-      read = chnReadTimeout(chn, buf, len*2, MS2ST(50));
-      if (read != len*2)
-        return;
-
       // Check message is from an LC-1/2
-      if (!((buf[0] & 0xE2) == 0x42))
+      if ((pkt_status_afr_mult & MTS_STATUS_MASK_TEST_LC2) != MTS_STATUS_MASK_LC2) {
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Message not from an LM/C-1/2: %04X\r\n",
+                              pkt_status_afr_mult);
         return;
+      }
 
-      status = buf[0] & MTS_STATUS_MASK;
-
+      status = pkt_status_afr_mult & MTS_STATUS_MASK;
       // Status is good
       if (status == 0)
       {
         /* Should be 147 */
-        afr_multiplier = ((buf[0] & MTS_AFR_MUL_MASK1) << 7)
-            & (buf[1] & MTS_AFR_MUL_MASK2);
+        //afr_multiplier = ((pkt_status_afr_mult & MTS_AFR_MUL_HI) >> 1) | (pkt_status_afr_mult & MTS_AFR_MUL_LO);
+        afr_multiplier = 147;
 
-        lambda = ((buf[2] & MTS_LAMBDA_MASK1) << 7)
-            & (buf[3] & MTS_LAMBDA_MASK2);
+        /* Sensor value */
+        lambda = ((pkt_lambda & MTS_LAMBDA_HI) >> 1) | (pkt_lambda & MTS_LAMBDA_LO);
 
-        /* Multiplied by 10 */
-        if (settings.afrInput == AFR_INPUT_MTS)
-            sensors_data.afr = ((lambda+500) * afr_multiplier) / 1000;
+        /* AFR Multiplied by 10 */
+        afr = ((lambda + 500) * afr_multiplier) / 1000;
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Multiplier/lambda/AFR(x10): %3u/%4u/%3u\r\n",
+                              afr_multiplier, lambda, afr);
+        if (settings.afrInput == AFR_INPUT_MTS && afr > 0)
+            sensors_data.afr = afr;
+      }
+      else if (status == MTS_STATUS_LAMBDA_WARMING)
+      {
+        if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Sensor warming up\r\n");
+      }
+      else
+      {
+        if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Status error: %02x\r\n", status);
       }
     }
-    else
+    else {
+      if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Length incorrect: %02X, expecting 2\r\n", len);
       return;
-
+    }
   }
-  else
+  else {
+    if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Not an MTS header: %04X/%04X\r\n", pkt_header, pkt_header & MTS_HEADER_MASK);
     return;
-
+  }
 }

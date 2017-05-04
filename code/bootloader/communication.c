@@ -97,7 +97,7 @@ CCM_FUNC uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
     return 1;
   }
 
-  uint32_t offset = leToInt(buf);
+  uint32_t offset = leToUInt32(buf);
   uint32_t *data_buf = (uint32_t*)(buf+4);
   uint8_t replbuf = MASK_REPLY_OK | CMD_WRITE;
 
@@ -112,8 +112,8 @@ CCM_FUNC uint8_t writeHandler(BaseChannel *chn, uint8_t* buf, uint8_t len) {
 
 CCM_FUNC uint8_t readHandler(BaseChannel *chn, uint8_t* buf) {
 
-  uint32_t address = leToInt(buf);
-  uint32_t buf_len = leToInt(buf+4);
+  uint32_t address = leToUInt32(buf);
+  uint32_t buf_len = leToUInt32(buf+4);
 
   chnPutTimeout(chn, MASK_REPLY_OK  | CMD_READ, MS2ST(25));
   chnWriteTimeout(chn, (uint8_t*)(address+USER_APP_ADDR), buf_len, MS2ST(50));
@@ -142,7 +142,7 @@ CCM_FUNC uint8_t sendMode(BaseChannel * chn) {
 
 CCM_FUNC uint8_t eraseHandler(BaseChannel * chn, uint8_t* buf) {
 
-  uint32_t len = leToInt(buf);
+  uint32_t len = leToUInt32(buf);
 
   if (eraseFlash(len)) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_ERASE, MS2ST(50));

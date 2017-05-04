@@ -51,7 +51,7 @@
 uint16_t irq_pct = 0;
 const char *irq_name = "Interrupts";
 static virtual_timer_t vt_freqin;
-extern bool dbg_can;
+extern bool dbg_can, dbg_mts;
 extern const ShellCommand sh_commands[];
 
 /*===========================================================================*/
@@ -167,11 +167,11 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
       /* Process message.*/
 
       if (dbg_can) {
-          chprintf((BaseSequentialStream *)&SDU1, "->[SID:%08x][RTR:%01x]", rxmsg.SID, rxmsg.RTR);
+          chprintf(DBG_STREAM, "->[SID:%08x][RTR:%01x]", rxmsg.SID, rxmsg.RTR);
           for(i = 0; i < 8; i++) {
-              chprintf((BaseSequentialStream *)&SDU1, ":%02x", rxmsg.data8[i]);
+              chprintf(DBG_STREAM, ":%02x", rxmsg.data8[i]);
           }
-          chprintf((BaseSequentialStream *)&SDU1, "\r\n");
+          chprintf(DBG_STREAM, "\r\n");
       }
 
       if (settings.functions & FUNC_OBD_SERVER) {
@@ -179,11 +179,11 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
         serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
 
         if (dbg_can) {
-            chprintf((BaseSequentialStream *)&SDU1, "<-[%08x][%01x]", txmsg.SID, txmsg.RTR);
+            chprintf(DBG_STREAM, "<-[%08x][%01x]", txmsg.SID, txmsg.RTR);
             for(i = 0; i < 8; i++) {
-                chprintf((BaseSequentialStream *)&SDU1, ":%02x", txmsg.data8[i]);
+                chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
             }
-            chprintf((BaseSequentialStream *)&SDU1, "\r\n");
+            chprintf(DBG_STREAM, "\r\n");
         }
       }
 
@@ -549,7 +549,7 @@ static THD_FUNCTION(ThreadMonitor, arg)
 /*
  * Uart2 thread.
  */
-THD_WORKING_AREA(waThreadSER2, 128);
+THD_WORKING_AREA(waThreadSER2, 256);
 CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
 {
   (void)arg;
@@ -561,13 +561,11 @@ CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
 
   while (TRUE) {
 
-    read = sdReadTimeout(&SD2, buffer, 1, TIME_IMMEDIATE);
-    if (read > 0)
+    read = sdReadTimeout(&SD1, buffer, 6, MS2ST(40));
+    if (read >= 6)
     {
-      readMtsHeader((BaseChannel *)&SD2, buffer);
+      readMtsPackets(buffer);
     }
-
-    chThdSleepMilliseconds(1);
   }
   return;
 }

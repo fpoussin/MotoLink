@@ -40,7 +40,7 @@ uint32_t rand32(uint32_t min, uint32_t max)
     return min + (r / buckets);
 }
 
-inline uint32_t leToInt(uint8_t *ptr) {
+inline uint32_t leToUInt32(uint8_t *ptr) {
 
   return ((uint32_t)ptr[3] << 24) |
       ((uint32_t)ptr[2] << 16) |
@@ -48,12 +48,22 @@ inline uint32_t leToInt(uint8_t *ptr) {
       (uint32_t)ptr[0];
 }
 
-inline uint32_t beToInt(uint8_t *ptr) {
+inline uint16_t leToUInt16(uint8_t *ptr) {
+
+  return ((uint16_t)ptr[1] << 8) | (uint16_t)ptr[0];
+}
+
+inline uint32_t beToUInt32(uint8_t *ptr) {
 
   return ((uint32_t)ptr[0] << 24) |
       ((uint32_t)ptr[1] << 16) |
       ((uint32_t)ptr[2] << 8) |
       (uint32_t)ptr[3];
+}
+
+inline uint16_t beToUInt16(uint8_t *ptr) {
+
+  return ((uint16_t)ptr[0] << 8) | (uint16_t)ptr[1];
 }
 
 uint8_t checksum(const uint8_t *data, uint8_t length)
