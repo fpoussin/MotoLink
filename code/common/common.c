@@ -4,6 +4,11 @@
 #include "vectors.h"
 #include <stdlib.h>
 
+inline uint32_t getuuid32(void) {
+
+    return MCU_UUID[0] * MCU_UUID[1] * MCU_UUID[2];
+}
+
 uint16_t rand16(uint16_t min, uint16_t max)
 {
     uint16_t r;

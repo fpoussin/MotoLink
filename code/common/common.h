@@ -15,7 +15,9 @@
 #endif
 
 #define DBG_STREAM ((BaseSequentialStream *)&SDU1)
+#define MCU_UUID ((uint32_t*)0x1FFFF7AC)
 
+uint32_t getuuid32(void);
 uint16_t rand16(uint16_t min, uint16_t max);
 uint32_t rand32(uint32_t min, uint32_t max);
 uint32_t leToUInt32(uint8_t *ptr);
