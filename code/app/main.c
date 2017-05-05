@@ -51,7 +51,7 @@
 uint16_t irq_pct = 0;
 const char *irq_name = "Interrupts";
 static virtual_timer_t vt_freqin;
-extern bool dbg_can;
+extern bool dbg_can, dbg_sensors;
 extern const ShellCommand sh_commands[];
 
 /*===========================================================================*/
@@ -338,7 +338,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 static pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
 static pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
 static pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
-THD_WORKING_AREA(waThreadADC, 192);
+THD_WORKING_AREA(waThreadADC, 256);
 CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 {
   (void)arg;
@@ -397,6 +397,11 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
         sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
         sensors_data.rpm = calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
         sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
+        if (dbg_sensors) {
+            chprintf(DBG_STREAM,"->[SENSORS] TPS mV/PCT: %06u/%04u\r\n", sensors_data.an2, sensors_data.tps);
+            chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
+            chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
+        }
     }
     else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
         sensors_data.tps = rand16(0, 200);

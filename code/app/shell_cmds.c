@@ -5,6 +5,7 @@
 
 bool dbg_can = false;
 bool dbg_mts = false;
+bool dbg_sensors = false;
 extern uint16_t irq_pct;
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
@@ -63,9 +64,29 @@ static void cmd_mtsdbg(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Closed MTS debug.\r\n");
 }
 
+static void cmd_sendbg(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+    (void)argc;
+    (void)argv;
+    uint8_t in, buf;
+
+    chprintf(chp, "Sensor debug active. Press any key to quit.\r\n");
+    chThdSleepMilliseconds(1000);
+    dbg_sensors = true;
+    in = chSequentialStreamRead(chp, &buf, 1);
+    while (in == 0) {
+        chThdSleepMilliseconds(10);
+    }
+    dbg_sensors = false;
+    chprintf(chp, "Sensor MTS debug.\r\n");
+}
+
+
+
 const ShellCommand sh_commands[] = {
   {"threads", cmd_threads},
   {"candbg", cmd_candbg},
   {"mtsdbg", cmd_mtsdbg},
+  {"sendbg", cmd_sendbg},
   {NULL, NULL}
 };
