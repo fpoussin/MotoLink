@@ -417,7 +417,7 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
       sensors_data.cell.row = row;
       sensors_data.cell.col = col;
 
-      if (settings.functions & FUNC_RECORD)
+      if ((settings.functions & FUNC_RECORD)  && sensors_data.rpm != 0)
       {
           /* Average */
           tableAFR[row][col] = tableAFR[row][col] == 0 ? sensors_data.afr : ((uint16_t)sensors_data.afr+(uint16_t)tableAFR[row][col])/2;
