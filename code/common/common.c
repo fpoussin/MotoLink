@@ -197,12 +197,14 @@ void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp)
       break;
   }
 
+  // TODO
   switch (lcp->bParityType)
   {
     default:
       break;
   }
 
+  // TODO
   switch (lcp->bDataBits)
   {
     default:
@@ -212,10 +214,10 @@ void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp)
   if (sdp->state != SD_UNINIT)
     return;
 
-  while(sdp->state != SD_READY) chThdSleepMilliseconds(2);
+  while(sdp->state != SD_READY) chThdSleepMilliseconds(1);
   sdStop(sdp);
 
-  while(sdp->state != SD_STOP) chThdSleepMilliseconds(2);
+  while(sdp->state != SD_STOP) chThdSleepMilliseconds(1);
   sdStart(sdp, scp);
 }
 

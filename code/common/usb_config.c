@@ -15,12 +15,14 @@
 */
 
 #include "hal.h"
+#include "common.h"
 
 /*
  * Virtual serial ports over USB.
  */
 SerialUSBDriver SDU1;
 SerialUSBDriver SDU2;
+extern SerialConfig uart3Cfg;
 
 #define USB_DEVICE_VID  0x0483
 #define USB_DEVICE_PID  0xABCD
@@ -45,6 +47,15 @@ SerialUSBDriver SDU2;
 #define USB_CDC_DIF_NUM0   1
 #define USB_BASE_CIF_NUM1  2
 #define USB_BASE_DIF_NUM1  3
+
+/*
+ * Current Line Coding.
+ */
+static cdc_linecoding_t linecoding = {
+  {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */
+  LC_STOP_1, LC_PARITY_NONE, 8
+};
+
 
 /*
 * Extra defines
@@ -636,6 +647,30 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   return;
 }
 
+bool sduCustomRequestsHook(USBDriver *usbp) {
+
+  USBSetupPkt *setup = (USBSetupPkt*)usbp->setup;
+
+  if ((setup->bmRequestType & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
+    switch (setup->bRequest) {
+    case CDC_GET_LINE_CODING:
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+      return true;
+    case CDC_SET_LINE_CODING:
+      usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
+      setLineCoding(&linecoding, &SD3, &uart3Cfg);
+      return true;
+    case CDC_SET_CONTROL_LINE_STATE:
+      /* Nothing to do, there are no control lines.*/
+      usbSetupTransfer(usbp, NULL, 0, NULL);
+      return true;
+    default:
+      return false;
+    }
+  }
+  return false;
+}
+
 /*
  * Handling messages not implemented in the default handler nor in the
  * SerialUSB handler.
@@ -673,7 +708,7 @@ static bool requests_hook(USBDriver *usbp) {
           }
       }
   }
-  return sduRequestsHook(usbp);
+  return sduCustomRequestsHook(usbp);
 }
 
 /*

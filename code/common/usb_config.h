@@ -12,9 +12,6 @@ extern SerialUSBDriver SDU1;
 extern SerialUSBDriver SDU2;
 
 extern bool doKLineInit;
-
-extern SerialConfig uart1Cfg;
-extern SerialConfig uart2Cfg;
 extern SerialConfig uart3Cfg;
 
 bool usbConnected(void);

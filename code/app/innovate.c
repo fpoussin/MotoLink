@@ -32,9 +32,9 @@ void readMtsPackets(uint8_t *buf)
     if (len == 6)
     {
       // Check message is from an LC-1/2
-      if ((pkt_status_afr_mult & MTS_STATUS_MASK_TEST_LC2) != MTS_STATUS_MASK_LC2) {
+      if ((pkt_status_afr_mult & MTS_STATUS_MASK_TEST_LC1) != MTS_STATUS_MASK_LC1) {
         if (dbg_mts) chprintf(DBG_STREAM,
-                              "->[MTS] Message not from an LM/C-1/2: %04X\r\n",
+                              "->[MTS] Message not from an LC-1/2: %04X\r\n",
                               pkt_status_afr_mult);
         return;
       }
@@ -58,22 +58,40 @@ void readMtsPackets(uint8_t *buf)
         if (settings.afrInput == AFR_INPUT_MTS && afr > 0)
             sensors_data.afr = afr;
       }
-      else if (status == MTS_STATUS_LAMBDA_WARMING)
+      else if (status & MTS_STATUS_LAMBDA_WARMING)
       {
-        if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Sensor warming up\r\n");
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Sensor warming up\r\n");
+      }
+      else if (status & MTS_STATUS_LAMBDA_NEED_CAL)
+      {
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Sensor need calibration\r\n");
+      }
+      else if (status & MTS_STATUS_LAMBDA_ERROR)
+      {
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Sensor error\r\n");
       }
       else
       {
-        if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Status error: %02x\r\n", status);
+        if (dbg_mts) chprintf(DBG_STREAM,
+                              "->[MTS] Status error: %02x\r\n",
+                              status);
       }
     }
     else {
-      if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Length incorrect: %02X, expecting 2\r\n", len);
+      if (dbg_mts) chprintf(DBG_STREAM,
+                            "->[MTS] Length incorrect: %02X, expecting 2\r\n",
+                            len);
       return;
     }
   }
   else {
-    if (dbg_mts) chprintf(DBG_STREAM, "->[MTS] Not an MTS header: %04X/%04X\r\n", pkt_header, pkt_header & MTS_HEADER_MASK);
+    if (dbg_mts) chprintf(DBG_STREAM,
+                          "->[MTS] Not an MTS header: %04X/%04X\r\n",
+                          pkt_header,
+                          pkt_header & MTS_HEADER_MASK);
     return;
   }
 }

@@ -51,7 +51,7 @@
 uint16_t irq_pct = 0;
 const char *irq_name = "Interrupts";
 static virtual_timer_t vt_freqin;
-extern bool dbg_can, dbg_mts;
+extern bool dbg_can;
 extern const ShellCommand sh_commands[];
 
 /*===========================================================================*/
@@ -92,6 +92,7 @@ const DACConfig dac1cfg1 = {
   0
 };
 
+// Used for MTS
 SerialConfig uart1Cfg =
 {
  19200, // bit rate
@@ -100,7 +101,17 @@ SerialConfig uart1Cfg =
  0
 };
 
+// Extra header
 SerialConfig uart2Cfg =
+{
+ 115200, // bit rate
+ 0,
+ USART_CR2_STOP1_BITS,
+ 0
+};
+
+// K-Line
+SerialConfig uart3Cfg =
 {
  19200, // bit rate
  0,
@@ -262,7 +273,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
-  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+  while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
 
   // Enable K-line transceiver
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
@@ -285,31 +296,31 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
     }
 
     /* In case we stop it to change baudrate */
-    while (SD1.state != SD_READY) chThdSleepMilliseconds(10);
+    while (SD3.state != SD_READY) chThdSleepMilliseconds(10);
 
     if (doKLineInit && 0)
     {
-      sdStop(&SD1);
+      sdStop(&SD3);
       klineInit(false);
-      //fiveBaudInit(&SD1);
-      //sdReadTimeout(&SD1, buffer_check, 1, MS2ST(5)); // noise
+      //fiveBaudInit(&SD3);
+      //sdReadTimeout(&SD3, buffer_check, 1, MS2ST(5)); // noise
       doKLineInit = false;
-      sdStart(&SD1, &uart1Cfg);
+      sdStart(&SD3, &uart1Cfg);
     }
 
     in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
-    out = sdReadTimeout(&SD1, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
+    out = sdReadTimeout(&SD3, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
 
     while (in == 0 && out == 0) {
 
         chThdSleepMilliseconds(1);
         in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
-        out = sdReadTimeout(&SD1, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
+        out = sdReadTimeout(&SD3, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
     }
 
     if (in > 0)
     {
-      sdWriteTimeout(&SD1, in_buffer, in, MS2ST(10));
+      sdWriteTimeout(&SD3, in_buffer, in, MS2ST(10));
     }
 
     if (out > 0)
@@ -547,17 +558,17 @@ static THD_FUNCTION(ThreadMonitor, arg)
 }
 
 /*
- * Uart2 thread.
+ * Uart1 thread.
  */
-THD_WORKING_AREA(waThreadSER2, 256);
-CCM_FUNC static THD_FUNCTION(ThreadSER2, arg)
+THD_WORKING_AREA(waThreadSER1, 256);
+CCM_FUNC static THD_FUNCTION(ThreadSER1, arg)
 {
   (void)arg;
   uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
   size_t read;
   chRegSetThreadName("MTS");
 
-  while(SD2.state != SD_READY) chThdSleepMilliseconds(10);
+  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
 
   while (TRUE) {
 
@@ -708,6 +719,7 @@ int main(void)
    */
   sdStart(&SD1, &uart1Cfg);
   sdStart(&SD2, &uart2Cfg);
+  sdStart(&SD3, &uart3Cfg);
   usbStart(&USBD1, &usbcfg);
   sduStart(&SDU1, &serusbcfg1);
   sduStart(&SDU2, &serusbcfg2);
@@ -737,7 +749,7 @@ int main(void)
   chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC, NULL);
   chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
   chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
-  chThdCreateStatic(waThreadSER2, sizeof(waThreadSER2), NORMALPRIO, ThreadSER2, NULL);
+  chThdCreateStatic(waThreadSER1, sizeof(waThreadSER1), NORMALPRIO, ThreadSER1, NULL);
   chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+1, ThreadRecord, NULL);
   chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
 
