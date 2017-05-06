@@ -1130,7 +1130,7 @@
                   </spacer>
                  </item>
                  <item row="5" column="0">
-                  <widget class="QDoubleSpinBox" name="dsbSpeedDiv">
+                  <widget class="QDoubleSpinBox" name="dsbSpeedMult">
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
@@ -1152,7 +1152,7 @@
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QDoubleSpinBox" name="dsbRpmDiv">
+                  <widget class="QDoubleSpinBox" name="dsbRpmMult">
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
@@ -1174,7 +1174,7 @@
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QLabel" name="ltRpmdiv">
+                  <widget class="QLabel" name="ltRpmMult">
                    <property name="font">
                     <font>
                      <weight>75</weight>
@@ -1182,7 +1182,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>RPM Divider</string>
+                    <string>RPM Multiplier</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -1190,7 +1190,7 @@
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QLabel" name="ltSpeedDiv">
+                  <widget class="QLabel" name="ltSpeedMult">
                    <property name="font">
                     <font>
                      <weight>75</weight>
@@ -1198,7 +1198,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>Speed Divider</string>
+                    <string>Speed Multiplier</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>

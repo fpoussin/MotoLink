@@ -552,8 +552,8 @@ void MainWindow::exportToMTLFile()
     mFile.addTable(&mAFRTgtModel);
     mFile.addTable(&mKnockModel);
 
-    mFile.addProperty("RpmDiv", mMainUi->dsbRpmDiv->value());
-    mFile.addProperty("SpeedDiv", mMainUi->dsbSpeedDiv->value());
+    mFile.addProperty("RpmMult", mMainUi->dsbRpmMult->value());
+    mFile.addProperty("SpeedMult", mMainUi->dsbSpeedMult->value());
 
     mFile.addProperty("AFRInput", mMainUi->cbAFRInput->currentIndex());
 
@@ -573,11 +573,11 @@ void MainWindow::importFromMTLFile()
 {
     QVariant prop;
 
-    mFile.getProperty("RpmDiv", &prop);
-    mMainUi->dsbRpmDiv->setValue(prop.toDouble());
+    mFile.getProperty("RpmMult", &prop);
+    mMainUi->dsbRpmMult->setValue(prop.toDouble());
 
-    mFile.getProperty("SpeedDiv", &prop);
-    mMainUi->dsbSpeedDiv->setValue(prop.toDouble());
+    mFile.getProperty("SpeedMult", &prop);
+    mMainUi->dsbSpeedMult->setValue(prop.toDouble());
 
     mFile.getProperty("AFRInput", &prop);
     mMainUi->cbAFRInput->setCurrentIndex(prop.toInt());
@@ -837,8 +837,8 @@ void MainWindow::onReadMtlSettings()
         mMainUi->dsbAFR0->setValue(mMtl->getAFRMinVal());
         mMainUi->dsbAFR5->setValue(mMtl->getAFRMaxVal());
         mMainUi->dsbAFROffset->setValue(mMtl->getAFROffset());
-        mMainUi->dsbRpmDiv->setValue(mMtl->getRpmMultiplier());
-        mMainUi->dsbSpeedDiv->setValue(mMtl->getSpdMultiplier());
+        mMainUi->dsbRpmMult->setValue(mMtl->getRpmMultiplier());
+        mMainUi->dsbSpeedMult->setValue(mMtl->getSpdMultiplier());
 
         if (mMtl->getFunctionAFR_Disabled())
             mMainUi->cbAFRInput->setCurrentIndex(0);
@@ -883,8 +883,8 @@ void MainWindow::onWriteMtlSettings()
     mMtl->setAFRMinVal(mMainUi->dsbAFR0->value());
     mMtl->setAFRMaxVal(mMainUi->dsbAFR5->value());
     mMtl->setAFROffset(mMainUi->dsbAFROffset->value());
-    mMtl->setRpmMultiplier(mMainUi->dsbRpmDiv->value());
-    mMtl->setSpdMultiplier(mMainUi->dsbSpeedDiv->value());
+    mMtl->setRpmMultiplier(mMainUi->dsbRpmMult->value());
+    mMtl->setSpdMultiplier(mMainUi->dsbSpeedMult->value());
 
     switch (mMainUi->cbAFRInput->currentIndex())
     {
