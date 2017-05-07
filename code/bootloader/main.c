@@ -43,7 +43,8 @@ static PWMConfig pwmcfg = {
   0
 };
 
-SerialConfig uart1Cfg =
+// K-Line
+SerialConfig uart3Cfg =
 {
  19200, // bit rate
  0,
@@ -145,19 +146,19 @@ static THD_FUNCTION(ThreadSDU, arg)
 
   while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
   while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
-  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+  while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
 
   while (TRUE) {
 
-    while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+    while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
 
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
-      sdWriteTimeout(&SD1, buffer, read, MS2ST(100));
+      sdWriteTimeout(&SD3, buffer, read, MS2ST(100));
     }
 
-    read = sdReadTimeout(&SD1, buffer, sizeof(buffer), MS2ST(5));
+    read = sdReadTimeout(&SD3, buffer, sizeof(buffer), MS2ST(5));
     if (read > 0)
     {
       chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
@@ -248,6 +249,7 @@ int main(void)
 
   pwmStart(&PWMD4, &pwmcfg);
   usbStart(&USBD1, &usbcfg);
+  sdStart(&SD3, &uart3Cfg);
 
   sduObjectInit(&SDU1);
   sduObjectInit(&SDU2);
