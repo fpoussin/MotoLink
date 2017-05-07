@@ -34,13 +34,14 @@ void writeColumns(uint8_t* columns, uint8_t size)
   }
 }
 
-CCM_FUNC bool findCell(uint8_t tp, uint8_t rpm, uint8_t* row, uint8_t* col)
+CCM_FUNC bool findCell(uint8_t tp, uint16_t rpm, uint8_t* row, uint8_t* col)
 {
   uint8_t i, maxcol, maxrow;
   bool rowFound = false, colFound = false;
 
   *row = 0;
   *col = 0;
+  rpm /= 100;
 
   maxrow = sizeof(tableRows)-1;
   maxcol = sizeof(tableColumns)-1;

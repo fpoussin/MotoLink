@@ -29,14 +29,14 @@
 #define _CHCONF_H_
 
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 9
+#define VERSION_MINOR 10
 #define VERSION_PATCH 0
 
 #include "vectors.h"
 #define CORTEX_VTOR_INIT ((uint32_t)&_vectors)
 #define CORTEX_ENABLE_WFI_IDLE TRUE
 #define STM32_DISABLE_EXTI16_HANDLER TRUE
-#define CHPRINT_USE_FLOAT TRUE
+#define CHPRINTF_USE_FLOAT TRUE
 
 /*===========================================================================*/
 /**

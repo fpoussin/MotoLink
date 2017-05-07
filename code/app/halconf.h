@@ -28,8 +28,6 @@
 #ifndef _HALCONF_H_
 #define _HALCONF_H_
 
-#define CHPRINT_USE_FLOAT TRUE
-
 #include "mcuconf.h"
 
 /**

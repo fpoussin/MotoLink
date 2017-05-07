@@ -29,6 +29,6 @@ typedef struct {
 
 void writeRows(uint8_t* rows, uint8_t size);
 void writeColumns(uint8_t* columns, uint8_t size);
-bool findCell(uint8_t tp, uint8_t rpm, uint8_t* row, uint8_t* col);
+bool findCell(uint8_t tp, uint16_t rpm, uint8_t* row, uint8_t* col);
 
 #endif /* TABLES_H_ */

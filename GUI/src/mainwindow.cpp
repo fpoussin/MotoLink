@@ -52,10 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mUndoView.setWindowTitle(tr("Actions History - ")+this->windowTitle());
     mHasChanged = false;
 
-    mFastPollingTimer.setInterval(50);
+    mFastPollingTimer.setInterval(25);
     mSlowPollingTimer.setInterval(500);
-    mTablesTimer.setInterval(200);
-    mRedrawTimer.setInterval(200);
+    mTablesTimer.setInterval(25);
+    mRedrawTimer.setInterval(25);
 
     this->exportToMTLFile();
     this->uiDisable();
@@ -644,7 +644,11 @@ void MainWindow::doSensorsRedraw()
 
     // Bottom progress bars
     mMainUi->pgbTps->setValue(mMtl->getTPS());
-    mMainUi->pgbRPM->setValue(mMtl->getRPM());
+
+    if (mMtl->getRPM() < mMainUi->pgbRPM->maximum())
+        mMainUi->pgbRPM->setValue(mMtl->getRPM());
+    else
+        mMainUi->pgbRPM->setValue(mMainUi->pgbRPM->maximum());
 }
 
 void MainWindow::onMonitoringReceived(const TaskList *monitoring)

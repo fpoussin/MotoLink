@@ -399,8 +399,8 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
         sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
         if (dbg_sensors) {
             chprintf(DBG_STREAM,"->[SENSORS] TPS mV/PCT: %06u/%04u\r\n", sensors_data.an2, sensors_data.tps);
-            chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
-            chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
+            chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
+            chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
         }
     }
     else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
@@ -421,6 +421,9 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     {
       sensors_data.cell.row = row;
       sensors_data.cell.col = col;
+      if (dbg_sensors) {
+          chprintf(DBG_STREAM,"->[SENSORS] Row:Value/Col:Value: %02u:%05u/%02u:%05u\r\n", row, tableRows[row], col, tableColumns[col]*100);
+      }
 
       if ((settings.functions & FUNC_RECORD)  && sensors_data.rpm != 0)
       {
