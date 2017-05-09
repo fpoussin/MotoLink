@@ -44,7 +44,7 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
   obd_msg_t* txobd = (obd_msg_t*)txmsg->data8;
 
   // Check Mode 1
-  if (rxobd->mode != OBD_QUERY_LIVEDATA)
+  if (rxobd->mode != OBD_MODE_QUERY_LIVEDATA)
     return;
 
   // Test addresses 0x7DF then 0x7D0-0x7D7
@@ -64,7 +64,7 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
   txmsg->RTR = CAN_RTR_DATA;
   txmsg->data64[0] = 0; // Clear data
   txobd->len = 0x03; // Default data length (mode + pid + 8b data)
-  txobd->mode = OBD_REPLY_LIVEDATA; // Show live data
+  txobd->mode = OBD_MODE_REPLY_LIVEDATA; // Show live data
   txobd->pid = rxobd->pid; // PID
 
   // Read PID and process
@@ -76,23 +76,25 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txobd->data[0] = 0x10; // 0x04 OBD_PID_LOAD
       txobd->data[1] = 0x18; // 0x0C OBD_PID_RPM, 0x0D OBD_PID_SPEED
       txobd->data[2] = 0x80; // 0x11 OBD_PID_TPS
-      txobd->data[3] = 0x01; // 0x24 OBD_PID_AFR
+      txobd->data[3] = 0x01; // 0x20 OBD_PID_SUPPORT2
       break;
 
     case OBD_PID_SUPPORT2: // Supported PIDs 0x21-0x40
       txobd->len = 0x06;
+      txobd->data[0] = 0x10; // 0x24 OBD_PID_AFR, 0x40 OBD_PID_SUPPORT3
+      txobd->data[3] = 0x01; // 0x40 OBD_PID_SUPPORT3
       break;
 
     case OBD_PID_SUPPORT3: // Supported PIDs 0x41-0x60
-      txobd->len = 0x06;
-      txobd->data[0] = 0x60; // 0x42 OBD_PID_VBAT, 0x43 OBD_PID_ABS_LOAD
-      break;
-
     case OBD_PID_SUPPORT4: // Supported PIDs 0x61-0x80
     case OBD_PID_SUPPORT5: // Supported PIDs 0x81-0xA0
     case OBD_PID_SUPPORT6: // Supported PIDs 0xA1-0xC0
+      txobd->len = 0x06;
+      txobd->data[3] = 0x01; // 0x[68AC]0 OBD_PID_SUPPORT[4567]
+      break;
     case OBD_PID_SUPPORT7: // Supported PIDs 0xC1-0xE0
       txobd->len = 0x06;
+      txobd->data[3] = 0x00; // Nothing
       break;
 
     case OBD_PID_CODES: // Error codes - no codes
@@ -157,7 +159,7 @@ void makeCanOBDPidRequest(CANTxFrame *txmsg, uint8_t pid) {
   txmsg->DLC = 8;
   txmsg->data64[0] = 0; // Clear data
   obd->len = 0x02; // Additional bytes
-  obd->mode = OBD_QUERY_LIVEDATA; // Show current data
+  obd->mode = OBD_MODE_QUERY_LIVEDATA; // Show current data
   obd->pid = pid;  // The PID
 }
 
@@ -168,7 +170,7 @@ void readCanOBDPidResponse(const CANRxFrame *rxmsg) {
   obd_msg_t* obd = (obd_msg_t*)rxmsg->data8;
 
   // Check it's mode 1
-  if (obd->mode != OBD_REPLY_LIVEDATA)
+  if (obd->mode != OBD_MODE_REPLY_LIVEDATA)
     return;
 
   // Test addresses 0x7DF 0x7D0-0x7D7
