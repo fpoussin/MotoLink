@@ -37,7 +37,7 @@
 
 /* Check if tp was the previous thread */
 #define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->p_next) << 15)
-#define FREQIN_INTERVAL MS2ST(50)
+#define FREQIN_INTERVAL MS2ST(25)
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */

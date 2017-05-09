@@ -76,8 +76,8 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txobd->len = 0x06;
       txobd->data[0] = 0x10; // 0x04 OBD_PID_LOAD
       txobd->data[1] = 0x18; // 0x0C OBD_PID_RPM, 0x0D OBD_PID_SPEED
-      txobd->data[2] = 0xA0; // 0x11 OBD_PID_TPS, 0x13 OBD_PID_AFR_CNT
-      txobd->data[3] = 0x01; // 0x20 OBD_PID_SUPPORT2
+      txobd->data[2] = 0xB0; // 0x11 OBD_PID_TPS, 0x13 OBD_PID_AFR_CNT, 0x14 OBD_PID_LAMBDA
+      txobd->data[3] = 0x11; // 0x1C OBD_PID_STANDARD, 0x20 OBD_PID_SUPPORT2
       break;
 
     case OBD_PID_SUPPORT2: // Supported PIDs 0x21-0x40
@@ -106,8 +106,15 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txobd->data[0] = 0xFF & ((uint16_t)sensors_data.tps * 128) / 100;
       break;
     case OBD_PID_AFR_CNT:
-      txobd->data[0] = 0x01; // How many oxygen sensors we have
+      txobd->data[0] = 0xFF; // How many oxygen sensors we have
       break;
+    case OBD_PID_LAMBDA:
+      txobd->len = 0x06;
+      ftmp = ((float)sensors_data.afr / 1.47f);
+      txobd->data[0] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
+      txobd->data[1] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
+      txobd->data[2] = 0x00;
+      txobd->data[3] = 0x00;
     case OBD_PID_RPM:
       txobd->len = 0x04;
       txobd->data[0] = 0xFF & sensors_data.rpm; // RPM LSB
@@ -116,6 +123,9 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     case OBD_PID_SPEED:
       txobd->data[0] = sensors_data.spd;
       break;
+    case OBD_PID_STANDARD:
+      txobd->data[0] = 0x0D; // JOBD, EOBD, and OBD II
+      break;
 
     // 0x21-3F
     case OBD_PID_AFR:
@@ -123,8 +133,8 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       ftmp = ((float)sensors_data.afr / 1.47f);
 
       txobd->len = 0x06;
-      txobd->data[0] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
-      txobd->data[1] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
+      txobd->data[0] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
+      txobd->data[1] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
       txobd->data[2] = 0xFF & (sensors_data.an3 >> 8); // Volts MSB
       txobd->data[3] = 0xFF & (sensors_data.an3); // Volts LSB
       break;
@@ -133,13 +143,13 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     // 0x41-5F
     case OBD_PID_VBAT:
       txobd->len = 0x04;
-      txobd->data[0] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
       txobd->data[0] = 0xFF & (sensors_data.an1); // VBAT LSB
+      txobd->data[0] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
       break;
     case OBD_PID_ABS_LOAD:
       txobd->len = 0x04;
-      txobd->data[0] = 0xFF & (sensors_data.tps >> 8); // Load MSB
       txobd->data[0] = 0xFF & (sensors_data.tps); // Load LSB
+      txobd->data[0] = 0xFF & (sensors_data.tps >> 8); // Load MSB
       break;
 
     default:

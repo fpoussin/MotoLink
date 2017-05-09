@@ -23,8 +23,10 @@
 #define OBD_PID_MAF      0x10
 #define OBD_PID_TPS      0x11
 #define OBD_PID_AFR_CNT  0x13
-#define OBD_PID_AFR      0x24
+#define OBD_PID_LAMBDA   0x14
+#define OBD_PID_STANDARD 0x1C
 
+#define OBD_PID_AFR      0x24
 #define OBD_PID_SUPPORT2 0x20
 #define OBD_PID_SUPPORT3 0x40
 

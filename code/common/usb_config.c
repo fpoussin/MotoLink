@@ -458,9 +458,7 @@ static const USBStringDesc usb_string4 = {
 static const USBStringDesc usb_string5 = {
   USB_DESC_BYTE(8),                     /* bLength.                         */
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING), /* bDescriptorType.                 */
-  {u'0' + VERSION_MAJOR,
-   u'0' + VERSION_MINOR,
-   u'0' + VERSION_PATCH}
+  {u'0' + 1, u'0', u'0'}
 };
 
 /*

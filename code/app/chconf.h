@@ -29,7 +29,7 @@
 #define _CHCONF_H_
 
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 10
+#define VERSION_MINOR 11
 #define VERSION_PATCH 0
 
 #include "vectors.h"
@@ -56,7 +56,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 10000
+#define CH_CFG_ST_FREQUENCY                 5000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -89,7 +89,7 @@
  * @note    The round robin preemption is not supported in tickless mode and
  *          must be set to zero in that case.
  */
-#define CH_CFG_TIME_QUANTUM                 30
+#define CH_CFG_TIME_QUANTUM                 5
 
 /**
  * @brief   Managed RAM size.
