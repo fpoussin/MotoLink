@@ -40,9 +40,11 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
   uint8_t i;
   float ftmp;
   bool pass = true;
+  obd_msg_t* rxobd = (obd_msg_t*)rxmsg->data8;
+  obd_msg_t* txobd = (obd_msg_t*)txmsg->data8;
 
   // Check Mode 1
-  if (rxmsg->data8[1] != 0x01)
+  if (rxobd->mode != OBD_QUERY_LIVEDATA)
     return;
 
   // Test addresses 0x7DF then 0x7D0-0x7D7
@@ -61,109 +63,117 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
   txmsg->IDE = CAN_IDE_STD;
   txmsg->RTR = CAN_RTR_DATA;
   txmsg->data64[0] = 0; // Clear data
-  txmsg->data8[0] = 0x03; // Default data length (mode + pid + 8b data)
-  txmsg->data8[1] = 0x41; // Show live data
-  txmsg->data8[2] = rxmsg->data8[2]; // PID
+  txobd->len = 0x03; // Default data length (mode + pid + 8b data)
+  txobd->mode = OBD_REPLY_LIVEDATA; // Show live data
+  txobd->pid = rxobd->pid; // PID
 
   // Read PID and process
-  switch (rxmsg->data8[2]) {
+  switch (rxobd->pid) {
 
     // Setup PIDs
-    case OBD_PID_SUPPORT: // Supported PIDs
-      txmsg->data8[0] = 0x06;
-      txmsg->data8[3] = 0x08; // 0x4 OBD_PID_LOAD
-      txmsg->data8[4] = 0x08; // 0x11 OBD_PID_TPS
-      txmsg->data8[5] = 0x0C; // 0x0C OBD_PID_RPM, 0x0D OBD_PID_SPEED
-      txmsg->data8[6] = 0x01; // 0x24 OBD_PID_AFR
+    case OBD_PID_SUPPORT: // Supported PIDs 0x01-0x20
+      txobd->len = 0x06;
+      txobd->data[0] = 0x10; // 0x04 OBD_PID_LOAD
+      txobd->data[1] = 0x18; // 0x0C OBD_PID_RPM, 0x0D OBD_PID_SPEED
+      txobd->data[2] = 0x80; // 0x11 OBD_PID_TPS
+      txobd->data[3] = 0x01; // 0x24 OBD_PID_AFR
       break;
 
-    case OBD_PID_SUPPORT2:
-      txmsg->data8[0] = 0x06;
-      txmsg->data8[3] = 0x03; // 0x42 OBD_PID_VBAT, 0x43 OBD_PID_ABS_LOAD
-      break;
-    case OBD_PID_SUPPORT3:
-    case OBD_PID_SUPPORT4:
-    case OBD_PID_SUPPORT5:
-    case OBD_PID_SUPPORT6:
-      txmsg->data8[0] = 0x06;
+    case OBD_PID_SUPPORT2: // Supported PIDs 0x21-0x40
+      txobd->len = 0x06;
       break;
 
-    case OBD_PID_CODES: // Error codes
-      txmsg->data8[0] = 0x06;
+    case OBD_PID_SUPPORT3: // Supported PIDs 0x41-0x60
+      txobd->len = 0x06;
+      txobd->data[0] = 0x60; // 0x42 OBD_PID_VBAT, 0x43 OBD_PID_ABS_LOAD
+      break;
+
+    case OBD_PID_SUPPORT4: // Supported PIDs 0x61-0x80
+    case OBD_PID_SUPPORT5: // Supported PIDs 0x81-0xA0
+    case OBD_PID_SUPPORT6: // Supported PIDs 0xA1-0xC0
+    case OBD_PID_SUPPORT7: // Supported PIDs 0xC1-0xE0
+      txobd->len = 0x06;
+      break;
+
+    case OBD_PID_CODES: // Error codes - no codes
+      txobd->len = 0x06;
       break;
 
 
     // Main PIDs
     case OBD_PID_LOAD:
     case OBD_PID_TPS:
-      txmsg->data8[3] = 0xFF & ((uint16_t)sensors_data.tps * 128) / 100;
+      txobd->data[0] = 0xFF & ((uint16_t)sensors_data.tps * 128) / 100;
       break;
     case OBD_PID_AFR_CNT:
-      txmsg->data8[3] = 0x01; // How many oxygen sensors we have
+      txobd->data[0] = 0x01; // How many oxygen sensors we have
       break;
     case OBD_PID_RPM:
-      txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & sensors_data.rpm; // RPM LSB
-      txmsg->data8[4] = 0xFF & (sensors_data.rpm >> 8); // RPM MSB
+      txobd->len = 0x04;
+      txobd->data[0] = 0xFF & sensors_data.rpm; // RPM LSB
+      txobd->data[1] = 0xFF & (sensors_data.rpm >> 8); // RPM MSB
       break;
     case OBD_PID_SPEED:
-      txmsg->data8[3] = sensors_data.spd;
+      txobd->data[0] = sensors_data.spd;
       break;
     case OBD_PID_AFR:
       // AFR to lambda
       ftmp = ((float)sensors_data.afr / 1.47f);
 
-      txmsg->data8[0] = 0x06;
-      txmsg->data8[3] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
-      txmsg->data8[4] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
-      txmsg->data8[5] = 0xFF & (sensors_data.an3 >> 8); // Volts MSB
-      txmsg->data8[6] = 0xFF & (sensors_data.an3); // Volts LSB
+      txobd->len = 0x06;
+      txobd->data[0] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
+      txobd->data[1] = 0xFF & ((uint16_t)((2.0f / 65536.0f) * ftmp)); // Lambda LSB
+      txobd->data[2] = 0xFF & (sensors_data.an3 >> 8); // Volts MSB
+      txobd->data[3] = 0xFF & (sensors_data.an3); // Volts LSB
       break;
 
 
     // 0x40+
     case OBD_PID_VBAT:
-      txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
-      txmsg->data8[3] = 0xFF & (sensors_data.an1); // VBAT LSB
+      txobd->len = 0x04;
+      txobd->data[0] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
+      txobd->data[0] = 0xFF & (sensors_data.an1); // VBAT LSB
       break;
     case OBD_PID_ABS_LOAD:
-      txmsg->data8[0] = 0x04;
-      txmsg->data8[3] = 0xFF & (sensors_data.tps >> 8); // Load MSB
-      txmsg->data8[3] = 0xFF & (sensors_data.tps); // Load LSB
+      txobd->len = 0x04;
+      txobd->data[0] = 0xFF & (sensors_data.tps >> 8); // Load MSB
+      txobd->data[0] = 0xFF & (sensors_data.tps); // Load LSB
       break;
 
     default:
-      txmsg->data8[3] = 0;
       break;
     }
 
-  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(2));
 }
 
 void makeCanOBDPidRequest(CANTxFrame *txmsg, uint8_t pid) {
+
+  obd_msg_t* obd = (obd_msg_t*)txmsg->data8;
 
   txmsg->IDE = CAN_IDE_STD;
   txmsg->SID = 0x7DF; // ECU Address
   txmsg->RTR = CAN_RTR_DATA;
   txmsg->DLC = 8;
-  txmsg->data8[0] = 0x02; // Additional bytes
-  txmsg->data8[1] = 0x01; // Show current data
-  txmsg->data8[2] = pid;  // The PID
-  txmsg->data8[3] = 0x00; // Not used
-  txmsg->data32[1] = 0x00; // Not used
+  txmsg->data64[0] = 0; // Clear data
+  obd->len = 0x02; // Additional bytes
+  obd->mode = OBD_QUERY_LIVEDATA; // Show current data
+  obd->pid = pid;  // The PID
 }
 
 void readCanOBDPidResponse(const CANRxFrame *rxmsg) {
 
   uint8_t i;
-  bool pass = false;
+  bool pass = true;
+  obd_msg_t* obd = (obd_msg_t*)rxmsg->data8;
+
   // Check it's mode 1
-  if (rxmsg->data8[1] != 0x41)
+  if (obd->mode != OBD_REPLY_LIVEDATA)
     return;
 
   // Test addresses 0x7DF 0x7D0-0x7D7
   if (rxmsg->SID != 0x7E8) {
+    pass = false;
 
     for (i = 0; i <= 7; i++) {
       if (rxmsg->SID == 0x7E0 + i)
@@ -174,7 +184,7 @@ void readCanOBDPidResponse(const CANRxFrame *rxmsg) {
   if (!pass) return;
 
   // Read PID and process
-  switch (rxmsg->data8[2]) {
+  switch (obd->pid) {
     case OBD_PID_LOAD:
       sensors_data.tps = (100 * rxmsg->data8[3]) >> 8; // x/256
       break;
