@@ -244,6 +244,8 @@ void MainWindow::showUpdateDialog()
 
 void MainWindow::setupDefaults(void)
 {
+    this->setWindowTitle(QString("Motolink ") + __MTL_VER__);
+
     mTablesModelList.append(&mAFRModel);
     mTablesModelList.append(&mAFRTgtModel);
     mTablesModelList.append(&mKnockModel);
