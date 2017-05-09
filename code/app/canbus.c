@@ -35,7 +35,7 @@ void checkCanFilters(CANDriver *canp, const CANConfig *config) {
   }
 }
 
-void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame *rxmsg)
+bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame *rxmsg)
 {
   uint8_t i;
   float ftmp;
@@ -45,7 +45,7 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
 
   // Check Mode 1
   if (rxobd->mode != OBD_MODE_QUERY_LIVEDATA)
-    return;
+    return false;
 
   // Test addresses 0x7DF then 0x7D0-0x7D7
   if (rxmsg->SID != 0x7DF) {
@@ -57,12 +57,13 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     }
   }
 
-  if (!pass) return;
+  if (!pass) return false;
 
   txmsg->SID = 0x7E8; // Recipient address
   txmsg->IDE = CAN_IDE_STD;
   txmsg->RTR = CAN_RTR_DATA;
-  txmsg->data64[0] = 0; // Clear data
+  txmsg->DLC = 8; // As per OBD standard
+  txmsg->data64[0] = 0; // Clear data  
   txobd->len = 0x03; // Default data length (mode + pid + 8b data)
   txobd->mode = OBD_MODE_REPLY_LIVEDATA; // Show live data
   txobd->pid = rxobd->pid; // PID
@@ -75,34 +76,31 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txobd->len = 0x06;
       txobd->data[0] = 0x10; // 0x04 OBD_PID_LOAD
       txobd->data[1] = 0x18; // 0x0C OBD_PID_RPM, 0x0D OBD_PID_SPEED
-      txobd->data[2] = 0x80; // 0x11 OBD_PID_TPS
+      txobd->data[2] = 0xA0; // 0x11 OBD_PID_TPS, 0x13 OBD_PID_AFR_CNT
       txobd->data[3] = 0x01; // 0x20 OBD_PID_SUPPORT2
       break;
 
     case OBD_PID_SUPPORT2: // Supported PIDs 0x21-0x40
       txobd->len = 0x06;
-      txobd->data[0] = 0x10; // 0x24 OBD_PID_AFR, 0x40 OBD_PID_SUPPORT3
+      txobd->data[0] = 0x10; // 0x24 OBD_PID_AFR
       txobd->data[3] = 0x01; // 0x40 OBD_PID_SUPPORT3
       break;
 
     case OBD_PID_SUPPORT3: // Supported PIDs 0x41-0x60
+      txobd->len = 0x06;
+      txobd->data[0] = 0x60; // 0x42 OBD_PID_AFR, 0x43 OBD_PID_ABS_LOAD
+      break;
+
     case OBD_PID_SUPPORT4: // Supported PIDs 0x61-0x80
     case OBD_PID_SUPPORT5: // Supported PIDs 0x81-0xA0
     case OBD_PID_SUPPORT6: // Supported PIDs 0xA1-0xC0
-      txobd->len = 0x06;
-      txobd->data[3] = 0x01; // 0x[68AC]0 OBD_PID_SUPPORT[4567]
-      break;
     case OBD_PID_SUPPORT7: // Supported PIDs 0xC1-0xE0
-      txobd->len = 0x06;
-      txobd->data[3] = 0x00; // Nothing
-      break;
-
     case OBD_PID_CODES: // Error codes - no codes
       txobd->len = 0x06;
       break;
 
 
-    // Main PIDs
+    // 0x01-1F
     case OBD_PID_LOAD:
     case OBD_PID_TPS:
       txobd->data[0] = 0xFF & ((uint16_t)sensors_data.tps * 128) / 100;
@@ -118,6 +116,8 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     case OBD_PID_SPEED:
       txobd->data[0] = sensors_data.spd;
       break;
+
+    // 0x21-3F
     case OBD_PID_AFR:
       // AFR to lambda
       ftmp = ((float)sensors_data.afr / 1.47f);
@@ -130,7 +130,7 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       break;
 
 
-    // 0x40+
+    // 0x41-5F
     case OBD_PID_VBAT:
       txobd->len = 0x04;
       txobd->data[0] = 0xFF & (sensors_data.an1 >> 8); // VBAT MSB
@@ -147,6 +147,7 @@ void serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
     }
 
   canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(2));
+  return true;
 }
 
 void makeCanOBDPidRequest(CANTxFrame *txmsg, uint8_t pid) {

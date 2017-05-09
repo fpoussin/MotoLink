@@ -150,6 +150,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   CANTxFrame txmsg;
   CANRxFrame rxmsg;
   uint16_t i;
+  bool pidserved;
 
   (void)arg;
   chRegSetThreadName("CAN Bus");
@@ -178,8 +179,8 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
       /* Process message.*/
 
       if (dbg_can) {
-          chprintf(DBG_STREAM, "->[SID:%08x][RTR:%01x]", rxmsg.SID, rxmsg.RTR);
-          for(i = 0; i < 8; i++) {
+          chprintf(DBG_STREAM, "->[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), rxmsg.SID, rxmsg.RTR);
+          for(i = 0; i < rxmsg.DLC; i++) {
               chprintf(DBG_STREAM, ":%02x", rxmsg.data8[i]);
           }
           chprintf(DBG_STREAM, "\r\n");
@@ -187,14 +188,17 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 
       if (settings.functions & FUNC_OBD_SERVER) {
 
-        serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
+        pidserved = serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
 
-        if (dbg_can) {
-            chprintf(DBG_STREAM, "<-[%08x][%01x]", txmsg.SID, txmsg.RTR);
-            for(i = 0; i < 8; i++) {
+        if (dbg_can && pidserved) {
+            chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
+            for(i = 0; i < txmsg.DLC; i++) {
                 chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
             }
             chprintf(DBG_STREAM, "\r\n");
+        }
+         else if (dbg_can) {
+            chprintf(DBG_STREAM, "!![CANBUS][%08x][ignored sender %03x]\r\n", chSysGetRealtimeCounterX(), rxmsg.SID);
         }
       }
 
@@ -215,6 +219,14 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 
       // Request OBD PIDs
       sendCanOBDFrames(&CAND1, &txmsg);
+
+      if (dbg_can) {
+          chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
+          for(i = 0; i < 8; i++) {
+              chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
+          }
+          chprintf(DBG_STREAM, "\r\n");
+      }
       chThdSleepMilliseconds(100); // ~10Hz
     }
   }
@@ -397,11 +409,6 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
         sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
         sensors_data.rpm = calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
         sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
-        if (dbg_sensors) {
-            chprintf(DBG_STREAM,"->[SENSORS] TPS mV/PCT: %06u/%04u\r\n", sensors_data.an2, sensors_data.tps);
-            chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
-            chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
-        }
     }
     else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
         sensors_data.tps = rand16(0, 200);
@@ -415,6 +422,12 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
     }
     else if (settings.afrInput == AFR_INPUT_TEST) {
         sensors_data.afr = rand16(11000, 16000) / 100;
+    }
+
+    if (dbg_sensors) {
+        chprintf(DBG_STREAM,"->[SENSORS] TPS mV/PCT: %06u/%04u\r\n", sensors_data.an2, sensors_data.tps);
+        chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
+        chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
     }
 
     if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
