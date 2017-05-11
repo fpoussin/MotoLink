@@ -32,10 +32,6 @@
 #define PAD_LED1 6
 #define PAD_LED2 7
 #define PAD_SCS_TRIG 0
-#define PAD_SPI1_MISO 6
-#define PAD_SPI1_MOSI 7
-#define PAD_SPI1_NSS 15
-#define PAD_SPI1_SCK 5
 #define PAD_SPI2_MISO 14
 #define PAD_SPI2_MOSI 15
 #define PAD_SPI2_NSS 12
@@ -67,10 +63,6 @@
 #define PORT_LED1 GPIOB
 #define PORT_LED2 GPIOB
 #define PORT_SCS_TRIG GPIOB
-#define PORT_SPI1_MISO GPIOA
-#define PORT_SPI1_MOSI GPIOA
-#define PORT_SPI1_NSS GPIOA
-#define PORT_SPI1_SCK GPIOA
 #define PORT_SPI2_MISO GPIOB
 #define PORT_SPI2_MOSI GPIOB
 #define PORT_SPI2_NSS GPIOB
@@ -103,9 +95,9 @@
     PIN_MODE_ANALOG(2) | \
     PIN_MODE_ANALOG(3) | \
     PIN_MODE_ANALOG(4) | \
-    PIN_MODE_ALTERNATE(5) | \
-    PIN_MODE_ALTERNATE(6) | \
-    PIN_MODE_ALTERNATE(7) | \
+    PIN_MODE_ANALOG(5) | \
+    PIN_MODE_ANALOG(6) | \
+    PIN_MODE_ANALOG(7) | \
     PIN_MODE_ANALOG(8) | \
     PIN_MODE_ALTERNATE(9) | \
     PIN_MODE_ALTERNATE(10) | \
@@ -113,7 +105,7 @@
     PIN_MODE_ALTERNATE(12) | \
     PIN_MODE_ALTERNATE(13) | \
     PIN_MODE_ALTERNATE(14) | \
-    PIN_MODE_ALTERNATE(15) | \
+    PIN_MODE_ANALOG(15) | \
     0)
 
 #define VAL_GPIOA_OTYPER ( \
@@ -141,9 +133,9 @@
     PIN_OSPEED_VERYLOW(2) | \
     PIN_OSPEED_VERYLOW(3) | \
     PIN_OSPEED_VERYLOW(4) | \
-    PIN_OSPEED_MEDIUM(5) | \
-    PIN_OSPEED_MEDIUM(6) | \
-    PIN_OSPEED_MEDIUM(7) | \
+    PIN_OSPEED_VERYLOW(5) | \
+    PIN_OSPEED_VERYLOW(6) | \
+    PIN_OSPEED_VERYLOW(7) | \
     PIN_OSPEED_VERYLOW(8) | \
     PIN_OSPEED_MEDIUM(9) | \
     PIN_OSPEED_MEDIUM(10) | \
@@ -151,7 +143,7 @@
     PIN_OSPEED_MEDIUM(12) | \
     PIN_OSPEED_MEDIUM(13) | \
     PIN_OSPEED_MEDIUM(14) | \
-    PIN_OSPEED_MEDIUM(15) | \
+    PIN_OSPEED_VERYLOW(15) | \
     0)
 
 #define VAL_GPIOA_PUPDR ( \
@@ -198,9 +190,9 @@
     PIN_AFIO_AF(2, 0) | \
     PIN_AFIO_AF(3, 0) | \
     PIN_AFIO_AF(4, 0) | \
-    PIN_AFIO_AF(5, 5) | \
-    PIN_AFIO_AF(6, 5) | \
-    PIN_AFIO_AF(7, 5) | \
+    PIN_AFIO_AF(5, 0) | \
+    PIN_AFIO_AF(6, 0) | \
+    PIN_AFIO_AF(7, 0) | \
     0)
 
 #define VAL_GPIOA_AFRH ( \
@@ -211,7 +203,7 @@
     PIN_AFIO_AF(12, 14) | \
     PIN_AFIO_AF(13, 0) | \
     PIN_AFIO_AF(14, 0) | \
-    PIN_AFIO_AF(15, 5) | \
+    PIN_AFIO_AF(15, 0) | \
     0)
 
 /* PORT B */
