@@ -19,6 +19,9 @@ Includes some digital (RPM, Speed), analog (TPS, ECT, Wideband), serial (Wideban
 
 ![](http://i.imgur.com/Rat9Znd.jpg)
 
+[![Alt text](https://img.youtube.com/vi/rAnS-8KSQrY/0.jpg)](https://www.youtube.com/watch?v=rAnS-8KSQrY)
+
+
 ###File tree:###
 
 **├── Board**  *Eagle board files*  
