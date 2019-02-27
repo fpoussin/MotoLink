@@ -24,8 +24,7 @@ Includes some digital (RPM, Speed), analog (TPS, ECT, Wideband), serial (Wideban
 [![Alt text](https://img.youtube.com/vi/rAnS-8KSQrY/0.jpg)](https://www.youtube.com/watch?v=rAnS-8KSQrY)
 
 
-###File tree:###
-
+### File tree:  
 **├── Board**  *Eagle board files*  
 **├── Code**  
 **│   ├── App**  *Motolink's MCU code*  
@@ -40,3 +39,22 @@ Includes some digital (RPM, Speed), analog (TPS, ECT, Wideband), serial (Wideban
 **└── README.md**  *This readme file*  
 
 You will need to init and update the git submodules (QtUsb, ChibiOS-RT, ChibiOS-Contrib) to build the projects.
+
+## Building
+### GUI
+* Make sure submodules are pulled
+* Go to the GUI folder
+* Unzip res/oxygen.zip
+* You will need libusb-1.0-0-dev (name might differ depending on distro/OS)
+* Open the project with Qt Creator
+* Compile and launch
+
+### App and Bootloader
+* [You will need ARM's GCC toolchain](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads)
+* Make sure submodules are pulled
+* Go the de code/app or code/bootloader folder
+* For the app, you need to compile the DSP lib (just launch make in the dsp_lib folder)
+* make
+* For the bootloader, use your favorite stlink interface [or my QSTLink2 app](https://github.com/fpoussin/QStlink2)
+* Once the bootloader is running, you can update the app through the GUI
+
