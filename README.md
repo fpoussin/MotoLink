@@ -43,8 +43,10 @@ You will need to init and update the git submodules (QtUsb, ChibiOS-RT, ChibiOS-
 ## Building
 ### GUI
 * Make sure submodules are pulled
+* You will need python 2/3 in the path (system path or Qt Creator project setting PATH variable)
 * Go to the GUI folder
 * Unzip res/oxygen.zip
+* You need a binary file of the firmware, an empty one can be created for testing. (../code/app/build/motolink.bin)
 * You will need libusb-1.0-0-dev (name might differ depending on distro/OS)
 * Open the project with Qt Creator
 * Compile and launch
