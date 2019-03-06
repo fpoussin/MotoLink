@@ -26,7 +26,7 @@ unzip oxygen.zip'''
           steps {
             sh '''cd $WORKSPACE/code/bootloader
 make clean
-make'''
+make -j $(nproc)'''
           }
         }
         stage('Compile uC Application') {
@@ -39,10 +39,10 @@ make'''
           steps {
             sh '''cd $WORKSPACE/code/app/dsp_lib
 make clean
-make
+make -j $(nproc)
 cd ..
 make clean
-make
+make -j $(nproc)
 '''
           }
         }
@@ -58,7 +58,7 @@ make
       steps {
         sh '''cd $WORKSPACE/GUI
 qmake
-make
+make -j $(nproc)
 '''
       }
     }
