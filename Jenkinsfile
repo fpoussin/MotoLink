@@ -1,12 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'fpoussin/jenkins:ubuntu-18.04-arm'
-    }
-
-  }
+  agent any
   stages {
     stage('Prepare code') {
+      agent {
+        docker {
+          image 'fpoussin/jenkins:ubuntu-18.04-arm'
+        }
+
+      }
       steps {
         sh '''git submodule sync
 git submodule update --init'''
