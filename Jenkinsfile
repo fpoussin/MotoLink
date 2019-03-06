@@ -52,7 +52,8 @@ nice make -j $(nproc)
       }
       steps {
         sh '''cd $WORKSPACE/GUI/res
-unzip oxygen.zip'''
+unzip oxygen.zip
+touch firmware.xml'''
         sh '''cd $WORKSPACE/GUI
 qmake
 nice make -j $(nproc)
