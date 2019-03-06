@@ -11,12 +11,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-#ifdef WIN32
-// Linked libraries
-#pragma comment (lib , "libeay32.lib" )
-#pragma comment (lib , "ssleay32.lib" )
-#endif
-
 class Update : public QObject
 {
     Q_OBJECT
