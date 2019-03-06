@@ -11,45 +11,22 @@ pipeline {
       steps {
         sh '''git submodule sync
 git submodule update --init'''
-        sh '''cd $WORKSPACE/GUI/res
-unzip oxygen.zip'''
       }
     }
     stage('Compile uC Bootloader') {
-      parallel {
-        stage('Compile uC Bootloader') {
-          agent {
-            docker {
-              image 'fpoussin/jenkins:ubuntu-18.04-arm'
-            }
-
-          }
-          steps {
-            sh '''cd $WORKSPACE/code/bootloader
-make clean
-make -j $(nproc)'''
-          }
+      agent {
+        docker {
+          image 'fpoussin/jenkins:ubuntu-18.04-arm'
         }
-        stage('Compile uC Application') {
-          agent {
-            docker {
-              image 'fpoussin/jenkins:ubuntu-18.04-arm'
-            }
 
-          }
-          steps {
-            sh '''cd $WORKSPACE/code/app/dsp_lib
+      }
+      steps {
+        sh '''cd $WORKSPACE/code/bootloader
 make clean
-make -j $(nproc)
-cd ..
-make clean
-make -j $(nproc)
-'''
-          }
-        }
+nice make -j $(nproc)'''
       }
     }
-    stage('Compile GUI') {
+    stage('Compile uC Application') {
       agent {
         docker {
           image 'fpoussin/jenkins:ubuntu-18.04-qt5'
@@ -57,9 +34,22 @@ make -j $(nproc)
 
       }
       steps {
+        sh '''cd $WORKSPACE/code/app/dsp_lib
+make clean
+nice make -j $(nproc)
+cd ..
+make clean
+nice make -j $(nproc)
+'''
+      }
+    }
+    stage('Compile GUI') {
+      steps {
+        sh '''cd $WORKSPACE/GUI/res
+unzip oxygen.zip'''
         sh '''cd $WORKSPACE/GUI
 qmake
-make -j $(nproc)
+nice make -j $(nproc)
 '''
       }
     }
