@@ -5,7 +5,8 @@ MotoLink
 
 [![GitHub version](https://badge.fury.io/gh/fpoussin%2Fmotolink.svg)](https://badge.fury.io/gh/fpoussin%2Fmotolink)  
 
-[![Build Status](http://jenkins.netyxia.net/buildStatus/icon?job=Motolink)](http://jenkins.netyxia.net/job/Motolink)  
+[![Build Status](https://jenkins.netyxia.net/buildStatus/icon?job=MotoLink%2Fmaster)](https://jenkins.netyxia.net/job/MotoLink/job/master/)  
+
 CAN Bus, K-Line interface for motorcycles, with a fuel/ignition mapper function.  
 
 Primarily intended to communicate with Honda HRC, Generic OBD, or Yamaha YEC ECUs.  
