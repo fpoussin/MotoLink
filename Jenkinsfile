@@ -1,5 +1,10 @@
 pipeline {
-  agent none
+  agent {
+    docker {
+      image 'fpoussin/jenkins:ubuntu-18.04-arm'
+    }
+
+  }
   stages {
     stage('Prepare code') {
       steps {
