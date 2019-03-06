@@ -29,7 +29,7 @@ nice make -j $(nproc)'''
     stage('Compile uC Application') {
       agent {
         docker {
-          image 'fpoussin/jenkins:ubuntu-18.04-qt5'
+          image 'fpoussin/jenkins:ubuntu-18.04-arm'
         }
 
       }
@@ -44,6 +44,12 @@ nice make -j $(nproc)
       }
     }
     stage('Compile GUI') {
+      agent {
+        docker {
+          image 'fpoussin/jenkins:ubuntu-18.04-qt5'
+        }
+
+      }
       steps {
         sh '''cd $WORKSPACE/GUI/res
 unzip oxygen.zip'''
