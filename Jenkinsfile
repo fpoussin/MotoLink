@@ -4,7 +4,7 @@ pipeline {
     stage('Prepare code') {
       agent {
         docker {
-          image 'fpoussin/jenkins:ubuntu-18.04-arm'
+          image 'fpoussin/jenkins:ubuntu-18.04-chibios'
         }
 
       }
