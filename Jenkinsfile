@@ -9,8 +9,14 @@ pipeline {
 
       }
       steps {
-        sh '''git submodule sync
-git submodule update --init'''
+        sh '''git config --file=.gitmodules submodule.code/ChibiOS-RT.url /var/lib/git/ChibiOS
+git submodule sync
+git submodule update --init || true
+
+git checkout .gitmodules
+git submodule sync
+git submodule update --init
+'''
       }
     }
     stage('Compile uC Bootloader') {
