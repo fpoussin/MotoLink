@@ -36,10 +36,10 @@ def indent(elem, level=0):
 
 try:
     with open(args.file, "rb") as bin_file:
-        encoded = b64encode(bin_file.read())
+        encoded = str(b64encode(bin_file.read()))
 except IOError:
     print("Could not find bin file, skipping...")
-    sys.exit(0)
+    exit(0)
 
 v_major = 0
 v_minor = 0
@@ -66,7 +66,7 @@ version = ET.SubElement(info, 'version')
 version.text = "{0}.{1}.{2}".format(v_major, v_minor, v_patch)
 
 data = ET.SubElement(top, 'data')
-data.text = "\n"+fill(encoded, 100, initial_indent="    ", subsequent_indent="    ")+"\n  "
+data.text = "\n" + fill(encoded, 100, initial_indent="    ", subsequent_indent="    ") + "\n  "
 
 indent(top)
 
