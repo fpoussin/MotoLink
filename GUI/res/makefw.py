@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from base64 import b64encode
 import xml.etree.cElementTree as ET
@@ -38,7 +38,7 @@ try:
     with open(args.file, "rb") as bin_file:
         encoded = b64encode(bin_file.read())
 except IOError:
-    print "Could not find bin file, skipping..."
+    print("Could not find bin file, skipping...")
     sys.exit(0)
 
 v_major = 0
@@ -74,6 +74,6 @@ with open(args.output, "wb") as xml_file:
     xml_file.write(ET.tostring(top))
 
 
-print "Version:", version.text
-print "Firmware file:", args.file
-print "Output File:", args.output
+print("Version:", version.text)
+print("Firmware file:", args.file)
+print("Output File:", args.output)
