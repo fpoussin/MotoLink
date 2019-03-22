@@ -13,12 +13,12 @@ Motolink::Motolink(QObject *parent) :
     QtUsb::DeviceFilter filter;
     QtUsb::DeviceConfig config;
 
+    m_read_ep = 0x84;
+    m_write_ep = 0x04;
+
     filter.pid = mPid;
     filter.vid = mVid;
 
-
-    config.readEp = 0x84;
-    config.writeEp = 0x04;
     config.alternate = 0;
     config.config = 1;
     config.interface = 3;
@@ -32,7 +32,7 @@ Motolink::Motolink(QObject *parent) :
     mUsb->setConfig(config);
     mUsb->setTimeout(300);
 
-    mBtl = new Bootloader(mUsb);
+    mBtl = new Bootloader(mUsb, m_read_ep, m_write_ep);
 
     mConnected = false;
     mAbortConnect = false;
@@ -124,7 +124,7 @@ bool Motolink::usbProbeConnect()
     }
 
     /* Clean buffer */
-    mUsb->flush();
+    mUsb->flush(m_read_ep);
 
     _UNLOCK_
     if (!this->sendWake())
@@ -418,7 +418,7 @@ bool Motolink::clearTables()
 void Motolink::clearUsb()
 {
     if (this->mConnected)
-        this->mUsb->flush();
+        this->mUsb->flush(m_read_ep);
 }
 
 bool Motolink::sendWake()
@@ -489,11 +489,11 @@ bool Motolink::sendSimpleCmd(quint8 cmd)
     QByteArray send, recv;
     this->prepareCmd(&send, cmd);
 
-    if (mUsb->write(&send, send.size()) != send.size())
+    if (mUsb->write(&send, send.size(), m_write_ep) != send.size())
     {
         return 0;
     }
-    if (mUsb->read(&recv, 1) > 0)
+    if (mUsb->read(&recv, 1, m_read_ep) > 0)
     {
         result = recv.at(0) == (MASK_REPLY_OK | cmd);
         if (!result)
@@ -509,26 +509,26 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
     bool result;
     recv->clear();
 
-    if (mUsb->write(send, send->size()) < send->size())
+    if (mUsb->write(send, send->size(), m_write_ep) < send->size())
     {
         return 0;
     }
 
-    mUsb->read(recv, 1); // Read command result first
+    mUsb->read(recv, 1, m_read_ep); // Read command result first
     result = recv->at(0) == (MASK_REPLY_OK | cmd);
     if (!result)
         this->printError(recv->at(0));
 
     recv->clear();
     if (len)
-        mUsb->read(recv, len); // Read actual command data
+        mUsb->read(recv, len, m_read_ep); // Read actual command data
 
     return result && (uint)recv->size() == len;
 }
 
 int Motolink::readMore(QByteArray *recv, uint len)
 {
-   return mUsb->read(recv, len);
+   return mUsb->read(recv, len, m_read_ep);
 }
 
 void Motolink::printError(quint8 reply)

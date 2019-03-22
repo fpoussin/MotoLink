@@ -21,7 +21,7 @@ class Bootloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bootloader(QUsbDevice *usb, QObject *parent = 0);
+    explicit Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent = Q_NULLPTR);
     ~Bootloader();
     
 public slots:
@@ -37,6 +37,8 @@ private slots:
 private:
     void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     QUsbDevice *mUsb;
+    quint8 m_read_ep;
+    quint8 m_write_ep;
 
 signals:
     void connectionResult(bool result);
