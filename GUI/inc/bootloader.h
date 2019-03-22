@@ -37,8 +37,8 @@ private slots:
 private:
     void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     QUsbDevice *mUsb;
-    quint8 m_read_ep;
-    quint8 m_write_ep;
+    QtUsb::endpoint m_read_ep;
+    QtUsb::endpoint m_write_ep;
 
 signals:
     void connectionResult(bool result);
