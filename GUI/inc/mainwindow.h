@@ -8,7 +8,7 @@
 #include <QItemDelegate>
 #include <QCloseEvent>
 #include <QString>
-#include <QUsb>
+#include <QUsbDevice>
 #include <QUndoStack>
 #include <QTranslator>
 #include <QSettings>

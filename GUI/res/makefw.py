@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from base64 import b64encode
 import xml.etree.cElementTree as ET
@@ -36,10 +36,10 @@ def indent(elem, level=0):
 
 try:
     with open(args.file, "rb") as bin_file:
-        encoded = b64encode(bin_file.read())
+        encoded = str(b64encode(bin_file.read()))
 except IOError:
-    print "Could not find bin file, skipping..."
-    sys.exit(0)
+    print("Could not find bin file, skipping...")
+    exit(0)
 
 v_major = 0
 v_minor = 0
@@ -66,7 +66,7 @@ version = ET.SubElement(info, 'version')
 version.text = "{0}.{1}.{2}".format(v_major, v_minor, v_patch)
 
 data = ET.SubElement(top, 'data')
-data.text = "\n"+fill(encoded, 100, initial_indent="    ", subsequent_indent="    ")+"\n  "
+data.text = "\n" + fill(encoded, 100, initial_indent="    ", subsequent_indent="    ") + "\n  "
 
 indent(top)
 
@@ -74,6 +74,6 @@ with open(args.output, "wb") as xml_file:
     xml_file.write(ET.tostring(top))
 
 
-print "Version:", version.text
-print "Firmware file:", args.file
-print "Output File:", args.output
+print("Version:", version.text)
+print("Firmware file:", args.file)
+print("Output File:", args.output)

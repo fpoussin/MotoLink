@@ -2,8 +2,9 @@
 #define MOTOLINK_H
 
 #include <QObject>
-#include <QUsb>
+#include <QUsbDevice>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
@@ -48,11 +49,16 @@ class Motolink : public QObject
 {
     Q_OBJECT
 public:
-    explicit Motolink(QObject *parent = 0);
+    explicit Motolink(QObject *parent = Q_NULLPTR);
     ~Motolink();
+
+    quint8 getReadEp(void) {return m_read_ep;}
+    quint8 getWriteEp(void) {return m_write_ep;}
+
     quint8 getBtlFlags(void) { _LOCK_ quint8 tmp = mBtl->getFlags(); _UNLOCK_ return tmp; }
     bool boot() { _LOCK_ bool tmp = mBtl->boot(); _UNLOCK_ return tmp; }
     inline bool isConnected(void) { return mConnected; }
+
     inline const TaskList * getMonitoring(void) { return &mMonitoring; }
     inline const QByteArray * getKnockSpectrum(void) { return &mKnockData; }
     inline const quint8 * getAFRTable(void) { return (quint8 *)&mAFRTable; }
@@ -183,6 +189,9 @@ private slots:
     void setupConnections(void);
 
 private:
+    QtUsb::endpoint m_read_ep;
+    QtUsb::endpoint m_write_ep;
+
     void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     bool sendSimpleCmd(quint8 cmd);
     bool sendCmd(QByteArray* send, QByteArray *recv, uint len, quint8 cmd);

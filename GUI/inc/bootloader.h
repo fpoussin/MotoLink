@@ -7,7 +7,7 @@
 #include <QtEndian>
 #include <QTimer>
 #include <QThread>
-#include <QUsb>
+#include <QUsbDevice>
 
 typedef quint8 uint8_t;
 typedef quint16 uint16_t;
@@ -21,7 +21,7 @@ class Bootloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bootloader(QUsbDevice *usb, QObject *parent = 0);
+    explicit Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent = Q_NULLPTR);
     ~Bootloader();
     
 public slots:
@@ -37,6 +37,8 @@ private slots:
 private:
     void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
     QUsbDevice *mUsb;
+    QtUsb::endpoint m_read_ep;
+    QtUsb::endpoint m_write_ep;
 
 signals:
     void connectionResult(bool result);
