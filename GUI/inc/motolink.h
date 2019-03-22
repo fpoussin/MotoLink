@@ -2,8 +2,9 @@
 #define MOTOLINK_H
 
 #include <QObject>
-#include <QUsb>
+#include <QUsbDevice>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>

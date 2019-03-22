@@ -72,10 +72,10 @@ bool Motolink::usbConnect()
         return false;
     }
 
-    if (mUsb->getSpeed() != QtUsb::fullSpeed)
+    if (mUsb->speed() != QtUsb::fullSpeed)
     {
         qWarning("Incorrect USB speed: %s",
-                 mUsb->getSpeedString().toStdString().data());
+                 mUsb->speedString().toStdString().data());
         mConnected = false;
         return false;
     }
@@ -113,10 +113,10 @@ bool Motolink::usbProbeConnect()
         return false;
     }
 
-    if (mUsb->getSpeed() != QtUsb::fullSpeed)
+    if (mUsb->speed() != QtUsb::fullSpeed)
     {
         qWarning("Incorrect USB speed: %s",
-                 mUsb->getSpeedString().toStdString().data());
+                 mUsb->speedString().toStdString().data());
         emit connectionResult(false);
         mConnected = false;
         emit connectionProgress(0);

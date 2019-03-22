@@ -4,17 +4,13 @@
 #
 #-------------------------------------------------
 
-# Note: USB has trouble with MSVC 2015, stick to 2013.
-
-QT += core gui xml network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+QT += core gui xml network widgets printsupport usb
 
 TARGET = MotoLink
 TEMPLATE = app
 #win32:CONFIG += console
 
-VERSION = 0.9.1
+VERSION = 0.9.2
 message(Version $$VERSION)
 
 DEFINES *= QT_USE_QSTRINGBUILDER
@@ -22,8 +18,6 @@ VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
 DEFINES += __MTL_VER__=\"$${VERSTR}\" # create a VER macro containing the version string
 
 INCLUDEPATH += inc ../code/common/
-
-include(QtUsb/src/QtUsb.pri)
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \

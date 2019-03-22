@@ -7,7 +7,7 @@
 #include <QtEndian>
 #include <QTimer>
 #include <QThread>
-#include <QUsb>
+#include <QUsbDevice>
 
 typedef quint8 uint8_t;
 typedef quint16 uint16_t;

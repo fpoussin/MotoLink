@@ -32,7 +32,6 @@ Includes some digital (RPM, Speed), analog (TPS, ECT, Wideband), serial (Wideban
 **│   └── Common**  *Common files for bootloader and Motolink*  
 **├── Drivers**  *Windows drivers installer*  
 **├── GUI**  *Motolink's graphical user interface*  
-**│   └── QtUsb**  *Qt USB submodule*  
 **├── LICENSE**  *GPL Licence file*  
 **└── README.md**  *This readme file*  
 
@@ -45,7 +44,7 @@ You will need to init and update the git submodules (QtUsb, ChibiOS-RT, ChibiOS-
 * Go to the GUI folder
 * Unzip res/oxygen.zip
 * You need a binary file of the firmware, an empty one can be created for testing. (../code/app/build/motolink.bin)
-* You will need libusb-1.0-0-dev (name might differ depending on distro/OS)
+* You need to install QtUsb (https://github.com/fpoussin/QtUsb)
 * Open the project with Qt Creator
 * Compile and launch
 
