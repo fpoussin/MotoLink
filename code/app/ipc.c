@@ -7,32 +7,25 @@
 
 #include "ipc.h"
 
-static msg_t buf1[10];
-static msg_t buf2[10];
+static msg_t buf1[MB_SIZE];
+static msg_t buf2[MB_SIZE];
 
-MAILBOX_DECL(knockMb, buf1, sizeof(buf1)/sizeof(msg_t));
-MAILBOX_DECL(sensorsMb, buf2, sizeof(buf2)/sizeof(msg_t));
+MAILBOX_DECL(knockMb, buf1, MB_SIZE);
+MAILBOX_DECL(sensorsMb, buf2, MB_SIZE);
 
-static samples_message_t samples_messages[POOL_SIZE] __attribute__((aligned(sizeof(stkalign_t))));
-static MEMORYPOOL_DECL(samples_pool, sizeof(samples_message_t), NULL);
+static MEMORYPOOL_DECL(samplesPool, POOL_SIZE * sizeof(samples_message_t), PORT_NATURAL_ALIGN, NULL);
 
 void setupIPC(void)
 {
-  size_t i;
-  chMBObjectInit(&knockMb, buf1, sizeof(buf1)/sizeof(msg_t));
-  chMBObjectInit(&sensorsMb, buf2, sizeof(buf2)/sizeof(msg_t));
-
-  // We need to init and "free" each place.
-  chPoolObjectInit(&samples_pool, sizeof(samples_message_t), NULL);
-  for(i=0; i < POOL_SIZE; i++)
-      chPoolFree(&samples_pool, &samples_messages[i]);
+  chMBObjectInit(&knockMb, buf1, MB_SIZE);
+  chMBObjectInit(&sensorsMb, buf2, MB_SIZE);
 }
 
 bool allocSendSamplesI(mailbox_t* mb, void * buffer, size_t size)
 {
   if (buffer == NULL) return false;
 
-  samples_message_t* info = chPoolAllocI(&samples_pool);
+  samples_message_t* info = chPoolAllocI(&samplesPool);
 
   if (info == NULL) return false;
 
@@ -48,13 +41,13 @@ bool recvFreeSamples(mailbox_t* mb, void ** buffer, size_t * size)
   msg_t msg;
   samples_message_t data;
 
-  if(chMBFetch(mb, &msg, TIME_IMMEDIATE) != MSG_OK)
+  if(chMBFetchTimeout(mb, &msg, TIME_IMMEDIATE) != MSG_OK)
     return false;
 
   if ((samples_message_t*)msg == NULL) return false;
 
   data = *(samples_message_t*)msg;
-  chPoolFree(&samples_pool, (void*)msg);
+  chPoolFree(&samplesPool, (void*)msg);
 
   if (data.location == NULL) return false;
 

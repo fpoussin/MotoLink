@@ -6,10 +6,11 @@
 #endif
 
 const SPIConfig EEPROM_SPIDCONFIG = {
+  false,
   NULL,
   PORT_SPI2_NSS,
   PAD_SPI2_NSS,
-  0, // Up to 20Mhz
+  0,
   SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0 | SPI_CR2_NSSP
 };
 
@@ -18,7 +19,7 @@ static SPIEepromFileConfig eeVersionsCfg = {
   EEPROM_VERSIONS_END,
   EEPROM_SIZE,
   EEPROM_PAGE_SIZE,
-  MS2ST(EEPROM_WRITE_TIME_MS),
+  TIME_MS2I(EEPROM_WRITE_TIME_MS),
   &EEPROM_SPID,
   &EEPROM_SPIDCONFIG,
 };
@@ -29,7 +30,7 @@ static SPIEepromFileConfig eeSettingsCfg = {
   EEPROM_SETTINGS_END,
   EEPROM_SIZE,
   EEPROM_PAGE_SIZE,
-  MS2ST(EEPROM_WRITE_TIME_MS),
+  TIME_MS2I(EEPROM_WRITE_TIME_MS),
   &EEPROM_SPID,
   &EEPROM_SPIDCONFIG,
 };
@@ -39,7 +40,7 @@ static SPIEepromFileConfig eeTablesCfg = {
   EEPROM_SIZE,
   EEPROM_SIZE,
   EEPROM_PAGE_SIZE,
-  MS2ST(EEPROM_WRITE_TIME_MS),
+  TIME_MS2I(EEPROM_WRITE_TIME_MS),
   &EEPROM_SPID,
   &EEPROM_SPIDCONFIG,
 };
@@ -169,7 +170,7 @@ CCM_FUNC uint32_t eeFindCurrentPageAddr(void)
 
     for (addr=from; addr < to; addr += EEPROM_TABLES_PAGE_SIZE)
     {
-        fileStreamSeek(tablesFS, addr);
+        fileStreamSetPosition(tablesFS, addr);
 
         status = fileStreamRead(tablesFS, (uint8_t*)&magic, sizeof magic);
         if (status != sizeof magic || magic != magic_key)
@@ -246,7 +247,7 @@ CCM_FUNC uint8_t eePushPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t 
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
     *crc = getCrc(&crc32_config, buffer, len);
 
-    fileStreamSeek(tablesFS, addr);
+    fileStreamSetPosition(tablesFS, addr);
     if (fileStreamWrite(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
@@ -254,7 +255,7 @@ CCM_FUNC uint8_t eePushPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t 
     }
 
     // CRC at the end of the page
-    fileStreamSeek(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
+    fileStreamSetPosition(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
     if (fileStreamWrite(tablesFS, (uint8_t*)crc, sizeof(crc_t)) != sizeof(crc_t))
     {
         fileStreamClose(tablesFS);
@@ -273,7 +274,7 @@ CCM_FUNC uint8_t eePullPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t 
 
     tablesFS = SPIEepromFileOpen(&tablesFile, &eeTablesCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(tablesFS, addr);
+    fileStreamSetPosition(tablesFS, addr);
     if (fileStreamRead(tablesFS, buffer, len) != len)
     {
         fileStreamClose(tablesFS);
@@ -281,7 +282,7 @@ CCM_FUNC uint8_t eePullPage(int32_t addr, uint8_t *buffer, crc_t *crc, uint32_t 
     }
 
     // CRC at the end of the page
-    fileStreamSeek(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
+    fileStreamSetPosition(tablesFS, addr+EEPROM_TABLES_PAGE_SIZE-sizeof(crc_t));
     if (fileStreamRead(tablesFS, (uint8_t*)crc, sizeof(crc_t)) != sizeof(crc_t))
     {
         fileStreamClose(tablesFS);
@@ -348,7 +349,7 @@ CCM_FUNC uint8_t readSettingsFromEE()
     const size_t len = sizeof settings;
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(settingsFS, 0);
+    fileStreamSetPosition(settingsFS, 0);
     if (fileStreamRead(settingsFS, (uint8_t*)&settings_buf, len) != len)
     {
         fileStreamClose(settingsFS);
@@ -386,7 +387,7 @@ CCM_FUNC uint8_t writeSettingsToEE()
 
     settingsFS = SPIEepromFileOpen(&settingsFile, &eeSettingsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(settingsFS, 0);
+    fileStreamSetPosition(settingsFS, 0);
     // Copy data to EE
     if (fileStreamWrite(settingsFS, (uint8_t*)&settings_buf, len) != len)
     {
@@ -412,7 +413,7 @@ CCM_FUNC uint8_t readVersionFromEE(uint8_t idx, version_t* dst)
     const size_t len = sizeof(version_t);
     versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(versionsFS, (len + sizeof(crc_t)) * idx);
+    fileStreamSetPosition(versionsFS, (len + sizeof(crc_t)) * idx);
     if (fileStreamRead(versionsFS, (uint8_t*)&version_buf, len) != len)
     {
         fileStreamClose(versionsFS);
@@ -450,7 +451,7 @@ CCM_FUNC uint8_t writeVersionToEE(uint8_t idx, const version_t* src)
 
     versionsFS = SPIEepromFileOpen(&versionsFile, &eeVersionsCfg, EepromFindDevice(EEPROM_DEV_25XX));
 
-    fileStreamSeek(versionsFS, (len + sizeof(crc_t)) * idx);
+    fileStreamSetPosition(versionsFS, (len + sizeof(crc_t)) * idx);
     // Copy data to EE
     if (fileStreamWrite(versionsFS, (uint8_t*)&version_buf, len) != len)
     {

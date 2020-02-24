@@ -36,8 +36,8 @@
 #define SHELL_SD SDU1
 
 /* Check if tp was the previous thread */
-#define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->p_next) << 15)
-#define FREQIN_INTERVAL MS2ST(25)
+#define RUNNING(tp) (uint16_t)((tp == chThdGetSelfX()->newer) << 15)
+#define FREQIN_INTERVAL TIME_MS2I(25)
 
 /*===========================================================================*/
 /* Thread pointers.                                                          */
@@ -171,7 +171,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
 
     //checkCanFilters(&CAND1, &cancfg);
 
-    if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(10)) == 0) {
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(10)) == 0) {
       continue;
     }
 
@@ -296,7 +296,11 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
     if (settings.serialMode == SERIAL_MODE_SHELL)  {
         if (th_shell == NULL || chThdTerminatedX(th_shell)) {
-            th_shell = shellCreateStatic(&shell_cfg1, waThreadShell, sizeof(waThreadShell), NORMALPRIO +1);
+            th_shell = chThdCreateStatic(waThreadShell,
+                                         sizeof(waThreadShell),
+                                         NORMALPRIO + 1,
+                                         shellThread,
+                                         (void *)&shell_cfg1);
         }
         chThdSleepMilliseconds(10);
         continue;
@@ -315,7 +319,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
       sdStop(&SD3);
       klineInit(false);
       //fiveBaudInit(&SD3);
-      //sdReadTimeout(&SD3, buffer_check, 1, MS2ST(5)); // noise
+      //sdReadTimeout(&SD3, buffer_check, 1, TIME_MS2I(5)); // noise
       doKLineInit = false;
       sdStart(&SD3, &uart1Cfg);
     }
@@ -332,12 +336,12 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
     if (in > 0)
     {
-      sdWriteTimeout(&SD3, in_buffer, in, MS2ST(10));
+      sdWriteTimeout(&SD3, in_buffer, in, TIME_MS2I(10));
     }
 
     if (out > 0)
     {
-      chnWriteTimeout(&SDU1, out_buffer, out, MS2ST(10));
+      chnWriteTimeout(&SDU1, out_buffer, out, TIME_MS2I(10));
     }
 
   }
@@ -555,11 +559,11 @@ static THD_FUNCTION(ThreadMonitor, arg)
     irq_ticks = 0;
     run_offset = DWT->CYCCNT;
 
-	/* Populate load data */
+    /* Populate load data */
     chThdSleepMilliseconds(1000);
 
-	/* Convert to systick time base */
-	total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
+    /* Convert to systick time base */
+    total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
 
     tp = chRegFirstThread();
     do {
@@ -593,7 +597,7 @@ CCM_FUNC static THD_FUNCTION(ThreadSER1, arg)
 
   while (TRUE) {
 
-    read = sdReadTimeout(&SD1, buffer, 6, MS2ST(40));
+    read = sdReadTimeout(&SD1, buffer, 6, TIME_MS2I(40));
     if (read >= 6)
     {
       readMtsPackets(buffer);

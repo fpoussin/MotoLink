@@ -4,7 +4,7 @@
 #include "prot_obd.h"
 #include "prot_yamaha.h"
 
-const CANFilter canfilter_obd = {1, 0, 0, 0, 0x07D0, 0x07E8};
+const CANFilter canfilter_obd[] = {{1, 0, 0, 0, 0x07D0, 0x07E8}};
 const CANFilter canfilter_yam[] = {{1, 0, 0, 0, YAMAHA_SID_MAIN, YAMAHA_SID_MAIN},
                                    {1, 0, 0, 0, 0x215, 0x215}}; // TODO
 
@@ -16,7 +16,7 @@ void checkCanFilters(CANDriver *canp, const CANConfig *config) {
 
     filter = 1;
     canStop(canp);
-    canSTM32SetFilters(1, 1, &canfilter_obd);
+    canSTM32SetFilters(canp, 1, 1, canfilter_obd);
     canStart(canp, config);
   }
 
@@ -24,13 +24,13 @@ void checkCanFilters(CANDriver *canp, const CANConfig *config) {
 
     filter = 2;
     canStop(canp);
-    canSTM32SetFilters(1, 2, canfilter_yam);
+    canSTM32SetFilters(canp, 1, 2, canfilter_yam);
     canStart(canp, config);
   }
 
   else {
       canStop(canp);
-      canSTM32SetFilters(1, 0, NULL);
+      canSTM32SetFilters(canp, 1, 0, NULL);
       canStart(canp, config);
   }
 }
@@ -63,7 +63,7 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
   txmsg->IDE = CAN_IDE_STD;
   txmsg->RTR = CAN_RTR_DATA;
   txmsg->DLC = 8; // As per OBD standard
-  txmsg->data64[0] = 0; // Clear data  
+  txmsg->data64[0] = 0; // Clear data
   txobd->len = 0x03; // Default data length (mode + pid + 8b data)
   txobd->mode = OBD_MODE_REPLY_LIVEDATA; // Show live data
   txobd->pid = rxobd->pid; // PID
@@ -115,6 +115,7 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       txobd->data[1] = 0xFF & (((uint16_t)((2.0f / 65536.0f) * ftmp)) >> 8); // Lambda MSB
       txobd->data[2] = 0x00;
       txobd->data[3] = 0x00;
+      break;
     case OBD_PID_RPM:
       txobd->len = 0x04;
       txobd->data[0] = 0xFF & sensors_data.rpm; // RPM LSB
@@ -156,7 +157,7 @@ bool serveCanOBDPidRequest(CANDriver *canp, CANTxFrame *txmsg, const CANRxFrame 
       break;
     }
 
-  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(2));
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, TIME_MS2I(2));
   return true;
 }
 
@@ -232,11 +233,11 @@ void sendCanOBDFrames(CANDriver *canp, CANTxFrame *txmsg)
     return;
 
   makeCanOBDPidRequest(txmsg, OBD_PID_LOAD);
-  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, TIME_MS2I(50));
 
   makeCanOBDPidRequest(txmsg, OBD_PID_RPM);
-  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, TIME_MS2I(50));
 
   makeCanOBDPidRequest(txmsg, OBD_PID_SPEED);
-  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, MS2ST(50));
+  canTransmit(canp, CAN_ANY_MAILBOX, txmsg, TIME_MS2I(50));
 }

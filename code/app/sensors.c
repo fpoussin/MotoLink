@@ -137,24 +137,36 @@ CCM_FUNC void capture2Cb(TIMCAPDriver *timcapp)
 }
 
 /* Every 64 samples at 965Hz each, triggers at around 15Hz */
-CCM_FUNC void sensorsCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+CCM_FUNC void sensorsCallback(ADCDriver *adcp)
 {
   (void)adcp;
+  size_t half = (adcp)->depth / 2;
+  size_t offset = 0;
+
+  if (!adcIsBufferComplete(adcp)) {
+      offset = half;
+  }
 
   // Filtering is done in a dedicated thread
   chSysLockFromISR();
-  allocSendSamplesI(&sensorsMb, (void*)buffer, n);
+  allocSendSamplesI(&sensorsMb, (void*)(adcp->samples + offset), half);
   chSysUnlockFromISR();
 }
 
 /* Every 1024 samples at 117.263KHz each, triggers at around 114Hz */
-CCM_FUNC void knockCallback(ADCDriver *adcp, adcsample_t *buffer, size_t n)
+CCM_FUNC void knockCallback(ADCDriver *adcp)
 {
   (void)adcp;
+  size_t half = (adcp)->depth / 2;
+  size_t offset = 0;
+
+  if (!adcIsBufferComplete(adcp)) {
+      offset = half;
+  }
 
   // Do FFT + Mag in a dedicated thread
   chSysLockFromISR();
-  allocSendSamplesI(&knockMb, (void*)buffer, n);
+  allocSendSamplesI(&sensorsMb, (void*)(adcp->samples + offset), half);
   chSysUnlockFromISR();
 }
 

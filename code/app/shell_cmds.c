@@ -21,10 +21,10 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   tp = chRegFirstThread();
   do {
     chprintf(chp, "%4u %8s %05u %12s\r\n",
-             (uint32_t)tp->p_prio,
-             states[tp->p_state],
+             (uint32_t)tp->prio,
+             states[tp->state],
              tp->pct & 0x3FFF,
-             tp->p_name);
+             tp->name);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
   chprintf(chp, "IRQ Pct: %05u\r\n", irq_pct);
@@ -39,7 +39,7 @@ static void cmd_candbg(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "CanBus debug active. Press any key to quit.\r\n");
     chThdSleepMilliseconds(1000);
     dbg_can = true;
-    in = chSequentialStreamRead(chp, &buf, 1);
+    in = streamRead(chp, &buf, 1);
     while (in == 0) {
         chThdSleepMilliseconds(10);
     }
@@ -56,7 +56,7 @@ static void cmd_mtsdbg(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "MTS debug active. Press any key to quit.\r\n");
     chThdSleepMilliseconds(1000);
     dbg_mts = true;
-    in = chSequentialStreamRead(chp, &buf, 1);
+    in = streamRead(chp, &buf, 1);
     while (in == 0) {
         chThdSleepMilliseconds(10);
     }
@@ -73,7 +73,7 @@ static void cmd_sendbg(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Sensor debug active. Press any key to quit.\r\n");
     chThdSleepMilliseconds(1000);
     dbg_sensors = true;
-    in = chSequentialStreamRead(chp, &buf, 1);
+    in = streamRead(chp, &buf, 1);
     while (in == 0) {
         chThdSleepMilliseconds(10);
     }

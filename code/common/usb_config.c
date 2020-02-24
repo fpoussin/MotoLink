@@ -494,6 +494,7 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
           return &usb_strings[dindex];
         else if (dindex == 0xee) /* WinUSB */
           return &usb_winusb_descriptor;
+        return NULL;
       case USB_DESCRIPTOR_DEVICE_QUALIFIER: /* High speed - not needed  */
         return NULL;
   }
@@ -632,8 +633,8 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     chSysLockFromISR();
 
     /* Disconnection event on suspend.*/
-    sduDisconnectI(&SDU1);
-    sduDisconnectI(&SDU2);
+    sduSuspendHookI(&SDU1);
+    sduSuspendHookI(&SDU2);
 
     chSysUnlockFromISR();
     return;

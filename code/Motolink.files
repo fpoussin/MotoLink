@@ -291,8 +291,8 @@ ChibiOS-RT/os/rt/templates/chcore.h
 ChibiOS-RT/os/rt/templates/chtypes.h
 ChibiOS-RT/os/rt/templates/meta/module.c
 ChibiOS-RT/os/rt/templates/meta/module.h
-ChibiOS-RT/os/various/shell.c
-ChibiOS-RT/os/various/shell.h
+ChibiOS-RT/os/various/shell/shell.c
+ChibiOS-RT/os/various/shell/shell.h
 app/Makefile
 app/canbus.c
 app/canbus.h

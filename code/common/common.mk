@@ -7,3 +7,6 @@ BOARDSRC += ../common/storage.c
 
 # Required include directories
 BOARDINC = ../common
+
+ALLCSRC += $(BOARDSRC)
+ALLINC += $(BOARDINC)

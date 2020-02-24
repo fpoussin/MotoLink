@@ -8,7 +8,7 @@
 #include "storage.h"
 #include <string.h>
 
-#define PUT_TIMEOUT MS2ST(25)
+#define PUT_TIMEOUT TIME_MS2I(25)
 
 static uint8_t input_buf[DATA_BUF_SIZE];
 static const char* sys_name = "System";
@@ -18,7 +18,7 @@ CCM_FUNC uint8_t readCommand(BaseChannel *chn)
   cmd_header_t header;
   uint16_t data_read;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(header), MS2ST(25)) < sizeof(header))
+  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(header), TIME_MS2I(25)) < sizeof(header))
   {
     chnPutTimeout(chn, MASK_DECODE_ERR+1, PUT_TIMEOUT);
     return 1;
@@ -32,7 +32,7 @@ CCM_FUNC uint8_t readCommand(BaseChannel *chn)
   }
 
   // Fetch data
-  data_read = (uint8_t)chnReadTimeout(chn, input_buf, header.len-sizeof(header), MS2ST(25));
+  data_read = (uint8_t)chnReadTimeout(chn, input_buf, header.len-sizeof(header), TIME_MS2I(25));
   if (data_read < (header.len-sizeof(header)))
   {
     chnPutTimeout(chn, MASK_DECODE_ERR+3, PUT_TIMEOUT);
@@ -157,14 +157,14 @@ CCM_FUNC uint8_t sendMonitoring(BaseChannel * chn) {
     thread_t *tp = chRegFirstThread();
     uint8_t name_len = 0;
     do {
-        if (tp->p_name == NULL)
+        if (tp->name == NULL)
         {
-            tp->p_name = sys_name;
+            tp->name = sys_name;
         }
-        name_len = strlen(tp->p_name);
+        name_len = strlen(tp->name);
         chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
         chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
-        chnWriteTimeout(chn, (uint8_t*)tp->p_name, name_len, PUT_TIMEOUT); // Send the thread name
+        chnWriteTimeout(chn, (uint8_t*)tp->name, name_len, PUT_TIMEOUT); // Send the thread name
 
         tp = chRegNextThread(tp);
     } while (tp != NULL);
