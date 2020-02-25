@@ -31,3 +31,5 @@ __user_flash_length__   = LENGTH(flash);
 
 __bl_flash_address__ = ORIGIN(bflash);
 __bl_flash_length__   = LENGTH(bflash);
+
+__flash_page_size__ = 0x800;
