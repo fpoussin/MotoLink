@@ -485,6 +485,8 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
 {
     _WAIT_USB_
     _LOCK_
+    Q_CHECK_PTR(send);
+    Q_CHECK_PTR(recv);
     bool result;
     recv->clear();
 
@@ -506,6 +508,7 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
 
 int Motolink::readMore(QByteArray *recv, uint len)
 {
+    Q_CHECK_PTR(recv);
     *recv = mReadEp->read(len);
     return recv->size();
 }

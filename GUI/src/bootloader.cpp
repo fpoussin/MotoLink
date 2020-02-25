@@ -1,10 +1,8 @@
 #include "bootloader.h"
 
 Bootloader::Bootloader(QUsbEndpoint *read_ep, QUsbEndpoint *write_ep, QObject *parent)
-    : QObject(parent)
+    : QObject(parent), mReadEp(read_ep), mWriteEp(write_ep)
 {
-    mReadEp = read_ep;
-    mWriteEp = write_ep;
 }
 
 Bootloader::~Bootloader()
