@@ -13,21 +13,22 @@ static msg_t buf2[MB_SIZE];
 MAILBOX_DECL(knockMb, buf1, MB_SIZE);
 MAILBOX_DECL(sensorsMb, buf2, MB_SIZE);
 
-static MEMORYPOOL_DECL(samplesPool, POOL_SIZE * sizeof(samples_message_t), PORT_NATURAL_ALIGN, NULL);
+static MEMORYPOOL_DECL(samplesPool, POOL_SIZE * sizeof(samples_message_t),
+                       PORT_NATURAL_ALIGN, NULL);
 
-void setupIPC(void)
-{
+void setupIPC(void) {
   chMBObjectInit(&knockMb, buf1, MB_SIZE);
   chMBObjectInit(&sensorsMb, buf2, MB_SIZE);
 }
 
-bool allocSendSamplesI(mailbox_t* mb, void * buffer, size_t size)
-{
-  if (buffer == NULL) return false;
+bool allocSendSamplesI(mailbox_t *mb, void *buffer, size_t size) {
+  if (buffer == NULL)
+    return false;
 
-  samples_message_t* info = chPoolAllocI(&samplesPool);
+  samples_message_t *info = chPoolAllocI(&samplesPool);
 
-  if (info == NULL) return false;
+  if (info == NULL)
+    return false;
 
   info->location = buffer;
   info->size = size;
@@ -36,20 +37,21 @@ bool allocSendSamplesI(mailbox_t* mb, void * buffer, size_t size)
   return true;
 }
 
-bool recvFreeSamples(mailbox_t* mb, void ** buffer, size_t * size)
-{
+bool recvFreeSamples(mailbox_t *mb, void **buffer, size_t *size) {
   msg_t msg;
   samples_message_t data;
 
-  if(chMBFetchTimeout(mb, &msg, TIME_IMMEDIATE) != MSG_OK)
+  if (chMBFetchTimeout(mb, &msg, TIME_IMMEDIATE) != MSG_OK)
     return false;
 
-  if ((samples_message_t*)msg == NULL) return false;
+  if ((samples_message_t *)msg == NULL)
+    return false;
 
-  data = *(samples_message_t*)msg;
-  chPoolFree(&samplesPool, (void*)msg);
+  data = *(samples_message_t *)msg;
+  chPoolFree(&samplesPool, (void *)msg);
 
-  if (data.location == NULL) return false;
+  if (data.location == NULL)
+    return false;
 
   *buffer = data.location;
   *size = data.size;

@@ -1,138 +1,137 @@
 #include "ch.h"
+#include "common.h"
+#include "commands.h"
 #include "protocol.h"
 #include "sensors.h"
-#include "tables.h"
-#include "commands.h"
-#include "common.h"
-#include "usb_config.h"
 #include "storage.h"
+#include "tables.h"
+#include "usb_config.h"
 #include <string.h>
 
 #define PUT_TIMEOUT TIME_MS2I(25)
 
 static uint8_t input_buf[DATA_BUF_SIZE];
-static const char* sys_name = "System";
+static const char *sys_name = "System";
 
-CCM_FUNC uint8_t readCommand(BaseChannel *chn)
-{
+CCM_FUNC uint8_t readCommand(BaseChannel *chn) {
   cmd_header_t header;
   uint16_t data_read;
 
-  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(header), TIME_MS2I(25)) < sizeof(header))
-  {
-    chnPutTimeout(chn, MASK_DECODE_ERR+1, PUT_TIMEOUT);
+  if (chnReadTimeout(chn, (uint8_t *)&header, sizeof(header), TIME_MS2I(25)) <
+      sizeof(header)) {
+    chnPutTimeout(chn, MASK_DECODE_ERR + 1, PUT_TIMEOUT);
     return 1;
   }
 
   // Decode header
-  if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 || !(header.type & MASK_CMD) || header.len < sizeof(header)+1)
-  {
-    chnPutTimeout(chn, MASK_DECODE_ERR+2, PUT_TIMEOUT);
+  if (header.magic1 != MAGIC1 || header.magic2 != MAGIC2 ||
+      !(header.type & MASK_CMD) || header.len < sizeof(header) + 1) {
+    chnPutTimeout(chn, MASK_DECODE_ERR + 2, PUT_TIMEOUT);
     return 2;
   }
 
   // Fetch data
-  data_read = (uint8_t)chnReadTimeout(chn, input_buf, header.len-sizeof(header), TIME_MS2I(25));
-  if (data_read < (header.len-sizeof(header)))
-  {
-    chnPutTimeout(chn, MASK_DECODE_ERR+3, PUT_TIMEOUT);
+  data_read = (uint8_t)chnReadTimeout(
+      chn, input_buf, header.len - sizeof(header), TIME_MS2I(25));
+  if (data_read < (header.len - sizeof(header))) {
+    chnPutTimeout(chn, MASK_DECODE_ERR + 3, PUT_TIMEOUT);
     return 3;
   }
   data_read--; // Discard checksum byte from length
 
   // Fetch, compute and compare checksums
-  const uint8_t cs1 = checksum((uint8_t *)&header, sizeof(header)) + checksum(input_buf, data_read);
+  const uint8_t cs1 = checksum((uint8_t *)&header, sizeof(header)) +
+                      checksum(input_buf, data_read);
   const uint8_t cs2 = input_buf[data_read];
 
-  if (cs1 != cs2)
-  {
-    chnPutTimeout(chn, MASK_DECODE_ERR+4, PUT_TIMEOUT);
+  if (cs1 != cs2) {
+    chnPutTimeout(chn, MASK_DECODE_ERR + 4, PUT_TIMEOUT);
     return 4;
   }
 
   // Process command
   uint8_t status = 0;
-  switch (header.type)
-  {
-    case MASK_CMD | CMD_RESET:
-      status = resetHandler(chn);
-      break;
+  switch (header.type) {
+  case MASK_CMD | CMD_RESET:
+    status = resetHandler(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_MODE:
-      status = sendMode(chn);
-      break;
+  case MASK_CMD | CMD_GET_MODE:
+    status = sendMode(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_VERSION:
-      status = sendVersion(chn);
-      break;
+  case MASK_CMD | CMD_GET_VERSION:
+    status = sendVersion(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_SENSORS:
-      status = sendSensors(chn);
-      break;
+  case MASK_CMD | CMD_GET_SENSORS:
+    status = sendSensors(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_MONITOR:
-      status = sendMonitoring(chn);
-      break;
+  case MASK_CMD | CMD_GET_MONITOR:
+    status = sendMonitoring(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_FFT:
-      status = sendFFT(chn);
-      break;
+  case MASK_CMD | CMD_GET_FFT:
+    status = sendFFT(chn);
+    break;
 
-    case MASK_CMD | CMD_SET_SETTINGS:
-      status = writeSettings(chn, input_buf, data_read);
-      break;
+  case MASK_CMD | CMD_SET_SETTINGS:
+    status = writeSettings(chn, input_buf, data_read);
+    break;
 
-    case MASK_CMD | CMD_GET_SETTINGS:
-      status = readSettings(chn);
-      break;
+  case MASK_CMD | CMD_GET_SETTINGS:
+    status = readSettings(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_TABLES:
-      status = readTables(chn);
-      break;
+  case MASK_CMD | CMD_GET_TABLES:
+    status = readTables(chn);
+    break;
 
-    case MASK_CMD | CMD_GET_TABLES_HEADERS:
-      status = readHeaders(chn);
-      break;
+  case MASK_CMD | CMD_GET_TABLES_HEADERS:
+    status = readHeaders(chn);
+    break;
 
-    case MASK_CMD | CMD_SET_TABLES_HEADERS:
-      status = writeHeaders(chn, input_buf, data_read);
-      break;
+  case MASK_CMD | CMD_SET_TABLES_HEADERS:
+    status = writeHeaders(chn, input_buf, data_read);
+    break;
 
-    case MASK_CMD | CMD_CLEAR_CELL:
-      status = clearCell(chn, input_buf, data_read);
-      break;
+  case MASK_CMD | CMD_CLEAR_CELL:
+    status = clearCell(chn, input_buf, data_read);
+    break;
 
-    case MASK_CMD | CMD_CLEAR_TABLES:
-      status = clearTables(chn);
-      break;
+  case MASK_CMD | CMD_CLEAR_TABLES:
+    status = clearTables(chn);
+    break;
 
-    case MASK_CMD | CMD_WAKE:
-      status = wakeHandler(chn);
-      break;
+  case MASK_CMD | CMD_WAKE:
+    status = wakeHandler(chn);
+    break;
 
-    default:
-      chnPutTimeout(chn, MASK_DECODE_ERR+5, PUT_TIMEOUT);
-      break;
+  default:
+    chnPutTimeout(chn, MASK_DECODE_ERR + 5, PUT_TIMEOUT);
+    break;
   }
 
   return status;
 }
 
-CCM_FUNC uint8_t sendMode(BaseChannel * chn) {
+CCM_FUNC uint8_t sendMode(BaseChannel *chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MODE, PUT_TIMEOUT);
   chnPutTimeout(chn, MODE_APP, PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t sendSensors(BaseChannel * chn) {
+CCM_FUNC uint8_t sendSensors(BaseChannel *chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_SENSORS, PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)&sensors_data, sizeof(sensors_t), PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)&sensors_data, sizeof(sensors_t),
+                  PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t resetHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t resetHandler(BaseChannel *chn) {
 
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_RESET, PUT_TIMEOUT);
 
@@ -144,84 +143,80 @@ CCM_FUNC uint8_t resetHandler(BaseChannel * chn) {
   return 0;
 }
 
-CCM_FUNC uint8_t wakeHandler(BaseChannel * chn) {
+CCM_FUNC uint8_t wakeHandler(BaseChannel *chn) {
 
   /* Dummy command to check connection */
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_WAKE, PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t sendMonitoring(BaseChannel * chn) {
+CCM_FUNC uint8_t sendMonitoring(BaseChannel *chn) {
 
-    chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
-    thread_t *tp = chRegFirstThread();
-    uint8_t name_len = 0;
-    do {
-        if (tp->name == NULL)
-        {
-            tp->name = sys_name;
-        }
-        name_len = strlen(tp->name);
-        chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
-        chnWriteTimeout(chn, (uint8_t*)&tp->pct, sizeof(tp->pct), PUT_TIMEOUT); // Send the usage
-        chnWriteTimeout(chn, (uint8_t*)tp->name, name_len, PUT_TIMEOUT); // Send the thread name
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_MONITOR, PUT_TIMEOUT);
+  thread_t *tp = chRegFirstThread();
+  uint8_t name_len = 0;
+  do {
+    if (tp->name == NULL) {
+      tp->name = sys_name;
+    }
+    name_len = strlen(tp->name);
+    chnPutTimeout(chn, name_len, PUT_TIMEOUT); // How much data we'll send
+    chnWriteTimeout(chn, (uint8_t *)&tp->pct, sizeof(tp->pct),
+                    PUT_TIMEOUT); // Send the usage
+    chnWriteTimeout(chn, (uint8_t *)tp->name, name_len,
+                    PUT_TIMEOUT); // Send the thread name
 
-        tp = chRegNextThread(tp);
-    } while (tp != NULL);
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
 
-    // Last, we send the IRQ stats.
-    name_len = strlen(irq_name);
-    chnPutTimeout(chn, name_len, PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)&irq_pct, sizeof(irq_pct), PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)irq_name, name_len, PUT_TIMEOUT);
+  // Last, we send the IRQ stats.
+  name_len = strlen(irq_name);
+  chnPutTimeout(chn, name_len, PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)&irq_pct, sizeof(irq_pct), PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)irq_name, name_len, PUT_TIMEOUT);
 
-    chnPutTimeout(chn, 0x00, PUT_TIMEOUT); // No more data to send
+  chnPutTimeout(chn, 0x00, PUT_TIMEOUT); // No more data to send
 
-    return 0;
-}
-
-CCM_FUNC uint8_t sendFFT(BaseChannel * chn) {
-
-  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_FFT, PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)output_knock, sizeof(output_knock), PUT_TIMEOUT*2);
   return 0;
 }
 
-CCM_FUNC uint8_t writeSettings(BaseChannel * chn, uint8_t * buf, uint16_t len)
-{
-  if (len != sizeof(settings_t))
-  {
+CCM_FUNC uint8_t sendFFT(BaseChannel *chn) {
+
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_FFT, PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)output_knock, sizeof(output_knock),
+                  PUT_TIMEOUT * 2);
+  return 0;
+}
+
+CCM_FUNC uint8_t writeSettings(BaseChannel *chn, uint8_t *buf, uint16_t len) {
+  if (len != sizeof(settings_t)) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_SET_SETTINGS, PUT_TIMEOUT);
     return 1;
   }
 
-  memcpy(&settings, (settings_t*)buf, sizeof(settings_t));
-  if (writeSettingsToEE() == 0)
-  {
-      chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_SETTINGS, PUT_TIMEOUT);
-      return 0;
+  memcpy(&settings, (settings_t *)buf, sizeof(settings_t));
+  if (writeSettingsToEE() == 0) {
+    chnPutTimeout(chn, MASK_REPLY_OK | CMD_SET_SETTINGS, PUT_TIMEOUT);
+    return 0;
   }
   chnPutTimeout(chn, MASK_CMD_ERR | CMD_SET_SETTINGS, PUT_TIMEOUT);
   return 1;
 }
 
-CCM_FUNC uint8_t readSettings(BaseChannel * chn)
-{
+CCM_FUNC uint8_t readSettings(BaseChannel *chn) {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_SETTINGS, PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)&settings, sizeof(settings_t), PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)&settings, sizeof(settings_t), PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
-{
-  if (len != sizeof(tableRows)+sizeof(tableColumns))
-  {
+CCM_FUNC uint8_t writeHeaders(BaseChannel *chn, uint8_t *buf, uint16_t len) {
+  if (len != sizeof(tableRows) + sizeof(tableColumns)) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_SET_TABLES_HEADERS, PUT_TIMEOUT);
     return 1;
   }
 
-  uint8_t* rows = buf;
-  uint8_t* columns = (buf+sizeof(tableRows));
+  uint8_t *rows = buf;
+  uint8_t *columns = (buf + sizeof(tableRows));
 
   memcpy(tableRows, rows, sizeof(tableRows));
   memcpy(tableColumns, columns, sizeof(tableColumns));
@@ -230,45 +225,37 @@ CCM_FUNC uint8_t writeHeaders(BaseChannel * chn, uint8_t * buf, uint16_t len)
   return 0;
 }
 
-CCM_FUNC uint8_t readHeaders(BaseChannel * chn)
-{
+CCM_FUNC uint8_t readHeaders(BaseChannel *chn) {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_TABLES_HEADERS, PUT_TIMEOUT);
   chnWriteTimeout(chn, tableColumns, sizeof(tableColumns), PUT_TIMEOUT);
   chnWriteTimeout(chn, tableRows, sizeof(tableRows), PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t readTables(BaseChannel * chn)
-{
+CCM_FUNC uint8_t readTables(BaseChannel *chn) {
   chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_TABLES, PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)tableAFR, sizeof(tableAFR), PUT_TIMEOUT);
-  chnWriteTimeout(chn, (uint8_t*)tableKnock, sizeof(tableKnock), PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)tableAFR, sizeof(tableAFR), PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)tableKnock, sizeof(tableKnock), PUT_TIMEOUT);
   return 0;
 }
 
-CCM_FUNC uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len)
-{
-  if (len != 3)
-  {
+CCM_FUNC uint8_t clearCell(BaseChannel *chn, uint8_t *buf, uint16_t len) {
+  if (len != 3) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_CLEAR_CELL, PUT_TIMEOUT);
     return 1;
   }
 
   uint8_t table = *buf;
-  cell_t *cell = (cell_t*)(buf+1);
+  cell_t *cell = (cell_t *)(buf + 1);
 
-  if (cell->row >= sizeof(tableRows) || cell->col >= sizeof(tableColumns))
-  {
+  if (cell->row >= sizeof(tableRows) || cell->col >= sizeof(tableColumns)) {
     chnPutTimeout(chn, MASK_CMD_ERR | CMD_CLEAR_CELL, PUT_TIMEOUT);
     return 2;
   }
 
-  if (table == 1)
-  {
+  if (table == 1) {
     tableAFR[cell->row][cell->col] = 0;
-  }
-  else if (table == 2)
-  {
+  } else if (table == 2) {
     tableKnock[cell->row][cell->col] = 0;
   }
 
@@ -276,8 +263,7 @@ CCM_FUNC uint8_t clearCell(BaseChannel * chn, uint8_t * buf, uint16_t len)
   return 0;
 }
 
-CCM_FUNC uint8_t clearTables(BaseChannel * chn)
-{
+CCM_FUNC uint8_t clearTables(BaseChannel *chn) {
   memset(tableAFR, 0, sizeof(tableAFR));
   memset(tableKnock, 0, sizeof(tableKnock));
 
@@ -285,9 +271,8 @@ CCM_FUNC uint8_t clearTables(BaseChannel * chn)
   return 0;
 }
 
-CCM_FUNC uint8_t sendVersion(BaseChannel *chn)
-{
-    chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
-    chnWriteTimeout(chn, (uint8_t*)versions, sizeof(version_t)*2, PUT_TIMEOUT);
-    return 0;
+CCM_FUNC uint8_t sendVersion(BaseChannel *chn) {
+  chnPutTimeout(chn, MASK_REPLY_OK | CMD_GET_VERSION, PUT_TIMEOUT);
+  chnWriteTimeout(chn, (uint8_t *)versions, sizeof(version_t) * 2, PUT_TIMEOUT);
+  return 0;
 }

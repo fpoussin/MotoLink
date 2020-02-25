@@ -18,9 +18,9 @@
 #include <string.h>
 
 #include "ch.h"
-#include "hal.h"
 #include "common.h"
 #include "communication.h"
+#include "hal.h"
 #include "storage.h"
 
 /*===========================================================================*/
@@ -29,65 +29,59 @@
 
 volatile uint8_t reset_flags = FLAG_OK;
 
-static PWMConfig pwmcfg = {
-  10000,    /* 10kHz PWM clock frequency.   */
-  50,      /* Initial PWM period 5mS.       */
-  NULL,
-  {
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_DISABLED, NULL},
-   {PWM_OUTPUT_DISABLED, NULL}
-  },
-  0,
-  0
-};
+static PWMConfig pwmcfg = {10000, /* 10kHz PWM clock frequency.   */
+                           50,    /* Initial PWM period 5mS.       */
+                           NULL,
+                           {{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+                            {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+                            {PWM_OUTPUT_DISABLED, NULL},
+                            {PWM_OUTPUT_DISABLED, NULL}},
+                           0,
+                           0};
 
 // K-Line
-SerialConfig uart3Cfg =
-{
- 19200, // bit rate
- 0,
- USART_CR2_STOP1_BITS,
- 0
-};
+SerialConfig uart3Cfg = {19200, // bit rate
+                         0, USART_CR2_STOP1_BITS, 0};
 
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
 
 // Duty
-#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD4, x*100)
+#define D(x) PWM_PERCENTAGE_TO_WIDTH(&PWMD4, x * 100)
 
 /*
  * Blue LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBlinker, 384);
-static THD_FUNCTION(ThreadBlinker, arg)
-{
+static THD_FUNCTION(ThreadBlinker, arg) {
   (void)arg;
   chRegSetThreadName("Blinker");
 
-  const uint16_t dimmer[] = {D(0), D(2), D(4), D(6), D(8), D(10), D(12), D(14), D(16), D(18), D(20), D(22),
-                             D(24), D(26), D(28), D(30),  D(32), D(34), D(36), D(38), D(40), D(42), D(44),
-                             D(46), D(48), D(50), D(52), D(54), D(56), D(58), D(60), D(62), D(64), D(66),
-                             D(68), D(70), D(72), D(74), D(76), D(78), D(80), D(78), D(76), D(74), D(72),
-                             D(70), D(68), D(66), D(64), D(62), D(60), D(58), D(56), D(54), D(52), D(50),
-                             D(48), D(46), D(44), D(42), D(40), D(38), D(36), D(34), D(32), D(30), D(28),
-                             D(26), D(24), D(22), D(20), D(18), D(16), D(14), D(12), D(10), D(8), D(6),
-                             D(4), D(2)};
+  const uint16_t dimmer[] = {
+      D(0),  D(2),  D(4),  D(6),  D(8),  D(10), D(12), D(14), D(16), D(18),
+      D(20), D(22), D(24), D(26), D(28), D(30), D(32), D(34), D(36), D(38),
+      D(40), D(42), D(44), D(46), D(48), D(50), D(52), D(54), D(56), D(58),
+      D(60), D(62), D(64), D(66), D(68), D(70), D(72), D(74), D(76), D(78),
+      D(80), D(78), D(76), D(74), D(72), D(70), D(68), D(66), D(64), D(62),
+      D(60), D(58), D(56), D(54), D(52), D(50), D(48), D(46), D(44), D(42),
+      D(40), D(38), D(36), D(34), D(32), D(30), D(28), D(26), D(24), D(22),
+      D(20), D(18), D(16), D(14), D(12), D(10), D(8),  D(6),  D(4),  D(2)};
 
   TIM_LED2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
-  if (dmaStreamAlloc(STM32_DMA_STREAM_ID(1, 7), 1, NULL, NULL)) chSysHalt("TIM DMA error");
+  if (dmaStreamAlloc(STM32_DMA_STREAM_ID(1, 7), 1, NULL, NULL))
+    chSysHalt("TIM DMA error");
 
   dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM_LED2->CCR_LED2);
   dmaStreamSetMemory0(STM32_DMA1_STREAM7, dimmer);
-  dmaStreamSetTransactionSize(STM32_DMA1_STREAM7, sizeof(dimmer)/sizeof(uint16_t));
-  dmaStreamSetMode(STM32_DMA1_STREAM7, STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD
-                   | STM32_DMA_CR_EN | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
+  dmaStreamSetTransactionSize(STM32_DMA1_STREAM7,
+                              sizeof(dimmer) / sizeof(uint16_t));
+  dmaStreamSetMode(STM32_DMA1_STREAM7, STM32_DMA_CR_PSIZE_WORD |
+                                           STM32_DMA_CR_MSIZE_HWORD |
+                                           STM32_DMA_CR_EN | STM32_DMA_CR_CIRC |
+                                           STM32_DMA_CR_DIR_M2P | DMA_CCR_MINC);
 
-  while (TRUE)
-  {
+  while (TRUE) {
     chThdSleepMilliseconds(100);
     if (usbConnected())
       TIM_LED2->PSC = (STM32_TIMCLK1 / 10000) - 1;
@@ -101,8 +95,7 @@ static THD_FUNCTION(ThreadBlinker, arg)
  * USB Bulk thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadBDU, 1024);
-CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadBDU, arg) {
   event_listener_t el1;
   eventmask_t flags;
   (void)arg;
@@ -111,21 +104,23 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 
   chEvtRegisterMask(chnGetEventSource(&SDU2), &el1, ALL_EVENTS);
 
-  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
+  while (USBD1.state != USB_READY)
+    chThdSleepMilliseconds(10);
+  while (SDU2.state != SDU_READY)
+    chThdSleepMilliseconds(10);
 
-  while (TRUE)
-  {
+  while (TRUE) {
     chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     flags = chEvtGetAndClearFlags(&el1);
 
     idle_duty = usbConnected() ? 500 : 0;
 
-    pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, idle_duty));
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                     PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, idle_duty));
 
-    if (flags & CHN_INPUT_AVAILABLE)
-    {
-      pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+    if (flags & CHN_INPUT_AVAILABLE) {
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
       readCommand((BaseChannel *)&SDU2, reset_flags);
     }
 
@@ -138,30 +133,31 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
  * USB Serial thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThreadSDU, 1024);
-static THD_FUNCTION(ThreadSDU, arg)
-{
+static THD_FUNCTION(ThreadSDU, arg) {
   (void)arg;
-  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  uint8_t buffer[SERIAL_BUFFERS_SIZE / 2];
   size_t read;
   chRegSetThreadName("SDU");
 
-  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
-  while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
+  while (USBD1.state != USB_READY)
+    chThdSleepMilliseconds(10);
+  while (SDU1.state != SDU_READY)
+    chThdSleepMilliseconds(10);
+  while (SD3.state != SD_READY)
+    chThdSleepMilliseconds(10);
 
   while (TRUE) {
 
-    while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
+    while (SD3.state != SD_READY)
+      chThdSleepMilliseconds(10);
 
     read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_MS2I(5));
-    if (read > 0)
-    {
+    if (read > 0) {
       sdWriteTimeout(&SD3, buffer, read, TIME_MS2I(100));
     }
 
     read = sdReadTimeout(&SD3, buffer, sizeof(buffer), TIME_MS2I(5));
-    if (read > 0)
-    {
+    if (read > 0) {
       chnWriteTimeout(&SDU1, buffer, read, TIME_MS2I(100));
     }
 
@@ -173,8 +169,7 @@ static THD_FUNCTION(ThreadSDU, arg)
 /*
  * Application entry point.
  */
-int main(void)
-{
+int main(void) {
   /* Begin charging switch cap */
   halInit();
   chSysInit();
@@ -239,11 +234,11 @@ int main(void)
   usbDisconnectBus(serusbcfg1.usbp);
 
   /* Ignore debug and reset pin (pulled down by debugger) */
-  if ((reset_flags & ~(FLAG_DBG | FLAG_PINRST)) == FLAG_OK)
-  {
+  if ((reset_flags & ~(FLAG_DBG | FLAG_PINRST)) == FLAG_OK) {
     DEBUGEN(printf("Booting...\n"));
     startUserApp();
-    while (1);
+    while (1)
+      ;
   }
 
   DEBUGEN(printf("DFU Mode\n"));
@@ -262,30 +257,31 @@ int main(void)
 
   // Compare and update versions in EEprom if needed.
   version_t v;
-  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 && memcmp(&versions, &v, sizeof(version_t)) != 0) {
+  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 &&
+      memcmp(&versions, &v, sizeof(version_t)) != 0) {
     writeVersionToEE(VERSION_IDX_BL, &versions[VERSION_IDX_BL]);
   }
-  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0 ) {
+  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0) {
     memcpy(&versions[VERSION_IDX_APP], &v, sizeof(version_t));
   }
 
-  chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO, ThreadBlinker, NULL);
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU, NULL);
-  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU, NULL);
+  chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO,
+                    ThreadBlinker, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO, ThreadBDU,
+                    NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO, ThreadSDU,
+                    NULL);
 
-  while (TRUE)
-  {
-      while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+  while (TRUE) {
+    while (USBD1.state != USB_READY)
+      chThdSleepMilliseconds(10);
 
-      chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(100);
 
-      if (usbConnected())
-      {
-        usbConnectBus(serusbcfg1.usbp);
-      }
-      else
-      {
-        usbDisconnectBus(serusbcfg1.usbp);
-      }
+    if (usbConnected()) {
+      usbConnectBus(serusbcfg1.usbp);
+    } else {
+      usbDisconnectBus(serusbcfg1.usbp);
     }
+  }
 }

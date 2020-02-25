@@ -18,12 +18,12 @@ extern mailbox_t knockMb;
 extern mailbox_t sensorsMb;
 
 typedef struct {
-    void* location;
-    size_t size;
+  void *location;
+  size_t size;
 } samples_message_t;
 
 void setupIPC(void);
-bool allocSendSamplesI(mailbox_t* mb, void* buffer, size_t size);
-bool recvFreeSamples(mailbox_t* mb, void** buffer, size_t* size);
+bool allocSendSamplesI(mailbox_t *mb, void *buffer, size_t size);
+bool recvFreeSamples(mailbox_t *mb, void **buffer, size_t *size);
 
 #endif /* IPC_H_ */

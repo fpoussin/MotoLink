@@ -14,20 +14,20 @@
     limitations under the License.
 */
 
-#include <stdio.h>
-#include <string.h>
 #include "ch.h"
 #include "hal.h"
-#include "usb_config.h"
-#include "commands.h"
-#include "sensors.h"
-#include "innovate.h"
-#include "storage.h"
 #include "canbus.h"
 #include "arm_math.h"
-#include "tables.h"
 #include "chprintf.h"
+#include "commands.h"
+#include "innovate.h"
+#include "sensors.h"
 #include "shell.h"
+#include "storage.h"
+#include "tables.h"
+#include "usb_config.h"
+#include <stdio.h>
+#include <string.h>
 
 /*===========================================================================*/
 /* Macros                                                                    */
@@ -42,7 +42,6 @@
 /*===========================================================================*/
 /* Thread pointers.                                                          */
 /*===========================================================================*/
-
 
 /*===========================================================================*/
 /* Structs / Vars                                                            */
@@ -66,8 +65,7 @@ static const WDGConfig wdgcfg = {
   STM32_IWDG_WIN_DISABLED
 };
 */
-CCM_FUNC void freqinVTHandler(void *arg)
-{
+CCM_FUNC void freqinVTHandler(void *arg) {
   (void)arg;
 
   reEnableInputCapture(&TIMCAPD3);
@@ -77,75 +75,47 @@ CCM_FUNC void freqinVTHandler(void *arg)
   chSysUnlockFromISR();
 }
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SHELL_SD,
-  sh_commands
-};
+static const ShellConfig shell_cfg1 = {(BaseSequentialStream *)&SHELL_SD,
+                                       sh_commands};
 
 /*===========================================================================*/
 /* Configs                                                                   */
 /*===========================================================================*/
 
-const DACConfig dac1cfg1 = {
-  2047U,
-  DAC_DHRM_12BIT_RIGHT,
-  0
-};
+const DACConfig dac1cfg1 = {2047U, DAC_DHRM_12BIT_RIGHT, 0};
 
 // Used for MTS
-SerialConfig uart1Cfg =
-{
- 19200, // bit rate
- 0,
- USART_CR2_STOP1_BITS,
- 0
-};
+SerialConfig uart1Cfg = {19200, // bit rate
+                         0, USART_CR2_STOP1_BITS, 0};
 
 // Extra header
-SerialConfig uart2Cfg =
-{
- 115200, // bit rate
- 0,
- USART_CR2_STOP1_BITS,
- 0
-};
+SerialConfig uart2Cfg = {115200, // bit rate
+                         0, USART_CR2_STOP1_BITS, 0};
 
 // K-Line
-SerialConfig uart3Cfg =
-{
- 19200, // bit rate
- 0,
- USART_CR2_STOP1_BITS,
- 0
-};
+SerialConfig uart3Cfg = {19200, // bit rate
+                         0, USART_CR2_STOP1_BITS, 0};
 
-PWMConfig pwmcfg = {
-  10000,    /* 10kHz PWM clock frequency.   */
-  50,      /* Initial PWM period 10mS.       */
-  NULL,
-  {
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-   {PWM_OUTPUT_DISABLED, NULL},
-   {PWM_OUTPUT_DISABLED, NULL}
-  },
-  0,
-  0
-};
+PWMConfig pwmcfg = {10000, /* 10kHz PWM clock frequency.   */
+                    50,    /* Initial PWM period 10mS.       */
+                    NULL,
+                    {{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+                     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+                     {PWM_OUTPUT_DISABLED, NULL},
+                     {PWM_OUTPUT_DISABLED, NULL}},
+                    0,
+                    0};
 
-const CANConfig cancfg = {
-  CAN_MCR_ABOM   | CAN_MCR_AWUM   | CAN_MCR_TXFP,
-  CAN_BTR_SJW(1) | CAN_BTR_TS2(4) |
-  CAN_BTR_TS1(5) | CAN_BTR_BRP(5)
-};
+const CANConfig cancfg = {CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
+                          CAN_BTR_SJW(1) | CAN_BTR_TS2(4) | CAN_BTR_TS1(5) |
+                              CAN_BTR_BRP(5)};
 
 /*===========================================================================*/
 /* Threads                                                                   */
 /*===========================================================================*/
 
 THD_WORKING_AREA(waThreadCAN, 256);
-CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadCAN, arg) {
   event_listener_t el;
   CANTxFrame txmsg;
   CANRxFrame rxmsg;
@@ -155,35 +125,40 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
   (void)arg;
   chRegSetThreadName("CAN Bus");
 
-  while(CAND1.state != CAN_READY) chThdSleepMilliseconds(10);
-  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
+  while (CAND1.state != CAN_READY)
+    chThdSleepMilliseconds(10);
+  while (SDU1.state != SDU_READY)
+    chThdSleepMilliseconds(10);
 
   chEvtRegister(&CAND1.rxfull_event, &el, 0);
 
-  while(TRUE) {
+  while (TRUE) {
 
     // Are we using coms for sensor data? If not just sleep.
-    if (settings.sensorsInput != SENSORS_INPUT_COM && (settings.functions & FUNC_OBD_SERVER) == 0) {
+    if (settings.sensorsInput != SENSORS_INPUT_COM &&
+        (settings.functions & FUNC_OBD_SERVER) == 0) {
 
       chThdSleepMilliseconds(100);
       continue;
     }
 
-    //checkCanFilters(&CAND1, &cancfg);
+    // checkCanFilters(&CAND1, &cancfg);
 
     if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(10)) == 0) {
       continue;
     }
 
-    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
+    while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) ==
+           MSG_OK) {
       /* Process message.*/
 
       if (dbg_can) {
-          chprintf(DBG_STREAM, "->[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), rxmsg.SID, rxmsg.RTR);
-          for(i = 0; i < rxmsg.DLC; i++) {
-              chprintf(DBG_STREAM, ":%02x", rxmsg.data8[i]);
-          }
-          chprintf(DBG_STREAM, "\r\n");
+        chprintf(DBG_STREAM, "->[CANBUS][%08x][SID:%03x][RTR:%01x]",
+                 chSysGetRealtimeCounterX(), rxmsg.SID, rxmsg.RTR);
+        for (i = 0; i < rxmsg.DLC; i++) {
+          chprintf(DBG_STREAM, ":%02x", rxmsg.data8[i]);
+        }
+        chprintf(DBG_STREAM, "\r\n");
       }
 
       if (settings.functions & FUNC_OBD_SERVER) {
@@ -191,41 +166,42 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
         pidserved = serveCanOBDPidRequest(&CAND1, &txmsg, &rxmsg);
 
         if (dbg_can && pidserved) {
-            chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
-            for(i = 0; i < txmsg.DLC; i++) {
-                chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
-            }
-            chprintf(DBG_STREAM, "\r\n");
-        }
-         else if (dbg_can) {
-            chprintf(DBG_STREAM, "!![CANBUS][%08x][ignored sender %03x]\r\n", chSysGetRealtimeCounterX(), rxmsg.SID);
+          chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]",
+                   chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
+          for (i = 0; i < txmsg.DLC; i++) {
+            chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
+          }
+          chprintf(DBG_STREAM, "\r\n");
+        } else if (dbg_can) {
+          chprintf(DBG_STREAM, "!![CANBUS][%08x][ignored sender %03x]\r\n",
+                   chSysGetRealtimeCounterX(), rxmsg.SID);
         }
       }
 
-      if ((settings.functions & FUNC_OBD_SERVER) == 0)  {
-          if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
+      if ((settings.functions & FUNC_OBD_SERVER) == 0) {
+        if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN) {
 
-            readCanOBDPidResponse(&rxmsg);
-          }
-          else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
+          readCanOBDPidResponse(&rxmsg);
+        } else if (settings.sensorsInput == SENSORS_INPUT_YAMAHA_CAN) {
 
-            readCanYamahaPid(&rxmsg);
-          }
+          readCanYamahaPid(&rxmsg);
+        }
       }
     }
 
-    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN
-            && (settings.functions & FUNC_OBD_SERVER) == 0) {
+    if (settings.sensorsInput == SENSORS_INPUT_OBD_CAN &&
+        (settings.functions & FUNC_OBD_SERVER) == 0) {
 
       // Request OBD PIDs
       sendCanOBDFrames(&CAND1, &txmsg);
 
       if (dbg_can) {
-          chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]", chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
-          for(i = 0; i < 8; i++) {
-              chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
-          }
-          chprintf(DBG_STREAM, "\r\n");
+        chprintf(DBG_STREAM, "<-[CANBUS][%08x][SID:%03x][RTR:%01x]",
+                 chSysGetRealtimeCounterX(), txmsg.SID, txmsg.RTR);
+        for (i = 0; i < 8; i++) {
+          chprintf(DBG_STREAM, ":%02x", txmsg.data8[i]);
+        }
+        chprintf(DBG_STREAM, "\r\n");
       }
       chThdSleepMilliseconds(100); // ~10Hz
     }
@@ -238,8 +214,7 @@ CCM_FUNC static THD_FUNCTION(ThreadCAN, arg)
  * USB Bulk thread.
  */
 THD_WORKING_AREA(waThreadBDU, 1024);
-CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadBDU, arg) {
   event_listener_t el1;
   eventmask_t flags;
   (void)arg;
@@ -247,22 +222,23 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
 
   chEvtRegisterMask(chnGetEventSource(&SDU2), &el1, ALL_EVENTS);
 
-  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(SDU2.state != SDU_READY) chThdSleepMilliseconds(10);
+  while (USBD1.state != USB_READY)
+    chThdSleepMilliseconds(10);
+  while (SDU2.state != SDU_READY)
+    chThdSleepMilliseconds(10);
 
-  while (TRUE)
-  {
+  while (TRUE) {
     chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     flags = chEvtGetAndClearFlags(&el1);
 
-    pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
+    pwmEnableChannel(&PWMD_LED2, CHN_LED2,
+                     PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 8000));
 
-    if (flags & CHN_INPUT_AVAILABLE)
-    {
-      pwmEnableChannel(&PWMD_LED2, CHN_LED2, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 1000));
+    if (flags & CHN_INPUT_AVAILABLE) {
+      pwmEnableChannel(&PWMD_LED2, CHN_LED2,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED2, 1000));
       readCommand((BaseChannel *)&SDU2);
-    }
-    else
+    } else
       chThdSleepMilliseconds(2);
   }
   return;
@@ -273,19 +249,21 @@ CCM_FUNC static THD_FUNCTION(ThreadBDU, arg)
  */
 THD_WORKING_AREA(waThreadSDU, 256);
 THD_WORKING_AREA(waThreadShell, 512);
-CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadSDU, arg) {
   (void)arg;
   uint8_t in_buffer[SERIAL_BUFFERS_SIZE];
   uint8_t out_buffer[SERIAL_BUFFERS_SIZE];
-  //uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
+  // uint8_t buffer_check[SERIAL_BUFFERS_SIZE/2];
   size_t in, out;
-  thread_t* th_shell = NULL;
+  thread_t *th_shell = NULL;
   chRegSetThreadName("SDU");
 
-  while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
-  while(SDU1.state != SDU_READY) chThdSleepMilliseconds(10);
-  while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
+  while (USBD1.state != USB_READY)
+    chThdSleepMilliseconds(10);
+  while (SDU1.state != SDU_READY)
+    chThdSleepMilliseconds(10);
+  while (SD3.state != SD_READY)
+    chThdSleepMilliseconds(10);
 
   // Enable K-line transceiver
   palSetPad(PORT_KLINE_CS, PAD_KLINE_CS);
@@ -294,32 +272,30 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
   while (TRUE) {
 
-    if (settings.serialMode == SERIAL_MODE_SHELL)  {
-        if (th_shell == NULL || chThdTerminatedX(th_shell)) {
-            th_shell = chThdCreateStatic(waThreadShell,
-                                         sizeof(waThreadShell),
-                                         NORMALPRIO + 1,
-                                         shellThread,
-                                         (void *)&shell_cfg1);
-        }
-        chThdSleepMilliseconds(10);
-        continue;
+    if (settings.serialMode == SERIAL_MODE_SHELL) {
+      if (th_shell == NULL || chThdTerminatedX(th_shell)) {
+        th_shell =
+            chThdCreateStatic(waThreadShell, sizeof(waThreadShell),
+                              NORMALPRIO + 1, shellThread, (void *)&shell_cfg1);
+      }
+      chThdSleepMilliseconds(10);
+      continue;
     }
 
     if (settings.serialMode != SERIAL_MODE_KLINE) {
-        chThdSleepMilliseconds(10);
-        continue;
+      chThdSleepMilliseconds(10);
+      continue;
     }
 
     /* In case we stop it to change baudrate */
-    while (SD3.state != SD_READY) chThdSleepMilliseconds(10);
+    while (SD3.state != SD_READY)
+      chThdSleepMilliseconds(10);
 
-    if (doKLineInit && 0)
-    {
+    if (doKLineInit && 0) {
       sdStop(&SD3);
       klineInit(false);
-      //fiveBaudInit(&SD3);
-      //sdReadTimeout(&SD3, buffer_check, 1, TIME_MS2I(5)); // noise
+      // fiveBaudInit(&SD3);
+      // sdReadTimeout(&SD3, buffer_check, 1, TIME_MS2I(5)); // noise
       doKLineInit = false;
       sdStart(&SD3, &uart1Cfg);
     }
@@ -329,21 +305,18 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 
     while (in == 0 && out == 0) {
 
-        chThdSleepMilliseconds(1);
-        in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
-        out = sdReadTimeout(&SD3, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
+      chThdSleepMilliseconds(1);
+      in = chnReadTimeout(&SDU1, in_buffer, sizeof(in_buffer), TIME_IMMEDIATE);
+      out = sdReadTimeout(&SD3, out_buffer, sizeof(out_buffer), TIME_IMMEDIATE);
     }
 
-    if (in > 0)
-    {
+    if (in > 0) {
       sdWriteTimeout(&SD3, in_buffer, in, TIME_MS2I(10));
     }
 
-    if (out > 0)
-    {
+    if (out > 0) {
       chnWriteTimeout(&SDU1, out_buffer, out, TIME_MS2I(10));
     }
-
   }
   return;
 }
@@ -351,16 +324,15 @@ CCM_FUNC static THD_FUNCTION(ThreadSDU, arg)
 /*
  * Sensors thread.
  */
-static pair_t an1_buffer[ADC_GRP1_BUF_DEPTH/2];
-static pair_t an2_buffer[ADC_GRP1_BUF_DEPTH/2];
-static pair_t an3_buffer[ADC_GRP1_BUF_DEPTH/2];
+static pair_t an1_buffer[ADC_GRP1_BUF_DEPTH / 2];
+static pair_t an2_buffer[ADC_GRP1_BUF_DEPTH / 2];
+static pair_t an3_buffer[ADC_GRP1_BUF_DEPTH / 2];
 THD_WORKING_AREA(waThreadADC, 256);
-CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadADC, arg) {
   (void)arg;
   chRegSetThreadName("Sensors");
 
-  adcsample_t * sensorsDataPtr;
+  adcsample_t *sensorsDataPtr;
   size_t n;
   uint16_t i, pos;
   uint32_t an[3] = {0, 0, 0};
@@ -370,34 +342,33 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
   chThdSleepMilliseconds(250);
   timcapEnable(&TIMCAPD3);
   chVTSet(&vt_freqin, FREQIN_INTERVAL, freqinVTHandler, NULL);
-  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors, ADC_GRP1_BUF_DEPTH);
+  adcStartConversion(&ADCD1, &adcgrpcfg_sensors, samples_sensors,
+                     ADC_GRP1_BUF_DEPTH);
 
-  median_init(&an1, 0 , an1_buffer, ADC_GRP1_BUF_DEPTH/2);
-  median_init(&an2, 0 , an2_buffer, ADC_GRP1_BUF_DEPTH/2);
-  median_init(&an3, 0 , an3_buffer, ADC_GRP1_BUF_DEPTH/2);
+  median_init(&an1, 0, an1_buffer, ADC_GRP1_BUF_DEPTH / 2);
+  median_init(&an2, 0, an2_buffer, ADC_GRP1_BUF_DEPTH / 2);
+  median_init(&an3, 0, an3_buffer, ADC_GRP1_BUF_DEPTH / 2);
 
-  while (TRUE)
-  {
-    while (!recvFreeSamples(&sensorsMb, (void*)&sensorsDataPtr, &n))
+  while (TRUE) {
+    while (!recvFreeSamples(&sensorsMb, (void *)&sensorsDataPtr, &n))
       chThdSleepMilliseconds(5);
 
-    an[0]= 0;
-    an[1]= 0;
-    an[2]= 0;
+    an[0] = 0;
+    an[1] = 0;
+    an[2] = 0;
 
     /* Filtering and adding */
-    for (i = 0; i < (n/ADC_GRP1_NUM_CHANNELS); i++)
-    {
+    for (i = 0; i < (n / ADC_GRP1_NUM_CHANNELS); i++) {
       pos = i * ADC_GRP1_NUM_CHANNELS;
       an[0] += median_filter(&an1, sensorsDataPtr[pos]);
-      an[1] += median_filter(&an2, sensorsDataPtr[pos+1]);
-      an[2] += median_filter(&an3, sensorsDataPtr[pos+2]);
+      an[1] += median_filter(&an2, sensorsDataPtr[pos + 1]);
+      an[2] += median_filter(&an3, sensorsDataPtr[pos + 2]);
     }
 
     /* Averaging */
-    an[0] /= (n/ADC_GRP1_NUM_CHANNELS);
-    an[1] /= (n/ADC_GRP1_NUM_CHANNELS);
-    an[2] /= (n/ADC_GRP1_NUM_CHANNELS);
+    an[0] /= (n / ADC_GRP1_NUM_CHANNELS);
+    an[1] /= (n / ADC_GRP1_NUM_CHANNELS);
+    an[2] /= (n / ADC_GRP1_NUM_CHANNELS);
 
     /* Convert to milliVolts */
     an[0] *= VBAT_RATIO;
@@ -410,44 +381,55 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 
     /* Analog/Digital Sensors */
     if (settings.sensorsInput == SENSORS_INPUT_DIRECT) {
-        sensors_data.tps = calculateTpFromMillivolt(settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
-        sensors_data.rpm = calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
-        sensors_data.spd = calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
-    }
-    else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
-        sensors_data.tps = rand16(0, 200);
-        sensors_data.rpm = rand16(10, 18000);
-        sensors_data.spd = rand16(5, 10000);
+      sensors_data.tps = calculateTpFromMillivolt(
+          settings.tpsMinV, settings.tpsMaxV, sensors_data.an2);
+      sensors_data.rpm =
+          calculateFreqWithRatio(sensors_data.freq1, settings.rpmMult);
+      sensors_data.spd =
+          calculateFreqWithRatio(sensors_data.freq2, settings.spdMult);
+    } else if (settings.sensorsInput == SENSORS_INPUT_TEST) {
+      sensors_data.tps = rand16(0, 200);
+      sensors_data.rpm = rand16(10, 18000);
+      sensors_data.spd = rand16(5, 10000);
     }
 
     /* AFR */
     if (settings.afrInput == AFR_INPUT_AN) {
-        sensors_data.afr = calculateAFRFromMillivolt(settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an3);
-    }
-    else if (settings.afrInput == AFR_INPUT_TEST) {
-        sensors_data.afr = rand16(11000, 16000) / 100;
+      sensors_data.afr = calculateAFRFromMillivolt(
+          settings.AfrMinVal, settings.AfrMaxVal, sensors_data.an3);
+    } else if (settings.afrInput == AFR_INPUT_TEST) {
+      sensors_data.afr = rand16(11000, 16000) / 100;
     }
 
     if (dbg_sensors) {
-        chprintf(DBG_STREAM,"->[SENSORS] TPS mV/PCT: %06u/%04u\r\n", sensors_data.an2, sensors_data.tps);
-        chprintf(DBG_STREAM,"->[SENSORS] RMP Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
-        chprintf(DBG_STREAM,"->[SENSORS] SPD Hz/Mult/Val: %06u/%.4f/%04u\r\n", sensors_data.freq2, settings.spdMult, sensors_data.spd);
+      chprintf(DBG_STREAM, "->[SENSORS] TPS mV/PCT: %06u/%04u\r\n",
+               sensors_data.an2, sensors_data.tps);
+      chprintf(DBG_STREAM, "->[SENSORS] RMP Hz/Mult/Val: %06u/%.4f/%04u\r\n",
+               sensors_data.freq1, settings.rpmMult, sensors_data.rpm);
+      chprintf(DBG_STREAM, "->[SENSORS] SPD Hz/Mult/Val: %06u/%.4f/%04u\r\n",
+               sensors_data.freq2, settings.spdMult, sensors_data.spd);
     }
 
-    if (findCell(sensors_data.tps/2, sensors_data.rpm, &row, &col))
-    {
+    if (findCell(sensors_data.tps / 2, sensors_data.rpm, &row, &col)) {
       sensors_data.cell.row = row;
       sensors_data.cell.col = col;
       if (dbg_sensors) {
-          chprintf(DBG_STREAM,"->[SENSORS] Row:Value/Col:Value: %02u:%05u/%02u:%05u\r\n", row, tableRows[row], col, tableColumns[col]*100);
+        chprintf(DBG_STREAM,
+                 "->[SENSORS] Row:Value/Col:Value: %02u:%05u/%02u:%05u\r\n",
+                 row, tableRows[row], col, tableColumns[col] * 100);
       }
 
-      if ((settings.functions & FUNC_RECORD)  && sensors_data.rpm != 0)
-      {
-          /* Average */
-          tableAFR[row][col] = tableAFR[row][col] == 0 ? sensors_data.afr : ((uint16_t)sensors_data.afr+(uint16_t)tableAFR[row][col])/2;
-          /* Peaks */
-          tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col] ? sensors_data.knock_value : tableKnock[row][col];
+      if ((settings.functions & FUNC_RECORD) && sensors_data.rpm != 0) {
+        /* Average */
+        tableAFR[row][col] =
+            tableAFR[row][col] == 0
+                ? sensors_data.afr
+                : ((uint16_t)sensors_data.afr + (uint16_t)tableAFR[row][col]) /
+                      2;
+        /* Peaks */
+        tableKnock[row][col] = sensors_data.knock_value > tableKnock[row][col]
+                                   ? sensors_data.knock_value
+                                   : tableKnock[row][col];
       }
     }
   }
@@ -457,16 +439,15 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg)
 /*
  * Knock processing thread.
  */
-static float32_t input[FFT_SIZE*2];
-static float32_t output[FFT_SIZE*2];
-static float32_t mag_knock[FFT_SIZE/2];
+static float32_t input[FFT_SIZE * 2];
+static float32_t output[FFT_SIZE * 2];
+static float32_t mag_knock[FFT_SIZE / 2];
 THD_WORKING_AREA(waThreadKnock, 600);
-CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadKnock, arg) {
   (void)arg;
   chRegSetThreadName("Knock");
 
-  q15_t* knockDataPtr;
+  q15_t *knockDataPtr;
   size_t knockDataSize;
 
   float32_t maxValue = 0;
@@ -474,30 +455,33 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
   uint16_t i;
 
   /* ADC 3 Ch1 Offset. -2048 */
-  ADC3->OFR1 = ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
-  dacPutChannelX(&DACD1, 0, 2048); // This sets the offset for the knock ADC opamp.
+  ADC3->OFR1 =
+      ADC_OFR1_OFFSET1_EN | ((1 << 26) & ADC_OFR1_OFFSET1_CH) | (2048 & 0xFFF);
+  dacPutChannelX(&DACD1, 0,
+                 2048); // This sets the offset for the knock ADC opamp.
 
   chThdSleepMilliseconds(200);
-  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock, ADC_GRP2_BUF_DEPTH);
+  adcStartConversion(&ADCD3, &adcgrpcfg_knock, samples_knock,
+                     ADC_GRP2_BUF_DEPTH);
 
   /* Initialize the CFFT/CIFFT module */
   arm_rfft_fast_instance_f32 S1;
   arm_rfft_fast_init_f32(&S1, FFT_SIZE);
 
-  while (TRUE)
-  {
-    while (!recvFreeSamples(&knockMb, (void*)&knockDataPtr, &knockDataSize))
+  while (TRUE) {
+    while (!recvFreeSamples(&knockMb, (void *)&knockDataPtr, &knockDataSize))
       chThdSleepMilliseconds(2);
 
     /* Copy and convert ADC samples */
-    for (i=0; i<FFT_SIZE*2; i+=4)
-    {
+    for (i = 0; i < FFT_SIZE * 2; i += 4) {
       /* Hann Window */
-      float32_t multiplier = (1.0 - arm_cos_f32((2.0*PI*(float32_t)i)/(((float32_t)FFT_SIZE*2.0)-1.0)));
-      input[i] = multiplier*(float32_t)knockDataPtr[i];
-      input[i+1] = multiplier*(float32_t)knockDataPtr[i+1];
-      input[i+2] = multiplier*(float32_t)knockDataPtr[i+2];
-      input[i+3] = multiplier*(float32_t)knockDataPtr[i+3];
+      float32_t multiplier =
+          (1.0 - arm_cos_f32((2.0 * PI * (float32_t)i) /
+                             (((float32_t)FFT_SIZE * 2.0) - 1.0)));
+      input[i] = multiplier * (float32_t)knockDataPtr[i];
+      input[i + 1] = multiplier * (float32_t)knockDataPtr[i + 1];
+      input[i + 2] = multiplier * (float32_t)knockDataPtr[i + 2];
+      input[i + 3] = multiplier * (float32_t)knockDataPtr[i + 3];
     }
 
     /* Process the data through the RFFT module */
@@ -505,13 +489,14 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
 
     /* Process the data through the Complex Magnitude Module for
     calculating the magnitude at each bin */
-    arm_cmplx_mag_f32(output, mag_knock, FFT_SIZE/2); // Calculate magnitude, outputs q2.14
-    arm_max_f32(mag_knock, FFT_SIZE/2, &maxValue, &maxIndex); // Find max magnitude
+    arm_cmplx_mag_f32(output, mag_knock,
+                      FFT_SIZE / 2); // Calculate magnitude, outputs q2.14
+    arm_max_f32(mag_knock, FFT_SIZE / 2, &maxValue,
+                &maxIndex); // Find max magnitude
 
     // Convert 2.14 to 8 Bits unsigned
-    for (i=0; i < sizeof(output_knock); i++)
-    {
-      uint16_t tmp = (mag_knock[i]/16384);
+    for (i = 0; i < sizeof(output_knock); i++) {
+      uint16_t tmp = (mag_knock[i] / 16384);
       if (tmp > 0xFF)
         tmp = 0xFF;
       output_knock[i] = tmp; // 8 bits minus the 2 fractional bits
@@ -520,16 +505,13 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
     sensors_data.knock_freq = settings.knockFreq;
 
     if (settings.sensorsInput == SENSORS_INPUT_TEST) {
-        sensors_data.knock_value = rand16(0, 255);
-        continue;
-      }
+      sensors_data.knock_value = rand16(0, 255);
+      continue;
+    }
 
-    sensors_data.knock_value = calculateKnockIntensity(
-                settings.knockFreq,
-                settings.knockRatio,
-                FFT_FREQ,
-                output_knock,
-                sizeof(output_knock));
+    sensors_data.knock_value =
+        calculateKnockIntensity(settings.knockFreq, settings.knockRatio,
+                                FFT_FREQ, output_knock, sizeof(output_knock));
   }
   return;
 }
@@ -538,22 +520,20 @@ CCM_FUNC static THD_FUNCTION(ThreadKnock, arg)
  * CPU Load Monitoring thread.
  */
 THD_WORKING_AREA(waThreadMonitor, 128);
-static THD_FUNCTION(ThreadMonitor, arg)
-{
+static THD_FUNCTION(ThreadMonitor, arg) {
   (void)arg;
   chRegSetThreadName("Monitor");
-  uint32_t  run_offset, irq_ticks = 0, total_ticks;
-  thread_t* tp = NULL;
+  uint32_t run_offset, irq_ticks = 0, total_ticks;
+  thread_t *tp = NULL;
 
   DWT->CTRL |= DWT_CTRL_EXCEVTENA_Msk;
 
-  while (TRUE)
-  {
+  while (TRUE) {
     tp = chRegFirstThread();
     do {
-        tp->runtime = 0;
-        tp->irqtime = 0;
-        tp = chRegNextThread(tp);
+      tp->runtime = 0;
+      tp->irqtime = 0;
+      tp = chRegNextThread(tp);
     } while (tp != NULL);
 
     irq_ticks = 0;
@@ -563,21 +543,22 @@ static THD_FUNCTION(ThreadMonitor, arg)
     chThdSleepMilliseconds(1000);
 
     /* Convert to systick time base */
-    total_ticks = (DWT->CYCCNT - run_offset) / (STM32_SYSCLK/CH_CFG_ST_FREQUENCY);
+    total_ticks =
+        (DWT->CYCCNT - run_offset) / (STM32_SYSCLK / CH_CFG_ST_FREQUENCY);
 
     tp = chRegFirstThread();
     do {
-        irq_ticks += tp->irqtime;
-        tp = chRegNextThread(tp);
+      irq_ticks += tp->irqtime;
+      tp = chRegNextThread(tp);
     } while (tp != NULL);
 
     tp = chRegFirstThread();
     do {
-        tp->pct = ((tp->runtime*10000)/total_ticks) | RUNNING(tp);
-        tp = chRegNextThread(tp);
+      tp->pct = ((tp->runtime * 10000) / total_ticks) | RUNNING(tp);
+      tp = chRegNextThread(tp);
     } while (tp != NULL);
 
-    irq_pct = ((irq_ticks*10000)/total_ticks);
+    irq_pct = ((irq_ticks * 10000) / total_ticks);
   }
   return;
 }
@@ -586,20 +567,19 @@ static THD_FUNCTION(ThreadMonitor, arg)
  * Uart1 thread.
  */
 THD_WORKING_AREA(waThreadSER1, 256);
-CCM_FUNC static THD_FUNCTION(ThreadSER1, arg)
-{
+CCM_FUNC static THD_FUNCTION(ThreadSER1, arg) {
   (void)arg;
-  uint8_t buffer[SERIAL_BUFFERS_SIZE/2];
+  uint8_t buffer[SERIAL_BUFFERS_SIZE / 2];
   size_t read;
   chRegSetThreadName("MTS");
 
-  while(SD1.state != SD_READY) chThdSleepMilliseconds(10);
+  while (SD1.state != SD_READY)
+    chThdSleepMilliseconds(10);
 
   while (TRUE) {
 
     read = sdReadTimeout(&SD1, buffer, 6, TIME_MS2I(40));
-    if (read >= 6)
-    {
+    if (read >= 6) {
       readMtsPackets(buffer);
     }
   }
@@ -607,120 +587,111 @@ CCM_FUNC static THD_FUNCTION(ThreadSER1, arg)
 }
 
 THD_WORKING_AREA(waThreadRecord, 256);
-static THD_FUNCTION(ThreadRecord, arg)
-{
-    (void)arg;
-    chRegSetThreadName("Recording");
-    uint16_t duty = 0;
-    uint8_t result = 0;
-    uint8_t count = 0;
-    bool debounce = false;
-    bool indicator = false;
+static THD_FUNCTION(ThreadRecord, arg) {
+  (void)arg;
+  chRegSetThreadName("Recording");
+  uint16_t duty = 0;
+  uint8_t result = 0;
+  uint8_t count = 0;
+  bool debounce = false;
+  bool indicator = false;
 
-    /* Load settings from EE first */
-    if (readSettingsFromEE() != 0)
-    {
-        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-        writeSettingsToEE();
-        chThdSleepMilliseconds(3000);
+  /* Load settings from EE first */
+  if (readSettingsFromEE() != 0) {
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                     PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+    writeSettingsToEE();
+    chThdSleepMilliseconds(3000);
+  }
+
+  if (readTablesFromEE() != 0) {
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                     PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+    chThdSleepMilliseconds(1000);
+    pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                     PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+    chThdSleepMilliseconds(3000);
+  }
+
+  while (true) {
+    if (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW) {
+      if (!debounce) {
+        pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                         PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+        count++;
+        indicator = true;
+      } else {
+        count = 0;
+        indicator = false;
+      }
+    } else {
+      count = 0;
+      debounce = false;
+      indicator = false;
     }
 
-    if (readTablesFromEE() != 0)
-    {
-        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-        chThdSleepMilliseconds(1000);
-        pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-        chThdSleepMilliseconds(3000);
+    if (count >= 2 && !debounce) {
+      /* Toggle Record mode */
+      settings.functions ^= FUNC_RECORD;
+      writeSettingsToEE();
+      readSettingsFromEE();
+      debounce = true;
+
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+      chThdSleepMilliseconds(150);
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+      chThdSleepMilliseconds(150);
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
+      chThdSleepMilliseconds(150);
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
+      chThdSleepMilliseconds(150);
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
     }
 
-    while (true)
-    {
-        if (palReadPad(PORT_BUTTON1, PAD_BUTTON1) == PAL_LOW)
-        {
-            if (!debounce)
-            {
-                pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-                count++;
-                indicator = true;
-            }
-            else {
-                count = 0;
-                indicator = false;
-            }
-        }
-        else
-        {
-            count = 0;
-            debounce = false;
-            indicator = false;
-        }
-
-        if (count >= 2 && !debounce)
-        {
-            /* Toggle Record mode */
-            settings.functions ^= FUNC_RECORD;
-            writeSettingsToEE();
-            readSettingsFromEE();
-            debounce = true;
-
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(150);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-            chThdSleepMilliseconds(150);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-            chThdSleepMilliseconds(150);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 10000));
-            chThdSleepMilliseconds(150);
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, 0));
-        }
-
-        if (settings.functions & FUNC_RECORD)
-        {
-            /* Record tables */
-            result = writeTablesToEE();
-            if (result == 0)
-            {
-                duty = duty == 0 ? 10000 : 0;
-            }
-            else
-            {
-                duty = duty == 0 ? 1000 : 0;
-            }
-        }
-        else
-        {
-            duty = 0;
-        }
-
-        if (!indicator)
-            pwmEnableChannel(&PWMD_LED1, CHN_LED1, PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
-
-        chThdSleepMilliseconds(500);
+    if (settings.functions & FUNC_RECORD) {
+      /* Record tables */
+      result = writeTablesToEE();
+      if (result == 0) {
+        duty = duty == 0 ? 10000 : 0;
+      } else {
+        duty = duty == 0 ? 1000 : 0;
+      }
+    } else {
+      duty = 0;
     }
-   return;
+
+    if (!indicator)
+      pwmEnableChannel(&PWMD_LED1, CHN_LED1,
+                       PWM_PERCENTAGE_TO_WIDTH(&PWMD_LED1, duty));
+
+    chThdSleepMilliseconds(500);
+  }
+  return;
 }
 
 THD_WORKING_AREA(waThreadWdg, 64);
-static THD_FUNCTION(ThreadWdg, arg)
-{
-    (void)arg;
-    chRegSetThreadName("Watchdog");
+static THD_FUNCTION(ThreadWdg, arg) {
+  (void)arg;
+  chRegSetThreadName("Watchdog");
 
-    while (true)
-    {
-        wdgResetI(&WDGD1);
-        chThdSleepMilliseconds(200);
-    }
+  while (true) {
+    wdgResetI(&WDGD1);
+    chThdSleepMilliseconds(200);
+  }
 
-    return;
+  return;
 }
 
 /*===========================================================================*/
 /* Main Thread                                                               */
 /*===========================================================================*/
 
-int main(void)
-{
+int main(void) {
   /*
    * Start OS and HAL
    */
@@ -758,41 +729,48 @@ int main(void)
   eeInit();
   // Compare and update versions in EEprom if needed.
   version_t v;
-  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0 && memcmp(&versions, &v, sizeof(version_t)) != 0) {
+  if (readVersionFromEE(VERSION_IDX_APP, &v) == 0 &&
+      memcmp(&versions, &v, sizeof(version_t)) != 0) {
 
     writeVersionToEE(VERSION_IDX_APP, &versions[VERSION_IDX_APP]);
   }
-  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0 ) {
+  if (readVersionFromEE(VERSION_IDX_BL, &v) == 0) {
     memcpy(&versions[VERSION_IDX_BL], &v, sizeof(version_t));
   }
 
   /*
    * Creates the threads.
    */
-  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO+5, ThreadBDU, NULL);
-  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO+2, ThreadSDU, NULL);
-  chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC, NULL);
-  chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO, ThreadKnock, NULL);
-  chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN, NULL);
-  chThdCreateStatic(waThreadSER1, sizeof(waThreadSER1), NORMALPRIO, ThreadSER1, NULL);
-  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO+1, ThreadRecord, NULL);
-  chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg, NULL);
+  chThdCreateStatic(waThreadBDU, sizeof(waThreadBDU), NORMALPRIO + 5, ThreadBDU,
+                    NULL);
+  chThdCreateStatic(waThreadSDU, sizeof(waThreadSDU), NORMALPRIO + 2, ThreadSDU,
+                    NULL);
+  chThdCreateStatic(waThreadADC, sizeof(waThreadADC), NORMALPRIO, ThreadADC,
+                    NULL);
+  chThdCreateStatic(waThreadKnock, sizeof(waThreadKnock), NORMALPRIO,
+                    ThreadKnock, NULL);
+  chThdCreateStatic(waThreadCAN, sizeof(waThreadCAN), NORMALPRIO, ThreadCAN,
+                    NULL);
+  chThdCreateStatic(waThreadSER1, sizeof(waThreadSER1), NORMALPRIO, ThreadSER1,
+                    NULL);
+  chThdCreateStatic(waThreadRecord, sizeof(waThreadRecord), NORMALPRIO + 1,
+                    ThreadRecord, NULL);
+  chThdCreateStatic(waThreadWdg, sizeof(waThreadWdg), HIGHPRIO, ThreadWdg,
+                    NULL);
 
   /* Create last as it uses pointers from above */
-  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO+10, ThreadMonitor, NULL);
+  chThdCreateStatic(waThreadMonitor, sizeof(waThreadMonitor), NORMALPRIO + 10,
+                    ThreadMonitor, NULL);
 
-  while (TRUE)
-  {
-    while(USBD1.state != USB_READY) chThdSleepMilliseconds(10);
+  while (TRUE) {
+    while (USBD1.state != USB_READY)
+      chThdSleepMilliseconds(10);
 
     chThdSleepMilliseconds(100);
 
-    if (usbConnected())
-    {
+    if (usbConnected()) {
       usbConnectBus(&USBD1);
-    }
-    else
-    {
+    } else {
       usbDisconnectBus(&USBD1);
     }
   }

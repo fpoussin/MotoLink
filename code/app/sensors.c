@@ -1,11 +1,11 @@
 
+#include "sensors.h"
 #include "common.h"
+#include "ipc.h"
+#include "limits.h"
+#include "median.h"
 #include "protocol.h"
 #include "arm_math.h"
-#include "median.h"
-#include "ipc.h"
-#include "sensors.h"
-#include "limits.h"
 
 /*===========================================================================*/
 /* Variables                                                                 */
@@ -15,7 +15,9 @@ adcsample_t samples_sensors[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 adcsample_t samples_knock[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 uint8_t output_knock[SPECTRUM_SIZE];
 
-sensors_t sensors_data = {0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F0F,0x0F,0x0F,0x0F0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,{0x0F,0x0F}};
+sensors_t sensors_data = {0x0F0F, 0x0F0F, 0x0F0F, 0x0F0F, 0x0F0F,
+                          0x0F,   0x0F,   0x0F0F, 0x0F,   0x0F,
+                          0x0F,   0x0F,   0x0F,   0x0F,   {0x0F, 0x0F}};
 static uint8_t TIM3CC1CaptureNumber, TIM3CC2CaptureNumber;
 static uint16_t TIM3CC1ReadValue1, TIM3CC1ReadValue2;
 static uint16_t TIM3CC2ReadValue1, TIM3CC2ReadValue2;
@@ -25,35 +27,28 @@ static bool TIM3CC1UD, TIM3CC2UD;
 /* CallBacks                                                                 */
 /*===========================================================================*/
 
-CCM_FUNC void reEnableInputCapture(TIMCAPDriver *timcapp)
-{
+CCM_FUNC void reEnableInputCapture(TIMCAPDriver *timcapp) {
 
-  if ((timcapp->tim->DIER & TIM_DIER_CC1IE) == 0)
-  {
+  if ((timcapp->tim->DIER & TIM_DIER_CC1IE) == 0) {
     TIM3CC1CaptureNumber = 0;
     TIM3CC1UD = false;
     timcapp->tim->DIER |= TIM_DIER_CC1IE;
   }
 
-  if ((timcapp->tim->DIER & TIM_DIER_CC2IE) == 0)
-  {
+  if ((timcapp->tim->DIER & TIM_DIER_CC2IE) == 0) {
     TIM3CC2CaptureNumber = 0;
     TIM3CC2UD = false;
     timcapp->tim->DIER |= TIM_DIER_CC2IE;
   }
-
 }
 
-CCM_FUNC void captureOverflowCb(TIMCAPDriver *timcapp)
-{
-  if (TIM3CC1UD && (timcapp->tim->DIER & TIM_DIER_CC1IE))
-  {
+CCM_FUNC void captureOverflowCb(TIMCAPDriver *timcapp) {
+  if (TIM3CC1UD && (timcapp->tim->DIER & TIM_DIER_CC1IE)) {
     timcapp->tim->DIER &= ~TIM_DIER_CC1IE;
     sensors_data.freq1 = 0;
   }
 
-  if (TIM3CC2UD && (timcapp->tim->DIER & TIM_DIER_CC2IE))
-  {
+  if (TIM3CC2UD && (timcapp->tim->DIER & TIM_DIER_CC2IE)) {
     timcapp->tim->DIER &= ~TIM_DIER_CC2IE;
     sensors_data.freq2 = 0;
   }
@@ -62,111 +57,97 @@ CCM_FUNC void captureOverflowCb(TIMCAPDriver *timcapp)
   TIM3CC2UD = true;
 }
 
-CCM_FUNC void capture1Cb(TIMCAPDriver *timcapp)
-{
-  if(TIM3CC1CaptureNumber == 0)
-  {
+CCM_FUNC void capture1Cb(TIMCAPDriver *timcapp) {
+  if (TIM3CC1CaptureNumber == 0) {
     /* Get the Input Capture value */
     TIM3CC1ReadValue1 = timcapp->tim->CCR[0];
     TIM3CC1CaptureNumber = 1;
     TIM3CC1UD = false;
-  }
-  else if(TIM3CC1CaptureNumber == 1)
-  {
-      uint32_t Capture;
-      /* Get the Input Capture value */
-      TIM3CC1ReadValue2 = timcapp->tim->CCR[0];
-      TIM3CC1UD = false;
+  } else if (TIM3CC1CaptureNumber == 1) {
+    uint32_t Capture;
+    /* Get the Input Capture value */
+    TIM3CC1ReadValue2 = timcapp->tim->CCR[0];
+    TIM3CC1UD = false;
 
-      /* Capture computation */
-      if (TIM3CC1ReadValue2 > TIM3CC1ReadValue1)
-      {
-          Capture = ((uint32_t)TIM3CC1ReadValue2 - (uint32_t)TIM3CC1ReadValue1);
-      }
-      else
-      {
-          Capture = (((uint32_t)TIM3CC1ReadValue2 + 0x10000) - (uint32_t)TIM3CC1ReadValue1);
-      }
+    /* Capture computation */
+    if (TIM3CC1ReadValue2 > TIM3CC1ReadValue1) {
+      Capture = ((uint32_t)TIM3CC1ReadValue2 - (uint32_t)TIM3CC1ReadValue1);
+    } else {
+      Capture = (((uint32_t)TIM3CC1ReadValue2 + 0x10000) -
+                 (uint32_t)TIM3CC1ReadValue1);
+    }
 
-      /* Frequency computation */
-      sensors_data.freq1 = (tc_conf.frequency / Capture);
+    /* Frequency computation */
+    sensors_data.freq1 = (tc_conf.frequency / Capture);
 
-      TIM3CC1ReadValue1 = TIM3CC1ReadValue2;
-      TIM3CC1CaptureNumber = 0;
+    TIM3CC1ReadValue1 = TIM3CC1ReadValue2;
+    TIM3CC1CaptureNumber = 0;
 
-      /* Disable CC1 interrupt */
-      timcapp->tim->DIER &= ~TIM_DIER_CC1IE;
+    /* Disable CC1 interrupt */
+    timcapp->tim->DIER &= ~TIM_DIER_CC1IE;
   }
 }
 
-CCM_FUNC void capture2Cb(TIMCAPDriver *timcapp)
-{
-  if(TIM3CC2CaptureNumber == 0)
-  {
+CCM_FUNC void capture2Cb(TIMCAPDriver *timcapp) {
+  if (TIM3CC2CaptureNumber == 0) {
     /* Get the Input Capture value */
     TIM3CC2ReadValue1 = timcapp->tim->CCR[1];
     TIM3CC2CaptureNumber = 1;
     TIM3CC2UD = false;
-  }
-  else if(TIM3CC2CaptureNumber == 1)
-  {
-      uint32_t Capture;
-      /* Get the Input Capture value */
-      TIM3CC2ReadValue2 = timcapp->tim->CCR[1];
-      TIM3CC2UD = false;
+  } else if (TIM3CC2CaptureNumber == 1) {
+    uint32_t Capture;
+    /* Get the Input Capture value */
+    TIM3CC2ReadValue2 = timcapp->tim->CCR[1];
+    TIM3CC2UD = false;
 
-      /* Capture computation */
-      if (TIM3CC2ReadValue2 > TIM3CC2ReadValue1)
-      {
-          Capture = ((uint32_t)TIM3CC2ReadValue2 - (uint32_t)TIM3CC2ReadValue1);
-      }
-      else
-      {
-          Capture = (((uint32_t)TIM3CC2ReadValue2 + 0x10000) - (uint32_t)TIM3CC2ReadValue1);
-      }
+    /* Capture computation */
+    if (TIM3CC2ReadValue2 > TIM3CC2ReadValue1) {
+      Capture = ((uint32_t)TIM3CC2ReadValue2 - (uint32_t)TIM3CC2ReadValue1);
+    } else {
+      Capture = (((uint32_t)TIM3CC2ReadValue2 + 0x10000) -
+                 (uint32_t)TIM3CC2ReadValue1);
+    }
 
-      /* Frequency computation */
-      sensors_data.freq2 = (tc_conf.frequency / Capture);
+    /* Frequency computation */
+    sensors_data.freq2 = (tc_conf.frequency / Capture);
 
-      TIM3CC2ReadValue1 = TIM3CC2ReadValue2;
-      TIM3CC2CaptureNumber = 0;
+    TIM3CC2ReadValue1 = TIM3CC2ReadValue2;
+    TIM3CC2CaptureNumber = 0;
 
-      /* Disable CC2 interrupt */
-      timcapp->tim->DIER &= ~TIM_DIER_CC2IE;
+    /* Disable CC2 interrupt */
+    timcapp->tim->DIER &= ~TIM_DIER_CC2IE;
   }
 }
 
 /* Every 64 samples at 965Hz each, triggers at around 15Hz */
-CCM_FUNC void sensorsCallback(ADCDriver *adcp)
-{
+CCM_FUNC void sensorsCallback(ADCDriver *adcp) {
   (void)adcp;
   size_t half = (adcp)->depth / 2;
   size_t offset = 0;
 
   if (!adcIsBufferComplete(adcp)) {
-      offset = half;
+    offset = half;
   }
 
   // Filtering is done in a dedicated thread
   chSysLockFromISR();
-  allocSendSamplesI(&sensorsMb, (void*)(adcp->samples + offset), half);
+  allocSendSamplesI(&sensorsMb, (void *)(adcp->samples + offset), half);
   chSysUnlockFromISR();
 }
 
 /* Every 1024 samples at 117.263KHz each, triggers at around 114Hz */
-CCM_FUNC void knockCallback(ADCDriver *adcp)
-{
+CCM_FUNC void knockCallback(ADCDriver *adcp) {
   (void)adcp;
   size_t half = (adcp)->depth / 2;
   size_t offset = 0;
 
   if (!adcIsBufferComplete(adcp)) {
-      offset = half;
+    offset = half;
   }
 
   // Do FFT + Mag in a dedicated thread
   chSysLockFromISR();
-  allocSendSamplesI(&sensorsMb, (void*)(adcp->samples + offset), half);
+  allocSendSamplesI(&sensorsMb, (void *)(adcp->samples + offset), half);
   chSysUnlockFromISR();
 }
 
@@ -174,63 +155,56 @@ CCM_FUNC void knockCallback(ADCDriver *adcp)
 /* Configs                                                                   */
 /*===========================================================================*/
 
-TIMCAPConfig tc_conf = {
-   {TIMCAP_INPUT_ACTIVE_HIGH,
-    TIMCAP_INPUT_ACTIVE_HIGH,
-    TIMCAP_INPUT_DISABLED,
-    TIMCAP_INPUT_DISABLED},
-   200000, /* TIM3 Runs at 36Mhz max. (1/200000)*65536 = 0.32s Max, 3.12Hz Min */
-   {capture1Cb, capture2Cb, NULL, NULL},
-   captureOverflowCb,
-   0,
-   0
-};
+TIMCAPConfig tc_conf = {{TIMCAP_INPUT_ACTIVE_HIGH, TIMCAP_INPUT_ACTIVE_HIGH,
+                         TIMCAP_INPUT_DISABLED, TIMCAP_INPUT_DISABLED},
+                        200000, /* TIM3 Runs at 36Mhz max. (1/200000)*65536 =
+                                   0.32s Max, 3.12Hz Min */
+                        {capture1Cb, capture2Cb, NULL, NULL},
+                        captureOverflowCb,
+                        0,
+                        0};
 
 /* ADC12 Clk is 72Mhz/128 562KHz  */
 const ADCConversionGroup adcgrpcfg_sensors = {
-  TRUE,
-  ADC_GRP1_NUM_CHANNELS,
-  sensorsCallback,
-  NULL,
-  ADC_CFGR_CONT,                        /* CFGR    */
-  ADC_TR(0, 4095),          /* TR1     */
-  {                         /* SMPR[2] */
-    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_181P5) | /* Sampling rate = 562000/(61.5+12.5) = 2.9KHz  */
-    ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_181P5) | /* 7.56Khz for 3 channels = 965Hz */
-    ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_181P5),
-    0
-  },
-  {                         /* SQR[4]  */
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8) |
-    ADC_SQR1_SQ3_N(ADC_CHANNEL_IN9) | 0,
-    0,
-    0,
-    0
-  }
-};
+    TRUE,
+    ADC_GRP1_NUM_CHANNELS,
+    sensorsCallback,
+    NULL,
+    ADC_CFGR_CONT,                           /* CFGR    */
+    ADC_TR(0, 4095),                         /* TR1     */
+    {                                        /* SMPR[2] */
+     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_181P5) | /* Sampling rate =
+                                                562000/(61.5+12.5) = 2.9KHz  */
+         ADC_SMPR1_SMP_AN8(
+             ADC_SMPR_SMP_181P5) | /* 7.56Khz for 3 channels = 965Hz */
+         ADC_SMPR1_SMP_AN9(ADC_SMPR_SMP_181P5),
+     0},
+    {/* SQR[4]  */
+     ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8) |
+         ADC_SQR1_SQ3_N(ADC_CHANNEL_IN9) | 0,
+     0, 0, 0}};
 
 /* ADC34 Clk is 72Mhz/1 72Mhz  */
 const ADCConversionGroup adcgrpcfg_knock = {
-  TRUE,
-  ADC_GRP2_NUM_CHANNELS,
-  knockCallback,
-  NULL,
-  ADC_CFGR_CONT | ADC_CFGR_ALIGN,    /* CFGR - Align result to left (convert 12 to 16 bits) */
-  ADC_TR(0, 4095),                  /* TR1     */
-  {                                 /* SMPR[2] */
-    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_601P5),  /* Sampling rate = 72000000/(601.5+12.5) = 117.263Khz  */
-    0,
-  },
-  {                                 /* SQR[4]  */
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1),
-    0,
-    0,
-    0
-  }
-};
+    TRUE,
+    ADC_GRP2_NUM_CHANNELS,
+    knockCallback,
+    NULL,
+    ADC_CFGR_CONT | ADC_CFGR_ALIGN, /* CFGR - Align result to left (convert 12
+                                       to 16 bits) */
+    ADC_TR(0, 4095),                /* TR1     */
+    {
+        /* SMPR[2] */
+        ADC_SMPR1_SMP_AN1(
+            ADC_SMPR_SMP_601P5), /* Sampling rate = 72000000/(601.5+12.5) =
+                                    117.263Khz  */
+        0,
+    },
+    {/* SQR[4]  */
+     ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1), 0, 0, 0}};
 
-uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal)
-{
+uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax,
+                                 uint16_t AnVal) {
   const uint8_t tpsMin = 0;
   const uint8_t tpsMax = 200;
 
@@ -242,8 +216,8 @@ uint8_t calculateTpFromMillivolt(uint16_t AnMin, uint16_t AnMax, uint16_t AnVal)
   return map(AnVal - AnMin, 0, AnMax - AnMin, tpsMin, tpsMax);
 }
 
-uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnVal)
-{
+uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax,
+                                  uint16_t AnVal) {
   if (AnVal == 0)
     return afrMin;
   else if (AnVal >= 5000)
@@ -252,35 +226,34 @@ uint8_t calculateAFRFromMillivolt(uint16_t afrMin, uint16_t afrMax, uint16_t AnV
   return map(AnVal, 0, 5000, afrMin, afrMax) / 100;
 }
 
-uint16_t calculateFreqWithRatio(uint16_t freq, float32_t ratio)
-{
-  float32_t flRatio = (float32_t)freq*ratio*60.0;
+uint16_t calculateFreqWithRatio(uint16_t freq, float32_t ratio) {
+  float32_t flRatio = (float32_t)freq * ratio * 60.0;
 
   return flRatio;
 }
 
-uint8_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio, uint16_t smplFreq, uint8_t* buffer, uint16_t size)
-{
+uint8_t calculateKnockIntensity(uint16_t tgtFreq, uint16_t ratio,
+                                uint16_t smplFreq, uint8_t *buffer,
+                                uint16_t size) {
   uint16_t i;
   uint16_t res;
   float32_t multiplier;
 
-  const float32_t hzPerBin = (float32_t)smplFreq/(float32_t)size;
-  const float32_t flRatio = ((float32_t)ratio/100000.0);
+  const float32_t hzPerBin = (float32_t)smplFreq / (float32_t)size;
+  const float32_t flRatio = ((float32_t)ratio / 100000.0);
   const uint16_t range = 11;
-  uint16_t index = tgtFreq/hzPerBin;
+  uint16_t index = tgtFreq / hzPerBin;
 
   if (index < range)
     index = range;
-  else if (index > size-range)
-    index = size-range;
+  else if (index > size - range)
+    index = size - range;
 
   res = buffer[index];
-  for (i=1; i<range; i++)
-  {
-    multiplier = 1.0/((float32_t)i/flRatio);
-    res += multiplier*(float32_t)buffer[index+i];
-    res += multiplier*(float32_t)buffer[index-i];
+  for (i = 1; i < range; i++) {
+    multiplier = 1.0 / ((float32_t)i / flRatio);
+    res += multiplier * (float32_t)buffer[index + i];
+    res += multiplier * (float32_t)buffer[index - i];
   }
 
   return res;

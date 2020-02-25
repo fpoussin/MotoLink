@@ -9,13 +9,16 @@
 #define CCM_FUNC __attribute__((section(".ram4_init.code")))
 
 #ifdef SEMIHOSTING
-  #define DEBUGEN(x) if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) { x; }
+#define DEBUGEN(x)                                                             \
+  if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {                      \
+    x;                                                                         \
+  }
 #else
-  #define DEBUGEN(x)
+#define DEBUGEN(x)
 #endif
 
 #define DBG_STREAM ((BaseSequentialStream *)&SDU1)
-#define MCU_UUID ((uint32_t*)0x1FFFF7AC)
+#define MCU_UUID ((uint32_t *)0x1FFFF7AC)
 
 uint32_t getuuid32(void);
 uint16_t rand16(uint16_t min, uint16_t max);
@@ -31,7 +34,7 @@ int map(int x, int in_min, int in_max, int out_min, int out_max);
 
 void klineInit(bool honda);
 bool fiveBaudInit(SerialDriver *sd);
-void setLineCoding(cdc_linecoding_t* lcp, SerialDriver *sdp, SerialConfig* scp);
+void setLineCoding(cdc_linecoding_t *lcp, SerialDriver *sdp, SerialConfig *scp);
 
 bool vbatDetect(void);
 

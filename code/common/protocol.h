@@ -50,31 +50,30 @@
 
 #define DATA_BUF_SIZE 256
 #define FFT_SIZE 512
-#define FFT_FREQ (117263/2)
+#define FFT_FREQ (117263 / 2)
 #define SPECTRUM_SIZE 256
 #define KNOCK_RATIO 4.66f
-#define KNOCK_MAX (3.3*KNOCK_RATIO)
+#define KNOCK_MAX (3.3 * KNOCK_RATIO)
 
-#define FUNC_RECORD     (uint16_t)0x0001
+#define FUNC_RECORD (uint16_t)0x0001
 #define FUNC_OBD_SERVER (uint16_t)0x0002
 
 #define AFR_INPUT_DISABLED (uint16_t)0x0000
-#define AFR_INPUT_MTS      (uint8_t)0x01
-#define AFR_INPUT_AN       (uint8_t)0x02
-#define AFR_INPUT_OBD      (uint8_t)0x03
-#define AFR_INPUT_TEST     (uint8_t)0x04
+#define AFR_INPUT_MTS (uint8_t)0x01
+#define AFR_INPUT_AN (uint8_t)0x02
+#define AFR_INPUT_OBD (uint8_t)0x03
+#define AFR_INPUT_TEST (uint8_t)0x04
 
-#define SENSORS_INPUT_DIRECT     (uint8_t)0x00
-#define SENSORS_INPUT_COM        (uint8_t)0x01
-#define SENSORS_INPUT_OBD_KLINE  (uint8_t)0x02
-#define SENSORS_INPUT_OBD_CAN    (uint8_t)0x03
+#define SENSORS_INPUT_DIRECT (uint8_t)0x00
+#define SENSORS_INPUT_COM (uint8_t)0x01
+#define SENSORS_INPUT_OBD_KLINE (uint8_t)0x02
+#define SENSORS_INPUT_OBD_CAN (uint8_t)0x03
 #define SENSORS_INPUT_YAMAHA_CAN (uint8_t)0x04
-#define SENSORS_INPUT_TEST       (uint8_t)0x05
+#define SENSORS_INPUT_TEST (uint8_t)0x05
 
-#define SERIAL_MODE_SHELL  (uint8_t)0x00
-#define SERIAL_MODE_KLINE  (uint8_t)0x01
+#define SERIAL_MODE_SHELL (uint8_t)0x00
+#define SERIAL_MODE_KLINE (uint8_t)0x01
 #define SERIAL_MODE_CANBUS (uint8_t)0x02
-
 
 typedef uint32_t crc_t;
 
@@ -139,10 +138,10 @@ typedef struct {
 } settings_t;
 
 typedef struct {
-    uint8_t protocol;
-    uint8_t major;
-    uint8_t minor;
-    uint8_t patch;
+  uint8_t protocol;
+  uint8_t major;
+  uint8_t minor;
+  uint8_t patch;
 } version_t;
 
 #endif

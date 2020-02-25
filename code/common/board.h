@@ -25,50 +25,49 @@
  * Board identifier.
  */
 #define BOARD_MOTOLINK_REV_B
-#define BOARD_NAME                  "Motolink board Revision B"
+#define BOARD_NAME "Motolink board Revision B"
 
 /*
  * Board oscillators-related settings.
  * NOTE: LSE not fitted.
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                0
+#define STM32_LSECLK 0
 #endif
 
-#define STM32_LSEDRV                (3 << 3)
+#define STM32_LSEDRV (3 << 3)
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                8000000
+#define STM32_HSECLK 8000000
 #endif
 
 /*
  * MCU type as defined in the ST header.
  */
 #define STM32F303xC
-#define STM32F30X //Fix 
+#define STM32F30X // Fix
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  * Please refer to the STM32 Reference Manual for details.
  */
-#define PIN_MODE_INPUT(n)           (0U << ((n) * 2))
-#define PIN_MODE_OUTPUT(n)          (1U << ((n) * 2))
-#define PIN_MODE_ALTERNATE(n)       (2U << ((n) * 2))
-#define PIN_MODE_ANALOG(n)          (3U << ((n) * 2))
-#define PIN_ODR_LOW(n)              (0U << (n))
-#define PIN_ODR_HIGH(n)             (1U << (n))
-#define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
-#define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
-#define PIN_OSPEED_VERYLOW(n)       (0U << ((n) * 2))
-#define PIN_OSPEED_LOW(n)           (1U << ((n) * 2))
-#define PIN_OSPEED_MEDIUM(n)        (2U << ((n) * 2))
-#define PIN_OSPEED_HIGH(n)          (3U << ((n) * 2))
-#define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
-#define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
-#define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
-#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
-
+#define PIN_MODE_INPUT(n) (0U << ((n)*2))
+#define PIN_MODE_OUTPUT(n) (1U << ((n)*2))
+#define PIN_MODE_ALTERNATE(n) (2U << ((n)*2))
+#define PIN_MODE_ANALOG(n) (3U << ((n)*2))
+#define PIN_ODR_LOW(n) (0U << (n))
+#define PIN_ODR_HIGH(n) (1U << (n))
+#define PIN_OTYPE_PUSHPULL(n) (0U << (n))
+#define PIN_OTYPE_OPENDRAIN(n) (1U << (n))
+#define PIN_OSPEED_VERYLOW(n) (0U << ((n)*2))
+#define PIN_OSPEED_LOW(n) (1U << ((n)*2))
+#define PIN_OSPEED_MEDIUM(n) (2U << ((n)*2))
+#define PIN_OSPEED_HIGH(n) (3U << ((n)*2))
+#define PIN_PUPDR_FLOATING(n) (0U << ((n)*2))
+#define PIN_PUPDR_PULLUP(n) (1U << ((n)*2))
+#define PIN_PUPDR_PULLDOWN(n) (2U << ((n)*2))
+#define PIN_AFIO_AF(n, v) ((v##U) << ((n % 8) * 4))
 
 /*
  * IO pins assignments.
@@ -79,7 +78,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void boardInit(void);
+void boardInit(void);
 #ifdef __cplusplus
 }
 #endif
