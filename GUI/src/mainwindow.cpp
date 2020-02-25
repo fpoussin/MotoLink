@@ -10,15 +10,8 @@
 #include <QDateTime>
 #include <QItemSelection>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    mSettings("Motolink", "Motolink"),
-    mHelpViewer(NULL),
-    mUndoStack(NULL),
-    mAFRModel(&mUndoStack, 7.0, 24.0, 13.0, false, false),
-    mAFRTgtModel(&mUndoStack, 8.0, 24.0, 13.0),
-    mKnockModel(&mUndoStack, 0, 512, 0, false, false),
-    mFuelOffsetModel(&mUndoStack, -30, 30, 0, false, false)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), mSettings("Motolink", "Motolink"), mHelpViewer(NULL), mUndoStack(NULL), mAFRModel(&mUndoStack, 7.0, 24.0, 13.0, false, false), mAFRTgtModel(&mUndoStack, 8.0, 24.0, 13.0), mKnockModel(&mUndoStack, 0, 512, 0, false, false), mFuelOffsetModel(&mUndoStack, -30, 30, 0, false, false)
 {
     mMainUi = new Ui::MainWindow();
     mTasksUi = new Ui::Tasks();
@@ -49,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setupKnockGraph();
 
     mUndoView.setStack(&mUndoStack);
-    mUndoView.setWindowTitle(tr("Actions History - ")+this->windowTitle());
+    mUndoView.setWindowTitle(tr("Actions History - ") + this->windowTitle());
     mHasChanged = false;
 
     mFastPollingTimer.setInterval(25);
@@ -78,8 +71,7 @@ MainWindow::~MainWindow()
     delete mLogsWidget;
     delete mMtl;
 
-    for (int i = 0; i < MAX_RECENT_FILES; ++i)
-    {
+    for (int i = 0; i < MAX_RECENT_FILES; ++i) {
         if (mRecentFilesActions[i] != NULL)
             delete mRecentFilesActions[i];
     }
@@ -90,19 +82,19 @@ void MainWindow::Quit()
     if (mHasChanged) {
 
         int ret = QMessageBox::question(this, tr("Confirm"),
-                    tr("Unsaved changes!\nSave file before closing?"),
-                    QMessageBox::Save | QMessageBox::Discard
-                    | QMessageBox::Cancel,
-                    QMessageBox::Cancel);
+                                        tr("Unsaved changes!\nSave file before closing?"),
+                                        QMessageBox::Save | QMessageBox::Discard
+                                                | QMessageBox::Cancel,
+                                        QMessageBox::Cancel);
 
         switch (ret) {
-          case QMessageBox::Save:
-              this->saveFile();
-              break;
-          case QMessageBox::Discard:
-              break;
-          case QMessageBox::Cancel:
-              return;
+        case QMessageBox::Save:
+            this->saveFile();
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+            return;
         }
     }
     qApp->quit();
@@ -117,7 +109,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::openFile(void)
 {
     QString fileName(QFileDialog::getOpenFileName(this,
-                       tr("Open Tune File"), "", tr("Tune Files (*.xml)")));
+                                                  tr("Open Tune File"), "", tr("Tune Files (*.xml)")));
 
     this->openFile(fileName);
 }
@@ -133,15 +125,14 @@ void MainWindow::openFile(const QString &filename)
     files.removeAll(filename);
     files.prepend(filename);
     while (files.size() > MAX_RECENT_FILES)
-             files.removeLast();
+        files.removeLast();
 
     mSettings.setValue(SETTINGS_RECENT_FILES, files);
     this->updateRecentFilesActions();
 
     QFile file(mCurrentFile);
 
-    if (!file.open(QFile::ReadOnly))
-    {
+    if (!file.open(QFile::ReadOnly)) {
         this->log(tr("Failed to open file for reading!"));
         return;
     }
@@ -156,8 +147,7 @@ void MainWindow::openFile(const QString &filename)
 
 void MainWindow::saveFile(void)
 {
-    if (mCurrentFile.length() == 0)
-    {
+    if (mCurrentFile.length() == 0) {
         this->saveFileAs();
         return;
     }
@@ -165,8 +155,7 @@ void MainWindow::saveFile(void)
     QFile file(mCurrentFile);
 
     qWarning() << "Saving" << mCurrentFile;
-    if (!file.open(QFile::WriteOnly))
-    {
+    if (!file.open(QFile::WriteOnly)) {
         qWarning() << tr("Failed to open file for writing!") << mCurrentFile;
         this->log(tr("Failed to open file for writing!"));
         return;
@@ -184,10 +173,9 @@ void MainWindow::saveFile(void)
 void MainWindow::saveFileAs(void)
 {
     QString fileName(QFileDialog::getSaveFileName(this,
-                       tr("Save Tune File"), "", tr("Tune Files (*.xml)")));
+                                                  tr("Save Tune File"), "", tr("Tune Files (*.xml)")));
 
-    if (fileName.isEmpty())
-    {
+    if (fileName.isEmpty()) {
         return;
     }
     mCurrentFile = fileName;
@@ -197,8 +185,7 @@ void MainWindow::saveFileAs(void)
 
 void MainWindow::connectMtl()
 {
-    if (mMtl->usbConnect())
-    {
+    if (mMtl->usbConnect()) {
         mMtl->bootAppIfNeeded();
         mMtl->readTablesHeaders();
         this->uiEnable();
@@ -208,8 +195,7 @@ void MainWindow::connectMtl()
         mRedrawTimer.start();
         onReadMtlSettings();
         this->log(tr("Connected"));
-    }
-    else {
+    } else {
         this->log(tr("Connection Failed"));
     }
 }
@@ -228,13 +214,10 @@ void MainWindow::disconnectMtl()
 void MainWindow::showAbout()
 {
     QString Fwv = mUpdateWizard->getFwVersion();
-    QMessageBox::information(this,tr("About Motolink"),
-       tr("<strong>App Version: ") + __MTL_VER__ + "</strong><br/>"+
-       tr("<strong>Bundled firmware Version: ") + Fwv + "</strong><br/>"+
-       tr("Built on: ") + QString(__DATE__)+" "+QString(__TIME__) + "<br/><br/>"+
-       tr("Motolink is a smart ECU mapping interface.<br/><br/>"
-       "You can find more information "
-       "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
+    QMessageBox::information(this, tr("About Motolink"),
+                             tr("<strong>App Version: ") + __MTL_VER__ + "</strong><br/>" + tr("<strong>Bundled firmware Version: ") + Fwv + "</strong><br/>" + tr("Built on: ") + QString(__DATE__) + " " + QString(__TIME__) + "<br/><br/>" + tr("Motolink is a smart ECU mapping interface.<br/><br/>"
+                                                                                                                                                                                                                                                   "You can find more information "
+                                                                                                                                                                                                                                                   "<a href=\"https://github.com/fpoussin/MotoLink\">here.</a>"));
 }
 
 void MainWindow::showUpdateDialog()
@@ -294,8 +277,8 @@ void MainWindow::setupConnections(void)
     QObject::connect(mMainUi->actionEnglish, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
     QObject::connect(mMainUi->actionFran_ais, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
     QObject::connect(mMainUi->actionShowHelpIndex, SIGNAL(triggered()), this, SLOT(showHelp()));
-    QObject::connect(mMainUi->actionShow_tasks, SIGNAL(triggered()),this, SLOT(showTasks()));
-    QObject::connect(mMainUi->actionShow_Knock_Spectrum, SIGNAL(triggered()),this, SLOT(showKnockGraph()));
+    QObject::connect(mMainUi->actionShow_tasks, SIGNAL(triggered()), this, SLOT(showTasks()));
+    QObject::connect(mMainUi->actionShow_Knock_Spectrum, SIGNAL(triggered()), this, SLOT(showKnockGraph()));
     QObject::connect(mMainUi->actionShow_Logs, SIGNAL(triggered()), this, SLOT(showLogs()));
     QObject::connect(mMainUi->actionShow_Serial_Data, SIGNAL(triggered()), this, SLOT(showSerialData()));
 
@@ -306,22 +289,20 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mUndoStack, SIGNAL(canUndoChanged(bool)), mMainUi->actionUndo, SLOT(setEnabled(bool)));
 
     // Tables (color and cursor update)
-    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(onDataChanged()));
-    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(calculateFuelOffset(int,int)));
-    QObject::connect(&mAFRModel, SIGNAL(cellValueChanged(int,int)), this, SLOT(calculateFuelOffset(int,int)));
-    for (int i = 0; i < mTablesModelList.size(); i++)
-    {
-        TableModel* tbl = mTablesModelList.at(i);
-        QObject::connect(tbl, SIGNAL(headerDataNeedSync(int,Qt::Orientation,QVariant)),
-                         this, SLOT(onHeadersNeedSync(int,Qt::Orientation,QVariant)));
+    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int, int)), this, SLOT(onDataChanged()));
+    QObject::connect(&mAFRTgtModel, SIGNAL(cellValueChanged(int, int)), this, SLOT(calculateFuelOffset(int, int)));
+    QObject::connect(&mAFRModel, SIGNAL(cellValueChanged(int, int)), this, SLOT(calculateFuelOffset(int, int)));
+    for (int i = 0; i < mTablesModelList.size(); i++) {
+        TableModel *tbl = mTablesModelList.at(i);
+        QObject::connect(tbl, SIGNAL(headerDataNeedSync(int, Qt::Orientation, QVariant)),
+                         this, SLOT(onHeadersNeedSync(int, Qt::Orientation, QVariant)));
         //QObject::connect(tbl->view(), SIGNAL(modelUpdated(QWidget*)), mMainUi->tabMain, SLOT(setCurrentWidget(QWidget*)));
         if (tbl->id() > 1)
-            QObject::connect(tbl->view(), SIGNAL(cellCleared(uint,int,int)), mMtl, SLOT(clearCell(uint,int,int)));
+            QObject::connect(tbl->view(), SIGNAL(cellCleared(uint, int, int)), mMtl, SLOT(clearCell(uint, int, int)));
     }
 
-    for (int i = 0; i < mSpinBoxList.size(); i++)
-    {
-        QSpinBox * sb = mSpinBoxList.at(i);
+    for (int i = 0; i < mSpinBoxList.size(); i++) {
+        QSpinBox *sb = mSpinBoxList.at(i);
         QObject::connect(sb, SIGNAL(valueChanged(int)), this, SLOT(showSettingsTab()));
         QObject::connect(sb, SIGNAL(valueChanged(int)), this, SLOT(onDataChanged()));
     }
@@ -338,13 +319,13 @@ void MainWindow::setupConnections(void)
 
     // Recent files
     for (int i = 0; i < MAX_RECENT_FILES; ++i) {
-             mRecentFilesActions[i] = new QAction(this);
-             mRecentFilesActions[i]->setVisible(false);
-             mRecentFilesActions[i]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-file.png"));
-             connect(mRecentFilesActions[i], SIGNAL(triggered()),
-                     this, SLOT(openRecenFile()));
-             mMainUi->menuRecent_files->addAction(mRecentFilesActions[i]);
-         }
+        mRecentFilesActions[i] = new QAction(this);
+        mRecentFilesActions[i]->setVisible(false);
+        mRecentFilesActions[i]->setIcon(QIcon("://oxygen/32x32/actions/quickopen-file.png"));
+        connect(mRecentFilesActions[i], SIGNAL(triggered()),
+                this, SLOT(openRecenFile()));
+        mMainUi->menuRecent_files->addAction(mRecentFilesActions[i]);
+    }
 
     /* UI update */
 
@@ -353,10 +334,10 @@ void MainWindow::setupConnections(void)
     QObject::connect(&mTablesTimer, SIGNAL(timeout()), this, SLOT(doTablesPolling()));
     QObject::connect(&mRedrawTimer, SIGNAL(timeout()), this, SLOT(doSensorsRedraw()));
 
-    QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const*)), this, SLOT(onMonitoringReceived(TaskList const*)));
-    QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const*)), this, SLOT(onKnockSpectrumReceived(QByteArray const*)));
-    QObject::connect(mMtl, SIGNAL(receivedTables(const quint8*,const quint8*)), this, SLOT(onTablesReceived(const quint8*,const quint8*)));
-    QObject::connect(mMtl, SIGNAL(receivedTablesHeaders(const quint8*,const quint8*)), this, SLOT(onTablesHeadersReceived(const quint8*,const quint8*)));
+    QObject::connect(mMtl, SIGNAL(receivedMonitoring(TaskList const *)), this, SLOT(onMonitoringReceived(TaskList const *)));
+    QObject::connect(mMtl, SIGNAL(receivedKockSpectrum(QByteArray const *)), this, SLOT(onKnockSpectrumReceived(QByteArray const *)));
+    QObject::connect(mMtl, SIGNAL(receivedTables(const quint8 *, const quint8 *)), this, SLOT(onTablesReceived(const quint8 *, const quint8 *)));
+    QObject::connect(mMtl, SIGNAL(receivedTablesHeaders(const quint8 *, const quint8 *)), this, SLOT(onTablesHeadersReceived(const quint8 *, const quint8 *)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), this, SLOT(log(QString)));
     QObject::connect(mMtl, SIGNAL(communicationError(QString)), mMtl, SLOT(clearUsb()));
 
@@ -368,15 +349,15 @@ void MainWindow::setupTabShortcuts()
     QSignalMapper *signalMapper = new QSignalMapper(this);
 
     /* Assign tab shortcuts starting from F5 up to F12 */
-    for(int index=0; index < mMainUi->tabMain->count(); ++index)
-    {
-       if (index > 7) break;
-       QShortcut *shortcut = new QShortcut(
-                   QKeySequence(QString("F%1").arg(index + 5)), this);
+    for (int index = 0; index < mMainUi->tabMain->count(); ++index) {
+        if (index > 7)
+            break;
+        QShortcut *shortcut = new QShortcut(
+                QKeySequence(QString("F%1").arg(index + 5)), this);
 
-       QObject::connect(shortcut, SIGNAL( activated()),
+        QObject::connect(shortcut, SIGNAL(activated()),
                          signalMapper, SLOT(map()));
-       signalMapper->setMapping(shortcut, index);
+        signalMapper->setMapping(shortcut, index);
     }
     QObject::connect(signalMapper, SIGNAL(mapped(int)),
                      mMainUi->tabMain, SLOT(setCurrentIndex(int)));
@@ -389,18 +370,16 @@ void MainWindow::setupSettings()
 
     if (lang == "French") {
         this->setLanguageFrench();
-    }
-    else {
+    } else {
         this->setLanguageEnglish();
     }
 
     this->updateRecentFilesActions();
-
 }
 
 void MainWindow::setupKnockGraph()
 {
-    QCustomPlot * plot = mKnockGraphUi->mainPlot;
+    QCustomPlot *plot = mKnockGraphUi->mainPlot;
     mKnockFreqLabel = new QCPItemText(plot);
 
     plot->addGraph();
@@ -410,7 +389,7 @@ void MainWindow::setupKnockGraph()
     plot->yAxis->setRange(0, KNOCK_MAX);
 
     plot->addItem(mKnockFreqLabel);
-    mKnockFreqLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    mKnockFreqLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     mKnockFreqLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     mKnockFreqLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
     mKnockFreqLabel->setText(tr("Loading..."));
@@ -490,8 +469,7 @@ void MainWindow::updateRecentFilesActions()
     QStringList files = mSettings.value(SETTINGS_RECENT_FILES).toStringList();
     const uint numRecentFiles = qMin(files.size(), (int)MAX_RECENT_FILES);
 
-    for (uint i = 0; i < numRecentFiles; ++i)
-    {
+    for (uint i = 0; i < numRecentFiles; ++i) {
         QString text = QFileInfo(files[i]).fileName();
         mRecentFilesActions[i]->setText(text);
         mRecentFilesActions[i]->setData(files[i]);
@@ -568,7 +546,6 @@ void MainWindow::exportToMTLFile()
                       mMainUi->dsbAFR0->value());
     mFile.addProperty("AFR5V",
                       mMainUi->dsbAFR5->value());
-
 }
 
 void MainWindow::importFromMTLFile()
@@ -597,52 +574,46 @@ void MainWindow::importFromMTLFile()
 
 void MainWindow::doFastPolling()
 {
-    if (mMtl->isConnected())
-    {
+    if (mMtl->isConnected()) {
         mMtl->readSensors();
         if (mKnockGraphWidget->isVisible())
             mMtl->readKnockSpectrum();
-    }
-    else {
+    } else {
         mFastPollingTimer.stop();
     }
 }
 
 void MainWindow::doSlowPolling()
 {
-    if (mMtl->isConnected())
-    {
+    if (mMtl->isConnected()) {
         if (mTasksWidget->isVisible())
             mMtl->readMonitoring();
-    }
-    else {
+    } else {
         mSlowPollingTimer.stop();
     }
 }
 
 void MainWindow::doTablesPolling()
 {
-    if (mMtl->isConnected())
-    {
+    if (mMtl->isConnected()) {
         mMtl->readTables();
-    }
-    else {
+    } else {
         mTablesTimer.stop();
     }
 }
 
 void MainWindow::doSensorsRedraw()
 {
-    mMainUi->lVbat->setText(QString::number(mMtl->getVBAT())+tr(" Volts"));
+    mMainUi->lVbat->setText(QString::number(mMtl->getVBAT()) + tr(" Volts"));
 
-    mMainUi->lTpsVolts->setText(QString::number(mMtl->getVTPS())+tr(" Volts"));
-    mMainUi->lTpsPct->setText(QString::number(mMtl->getTPS())+tr(" %"));
+    mMainUi->lTpsVolts->setText(QString::number(mMtl->getVTPS()) + tr(" Volts"));
+    mMainUi->lTpsPct->setText(QString::number(mMtl->getTPS()) + tr(" %"));
 
     mMainUi->lAfrVal->setText(QString::number(mMtl->getAFR()));
-    mMainUi->lAfrVolts->setText(QString::number(mMtl->getVAFR())+tr(" Volts"));
-    mMainUi->lRpm->setText(QString::number(mMtl->getRPM())+tr(" Rpm"));
-    mMainUi->lRpmHertz->setText(QString::number(mMtl->getRPMHz())+tr(" Hertz"));
-    mMainUi->lSpeedHertz->setText(QString::number(mMtl->getSpeedHz())+tr(" Hertz"));
+    mMainUi->lAfrVolts->setText(QString::number(mMtl->getVAFR()) + tr(" Volts"));
+    mMainUi->lRpm->setText(QString::number(mMtl->getRPM()) + tr(" Rpm"));
+    mMainUi->lRpmHertz->setText(QString::number(mMtl->getRPMHz()) + tr(" Hertz"));
+    mMainUi->lSpeedHertz->setText(QString::number(mMtl->getSpeedHz()) + tr(" Hertz"));
 
     // Bottom progress bars
     mMainUi->pgbTps->setValue(mMtl->getTPS());
@@ -661,8 +632,7 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
 
     table->clearContents();
 
-    for (int i = 0; i < monitoring->size(); i++)
-    {
+    for (int i = 0; i < monitoring->size(); i++) {
         nameItem = new QTableWidgetItem();
         cpuItem = new QTableWidgetItem();
 
@@ -670,13 +640,10 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
         nameItem->setData(Qt::DisplayRole, monitoring->at(i).name);
         cpuItem->setData(Qt::DisplayRole, flt_str);
 
-        if (monitoring->at(i).active)
-        {
+        if (monitoring->at(i).active) {
             nameItem->setBackgroundColor(Qt::white);
             cpuItem->setBackgroundColor(Qt::white);
-        }
-        else
-        {
+        } else {
             nameItem->setBackgroundColor(Qt::lightGray);
             cpuItem->setBackgroundColor(Qt::lightGray);
         }
@@ -693,22 +660,20 @@ void MainWindow::onMonitoringReceived(const TaskList *monitoring)
 void MainWindow::onKnockSpectrumReceived(const QByteArray *data)
 {
     QVector<double> x(SPECTRUM_SIZE), y(SPECTRUM_SIZE);
-    QCustomPlot * plot = mKnockGraphUi->mainPlot;
+    QCustomPlot *plot = mKnockGraphUi->mainPlot;
     double max_val = 0;
     double max_freq = 0;
 
-    for (uint i=4; i<SPECTRUM_SIZE; i++)
-    {
-        x[i] = ((FFT_FREQ*i)/SPECTRUM_SIZE);
-        y[i] = (KNOCK_MAX/256.0)*(uchar)data->at(i);
+    for (uint i = 4; i < SPECTRUM_SIZE; i++) {
+        x[i] = ((FFT_FREQ * i) / SPECTRUM_SIZE);
+        y[i] = (KNOCK_MAX / 256.0) * (uchar)data->at(i);
         if (y[i] > max_val) {
             max_val = y[i];
             max_freq = x[i];
         }
     }
 
-    mKnockFreqLabel->setText(QString::number(max_val, 'f', 2)+"V at "+
-                             QString::number(max_freq, 'f', 2)+"Hz");
+    mKnockFreqLabel->setText(QString::number(max_val, 'f', 2) + "V at " + QString::number(max_freq, 'f', 2) + "Hz");
 
     plot->graph(0)->setData(x, y);
     //plot->yAxis->setRange(0, max_val*1.2);
@@ -735,9 +700,8 @@ void MainWindow::onSerialDataReceived(const QByteArray *data)
     QString str;
     const QString prepend(" 0x");
 
-    for (int i = 0; i < data->size(); i++)
-    {
-        str.append(prepend+QString::number(data->at(i), 16));
+    for (int i = 0; i < data->size(); i++) {
+        str.append(prepend + QString::number(data->at(i), 16));
     }
 
     mSerialLogsUi->list->addItem(str);
@@ -755,19 +719,16 @@ void MainWindow::onSetTps100Pct(void)
 }
 
 void MainWindow::onDataChanged()
-{    
+{
     if (mFile.isLoading())
         return;
 
     mHasChanged = true;
-    if (mMainUi->actionAutosave->isChecked())
-    {
+    if (mMainUi->actionAutosave->isChecked()) {
         this->saveFile();
     }
 
-    if (mMainUi->actionAuto_Send->isChecked())
-    {
-
+    if (mMainUi->actionAuto_Send->isChecked()) {
     }
 }
 
@@ -775,11 +736,9 @@ void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, con
 {
     const int role = Qt::UserRole;
 
-    for (int i = 0; i < mTablesModelList.size(); i++)
-    {
-        TableModel* tbl = mTablesModelList.at(i);
-        if (tbl)
-        {
+    for (int i = 0; i < mTablesModelList.size(); i++) {
+        TableModel *tbl = mTablesModelList.at(i);
+        if (tbl) {
             tbl->setHeaderData(section, orientation, value, role);
         }
     }
@@ -790,7 +749,7 @@ void MainWindow::onHeadersNeedSync(int section, Qt::Orientation orientation, con
     mAFRModel.columnsToArray(cols, sizeof(cols));
 
     if (!mHeadersUpdating)
-      mMtl->writeTablesHeaders(rows, cols);
+        mMtl->writeTablesHeaders(rows, cols);
 }
 
 void MainWindow::onSimpleError(QString error)
@@ -801,21 +760,19 @@ void MainWindow::onSimpleError(QString error)
 void MainWindow::showNewVersionPopup(QString version)
 {
     QMessageBox::information(this,
-         tr("New version available"),
-         tr("There is a new version available for download: ")+version
-         +tr("<br/>You are currently using: ")+__MTL_VER__
-         +"<br/><br/><a href='https://github.com/fpoussin/MotoLink/releases/latest'>"
-                             +tr("Download here")+"</a>");
+                             tr("New version available"),
+                             tr("There is a new version available for download: ") + version
+                                     + tr("<br/>You are currently using: ") + __MTL_VER__
+                                     + "<br/><br/><a href='https://github.com/fpoussin/MotoLink/releases/latest'>"
+                                     + tr("Download here") + "</a>");
 }
 
 void MainWindow::setTablesCursorFromSensors(uint tps, uint rpm)
 {
     int row, col;
-    for (int i=0; i<mTablesModelList.size(); i++)
-    {
-        TableModel* tbl = mTablesModelList.at(i);
-        if (tbl && tbl->getCell(tps, rpm, &row, &col))
-        {
+    for (int i = 0; i < mTablesModelList.size(); i++) {
+        TableModel *tbl = mTablesModelList.at(i);
+        if (tbl && tbl->getCell(tps, rpm, &row, &col)) {
             tbl->highlightCell(row, col);
         }
     }
@@ -823,11 +780,9 @@ void MainWindow::setTablesCursorFromSensors(uint tps, uint rpm)
 
 void MainWindow::setTablesCursor(uint row, uint col)
 {
-    for (int i=0; i<mTablesModelList.size(); i++)
-    {
-        TableModel* tbl = mTablesModelList.at(i);
-        if (tbl)
-        {
+    for (int i = 0; i < mTablesModelList.size(); i++) {
+        TableModel *tbl = mTablesModelList.at(i);
+        if (tbl) {
             tbl->highlightCell(row, col);
         }
     }
@@ -835,8 +790,7 @@ void MainWindow::setTablesCursor(uint row, uint col)
 
 void MainWindow::onReadMtlSettings()
 {
-    if (mMtl->readSettings())
-    {
+    if (mMtl->readSettings()) {
         // Unpack settings
         mMainUi->dsbTPS0->setValue(mMtl->getTPSMinV());
         mMainUi->dsbTPS100->setValue(mMtl->getTPSMaxV());
@@ -877,8 +831,7 @@ void MainWindow::onReadMtlSettings()
         mMainUi->cbOBDEmulator->setChecked(mMtl->getFunctionOBDEmulator());
 
         this->log("Read settings OK");
-    }
-    else
+    } else
         this->log("Read settings Fail");
 }
 
@@ -892,71 +845,68 @@ void MainWindow::onWriteMtlSettings()
     mMtl->setRpmMultiplier(mMainUi->dsbRpmMult->value());
     mMtl->setSpdMultiplier(mMainUi->dsbSpeedMult->value());
 
-    switch (mMainUi->cbAFRInput->currentIndex())
-    {
-        case 0:
+    switch (mMainUi->cbAFRInput->currentIndex()) {
+    case 0:
         mMtl->setFunctionAFR_Disabled();
         break;
 
-        case 1:
+    case 1:
         mMtl->setFunctionAFR_Analog();
         break;
 
-        case 2:
+    case 2:
         mMtl->setFunctionAFR_MTS();
         break;
 
-        case 3:
+    case 3:
         mMtl->setFunctionAFR_OBD();
         break;
 
-        case 4:
+    case 4:
         mMtl->setFunctionAFR_Test();
         break;
 
-        default:
+    default:
         mMtl->setFunctionAFR_Disabled();
         break;
     }
 
-    switch (mMainUi->cbInputType->currentIndex())
-    {
-        case 0:
+    switch (mMainUi->cbInputType->currentIndex()) {
+    case 0:
         mMtl->setFunctionInput_Direct();
         break;
 
-        case 1:
+    case 1:
         mMtl->setFunctionInput_OBD();
         break;
 
-        case 2:
+    case 2:
         mMtl->setFunctionInput_Yamaha();
         break;
 
-        case 3:
+    case 3:
         mMtl->setFunctionInput_Test();
         break;
 
-        default:
+    default:
         mMtl->setFunctionInput_Direct();
         break;
     }
 
-    switch (mMainUi->cbSerialMode->currentIndex())
-    {
-        case 0:
+    switch (mMainUi->cbSerialMode->currentIndex()) {
+    case 0:
         mMtl->setSerialMode_Shell();
         break;
 
-        case 1:
+    case 1:
         mMtl->setSerialMode_Kline();
         break;
 
-        case 2:
+    case 2:
         mMtl->setSerialMode_CanBus();
         break;
 
-        default:
+    default:
         mMtl->setSerialMode_Shell();
         break;
     }
@@ -964,30 +914,30 @@ void MainWindow::onWriteMtlSettings()
     mMtl->setFunctionRecord(mMainUi->cbRecording->isChecked());
     mMtl->setFunctionOBDEmulator(mMainUi->cbOBDEmulator->isChecked());
 
-    if (mMtl->writeSettings())
-    {
+    if (mMtl->writeSettings()) {
         this->log("Write settings OK");
-    }
-    else
+    } else
         this->log("Write settings Fail");
 }
 
 void MainWindow::calculateFuelOffset(int row, int column)
 {
-  float target, value, offset;
-  QStandardItem* itm;
-  QModelIndex idx;
+    float target, value, offset;
+    QStandardItem *itm;
+    QModelIndex idx;
 
-  itm = mAFRTgtModel.item(row, column);
-  if (!itm->data(Qt::EditRole).isValid()) return;
-  target = (float)itm->data(Qt::EditRole).toFloat()/10.0;
+    itm = mAFRTgtModel.item(row, column);
+    if (!itm->data(Qt::EditRole).isValid())
+        return;
+    target = (float)itm->data(Qt::EditRole).toFloat() / 10.0;
 
-  itm = mAFRModel.item(row, column);
-  if (!itm->data(Qt::EditRole).isValid()) return;
-  value = itm->data(Qt::EditRole).toFloat()/10.0;
+    itm = mAFRModel.item(row, column);
+    if (!itm->data(Qt::EditRole).isValid())
+        return;
+    value = itm->data(Qt::EditRole).toFloat() / 10.0;
 
-  offset = (value - target) / ((value + target) / 2.0) * 100.0;
+    offset = (value - target) / ((value + target) / 2.0) * 100.0;
 
-  idx = mFuelOffsetModel.index(row, column);
-  mFuelOffsetModel.setData(idx, offset, Qt::UserRole);
+    idx = mFuelOffsetModel.index(row, column);
+    mFuelOffsetModel.setData(idx, offset, Qt::UserRole);
 }

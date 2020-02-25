@@ -25,7 +25,6 @@ private:
     int mOld;
     QString mName;
     QUndoStack *mUndoStack;
-
 };
 
 #endif // SPINBOX_H

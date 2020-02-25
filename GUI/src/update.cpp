@@ -1,11 +1,11 @@
 #include "update.h"
 #include <QTimer>
 
-Update::Update(QObject *parent) :
-    QObject(parent)
+Update::Update(QObject *parent)
+    : QObject(parent)
 {
     mReleasesUrl.setUrl("https://api.github.com/repos/fpoussin/motolink/releases");
-    connect(&mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onResult(QNetworkReply*)));
+    connect(&mNetworkManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(onResult(QNetworkReply *)));
     mCurrentVersion = __MTL_VER__;
     mNewVersion = mCurrentVersion;
 }
@@ -53,14 +53,10 @@ void Update::onResult(QNetworkReply *reply)
     }
 
     mNewVersion = version;
-    if (mCurrentVersion.compare(mNewVersion) < 0)
-    {
+    if (mCurrentVersion.compare(mNewVersion) < 0) {
         qInfo("New version available: %s", version.toStdString().c_str());
         emit newVersionAvailable(version);
-    }
-    else
-    {
+    } else {
         qInfo("Using latest version: %s", __MTL_VER__);
     }
-
 }

@@ -20,35 +20,33 @@ class MHTabBar;
 //    MHTabWidget implements the a Tab Widget with detach and attach
 //    functionality.
 //////////////////////////////////////////////////////////////////////////////
-class MHTabWidget: public QTabWidget
+class MHTabWidget : public QTabWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  void Initialize (QMainWindow* mainWindow);
-  void ShutDown   (void);
-  
-  // Construction.
-  MHTabWidget (QWidget *parent);
+    void Initialize(QMainWindow *mainWindow);
+    void ShutDown(void);
 
-  // Destruction.
-  virtual ~MHTabWidget (void);
+    // Construction.
+    MHTabWidget(QWidget *parent);
+
+    // Destruction.
+    virtual ~MHTabWidget(void);
 
 public slots:
-  // Move Tab
-  void MoveTab(int fromIndex, int toIndex);
+    // Move Tab
+    void MoveTab(int fromIndex, int toIndex);
 
-  // Detach Tab
-  void DetachTab (int index, QPoint& dropPoint);
+    // Detach Tab
+    void DetachTab(int index, QPoint &dropPoint);
 
-  // Attach Tab
-  void AttachTab (QWidget *parent);
+    // Attach Tab
+    void AttachTab(QWidget *parent);
 
 protected:
-  
-
 private:
-  MHTabBar* m_tabBar;
+    MHTabBar *m_tabBar;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,10 +60,10 @@ private:
 class MHWorkflowWidget : public QWidget
 {
 public:
-  // Default constructor
-  MHWorkflowWidget(QWidget *parent = 0);
-  // Default destructor
-  ~MHWorkflowWidget(void);
+    // Default constructor
+    MHWorkflowWidget(QWidget *parent = 0);
+    // Default destructor
+    ~MHWorkflowWidget(void);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,23 +76,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 class MHDetachedWindow : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  // Default constructor
-  MHDetachedWindow(QWidget *parent = 0);
-  // Default destructor
-  ~MHDetachedWindow(void);
-  void setTabIcon(const QIcon &icon);
-  QIcon tabIcon(void);
+    // Default constructor
+    MHDetachedWindow(QWidget *parent = 0);
+    // Default destructor
+    ~MHDetachedWindow(void);
+    void setTabIcon(const QIcon &icon);
+    QIcon tabIcon(void);
 
 protected:
-  void closeEvent(QCloseEvent *event);
-  QIcon m_tabIcon;
+    void closeEvent(QCloseEvent *event);
+    QIcon m_tabIcon;
 signals:
-  void OnClose (QWidget* widget);
-
+    void OnClose(QWidget *widget);
 };
 
-
 #endif // __MHTABWIDGET_H__
-

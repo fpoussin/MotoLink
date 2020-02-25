@@ -1,7 +1,7 @@
 #include "bootloader.h"
 
-Bootloader::Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent) :
-    QObject(parent)
+Bootloader::Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent)
+    : QObject(parent)
 {
     mUsb = usb;
     m_read_ep = read_ep;
@@ -10,7 +10,6 @@ Bootloader::Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject
 
 Bootloader::~Bootloader()
 {
-
 }
 
 quint8 Bootloader::getFlags()
@@ -53,7 +52,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     quint8 buf_addr[4];
     qToLittleEndian(addr, buf_addr);
 
-    send.append((char*)buf_addr, 4);
+    send.append((char *)buf_addr, 4);
     send.append(data->constData(), data->size());
     this->prepareCmd(&send, CMD_WRITE);
 
@@ -81,12 +80,12 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     quint8 buf_addr[4];
     qToLittleEndian(addr, buf_addr);
 
-    send.append((char*)buf_addr, 4);
-    send.append((char*)buf_len, 4);
+    send.append((char *)buf_addr, 4);
+    send.append((char *)buf_len, 4);
     this->prepareCmd(&send, CMD_READ);
 
     mUsb->write(&send, send.size(), m_write_ep);
-    qint32 cnt = mUsb->read(&recv, len+1, m_read_ep);
+    qint32 cnt = mUsb->read(&recv, len + 1, m_read_ep);
 
     if (!(recv.at(0) == (MASK_REPLY_OK | CMD_READ)))
         return -1;
@@ -94,7 +93,7 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     recv.remove(0, 1);
     *data = recv;
 
-    return cnt-1;
+    return cnt - 1;
 }
 
 bool Bootloader::eraseFlash(quint32 len)
@@ -105,12 +104,12 @@ bool Bootloader::eraseFlash(quint32 len)
 
     qToLittleEndian(len, buf_len);
 
-    send.append((char*)buf_len, 4);
+    send.append((char *)buf_len, 4);
     this->prepareCmd(&send, CMD_ERASE);
 
     mUsb->write(&send, send.size(), m_write_ep);
 
-     QThread::usleep(13*len);
+    QThread::usleep(13 * len);
 
     mUsb->read(&recv, 1, m_read_ep);
 
@@ -126,7 +125,7 @@ quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
     quint8 sum = 0;
 
     for (i = 0; i < length; i++)
-      sum += data[i];
+        sum += data[i];
 
     return sum;
 }
@@ -136,6 +135,6 @@ void Bootloader::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const
     cmdBuf->insert(0, MAGIC1);
     cmdBuf->insert(1, MAGIC2);
     cmdBuf->insert(2, MASK_CMD | cmd);
-    cmdBuf->insert(3, cmdBuf->size()+2); // +2 = The byte we are adding now, and the checksum.
-    cmdBuf->append(checkSum((quint8*)cmdBuf->constData(), cmdBuf->size()));
+    cmdBuf->insert(3, cmdBuf->size() + 2); // +2 = The byte we are adding now, and the checksum.
+    cmdBuf->append(checkSum((quint8 *)cmdBuf->constData(), cmdBuf->size()));
 }

@@ -9,9 +9,9 @@
 
 namespace Commands {
 
-    const QString msgChanged(QObject::tr("Changed"));
-    const QString msgFrom(QObject::tr("from"));
-    const QString msgTo(QObject::tr("to"));
+const QString msgChanged(QObject::tr("Changed"));
+const QString msgFrom(QObject::tr("from"));
+const QString msgTo(QObject::tr("to"));
 }
 
 class ModelEditCommand : public QUndoCommand
@@ -36,8 +36,8 @@ class SpinBoxEditCommand : public QUndoCommand
 {
 public:
     SpinBoxEditCommand(QSpinBox *spinbox,
-                     int value, QString &name,
-                     QUndoCommand *parent = 0);
+                       int value, QString &name,
+                       QUndoCommand *parent = 0);
 
 public slots:
     void undo();
@@ -52,8 +52,8 @@ class DoubleSpinBoxEditCommand : public QUndoCommand
 {
 public:
     DoubleSpinBoxEditCommand(QDoubleSpinBox *spinbox,
-                     double value, QString &name,
-                     QUndoCommand *parent = 0);
+                             double value, QString &name,
+                             QUndoCommand *parent = 0);
 
 public slots:
     void undo();

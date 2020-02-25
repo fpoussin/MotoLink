@@ -4,8 +4,8 @@
 #include <qcoreevent.h>
 #include <QDebug>
 
-SpinBox::SpinBox(QWidget *parent) :
-    QSpinBox(parent)
+SpinBox::SpinBox(QWidget *parent)
+    : QSpinBox(parent)
 {
     mUndoStack = NULL;
     mName = "SpinBox";
@@ -30,8 +30,7 @@ void SpinBox::pushUndo()
 {
     if (this->value() == mOld)
         return;
-    if (mUndoStack != NULL && !this->hasFocus())
-    {
+    if (mUndoStack != NULL && !this->hasFocus()) {
         mUndoStack->push(new SpinBoxEditCommand(this, mOld, mName));
     }
     mOld = this->value();
@@ -39,32 +38,28 @@ void SpinBox::pushUndo()
 
 bool SpinBox::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress)
-    {
-        QKeyEvent *keyEvt= (QKeyEvent *)event;
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvt = (QKeyEvent *)event;
         const int numKey = keyEvt->key();
         const bool isCtrl = keyEvt->modifiers().testFlag(Qt::ControlModifier);
 
-        if(numKey == Qt::Key_Z && isCtrl)
-        {
+        if (numKey == Qt::Key_Z && isCtrl) {
             this->setFocus();
             this->mUndoStack->undo();
             event->accept();
             return true;
         }
 
-        else if(numKey == Qt::Key_Y && isCtrl)
-        {
+        else if (numKey == Qt::Key_Y && isCtrl) {
             this->setFocus();
             this->mUndoStack->redo();
             event->accept();
             return true;
         }
 
-        else if(numKey == Qt::Key_Escape
-                || numKey == Qt::Key_Enter
-                || numKey == Qt::Key_Return)
-        {
+        else if (numKey == Qt::Key_Escape
+                 || numKey == Qt::Key_Enter
+                 || numKey == Qt::Key_Return) {
             this->clearFocus();
             event->accept();
             return true;

@@ -9,8 +9,8 @@
 #include "ui_celledit.h"
 
 namespace Ui {
-    class HeaderEdit;
-    class CellEdit;
+class HeaderEdit;
+class CellEdit;
 }
 
 class QEnhancedTableView : public QTableView
@@ -18,11 +18,11 @@ class QEnhancedTableView : public QTableView
     Q_OBJECT
 public:
     explicit QEnhancedTableView(QWidget *parent = 0);
-    void setModel(QAbstractItemModel * model);
+    void setModel(QAbstractItemModel *model);
     void setMenuReadOnly(bool enabled);
 
 signals:
-    void modelUpdated(QWidget* widget);
+    void modelUpdated(QWidget *widget);
     void cellCleared(uint id, int row, int col);
 
 public slots:
@@ -47,7 +47,6 @@ private:
     int mLastSection;
     Qt::Orientation mLastOrientation;
     bool mMenuReadOnly;
-
 };
 
 #endif // QENHANCEDTABLEVIEW_H

@@ -9,7 +9,7 @@
 #include "motolink.h"
 
 namespace Ui {
-    class UpdateWizard;
+class UpdateWizard;
 }
 
 class UpdateWizard : public QWizard
@@ -17,7 +17,7 @@ class UpdateWizard : public QWizard
     Q_OBJECT
 
 public:
-    explicit UpdateWizard(Motolink * const mtl, QWidget *parent = 0);
+    explicit UpdateWizard(Motolink *const mtl, QWidget *parent = 0);
     ~UpdateWizard();
     void showWizard(void);
 
@@ -46,7 +46,7 @@ private:
     void setupConnections(void);
     void startFwUpdate(void);
     Ui::UpdateWizard *mUi;
-    Motolink * const mMtl;
+    Motolink *const mMtl;
     QByteArray mFwData;
     QString mCurVersion;
     QString mNewVersion;

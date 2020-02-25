@@ -1,7 +1,7 @@
 #include "commands.h"
 #include <QToolTip>
 
-ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value, QString& name,
+ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value, QString &name,
                                    QStandardItemModel *model,
                                    QUndoCommand *parent)
     : QUndoCommand(parent), mItem(item), mModel(model)
@@ -10,17 +10,19 @@ ModelEditCommand::ModelEditCommand(QStandardItem *item, QVariant value, QString&
     mNew = value;
 
     const QString colname = model->headerData(
-                item->index().column(), Qt::Horizontal).toString();
+                                         item->index().column(), Qt::Horizontal)
+                                    .toString();
 
     const QString rowname = model->headerData(
-                item->index().row(), Qt::Vertical).toString();
+                                         item->index().row(), Qt::Vertical)
+                                    .toString();
 
     using namespace Commands;
     QString title = QString("%1 %2 %3:%4 %5 %6 %7 %8")
-            .arg(msgChanged, name,
-                 rowname, colname,
-                 msgFrom, mOld.toString(),
-                 msgTo, mNew.toString());
+                            .arg(msgChanged, name,
+                                 rowname, colname,
+                                 msgFrom, mOld.toString(),
+                                 msgTo, mNew.toString());
 
     this->setText(title);
 }
@@ -35,8 +37,7 @@ void ModelEditCommand::redo()
     mModel->setData(mItem->index(), mNew, Qt::UserRole);
 }
 
-
-SpinBoxEditCommand::SpinBoxEditCommand(QSpinBox *spinbox, int value, QString& name, QUndoCommand *parent)
+SpinBoxEditCommand::SpinBoxEditCommand(QSpinBox *spinbox, int value, QString &name, QUndoCommand *parent)
     : QUndoCommand(parent)
 {
     mSpinBox = spinbox;
@@ -45,25 +46,24 @@ SpinBoxEditCommand::SpinBoxEditCommand(QSpinBox *spinbox, int value, QString& na
 
     using namespace Commands;
     QString title = QString("%1 %2 %3 %4 %5 %6")
-            .arg(msgChanged, name,
-                 msgFrom, QString::number(mOld),
-                 msgTo, QString::number(mNew));
+                            .arg(msgChanged, name,
+                                 msgFrom, QString::number(mOld),
+                                 msgTo, QString::number(mNew));
 
     this->setText(title);
 }
 
 void SpinBoxEditCommand::undo()
 {
-    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Undo" );
+    QToolTip::showText(mSpinBox->mapToGlobal(QPoint(0, 0)), "Undo");
     mSpinBox->setValue(mOld);
 }
 
 void SpinBoxEditCommand::redo()
 {
-    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Redo" );
+    QToolTip::showText(mSpinBox->mapToGlobal(QPoint(0, 0)), "Redo");
     mSpinBox->setValue(mNew);
 }
-
 
 DoubleSpinBoxEditCommand::DoubleSpinBoxEditCommand(QDoubleSpinBox *spinbox, double value, QString &name, QUndoCommand *parent)
     : QUndoCommand(parent)
@@ -74,21 +74,21 @@ DoubleSpinBoxEditCommand::DoubleSpinBoxEditCommand(QDoubleSpinBox *spinbox, doub
 
     using namespace Commands;
     QString title = QString("%1 %2 %3 %4 %5 %6")
-            .arg(msgChanged, name,
-                 msgFrom, QString::number(mOld),
-                 msgTo, QString::number(mNew));
+                            .arg(msgChanged, name,
+                                 msgFrom, QString::number(mOld),
+                                 msgTo, QString::number(mNew));
 
     this->setText(title);
 }
 
 void DoubleSpinBoxEditCommand::undo()
 {
-    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Undo" );
+    QToolTip::showText(mSpinBox->mapToGlobal(QPoint(0, 0)), "Undo");
     mSpinBox->setValue(mOld);
 }
 
 void DoubleSpinBoxEditCommand::redo()
 {
-    QToolTip::showText( mSpinBox->mapToGlobal( QPoint( 0, 0 ) ), "Redo" );
+    QToolTip::showText(mSpinBox->mapToGlobal(QPoint(0, 0)), "Redo");
     mSpinBox->setValue(mNew);
 }

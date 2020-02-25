@@ -2,10 +2,8 @@
 #include "ui_updatewizard.h"
 #include <QtXml>
 
-UpdateWizard::UpdateWizard(Motolink * const mtl, QWidget *parent) :
-    QWizard(parent),
-    mUi(new Ui::UpdateWizard),
-    mMtl(mtl)
+UpdateWizard::UpdateWizard(Motolink *const mtl, QWidget *parent)
+    : QWizard(parent), mUi(new Ui::UpdateWizard), mMtl(mtl)
 {
     mUi->setupUi(this);
     this->setOptions(QWizard::NoBackButtonOnStartPage);
@@ -25,10 +23,9 @@ void UpdateWizard::showWizard()
     QString ver("Versions: [Bootloader %1] [App %2]");
     if (mMtl->usbConnect()) {
         mUi->lVersions->setText(ver.arg(mMtl->getVersion(0)).arg(mMtl->getVersion(1)));
+    } else {
+        mUi->lVersions->setText(ver.arg(tr("Unknown")).arg(("Unknown")));
     }
-    else {
-         mUi->lVersions->setText(ver.arg(tr("Unknown")).arg(("Unknown")));
-      }
     mUi->lNewVersion->setText(mNewVersion);
     this->enableButtons();
     this->restart();
@@ -49,10 +46,9 @@ void UpdateWizard::retranslate()
 void UpdateWizard::openCustomFw()
 {
     QString fileName(QFileDialog::getOpenFileName(this,
-                       tr("Open firmware file"), "", tr("Firmware files (*.bin)")));
+                                                  tr("Open firmware file"), "", tr("Firmware files (*.bin)")));
 
-    if (fileName.isEmpty())
-    {
+    if (fileName.isEmpty()) {
         mUi->rbBundledFW->setChecked(true);
         this->loadDefaultFirmareData();
         return;
@@ -60,8 +56,7 @@ void UpdateWizard::openCustomFw()
 
     QFile fwFile(fileName);
 
-    if(!fwFile.open(QIODevice::ReadOnly))
-    {
+    if (!fwFile.open(QIODevice::ReadOnly)) {
         qWarning() << msError << tr("Couldn't open ") << fileName;
         fwFile.close();
         return;
@@ -82,17 +77,16 @@ QString UpdateWizard::getFwVersion()
 
 void UpdateWizard::pageUpdated(int page)
 {
-    switch (page)
-    {
-        case 0:
-            break;
-        case 1:
-            this->startFwUpdate();
-            break;
-        case 2:
-            break;
-        default:
-            break;
+    switch (page) {
+    case 0:
+        break;
+    case 1:
+        this->startFwUpdate();
+        break;
+    case 2:
+        break;
+    default:
+        break;
     }
 }
 
@@ -129,7 +123,7 @@ void UpdateWizard::updateDone()
 void UpdateWizard::setupConnections()
 {
     /* Tranfer control */
-    QObject::connect(this, SIGNAL(startTransfer(QByteArray*)), mMtl, SLOT(startUpdate(QByteArray*)));
+    QObject::connect(this, SIGNAL(startTransfer(QByteArray *)), mMtl, SLOT(startUpdate(QByteArray *)));
     QObject::connect(this->button(QWizard::CancelButton), SIGNAL(clicked()), mMtl, SLOT(haltTransfer()));
 
     /* Tranfer status update */
@@ -154,8 +148,7 @@ void UpdateWizard::loadDefaultFirmareData()
     if (!file.open(QIODevice::ReadOnly))
         return;
 
-    if (!doc.setContent(&file))
-    {
+    if (!doc.setContent(&file)) {
         file.close();
         return;
     }
@@ -164,31 +157,22 @@ void UpdateWizard::loadDefaultFirmareData()
     QDomElement docElem = doc.documentElement();
     QDomNode n = docElem.firstChild();
 
-    while(!n.isNull())
-    {
+    while (!n.isNull()) {
         QDomElement e = n.toElement();
-        if (n.childNodes().count() > 1)
-        {
+        if (n.childNodes().count() > 1) {
             QDomNode cn = n.firstChild();
-            while (!cn.isNull())
-            {
+            while (!cn.isNull()) {
                 QDomElement ce = cn.toElement();
-                if(!ce.isNull())
-                {
-                    if (ce.tagName() == "version")
-                    {
+                if (!ce.isNull()) {
+                    if (ce.tagName() == "version") {
                         mNewVersion = ce.text();
                     }
                 }
                 cn = cn.nextSibling();
             }
-        }
-        else
-        {
-            if(!e.isNull())
-            {
-                if (e.tagName() == "data")
-                {
+        } else {
+            if (!e.isNull()) {
+                if (e.tagName() == "data") {
                     mFwData = QByteArray::fromBase64(e.text().toLocal8Bit());
                 }
             }
@@ -204,10 +188,8 @@ void UpdateWizard::startFwUpdate()
     mUi->tbStatus->clear();
     this->disableButtons();
 
-    if (mMtl->usbConnect())
-    {
-        if (mMtl->getMode() != MODE_BL)
-        {
+    if (mMtl->usbConnect()) {
+        if (mMtl->getMode() != MODE_BL) {
             /* App mode, reset to bootloader */
             emit sendStatus(tr("Reset to Bootloader..."));
 
@@ -216,20 +198,17 @@ void UpdateWizard::startFwUpdate()
             emit sendDisconnect();
 
             /* Wait 2s for windows to detect the bootloader */
-            for (uint i = 0; i <= 20; i++)
-            {
-                 QThread::msleep(100);
-                 mUi->pbProgress->setValue(i*5);
-                 QCoreApplication::processEvents();
+            for (uint i = 0; i <= 20; i++) {
+                QThread::msleep(100);
+                mUi->pbProgress->setValue(i * 5);
+                QCoreApplication::processEvents();
             }
             mMtl->usbProbeConnect();
 
-            if (mMtl->getMode() != MODE_BL)
-            {
+            if (mMtl->getMode() != MODE_BL) {
                 emit sendStatus(tr("Failed to reset device"));
                 return;
             }
-
         }
         emit sendStatus(tr("Connected"));
         mUi->pbProgress->setValue(10);
@@ -252,9 +231,7 @@ void UpdateWizard::startFwUpdate()
             emit sendStatus(tr("Boot Switch ON"));
 
         emit startTransfer(&mFwData);
-    }
-    else
-    {
+    } else {
         emit sendStatus(tr("Connection Failed"));
         this->enableButtons();
         return;

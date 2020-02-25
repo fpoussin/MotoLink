@@ -2,9 +2,8 @@
 #include <QLineEdit>
 #include <QDebug>
 
-TableModel::TableModel(QUndoStack *stack, float min, float max, float def, bool singlerow, bool permanent, QObject *parent) :
-    QStandardItemModel(parent),
-    mStack(stack)
+TableModel::TableModel(QUndoStack *stack, float min, float max, float def, bool singlerow, bool permanent, QObject *parent)
+    : QStandardItemModel(parent), mStack(stack)
 {
     mMin = min;
     mMax = max;
@@ -15,19 +14,17 @@ TableModel::TableModel(QUndoStack *stack, float min, float max, float def, bool 
     mSinglerow = singlerow;
     this->mId = 0;
 
-    const int defaultRpm[] = {0, 2000, 4000, 5500, 7000, 8000, 9000,
-                  10000, 11000, 12000, 13000, 14000, 15000, 16000,
-                  16500, 18000};
+    const int defaultRpm[] = { 0, 2000, 4000, 5500, 7000, 8000, 9000,
+                               10000, 11000, 12000, 13000, 14000, 15000, 16000,
+                               16500, 18000 };
 
-    const int defaultTps[] = {0, 4, 8, 15, 20, 27, 35, 50, 70, 85, 100};
+    const int defaultTps[] = { 0, 4, 8, 15, 20, 27, 35, 50, 70, 85, 100 };
 
-    for (uint i=0; i< sizeof(defaultRpm)/sizeof(int); i++)
-    {
+    for (uint i = 0; i < sizeof(defaultRpm) / sizeof(int); i++) {
         mDefaultRpm.append(defaultRpm[i]);
     }
 
-    for (uint i=0; i< sizeof(defaultTps)/sizeof(int); i++)
-    {
+    for (uint i = 0; i < sizeof(defaultTps) / sizeof(int); i++) {
         mDefaultTps.append(defaultTps[i]);
     }
 
@@ -42,7 +39,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 {
     float val = value.toFloat();
     float newvalue = val;
-    QStandardItem * item = this->itemFromIndex(index);
+    QStandardItem *item = this->itemFromIndex(index);
     bool notify = false;
     bool result;
 
@@ -50,7 +47,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         return false;
 
     if (val == item->data(Qt::EditRole))
-      return false;
+        return false;
 
     if (val > mMax)
         newvalue = mMax;
@@ -58,20 +55,17 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         newvalue = mMin;
 
     /* Manual cell edit, add action to undo/redo log */
-    if (role == Qt::EditRole)
-    {
+    if (role == Qt::EditRole) {
         mStack->push(new ModelEditCommand(item, QVariant(newvalue), mName, this));
         notify = true;
     }
     /* Read only cell edit - No extra action */
-    else if (role == Qt::UserRole)
-    {
+    else if (role == Qt::UserRole) {
         role = Qt::EditRole;
         notify = true;
     }
     /* Silent edit, for full tables update */
-    else
-    {
+    else {
         qWarning("Unknown cell value edit role: %d", role);
     }
     item->setData(this->NumberToColor(newvalue, true), Qt::BackgroundRole);
@@ -81,7 +75,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     result = QStandardItemModel::setData(index, newvalue, role);
 
     if (notify)
-      emit cellValueChanged(index.row(), index.column());
+        emit cellValueChanged(index.row(), index.column());
 
     return result;
 }
@@ -91,23 +85,19 @@ void TableModel::setDataFromArray(const quint8 *array, float multiplier)
     QModelIndex idx;
     float data;
 
-    for (int i=0; i<this->rowCount(); i++)
-    {
-        for (int j=0; j<this->columnCount(); j++)
-        {
+    for (int i = 0; i < this->rowCount(); i++) {
+        for (int j = 0; j < this->columnCount(); j++) {
             idx = this->index(i, j);
-            data = (float)array[(i*this->columnCount())+j] * multiplier;
+            data = (float)array[(i * this->columnCount()) + j] * multiplier;
 
             /* Skip if data unchanged */
-            if (data == this->data(idx, Qt::EditRole)) continue;
+            if (data == this->data(idx, Qt::EditRole))
+                continue;
 
-            if (idx.isValid() && data > 0)
-            {
+            if (idx.isValid() && data > 0) {
                 this->setData(idx, QVariant(data), Qt::UserRole);
-            }
-            else
-            {
-                QStandardItem * item = this->itemFromIndex(idx);
+            } else {
+                QStandardItem *item = this->itemFromIndex(idx);
                 if (item == NULL)
                     continue;
                 item->setData(QColor(Qt::gray), Qt::BackgroundRole);
@@ -119,7 +109,7 @@ void TableModel::setDataFromArray(const quint8 *array, float multiplier)
 
 void TableModel::emptyData(const QModelIndex &index)
 {
-    QStandardItem * item = this->itemFromIndex(index);
+    QStandardItem *item = this->itemFromIndex(index);
     if (item == NULL)
         return;
     item->setData(QColor(Qt::white), Qt::BackgroundRole);
@@ -130,12 +120,10 @@ void TableModel::emptyData(const QModelIndex &index)
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     QVariant data(QStandardItemModel::headerData(section, orientation, role));
-    if (role == Qt::DisplayRole && orientation == Qt::Vertical)
-    {
+    if (role == Qt::DisplayRole && orientation == Qt::Vertical) {
         if (mSinglerow)
             data = "Value";
-        else
-        {
+        else {
             QString str(data.toString());
             str.append("%");
             data = str;
@@ -148,8 +136,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
     QVariant tmp(value);
-    if (orientation == Qt::Horizontal)
-    {
+    if (orientation == Qt::Horizontal) {
         /* Average to +- 100 */
         int tmpval = tmp.toInt();
         tmpval /= 100;
@@ -162,8 +149,7 @@ bool TableModel::setHeaderData(int section, Qt::Orientation orientation, const Q
 
     if (role != Qt::UserRole) {
         emit headerDataNeedSync(section, orientation, value);
-    }
-    else {
+    } else {
         role = Qt::EditRole;
     }
     return QStandardItemModel::setHeaderData(section, orientation, tmp, role);
@@ -185,7 +171,7 @@ bool TableModel::writeCellPeak(uint tp, uint rpm, QVariant &value)
     if (!this->getCell(tp, rpm, &row, &col))
         return false;
 
-    QStandardItem* item = this->item(row, col);
+    QStandardItem *item = this->item(row, col);
     QVariant old(item->data(Qt::EditRole));
 
     if (old > value)
@@ -205,19 +191,16 @@ bool TableModel::writeCellAverage(uint tp, uint rpm, QVariant &value)
     if (!this->getCell(tp, rpm, &row, &col))
         return false;
 
-    QStandardItem* item = this->item(row, col);
+    QStandardItem *item = this->item(row, col);
     QVariant average(item->data(Qt::EditRole));
 
-    if (!average.isNull())
-    {
+    if (!average.isNull()) {
         float flAvg = average.value<float>();
 
         flAvg += value.toFloat();
         flAvg /= 2;
         item->setData(QVariant(flAvg), Qt::EditRole);
-    }
-    else
-    {
+    } else {
         item->setData(value, Qt::EditRole);
     }
     item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
@@ -230,15 +213,14 @@ void TableModel::highlightCell(int row, int col)
     QFont font;
     if (mSinglerow)
         row = 0;
-    QStandardItem* item = this->item(row, col);
+    QStandardItem *item = this->item(row, col);
     if (item == NULL)
         return;
 
     QString valueStr = item->data(Qt::EditRole).value<QString>();
     float value = item->data(Qt::EditRole).toFloat();
 
-    if (mLastItem != NULL && mLastItem != item)
-    {
+    if (mLastItem != NULL && mLastItem != item) {
         if (valueStr.isEmpty())
             mLastItem->setData(QColor(Qt::white), Qt::BackgroundRole);
         else
@@ -266,45 +248,34 @@ bool TableModel::getCell(uint tp, uint rpm, int *row, int *col)
     *row = -1;
     *col = -1;
 
-    maxrow = this->rowCount()-1;
-    maxcol = this->columnCount()-1;
+    maxrow = this->rowCount() - 1;
+    maxcol = this->columnCount() - 1;
 
-    if (mSinglerow)
-    {
+    if (mSinglerow) {
         *row = 0;
-    }
-    else
-    {
-        for (int i=0; i < maxrow; i++)
-        {
+    } else {
+        for (int i = 0; i < maxrow; i++) {
             uint h = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt();
-            uint h2 = this->headerData(i+1, Qt::Vertical, Qt::EditRole).toUInt();
+            uint h2 = this->headerData(i + 1, Qt::Vertical, Qt::EditRole).toUInt();
 
-            if (tp >= this->headerData(maxrow, Qt::Vertical, Qt::EditRole).toUInt())
-            {
+            if (tp >= this->headerData(maxrow, Qt::Vertical, Qt::EditRole).toUInt()) {
                 *row = maxrow;
                 break;
-            }
-            else if (tp >= h && tp <= h2)
-            {
+            } else if (tp >= h && tp <= h2) {
                 *row = i;
                 break;
             }
         }
     }
 
-    for (int i=0; i < maxcol; i++)
-    {
+    for (int i = 0; i < maxcol; i++) {
         uint h = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt();
-        uint h2 = this->headerData(i+1, Qt::Horizontal, Qt::EditRole).toUInt();
+        uint h2 = this->headerData(i + 1, Qt::Horizontal, Qt::EditRole).toUInt();
 
-        if (rpm >= this->headerData(maxcol, Qt::Horizontal, Qt::EditRole).toUInt())
-        {
+        if (rpm >= this->headerData(maxcol, Qt::Horizontal, Qt::EditRole).toUInt()) {
             *col = maxcol;
             break;
-        }
-        else if (rpm >= h && rpm <= h2)
-        {
+        } else if (rpm >= h && rpm <= h2) {
             *col = i;
             break;
         }
@@ -327,8 +298,7 @@ void TableModel::rowsToArray(quint8 *data, int maxLen)
 {
     bool ok;
     uint value;
-    for (int i=0; i < this->rowCount() && i < maxLen; i++)
-    {
+    for (int i = 0; i < this->rowCount() && i < maxLen; i++) {
         ok = false;
         value = this->headerData(i, Qt::Vertical, Qt::EditRole).toUInt(&ok);
         if (ok)
@@ -339,8 +309,7 @@ void TableModel::rowsToArray(quint8 *data, int maxLen)
 void TableModel::arrayToRows(const quint8 *data, int maxLen)
 {
     Q_CHECK_PTR(data);
-    for (int i=0; i < this->rowCount() && i < maxLen; i++)
-    {
+    for (int i = 0; i < this->rowCount() && i < maxLen; i++) {
         this->setHeaderData(i, Qt::Vertical, data[i], Qt::EditRole);
     }
 }
@@ -349,10 +318,9 @@ void TableModel::columnsToArray(quint8 *data, int maxLen)
 {
     bool ok;
     uint value;
-    for (int i=0; i < this->columnCount() && i < maxLen; i++)
-    {
+    for (int i = 0; i < this->columnCount() && i < maxLen; i++) {
         ok = false;
-        value = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt(&ok)/100;
+        value = this->headerData(i, Qt::Horizontal, Qt::EditRole).toUInt(&ok) / 100;
         if (ok)
             data[i] = value & 0xFF;
     }
@@ -361,9 +329,8 @@ void TableModel::columnsToArray(quint8 *data, int maxLen)
 void TableModel::arrayToColumns(const quint8 *data, int maxLen)
 {
     Q_CHECK_PTR(data);
-    for (int i=0; i < this->columnCount() && i < maxLen; i++)
-    {
-        this->setHeaderData(i, Qt::Horizontal, data[i]*100, Qt::EditRole);
+    for (int i = 0; i < this->columnCount() && i < maxLen; i++) {
+        this->setHeaderData(i, Qt::Horizontal, data[i] * 100, Qt::EditRole);
     }
 }
 
@@ -399,9 +366,8 @@ QColor TableModel::NumberToColor(float value, bool greenIsNegative, bool darkCol
 
     if (mMin > 0) {
         value -= mMin;
-    }
-    else {
-        value += (range/2.0);
+    } else {
+        value += (range / 2.0);
     }
     if (greenIsNegative) /* - Green to + Red */
         value = range - value;
@@ -438,10 +404,8 @@ void TableModel::fill(bool random)
     if (mSinglerow)
         mNumRow = 1;
 
-    for (int row = 0; row < mNumRow; row++)
-    {
-        for (int column = 0; column < mNumCol; column++)
-        {
+    for (int row = 0; row < mNumRow; row++) {
+        for (int column = 0; column < mNumCol; column++) {
             QStandardItem *item = new QStandardItem(0);
             this->setItem(row, column, item);
             this->setHeaderData(column, Qt::Horizontal, getDefaultRpmAt(column));
@@ -455,31 +419,31 @@ void TableModel::fill(bool random)
     }
 }
 
-NumberFormatDelegate::NumberFormatDelegate(QObject *parent) :
-    QStyledItemDelegate(parent)
+NumberFormatDelegate::NumberFormatDelegate(QObject *parent)
+    : QStyledItemDelegate(parent)
 {
 }
 
 QString NumberFormatDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
     if (value.toInt() > 0)
-        return QString("+")+locale.toString(value.toInt())+mSuffix;
+        return QString("+") + locale.toString(value.toInt()) + mSuffix;
 
-    return locale.toString(value.toInt())+mSuffix;
+    return locale.toString(value.toInt()) + mSuffix;
 }
 
-QWidget * NumberFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
+QWidget *NumberFormatDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QWidget* editor = QStyledItemDelegate::createEditor(parent, option, index);
-    QLineEdit* lineEditEditor = qobject_cast<QLineEdit*>(editor);
-    if( lineEditEditor )
+    QWidget *editor = QStyledItemDelegate::createEditor(parent, option, index);
+    QLineEdit *lineEditEditor = qobject_cast<QLineEdit *>(editor);
+    if (lineEditEditor)
         lineEditEditor->setValidator(&mValidator);
 
     return editor;
 }
 
-AfrFormatDelegate::AfrFormatDelegate(QObject *parent) :
-    QStyledItemDelegate(parent)
+AfrFormatDelegate::AfrFormatDelegate(QObject *parent)
+    : QStyledItemDelegate(parent)
 {
 }
 
@@ -494,11 +458,11 @@ QString AfrFormatDelegate::displayText(const QVariant &value, const QLocale &loc
     return QString();
 }
 
-QWidget * AfrFormatDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
+QWidget *AfrFormatDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QWidget* editor = QStyledItemDelegate::createEditor(parent, option, index);
-    QLineEdit* lineEditEditor = qobject_cast<QLineEdit*>(editor);
-    if( lineEditEditor )
+    QWidget *editor = QStyledItemDelegate::createEditor(parent, option, index);
+    QLineEdit *lineEditEditor = qobject_cast<QLineEdit *>(editor);
+    if (lineEditEditor)
         lineEditEditor->setValidator(&mValidator);
 
     return editor;

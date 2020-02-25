@@ -45,10 +45,11 @@ typedef struct {
 typedef QList<mtl_task_t> TaskList;
 typedef QList<mtl_value_t> ValueList;
 
-class Motolink : public QObject {
+class Motolink : public QObject
+{
     Q_OBJECT
 public:
-    explicit Motolink(QObject* parent = Q_NULLPTR);
+    explicit Motolink(QObject *parent = Q_NULLPTR);
     ~Motolink();
 
     quint8 getReadEp(void) { return m_read_ep; }
@@ -66,10 +67,10 @@ public:
     }
     inline bool isConnected(void) { return mConnected; }
 
-    inline const TaskList* getMonitoring(void) { return &mMonitoring; }
-    inline const QByteArray* getKnockSpectrum(void) { return &mKnockData; }
-    inline const quint8* getAFRTable(void) { return (quint8*)&mAFRTable; }
-    inline const quint8* getKnockTable(void) { return (quint8*)&mKnockTable; }
+    inline const TaskList *getMonitoring(void) { return &mMonitoring; }
+    inline const QByteArray *getKnockSpectrum(void) { return &mKnockData; }
+    inline const quint8 *getAFRTable(void) { return (quint8 *)&mAFRTable; }
+    inline const quint8 *getKnockTable(void) { return (quint8 *)&mKnockTable; }
 
     // Sensors (Get)
     inline float getTPS(void) { return mSensors.tps; }
@@ -167,15 +168,15 @@ public slots:
 
     bool sendWake();
 
-    void startUpdate(QByteArray* data);
+    void startUpdate(QByteArray *data);
     void haltTransfer(void);
-    bool sendFirmware(QByteArray* data);
-    bool verifyFirmware(QByteArray* data);
+    bool sendFirmware(QByteArray *data);
+    bool verifyFirmware(QByteArray *data);
 
     bool writeSettings();
     bool readSettings();
 
-    bool writeTablesHeaders(const quint8* rows, const quint8* cols);
+    bool writeTablesHeaders(const quint8 *rows, const quint8 *cols);
 
     bool clearCell(uint tableId, int row, int col);
     bool clearTables(void);
@@ -184,10 +185,10 @@ public slots:
 
 signals:
     void transferProgress(int p);
-    void signalStatus(const QString& s);
+    void signalStatus(const QString &s);
     void signalLock(bool enabled);
     void updateDone(void);
-    void communicationError(const QString& msg);
+    void communicationError(const QString &msg);
 
     void connectionProgress(int progress);
     void connectionResult(bool result);
@@ -195,29 +196,29 @@ signals:
 
     void receivedSensors();
     void receivedSettings();
-    void receivedMonitoring(const TaskList* monitoring);
-    void receivedKockSpectrum(const QByteArray* data);
-    void receivedTables(const quint8* AFR, const quint8* Knock);
-    void receivedTablesHeaders(const quint8* rows, const quint8* cols);
+    void receivedMonitoring(const TaskList *monitoring);
+    void receivedKockSpectrum(const QByteArray *data);
+    void receivedTables(const quint8 *AFR, const quint8 *Knock);
+    void receivedTablesHeaders(const quint8 *rows, const quint8 *cols);
     void receivedSerialData(QByteArray data);
 
 private slots:
-    quint8 checkSum(const quint8* data, quint8 length) const;
+    quint8 checkSum(const quint8 *data, quint8 length) const;
     void setupConnections(void);
 
 private:
-    void prepareCmd(QByteArray* cmdBuf, quint8 cmd) const;
+    void prepareCmd(QByteArray *cmdBuf, quint8 cmd) const;
     bool sendSimpleCmd(quint8 cmd);
-    bool sendCmd(QByteArray* send, QByteArray* recv, uint len, quint8 cmd);
-    int readMore(QByteArray* recv, uint len);
+    bool sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd);
+    int readMore(QByteArray *recv, uint len);
     void printError(quint8 reply);
     QMutex mMutex;
-    QThread* mThread;
+    QThread *mThread;
 
-    QUsbDevice* mUsb;
-    Bootloader* mBtl;
-    QUsbEndpoint* m_read_ep;
-    QUsbEndpoint* m_write_ep;
+    QUsbDevice *mUsb;
+    Bootloader *mBtl;
+    QUsbEndpoint *m_read_ep;
+    QUsbEndpoint *m_write_ep;
 
     bool mConnected;
     bool mAbortConnect;

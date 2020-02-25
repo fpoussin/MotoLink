@@ -6,9 +6,8 @@
 #include <QDir>
 #include <QDebug>
 
-HelpViewer::HelpViewer(QWidget *parent) :
-    QWidget(parent),
-    mUi(new Ui::HelpViewer)
+HelpViewer::HelpViewer(QWidget *parent)
+    : QWidget(parent), mUi(new Ui::HelpViewer)
 {
     mUi->setupUi(this);
 }
@@ -22,13 +21,11 @@ void HelpViewer::show()
 {
     QString path;
 
-    path = QDir::tempPath()+"/mtlhelp";
+    path = QDir::tempPath() + "/mtlhelp";
 
-    if (this->cpDir(":/doc/", path))
-    {
-        QDesktopServices::openUrl(QUrl(path+"/html/index.html"));
-    }
-    else {
+    if (this->cpDir(":/doc/", path)) {
+        QDesktopServices::openUrl(QUrl(path + "/html/index.html"));
+    } else {
         qDebug("Failed to copy help files");
     }
     //QWidget::show();
@@ -42,7 +39,7 @@ bool HelpViewer::cpDir(const QString &srcPath, const QString &dstPath)
         return false;
 
     QDir srcDir(srcPath);
-    foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
+    foreach (const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
         QString srcItemPath = srcPath + "/" + info.fileName();
         QString dstItemPath = dstPath + "/" + info.fileName();
         if (info.isDir()) {
@@ -65,7 +62,7 @@ bool HelpViewer::rmDir(const QString &dirPath)
     QDir dir(dirPath);
     if (!dir.exists())
         return true;
-    foreach(const QFileInfo &info, dir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
+    foreach (const QFileInfo &info, dir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot)) {
         if (info.isDir()) {
             if (!rmDir(info.filePath()))
                 return false;

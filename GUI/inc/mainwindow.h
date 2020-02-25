@@ -44,18 +44,19 @@ class HeaderEdit;
 class Logs;
 }
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
     void Quit(void);
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent *event);
     void openFile(void);
-    void openFile(const QString& filename);
+    void openFile(const QString &filename);
     void saveFile(void);
     void saveFileAs(void);
     void connectMtl(void);
@@ -81,17 +82,17 @@ private slots:
     void showSerialData(void);
 
     void showLogs(void);
-    void log(const QString& msg);
+    void log(const QString &msg);
 
     void doFastPolling(void);
     void doSlowPolling(void);
     void doTablesPolling(void);
     void doSensorsRedraw(void);
-    void onMonitoringReceived(const TaskList* monitoring);
-    void onKnockSpectrumReceived(const QByteArray* data);
-    void onTablesReceived(const quint8* afr, const quint8* knock);
-    void onTablesHeadersReceived(const quint8* columns, const quint8* rows);
-    void onSerialDataReceived(const QByteArray* data);
+    void onMonitoringReceived(const TaskList *monitoring);
+    void onKnockSpectrumReceived(const QByteArray *data);
+    void onTablesReceived(const quint8 *afr, const quint8 *knock);
+    void onTablesHeadersReceived(const quint8 *columns, const quint8 *rows);
+    void onSerialDataReceived(const QByteArray *data);
     void onSetTps0Pct(void);
     void onSetTps100Pct(void);
     void onDataChanged(void);
@@ -119,34 +120,34 @@ private:
     void exportToMTLFile(void);
     void importFromMTLFile(void);
 
-    Ui::MainWindow* mMainUi;
-    Ui::Tasks* mTasksUi;
-    Ui::KnockGraph* mKnockGraphUi;
-    Ui::Logs* mLogsUi;
-    Ui::Logs* mSerialLogsUi;
-    QWidget* mTasksWidget;
-    QWidget* mKnockGraphWidget;
-    QWidget* mLogsWidget;
-    QWidget* mSerialLogsWidget;
-    QCPItemText* mKnockFreqLabel;
+    Ui::MainWindow *mMainUi;
+    Ui::Tasks *mTasksUi;
+    Ui::KnockGraph *mKnockGraphUi;
+    Ui::Logs *mLogsUi;
+    Ui::Logs *mSerialLogsUi;
+    QWidget *mTasksWidget;
+    QWidget *mKnockGraphWidget;
+    QWidget *mLogsWidget;
+    QWidget *mSerialLogsWidget;
+    QCPItemText *mKnockFreqLabel;
     QTranslator mTranslator;
     QSettings mSettings;
     QString mCurrentFile;
     bool mHasChanged;
-    Motolink* mMtl;
-    UpdateWizard* mUpdateWizard;
+    Motolink *mMtl;
+    UpdateWizard *mUpdateWizard;
     HelpViewer mHelpViewer;
     QUndoStack mUndoStack;
     QUndoView mUndoView;
     QStringList mRecentFiles;
-    QAction* mRecentFilesActions[MAX_RECENT_FILES];
+    QAction *mRecentFilesActions[MAX_RECENT_FILES];
     TableModel mAFRModel;
     TableModel mAFRTgtModel;
     TableModel mKnockModel;
     TableModel mFuelOffsetModel;
-    QVector<TableModel*> mTablesModelList;
-    QVector<QEnhancedTableView*> mTablesViewList;
-    QVector<QSpinBox*> mSpinBoxList;
+    QVector<TableModel *> mTablesModelList;
+    QVector<QEnhancedTableView *> mTablesViewList;
+    QVector<QSpinBox *> mSpinBoxList;
     Update mUpdate;
     NumberFormatDelegate mDegreeSuffix;
     NumberFormatDelegate mPercentSuffix;

@@ -9,7 +9,6 @@
 #include "qenhancedtableview.h"
 #include "commands.h"
 
-
 class TableModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -18,9 +17,9 @@ public:
     ~TableModel(void);
     bool isPermanent(void) { return mPermanent; }
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    void setDataFromArray(const quint8 * array, float multiplier);
+    void setDataFromArray(const quint8 *array, float multiplier);
     void emptyData(const QModelIndex &index);
-    QEnhancedTableView * view();
+    QEnhancedTableView *view();
     void setSingleRow(bool val);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
@@ -35,10 +34,10 @@ public:
     void setView(QEnhancedTableView *view);
     void setId(uint id);
     uint id(void) { return mId; }
-    void rowsToArray(quint8 * data, int maxLen);
-    void arrayToRows(const quint8 * data, int maxLen);
-    void columnsToArray(quint8 * data, int maxLen);
-    void arrayToColumns(const quint8 * data, int maxLen);
+    void rowsToArray(quint8 *data, int maxLen);
+    void arrayToRows(const quint8 *data, int maxLen);
+    void columnsToArray(quint8 *data, int maxLen);
+    void arrayToColumns(const quint8 *data, int maxLen);
     int getDefaultRpmAt(int index);
     int getDefaultTpsAt(int index);
 
@@ -59,7 +58,7 @@ private:
     void fill(bool random = false);
 
     QEnhancedTableView *mView;
-    QUndoStack* mStack;
+    QUndoStack *mStack;
     QString mName;
     QString mSuffix;
     float mMin;
@@ -67,7 +66,7 @@ private:
     float mDefaultValue;
     quint8 mNumCol;
     quint8 mNumRow;
-    QStandardItem* mLastItem;
+    QStandardItem *mLastItem;
     bool mPermanent;
     bool mSinglerow;
     uint mId;
@@ -81,8 +80,8 @@ class NumberFormatDelegate : public QStyledItemDelegate
 public:
     explicit NumberFormatDelegate(QObject *parent = 0);
     virtual QString displayText(const QVariant &value, const QLocale &locale) const;
-    QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-    void setSuffix(QString suffix) { mSuffix = suffix;}
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void setSuffix(QString suffix) { mSuffix = suffix; }
 
 signals:
 
@@ -91,7 +90,6 @@ public slots:
 private:
     QIntValidator mValidator;
     QString mSuffix;
-
 };
 
 class AfrFormatDelegate : public QStyledItemDelegate
@@ -100,7 +98,7 @@ class AfrFormatDelegate : public QStyledItemDelegate
 public:
     explicit AfrFormatDelegate(QObject *parent = 0);
     virtual QString displayText(const QVariant &value, const QLocale &locale) const;
-    QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
 
@@ -108,7 +106,6 @@ public slots:
 
 private:
     QDoubleValidator mValidator;
-
 };
 
 #endif // TABLEMODEL_H
