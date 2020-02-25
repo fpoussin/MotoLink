@@ -78,7 +78,8 @@ static THD_FUNCTION(ThreadBlinker, arg)
                              D(4), D(2)};
 
   TIM_LED2->DIER |= TIM_DIER_UDE; /* Timer Update DMA request */
-  if (dmaStreamAllocate(STM32_DMA1_STREAM7, 1, NULL, NULL)) chSysHalt("TIM DMA error");
+  if (dmaStreamAlloc(STM32_DMA_STREAM_ID(1, 7), 1, NULL, NULL)) chSysHalt("TIM DMA error");
+
   dmaStreamSetPeripheral(STM32_DMA1_STREAM7, &TIM_LED2->CCR_LED2);
   dmaStreamSetMemory0(STM32_DMA1_STREAM7, dimmer);
   dmaStreamSetTransactionSize(STM32_DMA1_STREAM7, sizeof(dimmer)/sizeof(uint16_t));
@@ -152,16 +153,16 @@ static THD_FUNCTION(ThreadSDU, arg)
 
     while(SD3.state != SD_READY) chThdSleepMilliseconds(10);
 
-    read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), MS2ST(5));
+    read = chnReadTimeout(&SDU1, buffer, sizeof(buffer), TIME_MS2I(5));
     if (read > 0)
     {
-      sdWriteTimeout(&SD3, buffer, read, MS2ST(100));
+      sdWriteTimeout(&SD3, buffer, read, TIME_MS2I(100));
     }
 
-    read = sdReadTimeout(&SD3, buffer, sizeof(buffer), MS2ST(5));
+    read = sdReadTimeout(&SD3, buffer, sizeof(buffer), TIME_MS2I(5));
     if (read > 0)
     {
-      chnWriteTimeout(&SDU1, buffer, read, MS2ST(100));
+      chnWriteTimeout(&SDU1, buffer, read, TIME_MS2I(100));
     }
 
     chThdSleepMilliseconds(1);
@@ -216,7 +217,7 @@ int main(void)
   uint32_t i = 0;
   while (i++ < 20000) // 1.4ms * 3
   {
-    asm ("nop");
+    __asm__("nop");
   }
 
   /* Check boot switch */

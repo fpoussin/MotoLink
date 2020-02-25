@@ -600,6 +600,7 @@ app/shell_cmds.c
 app/tables.c
 app/tables.h
 binsize.py
+bootloader/Makefile
 bootloader/bootloader.c
 bootloader/bootloader.h
 bootloader/chconf.h

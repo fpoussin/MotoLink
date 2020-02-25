@@ -4,13 +4,15 @@
 #
 #-------------------------------------------------
 
-QT += core gui xml network widgets printsupport usb
+QT += core gui xml network widgets printsupport
 
 TARGET = MotoLink
 TEMPLATE = app
 #win32:CONFIG += console
 
-VERSION = 0.9.2
+include(QtUsb/src/usb/usb-lib.pri)
+
+VERSION = 0.10.0
 message(Version $$VERSION)
 
 DEFINES *= QT_USE_QSTRINGBUILDER
