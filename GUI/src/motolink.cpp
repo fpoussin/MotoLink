@@ -1,23 +1,18 @@
 #include "motolink.h"
 
 Motolink::Motolink(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), mThread(new QThread), mUsb(new QUsbDevice), mReadEp(new QUsbEndpoint(mUsb, QUsbEndpoint::bulkEndpoint, 0x84)), mWriteEp(new QUsbEndpoint(mUsb, QUsbEndpoint::bulkEndpoint, 0x04))
 {
-    mUsb = new QUsbDevice;
-    mThread = new QThread;
 
     mGuid = "1EE57D96-67C5-4E84-9CB7-DEEC7929B8A3";
     mVid = 0x0483;
     mPid = 0xABCD;
 
-    QtUsb::DeviceFilter filter;
-    QtUsb::DeviceConfig config;
+    QUsbDevice::Id id;
+    QUsbDevice::Config config;
 
-    m_read_ep = 0x84;
-    m_write_ep = 0x04;
-
-    filter.pid = mPid;
-    filter.vid = mVid;
+    id.pid = mPid;
+    id.vid = mVid;
 
     config.alternate = 0;
     config.config = 1;
@@ -28,16 +23,16 @@ Motolink::Motolink(QObject *parent)
     config.interface = 1;
 #endif
 
-    mUsb->setFilter(filter);
+    mUsb->setId(id);
     mUsb->setConfig(config);
     mUsb->setTimeout(300);
 
-    mBtl = new Bootloader(mUsb, m_read_ep, m_write_ep);
+    mBtl = new Bootloader(mReadEp, mWriteEp);
 
     mConnected = false;
     mAbortConnect = false;
 
-    mUsb->setDebug(false);
+    mUsb->setLogLevel(QUsbDevice::logInfo);
 
     this->moveToThread(mThread);
     mThread->setObjectName("MotoLink USB");
@@ -71,12 +66,15 @@ bool Motolink::usbConnect()
         return false;
     }
 
-    if (mUsb->speed() != QtUsb::fullSpeed) {
+    if (mUsb->speed() != QUsbDevice::fullSpeed) {
         qWarning("Incorrect USB speed: %s",
                  mUsb->speedString().toStdString().data());
         mConnected = false;
         return false;
     }
+
+    mReadEp->open(QIODevice::ReadOnly);
+    mWriteEp->open(QIODevice::WriteOnly);
 
     //mUsb->flush();
     return true;
@@ -110,7 +108,7 @@ bool Motolink::usbProbeConnect()
         return false;
     }
 
-    if (mUsb->speed() != QtUsb::fullSpeed) {
+    if (mUsb->speed() != QUsbDevice::fullSpeed) {
         qWarning("Incorrect USB speed: %s",
                  mUsb->speedString().toStdString().data());
         emit connectionResult(false);
@@ -120,7 +118,7 @@ bool Motolink::usbProbeConnect()
     }
 
     /* Clean buffer */
-    mUsb->flush(m_read_ep);
+    //    mReadEp->readAll();
 
     _UNLOCK_
     if (!this->sendWake()) {
@@ -143,6 +141,8 @@ bool Motolink::usbDisconnect(void)
     }
 
     _LOCK_
+    mReadEp->close();
+    mWriteEp->close();
     mUsb->close();
     mConnected = false;
 
@@ -399,7 +399,7 @@ bool Motolink::clearTables()
 void Motolink::clearUsb()
 {
     if (this->mConnected)
-        this->mUsb->flush(m_read_ep);
+        mReadEp->readAll();
 }
 
 bool Motolink::sendWake()
@@ -469,10 +469,11 @@ bool Motolink::sendSimpleCmd(quint8 cmd)
     QByteArray send, recv;
     this->prepareCmd(&send, cmd);
 
-    if (mUsb->write(&send, send.size(), m_write_ep) != send.size()) {
+    if (mWriteEp->write(send) != send.size()) {
         return 0;
     }
-    if (mUsb->read(&recv, 1, m_read_ep) > 0) {
+    recv = mReadEp->read(1);
+    if (recv.size() > 0) {
         result = recv.at(0) == (MASK_REPLY_OK | cmd);
         if (!result)
             this->printError(recv.at(0));
@@ -487,25 +488,26 @@ bool Motolink::sendCmd(QByteArray *send, QByteArray *recv, uint len, quint8 cmd)
     bool result;
     recv->clear();
 
-    if (mUsb->write(send, send->size(), m_write_ep) < send->size()) {
+    if (mWriteEp->write(*send) < send->size()) {
         return 0;
     }
 
-    mUsb->read(recv, 1, m_read_ep); // Read command result first
+    *recv = mReadEp->read(1); // Read command result first
     result = recv->at(0) == (MASK_REPLY_OK | cmd);
     if (!result)
         this->printError(recv->at(0));
 
     recv->clear();
     if (len)
-        mUsb->read(recv, len, m_read_ep); // Read actual command data
+        *recv = mReadEp->read(len); // Read actual command data
 
     return result && (uint)recv->size() == len;
 }
 
 int Motolink::readMore(QByteArray *recv, uint len)
 {
-    return mUsb->read(recv, len, m_read_ep);
+    *recv = mReadEp->read(len);
+    return recv->size();
 }
 
 void Motolink::printError(quint8 reply)
@@ -577,6 +579,7 @@ bool Motolink::sendFirmware(QByteArray *data)
 
         emit signalStatus(tr("Erase failed"));
         emit signalLock(false);
+        delete[] buf2;
         return false;
     } else {
         emit signalStatus(tr("Erase OK"));
@@ -608,7 +611,7 @@ bool Motolink::sendFirmware(QByteArray *data)
             emit signalStatus(tr("Transfer failed"));
             qWarning() << tr("Transfer failed") << wrote << read;
 
-            delete buf2;
+            delete[] buf2;
             emit signalLock(false);
             return false;
         }
@@ -619,7 +622,7 @@ bool Motolink::sendFirmware(QByteArray *data)
             emit transferProgress(progress);
         }
     }
-    delete buf2;
+    delete[] buf2;
 
     emit transferProgress(100);
     emit signalStatus(tr("Transfer done"));

@@ -2,6 +2,7 @@
 #define BOOTLOADER_H
 
 #include "qusbdevice.h"
+#include "qusbendpoint.h"
 #include <QObject>
 #include <QString>
 #include <QThread>
@@ -21,7 +22,7 @@ class Bootloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent = Q_NULLPTR);
+    explicit Bootloader(QUsbEndpoint *read_ep, QUsbEndpoint *write_ep, QObject *parent = Q_NULLPTR);
     ~Bootloader();
 
 public slots:
@@ -36,9 +37,8 @@ private slots:
 
 private:
     void prepareCmd(QByteArray *cmdBuf, quint8 cmd) const;
-    QUsbDevice *mUsb;
-    QUsbEndpoint *m_read_ep;
-    QUsbEndpoint *m_write_ep;
+    QUsbEndpoint *mReadEp;
+    QUsbEndpoint *mWriteEp;
 
 signals:
     void connectionResult(bool result);

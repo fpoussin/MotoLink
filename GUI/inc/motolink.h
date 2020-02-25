@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QTimer>
 #include <qusbdevice.h>
+#include <qusbendpoint.h>
 
 #define _LOCK_ QMutexLocker locker(&mMutex);
 #define _UNLOCK_ locker.unlock();
@@ -51,9 +52,6 @@ class Motolink : public QObject
 public:
     explicit Motolink(QObject *parent = Q_NULLPTR);
     ~Motolink();
-
-    quint8 getReadEp(void) { return m_read_ep; }
-    quint8 getWriteEp(void) { return m_write_ep; }
 
     quint8 getBtlFlags(void)
     {
@@ -217,8 +215,8 @@ private:
 
     QUsbDevice *mUsb;
     Bootloader *mBtl;
-    QUsbEndpoint *m_read_ep;
-    QUsbEndpoint *m_write_ep;
+    QUsbEndpoint *mReadEp;
+    QUsbEndpoint *mWriteEp;
 
     bool mConnected;
     bool mAbortConnect;

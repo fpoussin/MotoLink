@@ -1,11 +1,10 @@
 #include "bootloader.h"
 
-Bootloader::Bootloader(QUsbDevice *usb, quint8 read_ep, quint8 write_ep, QObject *parent)
+Bootloader::Bootloader(QUsbEndpoint *read_ep, QUsbEndpoint *write_ep, QObject *parent)
     : QObject(parent)
 {
-    mUsb = usb;
-    m_read_ep = read_ep;
-    m_write_ep = write_ep;
+    mReadEp = read_ep;
+    mWriteEp = write_ep;
 }
 
 Bootloader::~Bootloader()
@@ -19,8 +18,8 @@ quint8 Bootloader::getFlags()
 
     this->prepareCmd(&send, CMD_GET_FLAGS);
 
-    mUsb->write(&send, send.size(), m_write_ep);
-    mUsb->read(&recv, 2);
+    mWriteEp->write(send);
+    recv = mReadEp->read(2);
 
     if (recv.size() > 1 && recv.at(0) == (MASK_REPLY_OK | CMD_GET_FLAGS))
         return recv.at(1);
@@ -34,8 +33,8 @@ bool Bootloader::boot()
     QByteArray send, recv;
     this->prepareCmd(&send, CMD_BOOT);
 
-    mUsb->write(&send, send.size(), m_write_ep);
-    mUsb->read(&recv, 1, m_read_ep);
+    mWriteEp->write(send);
+    recv = mReadEp->read(1);
 
     if (recv.size() > 0 && recv.at(0) == (MASK_REPLY_OK | CMD_BOOT))
         return true;
@@ -56,11 +55,11 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
     send.append(data->constData(), data->size());
     this->prepareCmd(&send, CMD_WRITE);
 
-    if (mUsb->write(&send, send.size(), m_write_ep) != send.size())
+    if (mWriteEp->write(send) != send.size())
         return -1;
 
     QThread::msleep(10);
-    mUsb->read(&recv, 1, m_read_ep);
+    recv = mReadEp->read(1);
 
     if (recv.size() < 1)
         return -2;
@@ -84,8 +83,10 @@ qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
     send.append((char *)buf_len, 4);
     this->prepareCmd(&send, CMD_READ);
 
-    mUsb->write(&send, send.size(), m_write_ep);
-    qint32 cnt = mUsb->read(&recv, len + 1, m_read_ep);
+    if (mWriteEp->write(send) != send.size())
+        return -1;
+    recv = mReadEp->read(1);
+    qint32 cnt = recv.size();
 
     if (!(recv.at(0) == (MASK_REPLY_OK | CMD_READ)))
         return -1;
@@ -107,11 +108,12 @@ bool Bootloader::eraseFlash(quint32 len)
     send.append((char *)buf_len, 4);
     this->prepareCmd(&send, CMD_ERASE);
 
-    mUsb->write(&send, send.size(), m_write_ep);
+    if (mWriteEp->write(send) != send.size())
+        return false;
 
     QThread::usleep(13 * len);
 
-    mUsb->read(&recv, 1, m_read_ep);
+    recv = mReadEp->read(1);
 
     if (recv.size() > 0)
         return ((recv.at(0) == (MASK_REPLY_OK | CMD_ERASE)));
