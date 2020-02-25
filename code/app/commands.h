@@ -1,5 +1,5 @@
-#ifndef COMMUNICATION_H
-#define COMMUNICATION_H
+#ifndef _COMMANDS_H_
+#define _COMMANDS_H_
 
 #include "hal.h"
 

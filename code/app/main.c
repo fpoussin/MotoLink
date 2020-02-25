@@ -334,7 +334,7 @@ CCM_FUNC static THD_FUNCTION(ThreadADC, arg) {
 
   adcsample_t *sensorsDataPtr;
   size_t n;
-  uint16_t i, pos;
+  uint32_t i, pos;
   uint32_t an[3] = {0, 0, 0};
   median_t an1, an2, an3;
   uint8_t row, col;

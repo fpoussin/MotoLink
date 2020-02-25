@@ -33,7 +33,7 @@ void HardFault_Handler(void) {
   (void)reason;
   (void)stack_pointer;
 
-  thread_t *tp = tp = chThdGetSelfX();
+  thread_t *tp = chThdGetSelfX();
 
   // Hijack the process stack pointer to make backtrace work
   asm volatile("mrs %0, psp" : "=r"(HARDFAULT_PSP) : :);
