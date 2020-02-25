@@ -9,4 +9,4 @@
 	url = https://github.com/fpoussin/cm4-dsp-lib.git
 [submodule "GUI/QtUsb"]
 	path = GUI/QtUsb
-	url = git@github.com:fpoussin/QtUsb.git
+	url = https://github.com/fpoussin/QtUsb.git
