@@ -3,9 +3,10 @@ View this project on [CADLAB.io](https://cadlab.io/node/808).
 MotoLink
 ===================
 
-[![GitHub version](https://badge.fury.io/gh/fpoussin%2Fmotolink.svg)](https://badge.fury.io/gh/fpoussin%2Fmotolink)  
-
-[![Build Status](https://jenkins.netyxia.net/buildStatus/icon?job=MotoLink%2Fmaster)](https://jenkins.netyxia.net/job/MotoLink/job/master/)  
+[![GitHub version](https://badge.fury.io/gh/fpoussin%2Fmotolink.svg)](https://badge.fury.io/gh/fpoussin%2Fmotolink) 
+[![Build Status](https://jenkins.netyxia.net/buildStatus/icon?job=MotoLink%2Fmaster)](https://jenkins.netyxia.net/job/MotoLink/job/master/) 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/fpoussin/MotoLink.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fpoussin/MotoLink/alerts/) 
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/fpoussin/MotoLink.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fpoussin/MotoLink/context:cpp)  
 
 CAN Bus, K-Line interface for motorcycles, with a fuel/ignition mapper function.  
 
