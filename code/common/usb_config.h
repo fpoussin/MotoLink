@@ -1,3 +1,5 @@
+#ifndef _USB_CONFIG_H_
+#define _USB_CONFIG_H_
 
 #include "common.h"
 
@@ -17,3 +19,5 @@ extern SerialConfig uart3Cfg;
 bool usbConnected(void);
 bool usb_lld_connect_bus(USBDriver *usbp);
 bool usb_lld_disconnect_bus(USBDriver *usbp);
+
+#endif
