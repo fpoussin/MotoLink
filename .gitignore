@@ -14,10 +14,13 @@ board/*.dri
 board/*.dxf
 board/*.gpi
 
-GUI/*.pro.user*
+*/*.user*
 build-*
 GUI/res/oxygen
+GUI/res/firmware.xml
 
+code/*.cflags
+code/*.cxxflags
 code/*/.dep
 code/*/build
 code/*/.cproject
