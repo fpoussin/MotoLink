@@ -3,6 +3,8 @@
 Bootloader::Bootloader(QUsbEndpoint *read_ep, QUsbEndpoint *write_ep, QObject *parent)
     : QObject(parent), mReadEp(read_ep), mWriteEp(write_ep)
 {
+    Q_CHECK_PTR(read_ep);
+    Q_CHECK_PTR(write_ep);
 }
 
 Bootloader::~Bootloader()
@@ -42,6 +44,7 @@ bool Bootloader::boot()
 
 qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 {
+    Q_CHECK_PTR(data);
     //WAIT_USB
     QByteArray send, recv;
     quint8 buf_len[4];
@@ -70,6 +73,7 @@ qint32 Bootloader::writeFlash(quint32 addr, const QByteArray *data, quint32 len)
 
 qint32 Bootloader::readMem(quint32 addr, QByteArray *data, quint32 len)
 {
+    Q_CHECK_PTR(data);
     //WAIT_USB
     QByteArray send, recv;
     quint8 buf_len[4];
@@ -121,6 +125,7 @@ bool Bootloader::eraseFlash(quint32 len)
 
 quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
 {
+    Q_CHECK_PTR(data);
     quint8 i;
     quint8 sum = 0;
 
@@ -132,6 +137,7 @@ quint8 Bootloader::checkSum(const quint8 *data, quint8 length) const
 
 void Bootloader::prepareCmd(QByteArray *cmdBuf, quint8 cmd) const
 {
+    Q_CHECK_PTR(cmdBuf);
     cmdBuf->insert(0, MAGIC1);
     cmdBuf->insert(1, MAGIC2);
     cmdBuf->insert(2, MASK_CMD | cmd);
