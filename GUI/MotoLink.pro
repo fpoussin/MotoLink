@@ -11,6 +11,7 @@ TEMPLATE = app
 #win32:CONFIG += console
 
 include(QtUsb/src/usb/usb-lib.pri)
+include(qmsgpack/qmsgpack.pri)
 
 VERSION = 0.10.0
 message(Version $$VERSION)

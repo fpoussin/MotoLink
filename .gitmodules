@@ -10,3 +10,9 @@
 [submodule "GUI/QtUsb"]
 	path = GUI/QtUsb
 	url = https://github.com/fpoussin/QtUsb.git
+[submodule "code/msgpack"]
+	path = code/msgpack
+	url = https://github.com/fpoussin/msgpack-c.git
+[submodule "GUI/qmsgpack"]
+	path = GUI/qmsgpack
+	url = https://github.com/fpoussin/qmsgpack.git
