@@ -85,8 +85,8 @@ void MHTabWidget::DetachTab(int index, QPoint &dropPoint)
     // Needs to be done explicit
     tearOffWidget->show();
     //detachedWidget->move (dropPoint);
-    detachedWidget->setFixedSize(tearOffWidget->size());
-    detachedWidget->setSizeGripEnabled(false);
+    //    detachedWidget->setFixedSize(tearOffWidget->size());
+    //    detachedWidget->setSizeGripEnabled(false);
     detachedWidget->show();
 }
 

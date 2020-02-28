@@ -13,20 +13,22 @@ TableModel::TableModel(QUndoStack *stack, float min, float max, float def, bool 
     mPermanent = permanent;
     mSinglerow = singlerow;
     this->mId = 0;
+    const uint rpm_sz = 20;
+    const uint tps_sz = 10;
 
-    const int defaultRpm[] = { 0, 2000, 4000, 5500, 7000, 8000, 9000,
-                               10000, 11000, 12000, 13000, 14000, 15000, 16000,
-                               16500, 18000 };
+    const uint max_rpm = 17000;
 
-    const int defaultTps[] = { 0, 4, 8, 15, 20, 27, 35, 50, 70, 85, 100 };
-
-    for (uint i = 0; i < sizeof(defaultRpm) / sizeof(int); i++) {
-        mDefaultRpm.append(defaultRpm[i]);
+    for (uint i = 0; i < rpm_sz; i++) {
+        uint val = (max_rpm / rpm_sz) * i;
+        mDefaultRpm.append(val);
     }
+    mDefaultRpm.append(max_rpm);
 
-    for (uint i = 0; i < sizeof(defaultTps) / sizeof(int); i++) {
-        mDefaultTps.append(defaultTps[i]);
+    for (uint i = 0; i < tps_sz; i++) {
+        uint val = 100 - ((100 / tps_sz) * i);
+        mDefaultTps.append(val);
     }
+    mDefaultTps.append(0);
 
     this->fill(false);
 }
@@ -397,8 +399,8 @@ int TableModel::getDefaultTpsAt(int index)
 
 void TableModel::fill(bool random)
 {
-    mNumRow = 11;
-    mNumCol = 16;
+    mNumRow = mDefaultTps.size();
+    mNumCol = mDefaultRpm.size();
     float value = mDefaultValue;
 
     if (mSinglerow)

@@ -68,6 +68,7 @@ MainWindow::~MainWindow()
     delete mKnockGraphUi;
     delete mKnockGraphWidget;
     delete mLogsUi;
+    delete mSerialLogsUi;
     delete mLogsWidget;
     delete mMtl;
 

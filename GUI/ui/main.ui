@@ -25,12 +25,6 @@
     <height>0</height>
    </size>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>902</width>
-    <height>520</height>
-   </size>
-  </property>
   <property name="focusPolicy">
    <enum>Qt::ClickFocus</enum>
   </property>
@@ -196,13 +190,10 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
-        <item>
+        <item alignment="Qt::AlignLeft|Qt::AlignTop">
          <widget class="QEnhancedTableView" name="tableAfrTgt">
-          <property name="maximumSize">
-           <size>
-            <width>842</width>
-            <height>360</height>
-           </size>
+          <property name="mouseTracking">
+           <bool>false</bool>
           </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -210,10 +201,13 @@
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <attribute name="horizontalHeaderMinimumSectionSize">
            <number>50</number>
           </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
+          <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
@@ -268,19 +262,16 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
-        <item>
+        <item alignment="Qt::AlignLeft|Qt::AlignTop">
          <widget class="QEnhancedTableView" name="tableFuelOffset">
-          <property name="maximumSize">
-           <size>
-            <width>842</width>
-            <height>360</height>
-           </size>
-          </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -288,10 +279,10 @@
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
+          <attribute name="horizontalHeaderMinimumSectionSize">
            <number>50</number>
           </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
+          <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
@@ -352,27 +343,24 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
-        <item>
+        <item alignment="Qt::AlignLeft|Qt::AlignTop">
          <widget class="QEnhancedTableView" name="tableAfrMap">
-          <property name="maximumSize">
-           <size>
-            <width>842</width>
-            <height>360</height>
-           </size>
-          </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
+          <attribute name="horizontalHeaderMinimumSectionSize">
            <number>50</number>
           </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
+          <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
@@ -427,27 +415,24 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
-        <item>
+        <item alignment="Qt::AlignLeft|Qt::AlignTop">
          <widget class="QEnhancedTableView" name="tableKnk">
-          <property name="maximumSize">
-           <size>
-            <width>842</width>
-            <height>360</height>
-           </size>
-          </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
-          <attribute name="horizontalHeaderDefaultSectionSize">
+          <attribute name="horizontalHeaderMinimumSectionSize">
            <number>50</number>
           </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
+          <attribute name="horizontalHeaderDefaultSectionSize">
            <number>50</number>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
@@ -1961,7 +1946,7 @@
      <x>0</x>
      <y>0</y>
      <width>902</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
