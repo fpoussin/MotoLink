@@ -53,7 +53,30 @@ void Update::onResult(QNetworkReply *reply)
     }
 
     mNewVersion = version;
-    if (mCurrentVersion.compare(mNewVersion) < 0) {
+    QList<uint> local_int, remote_int;
+    QStringList local(mCurrentVersion.split('.'));
+    QStringList remote(mNewVersion.split('.'));
+    bool new_version_avail = false;
+
+    for (int i = 0; i < local.size(); i++) {
+        local_int << local.at(i).toUInt();
+        if (remote.size() >= i)
+            remote_int << remote.at(i).toUInt();
+        else
+            remote_int << 0;
+    }
+
+    if (local_int.at(0) < remote_int.at(0)) {
+        new_version_avail = true;
+    }
+    if (local_int.at(0) <= remote_int.at(0) && local_int.at(1) < remote_int.at(1)) {
+        new_version_avail = true;
+    }
+    if (local_int.at(0) <= remote_int.at(0) && local_int.at(1) <= remote_int.at(1) && local_int.at(2) < remote_int.at(2)) {
+        new_version_avail = true;
+    }
+
+    if (new_version_avail) {
         qInfo("New version available: %s", version.toStdString().c_str());
         emit newVersionAvailable(version);
     } else {
